@@ -16,6 +16,10 @@ apt-get -y install nmap
 apt-get -y install xsltproc
 apt-get -y install sqlite3
 
+git clone https://github.com/eesmer/LastControl.git
+mkdir /usr/local/lastcontrol
+cp -R LastControl /usr/local/lastcontrol
+
 # create ssh-key
 mkdir -p /root/.ssh
 chmod 700 /root/.ssh
