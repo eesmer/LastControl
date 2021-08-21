@@ -17,8 +17,9 @@ apt-get -y install xsltproc
 apt-get -y install sqlite3
 
 git clone https://github.com/eesmer/LastControl.git
-mkdir /usr/local/lastcontrol
+mv LastControl lastcontrol
 cp -R LastControl /usr/local/lastcontrol
+chmod -R 755 /usr/local/lastcontrol
 
 # create ssh-key
 mkdir -p /root/.ssh
@@ -42,8 +43,16 @@ sqlite3 lastcontrol.sqlite "CREATE TABLE report ( date text(15), hour text(10), 
 # SERVICE CONFIG
 # -----------------------------------------------------------------------------
 systemctl stop lastcontrol.service && systemctl disable lastcontrol.service
-if [ -f "/etc/systemd/system/multi-user.target.wants/lastcontrol.service" ]; then rm /etc/systemd/system/multi-user.target.wants/lastcontrol.service; fi
+
+if [ -f "/etc/systemd/system/multi-user.target.wants/lastcontrol.service" ]; then
+rm /etc/systemd/system/multi-user.target.wants/lastcontrol.service
+fi
+if [ -f "/etc/systemd/system/lastcontrol.service" ]; then
+rm /etc/systemd/system/lastcontrol.service
+fi
+
 cp /usr/local/lastcontrol/lastcontrol.service /etc/systemd/system/
 ln -s /etc/systemd/system/lastcontrol.service /etc/systemd/system/multi-user.target.wants/
 systemctl enable lastcontrol.service
 systemctl start lastcontrol.service
+systemctl restart lastcontrol.service
