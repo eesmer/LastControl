@@ -18,7 +18,7 @@ It runs periodically every 3 hours.
 ## Requirements
 It works in Debian environment. Desktop environment is not required.
 
-## Installation and Usage
+### Installation and Usage
 Use LastControl with root user
 ```sh
 $ wget https://raw.githubusercontent.com/eesmer/LastControl/main/lastcontrol-installer.sh
@@ -27,7 +27,7 @@ $ bash lastcontrol-installer.sh
 **Access Page:**
 https://$LastControl_IP/reports/mainpage.html
 
-## add/remove machine
+#### add/remove machine
 ```sh
 $ vim /usr/local/lastcontrol/hostlist
 ```
