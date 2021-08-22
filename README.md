@@ -24,8 +24,9 @@ Use LastControl with root user
 $ wget https://raw.githubusercontent.com/eesmer/LastControl/main/lastcontrol-installer.sh
 $ bash lastcontrol-installer.sh
 ```
-**Access Page:**
-https://$LastControl_IP/reports/mainpage.html
+![alt text](screenshot/LastControl_main_page.png "LastControl Main Page")
+
+**Access Page:** http://$LastControl_IP/reports/mainpage.html
 
 #### add/remove machine
 ```sh
