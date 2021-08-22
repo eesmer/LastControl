@@ -13,8 +13,6 @@ LastControl is a work around for health checking on linux machines.
 - It only performs a fast scan with nmap on the subnet.
 - All these outputs with a web page; It shows the reports on a single screen by categorizing the machines as 'red' 'green' and 'orange'
 
-It runs periodically every 3 hours.
-
 ## Requirements
 It works in Debian environment. Desktop environment is not required.
 
@@ -39,3 +37,8 @@ Each machine must be written with the machine name.
 LastControl should be able to reach the target machine by hostname.
 If you cannot use DNS;<br>
 Add the target machine to the **/etc/hosts file** on the LastControl machine.
+
+#### How it works
+It runs periodically every 3 hours.<br>
+If you want to trigger the operation manually;<br>
+systemctl restart lastcontrol.service
