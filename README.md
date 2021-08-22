@@ -41,4 +41,6 @@ Add the target machine to the **/etc/hosts file** on the LastControl machine.
 #### How it works
 It runs periodically every 3 hours.<br>
 If you want to trigger the operation manually;<br>
-systemctl restart lastcontrol.service
+```sh
+$ systemctl restart lastcontrol.service
+```
