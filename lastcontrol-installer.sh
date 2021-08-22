@@ -17,8 +17,7 @@ apt-get -y install xsltproc
 apt-get -y install sqlite3
 
 git clone https://github.com/eesmer/LastControl.git
-mv LastControl lastcontrol
-cp -R LastControl /usr/local/lastcontrol
+cp -R LastControl /usr/local/lastcontrol/
 chmod -R 755 /usr/local/lastcontrol
 
 # create ssh-key
