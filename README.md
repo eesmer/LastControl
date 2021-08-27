@@ -1,3 +1,5 @@
+![alt text](screenshot/lastcontrol_logo.png "LastControl")
+<br>
 # LastControl
 Health Checker for Linux machines
 
