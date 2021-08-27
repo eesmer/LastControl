@@ -2,7 +2,8 @@
 Health Checker for Linux machines
 
 LastControl is a work around for health checking on linux machines.
-<br> It is compatible with Debian and Ubuntu.
+<br> It is compatible with Debian, Ubuntu, Red Hat, Centos
+<br> Distributions tested as client: Debian, Ubuntu, Centos
 
 ## Features
 - Checks for updates
