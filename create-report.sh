@@ -226,8 +226,6 @@ border: 5px solid lightgray;
 <table id="tblinventory">
 <tr>
 <th style="text-align:left">MACHINE NAME</th>
-<th style="text-align:left">IP ADDRESS</th>
-<th style="text-align:left">MAC ADDRESS</th>
 <th style="text-align:left">CPU</th>
 <th style="text-align:left">RAM</th>
 <th style="text-align:left">VGA</th>
@@ -320,24 +318,22 @@ while [ "$i" -le $NUMMACHINE ]; do
         ssh -p22 -i /root/.ssh/lastcontrol root@$MACHINE -- bash /tmp/lastcontrol.sh
         scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.txt $RDIR/
 
-        UPDATE_CHECK=$(perl -ne'17..17 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-        UPTIME=$(perl -ne'19..19 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+        UPDATE_CHECK=$(perl -ne'15..15 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+        UPTIME=$(perl -ne'17..17 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
         # for inventory.html
         MACHINE_NAME=$(perl -ne'6..6 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-        IP_ADDR=$(perl -ne'7..7 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-        MAC_ADDR=$(perl -ne'8..8 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-        CPU=$(perl -ne'10..10 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-        RAM=$(perl -ne'11..11 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-        VGA=$(perl -ne'12..12 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-        HDD=$(perl -ne'13..13 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-        VIRT=$(perl -ne'14..14 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-        OS=$(perl -ne'15..15 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-        OS_VER=$(perl -ne'16..16 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	LAST_BOOT=$(perl -ne'18..18 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	NUMPROCESS=$(perl -ne'21..21 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	INVCHECK=$(perl -ne'24..24 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	CVE_LIST=$(perl -ne'28..28 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	KERNEL_VER=$(perl -ne'26..26 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+        CPU=$(perl -ne'8..8 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+        RAM=$(perl -ne'9..9 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+        VGA=$(perl -ne'10..10 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+        HDD=$(perl -ne'11..11 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+        VIRT=$(perl -ne'12..12 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+        OS=$(perl -ne'13..13 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+        OS_VER=$(perl -ne'14..14 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	LAST_BOOT=$(perl -ne'16..16 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	NUMPROCESS=$(perl -ne'19..19 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	INVCHECK=$(perl -ne'22..22 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	CVE_LIST=$(perl -ne'26..26 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	KERNEL_VER=$(perl -ne'24..24 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
 
         # create cvelist.html
 	echo "<tr>" >> $RDIR/cvelist.html
@@ -348,8 +344,6 @@ while [ "$i" -le $NUMMACHINE ]; do
 	# create inventory.html
         echo "<tr>" >> $RDIR/inventory.html
         echo "<td>$MACHINE_NAME</td>" >> $RDIR/inventory.html
-        echo "<td>$IP_ADDR</td>" >> $RDIR/inventory.html
-        echo "<td>$MAC_ADDR</td>" >> $RDIR/inventory.html
         echo "<td>$CPU</td>" >> $RDIR/inventory.html
         echo "<td>$RAM</td>" >> $RDIR/inventory.html
         echo "<td>$VGA</td>" >> $RDIR/inventory.html
@@ -360,11 +354,11 @@ while [ "$i" -le $NUMMACHINE ]; do
         echo "</tr>" >> $RDIR/inventory.html
 
         # create OrangeList & GreenList
-        if [ ! -z "$UPDATE_CHECK" ] || [ $INVCHECK = DETECTED ] || [ ! -z "$CVE_LIST" ]; then
+        if [ $UPDATE_CHECK = EXIST ] || [ $INVCHECK = DETECTED ] || [ ! -z "$CVE_LIST" ]; then
             echo "<ul><li><a href=report.html#$MACHINE>Details</a>  &nbsp; | &nbsp; $MACHINE_NAME $LINE</li></ul>" >> $RDIR/orangelist.html && ORANGEMACHINE=$((ORANGEMACHINE+1))
 	    MACHINEGROUP=ORANGE
 	    savedb
-        elif [ -z "$UPDATE_CHECK" ] || [ $INVCHECK = NOTDETECTED ] || [ -z "$CVE_LIST" ]; then
+        elif [ $UPDATE_CHECK = NONE ] || [ $INVCHECK = NOTDETECTED ] || [ -z "$CVE_LIST" ]; then
 	    echo "<ul><li><a href=report.html#$MACHINE>Details</a>  &nbsp; | &nbsp; $MACHINE_NAME $LINE</li></ul>" >> $RDIR/greenlist.html && GREENMACHINE=$((GREENMACHINE+1))
 	    MACHINEGROUP=GREEN
 	    savedb
@@ -418,35 +412,35 @@ echo "</html>" |tee -a $RDIR/report.html $RDIR/redlist.html $RDIR/orangelist.htm
 #----------------
 # network scan
 #----------------
-SRVSUBNET=$(ip r |grep link |grep proto |cut -d' ' -f1)
-nmap -Pn -F -oX /tmp/networkscan.xml $SRVSUBNET
-xsltproc /tmp/networkscan.xml -o /tmp/networkscan.html && cp /tmp/networkscan.html /var/www/html/reports/
+#SRVSUBNET=$(ip r |grep link |grep proto |cut -d' ' -f1)
+#nmap -Pn -F -oX /tmp/networkscan.xml $SRVSUBNET
+#xsltproc /tmp/networkscan.xml -o /tmp/networkscan.html && cp /tmp/networkscan.html /var/www/html/reports/
 
-cat > /tmp/buttons.txt << EOF
-<p style="text-align:right;">
-<style>
-a:link, a:visited {
-background-color: #1C1C1C;
-color: white;
-padding: 5px 10px;
-text-align: center;
-text-decoration: none;
-display: inline-block;
-}
-a:hover, a:active {
-background-color: gray;
-}
-</style>
-<a href="mainpage.html">Main Page</a>
-<a href="report.html">Report</a>
-<a href="redlist.html">Red List</a>
-<a href="orangelist.html">Orange List</a>
-<a href="greenlist.html">Green List</a>
-<a href="inventory.html">Inventory List</a>
-<a href="networkscan.html">Network Scan</a>
-</p>
-<hr class="solid">
-EOF
+#cat > /tmp/buttons.txt << EOF
+#<p style="text-align:right;">
+#<style>
+#a:link, a:visited {
+#background-color: #1C1C1C;
+#color: white;
+#padding: 5px 10px;
+#text-align: center;
+#text-decoration: none;
+#display: inline-block;
+#}
+#a:hover, a:active {
+#background-color: gray;
+#}
+#</style>
+#<a href="mainpage.html">Main Page</a>
+#<a href="report.html">Report</a>
+#<a href="redlist.html">Red List</a>
+#<a href="orangelist.html">Orange List</a>
+#<a href="greenlist.html">Green List</a>
+#<a href="inventory.html">Inventory List</a>
+#<a href="networkscan.html">Network Scan</a>
+#</p>
+#<hr class="solid">
+#EOF
 
-sed -i $'/1>Nmap Scan Report/{e cat /tmp/buttons.txt\n}' /var/www/html/reports/networkscan.html
-sed -i 's/href="javascript:togglePorts'//g /var/www/html/reports/networkscan.html
+#sed -i $'/1>Nmap Scan Report/{e cat /tmp/buttons.txt\n}' /var/www/html/reports/networkscan.html
+#sed -i 's/href="javascript:togglePorts'//g /var/www/html/reports/networkscan.html

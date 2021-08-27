@@ -1,29 +1,37 @@
 #!/bin/bash
 
-if ! [ -x "$(command -v netstat)" ]; then
-apt-get -y install net-tools
-fi
+cat /etc/redhat-release > /tmp/distrocheck || cat /etc/*-release > /tmp/distrocheck || cat /etc/issue > /tmp/distrocheck
+grep debian /tmp/distrocheck 2>/dev/null && REP=APT
+grep CentOS /tmp/distrocheck 2>/dev/null && REP=YUM
+grep RedHat /tmp/distrocheck 2>/dev/null && REP=YUM
+rm /tmp/distrocheck
 
-if ! [ -x "$(command -v rsync)" ]; then
-apt-get -y install rsync
+if [ $REP = APT ]; then
+	apt-get -y install net-tools rsync
+fi
+if [ $REP = YUM ]; then
+	yum -y install net-tools rsync
 fi
 
 DATE=$(date)
 HOST_NAME=$(hostname -f)
 
-ip link |grep "UP mode" |cut -d':' -f2 |cut -d' ' -f2 > /tmp/interface-list
-LINE=$(cat /tmp/interface-list | wc -l)
-i=1
-while [ "$i" -le $LINE ]; do
-	TARGETINTERFACE=$(cat /tmp/interface-list |head -$i |tail -1)
-	ip a |grep $TARGETINTERFACE > /tmp/interfaceconfig
-	echo "$TARGETINTERFACE: " && cat /sys/class/net/$TARGETINTERFACE/address >> /tmp/interfaceconfig
-i=$(( i + 1 ))
-done
-rm /tmp/interface-list
+#ip link |grep "UP mode" |cut -d':' -f2 |cut -d' ' -f2 > /tmp/interface-list
+#LINE=$(cat /tmp/interface-list | wc -l)
+#i=1
+#while [ "$i" -le $LINE ]; do
+#	TARGETINTERFACE=$(cat /tmp/interface-list |head -$i |tail -1)
+#	ip a |grep $TARGETINTERFACE > /tmp/interfaceconfig
+#	echo "$TARGETINTERFACE: " && cat /sys/class/net/$TARGETINTERFACE/address >> /tmp/interfaceconfig
+#i=$(( i + 1 ))
+#done
+#rm /tmp/interface-list
+#
+#ip a |grep "inet " > /tmp/ipoutput && sed -i '/127.0/d' /tmp/ipoutput && IPADDRESS=$(cat /tmp/ipoutput) && NWADAPTER=$(echo $IPADDRESS |cut -d " " -f7) && rm /tmp/ipoutput
+#MACADDRESS=$(cat /sys/class/net/$NWADAPTER/address)
 
-ip a |grep "inet " > /tmp/ipoutput && sed -i '/127.0/d' /tmp/ipoutput && IPADDRESS=$(cat /tmp/ipoutput) && NWADAPTER=$(echo $IPADDRESS |cut -d " " -f7) && rm /tmp/ipoutput
-MACADDRESS=$(cat /sys/class/net/$NWADAPTER/address)
+ip a |grep "inet " > /tmp/ipoutput && sed -i '/127.0/d' /tmp/ipoutput
+IPADDRESS=$(cat /tmp/ipoutput)
 
 CPUINFO=$(cat /proc/cpuinfo |grep "model name" |cut -d ':' -f2 > /tmp/cpuinfooutput.txt && tail -n1 /tmp/cpuinfooutput.txt > /tmp/cpuinfo.txt && rm /tmp/cpuinfooutput.txt && cat /tmp/cpuinfo.txt) && rm /tmp/cpuinfo.txt
 RAM_TOTAL=$(free -m |awk 'NR == 2 {print "" $2*1.024}')
@@ -37,7 +45,30 @@ OS_KERNEL=$(uname -a)
 OS_VER=$(cat /etc/os-release |grep PRETTY_NAME | cut -d '=' -f2 |cut -d '"' -f2)
 LAST_BOOT=$(who -b | awk '{print $3,$4}')
 UPTIME=$(uptime)
-CHECK_UPDATE=$(apt-get update 2>/dev/null |grep upgradable |cut -d '.' -f1)
+
+if [ $REP = APT ]; then
+	apt-get update 2>/dev/null |grep upgradable |cut -d '.' -f1 > /tmp/update_list.txt
+	UPDATE_COUNT=$(cat /tmp/update_list.txt |wc -l)
+		
+	CHECK_UPDATE=EXIST
+	if [ $UPDATE_COUNT = 0 ];then
+		CHECK_UPDATE=NONE
+	fi
+
+elif [ $REP = YUM ]; then
+	yum check-update > /tmp/update_list.txt
+	sed -i '/Loaded/d' /tmp/update_list.txt
+	sed -i '/Loading/d' /tmp/update_list.txt
+	sed -i '/*/d' /tmp/update_list.txt
+	sed -i '/Last metadata/d' /tmp/update_list.txt
+	sed -i '/^$/d' /tmp/update_list.txt
+	UPDATE_COUNT=$(cat /tmp/update_list.txt |wc -l)
+
+	CHECK_UPDATE=EXIST
+	if [ $UPDATE_COUNT = 0 ]; then
+		CHECK_UPDATE=NONE
+	fi
+fi
 
 KERNELVER=$(uname -a |cut -d " " -f3 |cut -d "-" -f1)
 perl /tmp/cve_check -k $KERNELVER > /tmp/cve_list
@@ -76,11 +107,14 @@ sshd -T | grep denyusers >> /tmp/sshconfig.txt
 sshd -T | grep denygroups >> /tmp/sshconfig.txt
 sshd -T | grep -i allowtcpforwarding >> /tmp/sshconfig.txt
 
-#--------------------------
-# broken package list
-#--------------------------
-dpkg -l | grep -v "^ii" > /tmp/packagelist.txt
-sed -i -e '1d;2d;3d' /tmp/packagelist.txt
+
+#------------------------------
+# broken package list for APT
+#------------------------------
+if [ $REP = APT ];then
+	dpkg -l | grep -v "^ii" > /tmp/packagelist.txt
+	sed -i -e '1d;2d;3d' /tmp/packagelist.txt
+fi
 
 rm /tmp/mostcpu.txt
 top -b -n1 | head -17 | tail -11 > /tmp/mostcpu.txt
@@ -212,8 +246,6 @@ $HOST_NAME LastControl Report $DATE
 				:::... MACHINE INVENTORY ...:::
 ------------------------------------------------------------------------------------------------------
 |Hostname:          |$HOST_NAME
-|IP Address:        |$IPADDRESS
-|MAC Address:       |$MACADDRESS
 ------------------------------------------------------------------------------------------------------
 |CPU Info:          |$CPUINFO
 |RAM:               |Total:$RAM_TOTAL | Usage:$RAM_USAGE
@@ -235,22 +267,31 @@ $HOST_NAME LastControl Report $DATE
 ------------------------------------------------------------------------------------------------------
 |CVE List:          |$CVELIST
 ------------------------------------------------------------------------------------------------------
+|IP Address:        |$IPADDRESS
+------------------------------------------------------------------------------------------------------
 EOF
 
+echo "" >> /tmp/$HOST_NAME.txt
+echo "" >> /tmp/$HOST_NAME.txt
+
 if [ $INVCHECK = DETECTED ]; then
-	echo "Changed Hardware Notification!!!" >> /tmp/$HOST_NAME.txt
+	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+	echo "                          :::... CHANGE HARDWARE NOTIFICATION !!! ....:::" >> /tmp/$HOST_NAME.txt
+	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 	diff $LOCALFILE /tmp/inventory.txt >> /tmp/$HOST_NAME.txt
+	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 fi
 rm /tmp/inventory.txt
-
-echo "" >> /tmp/$HOST_NAME.txt
 echo "" >> /tmp/$HOST_NAME.txt
 
-echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-echo "                          :::... INTERFACE CONFIG ....:::" >> /tmp/$HOST_NAME.txt
-echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+if [ $CHECK_UPDATE = EXIST ]; then
+	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+	echo "                          :::... UPDATE LIST ....:::" >> /tmp/$HOST_NAME.txt
+	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+	echo "" >> /tmp/$HOST_NAME.txt
+	cat /tmp/update_list.txt>> /tmp/$HOST_NAME.txt && rm /tmp/update_list.txt
+fi
 echo "" >> /tmp/$HOST_NAME.txt
-cat /tmp/interfaceconfig >> /tmp/$HOST_NAME.txt && rm /tmp/interfaceconfig
 
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 echo "				:::... SYSTEM LOAD ....:::" >> /tmp/$HOST_NAME.txt
@@ -342,12 +383,14 @@ echo "--------------------------------------------------------------------------
 cat /tmp/sshconfig.txt >> /tmp/$HOST_NAME.txt && rm /tmp/sshconfig.txt
 echo "" >> /tmp/$HOST_NAME.txt
 
-echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-echo "			:::... BROKEN PACKAGE LIST ...:::" >> /tmp/$HOST_NAME.txt
-echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-echo "" >> /tmp/$HOST_NAME.txt
-cat /tmp/packagelist.txt >> /tmp/$HOST_NAME.txt
-echo "" >> /tmp/$HOST_NAME.txt
+if [ $REP = APT ];then
+	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+	echo "			:::... BROKEN PACKAGE LIST ...:::" >> /tmp/$HOST_NAME.txt
+	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+	echo "" >> /tmp/$HOST_NAME.txt
+	cat /tmp/packagelist.txt >> /tmp/$HOST_NAME.txt
+	echo "" >> /tmp/$HOST_NAME.txt
+fi
 
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 echo "			:::... INTEGRITY CHECK ...:::" >> /tmp/$HOST_NAME.txt
