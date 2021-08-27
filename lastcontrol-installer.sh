@@ -7,7 +7,7 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get -y update && apt-get -y upgrade && apt-get -y dist-upgrade && apt-get -y autoremove
 
 apt-get -y install git
-apt-get -y install nginx
+apt-get -y install apache2
 apt-get -y install openssh-server ntp
 apt-get -y install tmux vim
 apt-get -y install curl wget
