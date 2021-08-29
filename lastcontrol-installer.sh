@@ -31,8 +31,7 @@ rm -r /var/www/html/reports && /var/www/html/lastcontrol
 mkdir -p /var/www/html/reports
 mkdir -p /var/www/html/lastcontrol
 cp /root/.ssh/lastcontrol.pub /var/www/html/lastcontrol/
-rm /var/www/html/index.html
-cp /usr/local/lastcontrol/screenshot/index.html /var/www/html/
+rm /var/www/html/index.html && cp /usr/local/lastcontrol/index.html /var/www/html/
 cp /usr/local/lastcontrol/screenshot/lastcontrol_logo.png /var/www/html/
 chmod 644 /var/www/html/index.html
 chmod 644 /var/www/html/lastcontrol_logo.png
