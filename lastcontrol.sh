@@ -1,11 +1,17 @@
 #!/bin/bash
 
+#--------------------------
+# determine distro
+#--------------------------
 cat /etc/redhat-release > /tmp/distrocheck || cat /etc/*-release > /tmp/distrocheck || cat /etc/issue > /tmp/distrocheck
 grep debian /tmp/distrocheck 2>/dev/null && REP=APT
 grep CentOS /tmp/distrocheck 2>/dev/null && REP=YUM
 grep RedHat /tmp/distrocheck 2>/dev/null && REP=YUM
 rm /tmp/distrocheck
 
+#--------------------------
+# install packages
+#--------------------------
 if [ $REP = APT ]; then
 	apt-get -y install net-tools rsync
 fi
@@ -16,23 +22,8 @@ fi
 DATE=$(date)
 HOST_NAME=$(hostname -f)
 
-#ip link |grep "UP mode" |cut -d':' -f2 |cut -d' ' -f2 > /tmp/interface-list
-#LINE=$(cat /tmp/interface-list | wc -l)
-#i=1
-#while [ "$i" -le $LINE ]; do
-#	TARGETINTERFACE=$(cat /tmp/interface-list |head -$i |tail -1)
-#	ip a |grep $TARGETINTERFACE > /tmp/interfaceconfig
-#	echo "$TARGETINTERFACE: " && cat /sys/class/net/$TARGETINTERFACE/address >> /tmp/interfaceconfig
-#i=$(( i + 1 ))
-#done
-#rm /tmp/interface-list
-#
-#ip a |grep "inet " > /tmp/ipoutput && sed -i '/127.0/d' /tmp/ipoutput && IPADDRESS=$(cat /tmp/ipoutput) && NWADAPTER=$(echo $IPADDRESS |cut -d " " -f7) && rm /tmp/ipoutput
-#MACADDRESS=$(cat /sys/class/net/$NWADAPTER/address)
-
 ip a |grep "inet " > /tmp/ipoutput && sed -i '/127.0/d' /tmp/ipoutput
 IPADDRESS=$(cat /tmp/ipoutput)
-
 CPUINFO=$(cat /proc/cpuinfo |grep "model name" |cut -d ':' -f2 > /tmp/cpuinfooutput.txt && tail -n1 /tmp/cpuinfooutput.txt > /tmp/cpuinfo.txt && rm /tmp/cpuinfooutput.txt && cat /tmp/cpuinfo.txt) && rm /tmp/cpuinfo.txt
 RAM_TOTAL=$(free -m |awk 'NR == 2 {print "" $2*1.024}')
 RAM_USAGE=$(free -m |awk 'NR == 2 {print "" $3*1.024}')
@@ -46,6 +37,9 @@ OS_VER=$(cat /etc/os-release |grep PRETTY_NAME | cut -d '=' -f2 |cut -d '"' -f2)
 LAST_BOOT=$(who -b | awk '{print $3,$4}')
 UPTIME=$(uptime)
 
+#--------------------------
+# Check Update
+#--------------------------
 if [ $REP = APT ]; then
 	apt-get update 2>/dev/null |grep upgradable |cut -d '.' -f1 > /tmp/update_list.txt
 	UPDATE_COUNT=$(cat /tmp/update_list.txt |wc -l)
@@ -70,9 +64,46 @@ elif [ $REP = YUM ]; then
 	fi
 fi
 
+#--------------------------
+# CVE Check
+#--------------------------
 KERNELVER=$(uname -a |cut -d " " -f3 |cut -d "-" -f1)
 perl /tmp/cve_check -k $KERNELVER > /tmp/cve_list
 CVELIST=$(cat /tmp/cve_list |grep CVE) && echo $CVELIST > /tmp/cve_list && CVELIST=$(cat /tmp/cve_list) && rm /tmp/cve_list.txt && rm /tmp/cve_check
+
+#--------------------------
+# FS Conf. check
+#--------------------------
+part_check () {
+if [ "$#" != "1" ]; then
+		options="$(echo $@ | awk 'BEGIN{FS="[()]"}{print $2}')"
+	echo "[+]$@"
+else
+	echo "[-]\"$1\" not in separated partition. -Ref. CIS-"
+fi
+}
+parts=(/tmp /var /var/tmp /var/log /var/log/audit /home /dev/shm)
+for part in ${parts[*]}; do
+	out="$(mount | grep $part)"
+	part_check $part $out >> /tmp/fs_conf.txt
+done
+
+#--------------------------
+# repo list
+#--------------------------
+if [ $REP = APT ]; then
+	cat /etc/apt/sources.list > /tmp/repo_list.txt
+	shopt -s nullglob dotglob
+	files=(/etc/apt/sources.list.d/*)
+	DIRC=EMPTY
+	if [ ${#files[@]} -gt 0 ]; then DIRC=FULL; fi
+	if [ $DIRC = "FULL" ]; then
+	echo "----------------------------------------------" >> /tmp/repo_list.txt
+	cat /etc/apt/sources.list.d/* >> /tmp/repo_list.txt
+	fi
+elif [ $REP = YUM ]; then
+	yum repolist > /tmp/repo_list.txt
+fi
 
 #--------------------------
 # running services
@@ -112,8 +143,8 @@ sshd -T | grep -i allowtcpforwarding >> /tmp/sshconfig.txt
 # broken package list for APT
 #------------------------------
 if [ $REP = APT ];then
-	dpkg -l | grep -v "^ii" > /tmp/packagelist.txt
-	sed -i -e '1d;2d;3d' /tmp/packagelist.txt
+	dpkg -l | grep -v "^ii" > /tmp/package_list.txt
+	sed -i -e '1d;2d;3d' /tmp/package_list.txt
 fi
 
 rm /tmp/mostcpu.txt
@@ -378,17 +409,29 @@ echo "--------------------------------------------------------------------------
 echo "" >> /tmp/$HOST_NAME.txt
 
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+echo "			:::... Filesystem Configuration Check ...:::" >> /tmp/$HOST_NAME.txt
+echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+cat /tmp/fs_conf.txt >> /tmp/$HOST_NAME.txt && rm /tmp/fs_conf.txt
+echo "" >> /tmp/$HOST_NAME.txt
+
+echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 echo "SSH Config Check" >> /tmp/$HOST_NAME.txt
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 cat /tmp/sshconfig.txt >> /tmp/$HOST_NAME.txt && rm /tmp/sshconfig.txt
 echo "" >> /tmp/$HOST_NAME.txt
+
+echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+echo "                  :::... REPOs LIST ...:::" >> /tmp/$HOST_NAME.txt
+echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+cat /tmp/repo_list.txt >> /tmp/$HOST_NAME.txt
+echo "" >> /tmp/$HOST_NAME.txt && /tmp/repo_list.txt
 
 if [ $REP = APT ];then
 	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 	echo "			:::... BROKEN PACKAGE LIST ...:::" >> /tmp/$HOST_NAME.txt
 	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 	echo "" >> /tmp/$HOST_NAME.txt
-	cat /tmp/packagelist.txt >> /tmp/$HOST_NAME.txt
+	cat /tmp/package_list.txt >> /tmp/$HOST_NAME.txt && rm /tmp/package_list.txt
 	echo "" >> /tmp/$HOST_NAME.txt
 fi
 
