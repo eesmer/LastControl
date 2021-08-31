@@ -4,9 +4,10 @@
 # determine distro
 #--------------------------
 cat /etc/redhat-release > /tmp/distrocheck || cat /etc/*-release > /tmp/distrocheck || cat /etc/issue > /tmp/distrocheck
-grep debian /tmp/distrocheck 2>/dev/null && REP=APT
-grep CentOS /tmp/distrocheck 2>/dev/null && REP=YUM
-grep RedHat /tmp/distrocheck 2>/dev/null && REP=YUM
+grep -i debian /tmp/distrocheck 2>/dev/null && REP=APT
+grep -i ubuntu /tmp/distrocheck 2>/dev/null && REP=APT
+grep -i centos /tmp/distrocheck 2>/dev/null && REP=YUM
+grep -i "red hat" /tmp/distrocheck 2>/dev/null && REP=YUM
 rm /tmp/distrocheck
 
 #--------------------------
@@ -16,7 +17,7 @@ if [ $REP = APT ]; then
 	apt-get -y install net-tools rsync
 fi
 if [ $REP = YUM ]; then
-	yum -y install net-tools rsync
+	yum -y install net-tools rsync perl
 fi
 
 DATE=$(date)
