@@ -1,5 +1,11 @@
 #!/bin/bash
 
+#---------------------------------------------------------------
+# Lastcontrol, it does not change any settings in the system.
+# It just checks and outputs.
+# However, it is your responsibility to run it on any system.
+#---------------------------------------------------------------
+
 #--------------------------
 # determine distro
 #--------------------------
