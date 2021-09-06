@@ -1,10 +1,10 @@
 #!/bin/bash
 
-#---------------------------------------------------------------
-# Lastcontrol, it does not change any settings in the system.
+#----------------------------------------------------------------------
+# Lastcontrol, it does not change any settings in the target system.
 # It just checks and outputs.
 # However, it is your responsibility to run it on any system.
-#---------------------------------------------------------------
+#----------------------------------------------------------------------
 
 WDIR=/usr/local/lastcontrol
 RDIR=/var/www/html/reports
