@@ -418,35 +418,35 @@ echo "</html>" |tee -a $RDIR/report.html $RDIR/redlist.html $RDIR/orangelist.htm
 #----------------
 # network scan
 #----------------
-#SRVSUBNET=$(ip r |grep link |grep proto |cut -d' ' -f1)
-#nmap -Pn -F -oX /tmp/networkscan.xml $SRVSUBNET
-#xsltproc /tmp/networkscan.xml -o /tmp/networkscan.html && cp /tmp/networkscan.html /var/www/html/reports/
+SRVSUBNET=$(ip r |grep link |grep proto |cut -d' ' -f1)
+nmap -Pn -F -oX /tmp/networkscan.xml $SRVSUBNET
+xsltproc /tmp/networkscan.xml -o /tmp/networkscan.html && cp /tmp/networkscan.html /var/www/html/reports/
 
-#cat > /tmp/buttons.txt << EOF
-#<p style="text-align:right;">
-#<style>
-#a:link, a:visited {
-#background-color: #1C1C1C;
-#color: white;
-#padding: 5px 10px;
-#text-align: center;
-#text-decoration: none;
-#display: inline-block;
-#}
-#a:hover, a:active {
-#background-color: gray;
-#}
-#</style>
-#<a href="mainpage.html">Main Page</a>
-#<a href="report.html">Report</a>
-#<a href="redlist.html">Red List</a>
-#<a href="orangelist.html">Orange List</a>
-#<a href="greenlist.html">Green List</a>
-#<a href="inventory.html">Inventory List</a>
-#<a href="networkscan.html">Network Scan</a>
-#</p>
-#<hr class="solid">
-#EOF
+cat > /tmp/buttons.txt << EOF
+<p style="text-align:right;">
+<style>
+a:link, a:visited {
+background-color: #1C1C1C;
+color: white;
+padding: 5px 10px;
+text-align: center;
+text-decoration: none;
+display: inline-block;
+}
+a:hover, a:active {
+background-color: gray;
+}
+</style>
+<a href="mainpage.html">Main Page</a>
+<a href="report.html">Report</a>
+<a href="redlist.html">Red List</a>
+<a href="orangelist.html">Orange List</a>
+<a href="greenlist.html">Green List</a>
+<a href="inventory.html">Inventory List</a>
+<a href="networkscan.html">Network Scan</a>
+</p>
+<hr class="solid">
+EOF
 
-#sed -i $'/1>Nmap Scan Report/{e cat /tmp/buttons.txt\n}' /var/www/html/reports/networkscan.html
-#sed -i 's/href="javascript:togglePorts'//g /var/www/html/reports/networkscan.html
+sed -i $'/1>Nmap Scan Report/{e cat /tmp/buttons.txt\n}' /var/www/html/reports/networkscan.html
+sed -i 's/href="javascript:togglePorts'//g /var/www/html/reports/networkscan.html
