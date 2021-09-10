@@ -30,7 +30,7 @@ DATE=$(date)
 HOST_NAME=$(hostname -f)
 
 ip a |grep "inet " > /tmp/ipoutput && sed -i '/127.0/d' /tmp/ipoutput
-IPADDRESS=$(cat /tmp/ipoutput)
+IPADDRESS=$(cat /tmp/ipoutput) && rm /tmp/ipoutput
 CPUINFO=$(cat /proc/cpuinfo |grep "model name" |cut -d ':' -f2 > /tmp/cpuinfooutput.txt && tail -n1 /tmp/cpuinfooutput.txt > /tmp/cpuinfo.txt && rm /tmp/cpuinfooutput.txt && cat /tmp/cpuinfo.txt) && rm /tmp/cpuinfo.txt
 RAM_TOTAL=$(free -m |awk 'NR == 2 {print "" $2*1.024}')
 RAM_USAGE=$(free -m |awk 'NR == 2 {print "" $3*1.024}')
@@ -76,7 +76,17 @@ fi
 #--------------------------
 KERNELVER=$(uname -a |cut -d " " -f3 |cut -d "-" -f1)
 perl /tmp/cve_check -k $KERNELVER > /tmp/cve_list
-CVELIST=$(cat /tmp/cve_list |grep CVE) && echo $CVELIST > /tmp/cve_list && CVELIST=$(cat /tmp/cve_list) && rm /tmp/cve_list.txt && rm /tmp/cve_check
+CVELIST=$(cat /tmp/cve_list |grep CVE) && echo $CVELIST > /tmp/cve_list && CVELIST=$(cat /tmp/cve_list) && rm /tmp/cve_list && rm /tmp/cve_check
+
+#--------------------------
+# Rootkit Check
+#--------------------------
+bash /tmp/chkrootkit > /tmp/rootkit.txt
+cat /tmp/rootkit.txt |grep "INFECTED" > /tmp/rootkit_result.txt
+cat /tmp/rootkit.txt |grep "Warning" >> /tmp/rootkit_result.txt
+ROOTKITCHECK=$(wc -l /tmp/rootkit_result.txt |cut -d " " -f1)
+ROOTKITLIST=$(cat /tmp/rootkit_result.txt)
+rm /tmp/rootkit.txt /tmp/rootkit_result.txt
 
 #--------------------------
 # FS Conf. check
@@ -305,12 +315,22 @@ $HOST_NAME LastControl Report $DATE
 ------------------------------------------------------------------------------------------------------
 |CVE List:          |$CVELIST
 ------------------------------------------------------------------------------------------------------
+|Rootkit List:      |$ROOTKITLIST
+------------------------------------------------------------------------------------------------------
 |IP Address:        |$IPADDRESS
 ------------------------------------------------------------------------------------------------------
 EOF
 
 echo "" >> /tmp/$HOST_NAME.txt
 echo "" >> /tmp/$HOST_NAME.txt
+
+#if [ $ROOTKITCHECK != "0" ]; then
+#	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+#	echo "                          :::... ROOTKIT NOTIFICATION !!! ....:::" >> /tmp/$HOST_NAME.txt
+#	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+#	echo $ROOTKITLIST
+#fi
+#echo "" >> /tmp/$HOST_NAME.txt
 
 if [ $INVCHECK = DETECTED ]; then
 	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
@@ -326,8 +346,7 @@ if [ $CHECK_UPDATE = EXIST ]; then
 	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 	echo "                          :::... UPDATE LIST ....:::" >> /tmp/$HOST_NAME.txt
 	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-	echo "" >> /tmp/$HOST_NAME.txt
-	cat /tmp/update_list.txt>> /tmp/$HOST_NAME.txt && rm /tmp/update_list.txt
+	cat /tmp/update_list.txt >> /tmp/$HOST_NAME.txt && rm /tmp/update_list.txt
 fi
 echo "" >> /tmp/$HOST_NAME.txt
 
