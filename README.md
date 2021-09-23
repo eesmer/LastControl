@@ -2,7 +2,7 @@
 <br>
 
 LastControl is a work around for health checking on linux machines. <br>
-**distributions that are compatible and tested as a client:** Debian, Ubuntu, Centos
+**distributions that are compatible and tested as a client:** Debian, Ubuntu, Centos, RedHat, Oracle Linux
 
 ## Features
 - Checks for updates
