@@ -7,7 +7,7 @@
 #----------------------------------------------------------------------
 
 WDIR=/usr/local/lastcontrol
-RDIR=/var/www/html/reports
+RDIR=/tmp/reports
 LINE='<hr class="dashed">'
 SYSDATE=$(date +%F)
 SYSDAY=$(date +%A)
@@ -18,7 +18,7 @@ DBPATH="/usr/local/lastcontrol/db/lastcontrol.sqlite"
 
 #------------------------------------------------------------------------------------
 # report files
-rm $RDIR/*
+rm -r $RDIR && mkdir -p $RDIR
 
 cat > $RDIR/mainpage.html << EOF
 <!DOCTYPE html>
@@ -416,12 +416,17 @@ echo "</table>" >> $RDIR/inventory.html
 echo "</body>" |tee -a $RDIR/report.html $RDIR/redlist.html $RDIR/orangelist.html $RDIR/greenlist.html $RDIR/inventory.html $RDIR/mainpage.html >/dev/null
 echo "</html>" |tee -a $RDIR/report.html $RDIR/redlist.html $RDIR/orangelist.html $RDIR/greenlist.html $RDIR/inventory.html $RDIR/mainpage.html >/dev/null
 
+rm -r /var/www/html/reports
+mkdir -p /var/www/html/reports
+RDIR=/var/www/html/reports
+cp /tmp/reports/* $RDIR/
+
 #----------------
 # network scan
 #----------------
 SRVSUBNET=$(ip r |grep link |grep proto |cut -d' ' -f1)
 nmap -Pn -F -oX /tmp/networkscan.xml $SRVSUBNET
-xsltproc /tmp/networkscan.xml -o /tmp/networkscan.html && cp /tmp/networkscan.html /var/www/html/reports/
+xsltproc /tmp/networkscan.xml -o /tmp/networkscan.html && cp /tmp/networkscan.html $RDIR/
 
 cat > /tmp/buttons.txt << EOF
 <p style="text-align:right;">
@@ -449,5 +454,5 @@ background-color: gray;
 <hr class="solid">
 EOF
 
-sed -i $'/1>Nmap Scan Report/{e cat /tmp/buttons.txt\n}' /var/www/html/reports/networkscan.html
-sed -i 's/href="javascript:togglePorts'//g /var/www/html/reports/networkscan.html
+sed -i $'/1>Nmap Scan Report/{e cat /tmp/buttons.txt\n}' $RDIR/networkscan.html && rm /tmp/buttons.txt
+sed -i 's/href="javascript:togglePorts'//g $RDIR/networkscan.html
