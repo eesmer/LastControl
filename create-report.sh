@@ -319,9 +319,9 @@ while [ "$i" -le $NUMMACHINE ]; do
     fi
 
     if [ $pingReturn -eq 0 ] && [ $sshReturn -eq 0 ]; then
-	scp -P22 -i /root/.ssh/lastcontrol $WDIR/lastcontrol.sh root@$MACHINE:/tmp/
-	scp -P22 -i /root/.ssh/lastcontrol $WDIR/cve_check root@$MACHINE:/tmp/
-	scp -P22 -i /root/.ssh/lastcontrol $WDIR/chkrootkit/chkrootkit root@$MACHINE:/tmp/
+        scp -P22 -i /root/.ssh/lastcontrol $WDIR/lastcontrol.sh root@$MACHINE:/tmp/
+        scp -P22 -i /root/.ssh/lastcontrol $WDIR/cve_check root@$MACHINE:/tmp/
+        scp -P22 -i /root/.ssh/lastcontrol $WDIR/chkrootkit/chkrootkit root@$MACHINE:/tmp/
         ssh -p22 -i /root/.ssh/lastcontrol root@$MACHINE -- bash /tmp/lastcontrol.sh
         scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.txt $RDIR/
 
@@ -336,19 +336,19 @@ while [ "$i" -le $NUMMACHINE ]; do
         VIRT=$(perl -ne'12..12 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
         OS=$(perl -ne'13..13 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
         OS_VER=$(perl -ne'14..14 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	LAST_BOOT=$(perl -ne'16..16 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	NUMPROCESS=$(perl -ne'19..19 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	INVCHECK=$(perl -ne'22..22 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	CVE_LIST=$(perl -ne'26..26 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	KERNEL_VER=$(perl -ne'24..24 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+        LAST_BOOT=$(perl -ne'16..16 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+        NUMPROCESS=$(perl -ne'19..19 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+        INVCHECK=$(perl -ne'22..22 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+        CVE_LIST=$(perl -ne'26..26 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+        KERNEL_VER=$(perl -ne'24..24 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
 
         # create cvelist.html
-	echo "<tr>" >> $RDIR/cvelist.html
-	echo "<td>$MACHINE_NAME</td>" >> $RDIR/cvelist.html
-	echo "<td>$KERNEL_VER</td>" >> $RDIR/cvelist.html
-	echo "<td>$CVE_LIST</td>" >> $RDIR/cvelist.html
+        echo "<tr>" >> $RDIR/cvelist.html
+        echo "<td>$MACHINE_NAME</td>" >> $RDIR/cvelist.html
+        echo "<td>$KERNEL_VER</td>" >> $RDIR/cvelist.html
+        echo "<td>$CVE_LIST</td>" >> $RDIR/cvelist.html
 
-	# create inventory.html
+        #create inventory.html
         echo "<tr>" >> $RDIR/inventory.html
         echo "<td>$MACHINE_NAME</td>" >> $RDIR/inventory.html
         echo "<td>$CPU</td>" >> $RDIR/inventory.html
