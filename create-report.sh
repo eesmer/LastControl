@@ -23,7 +23,10 @@ rm -r $RDIR && mkdir -p $RDIR
 cat > $RDIR/mainpage.html << EOF
 <!DOCTYPE html>
 <html>
+<head>
+<title>LastControl Mainpage</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
 <body>
 <p style="color: #000000; font-size: 25px; font-weight: bold; text-align:center;">
 LastControl Main Page</p>
@@ -50,6 +53,7 @@ background-color: gray;
 <a href="inventory.html">Inventory List</a>
 <a href="cvelist.html">CVE List</a>
 <a href="networkscan.html">Network Scan</a>
+<a href="history.php">History</a>
 </p>
 <hr class="solid">
 EOF
@@ -58,6 +62,7 @@ cat > $RDIR/report.html << EOF
 <!DOCTYPE html>
 <html>
 <head>
+<title>LastControl Report</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 <body>
@@ -86,6 +91,7 @@ background-color: gray;
 <a href="inventory.html">Inventory List</a>
 <a href="cvelist.html">CVE List</a>
 <a href="networkscan.html">Network Scan</a>
+<a href="history.php">History</a>
 </p>
 <hr class="solid">
 EOF
@@ -93,7 +99,10 @@ EOF
 cat > $RDIR/redlist.html << EOF
 <!DOCTYPE html>
 <html>
+<head>
+<title>LastControl Red List</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
 <body>
 <p style="color: #000000; font-size: 25px; font-weight: bold; background-color:Red; text-align:center;">
 LastControl Red List</p>
@@ -120,6 +129,7 @@ background-color: gray;
 <a href="inventory.html">Inventory List</a>
 <a href="cvelist.html">CVE List</a>
 <a href="networkscan.html">Network Scan</a>
+<a href="history.php">History</a>
 </p>
 <hr class="solid">
 EOF
@@ -127,7 +137,10 @@ EOF
 cat > $RDIR/orangelist.html << EOF
 <!DOCTYPE html>
 <html>
+<head>
+<title>LastControl Orange List</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
 <body>
 <p style="color: #000000; font-size: 25px; font-weight: bold; background-color:orange; text-align:center;">
 LastControl Orange List</p>
@@ -154,6 +167,7 @@ background-color: gray;
 <a href="inventory.html">Inventory List</a>
 <a href="cvelist.html">CVE List</a>
 <a href="networkscan.html">Network Scan</a>
+<a href="history.php">History</a>
 </p>
 <hr class="solid">
 EOF
@@ -161,7 +175,10 @@ EOF
 cat > $RDIR/greenlist.html << EOF
 <!DOCTYPE html>
 <html>
+<head>
+<title>LastControl Green List</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
 <body>
 <p style="color: #000000; font-size: 25px; font-weight: bold; background-color:green; text-align:center;">
 LastControl Green List</p>
@@ -188,6 +205,7 @@ background-color: gray;
 <a href="inventory.html">Inventory List</a>
 <a href="cvelist.html">CVE List</a>
 <a href="networkscan.html">Network Scan</a>
+<a href="history.php">History</a>
 </p>
 <hr class="solid">
 EOF
@@ -195,6 +213,9 @@ EOF
 cat > $RDIR/inventory.html << EOF
 <!DOCTYPE html>
 <html>
+<head>
+<title>LastControl Inventory List</title>
+</head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <body>
 <p style="color: #000000; font-size: 25px; font-weight: bold; background-color:gray; text-align:center;">
@@ -222,6 +243,7 @@ background-color: gray;
 <a href="inventory.html">Inventory List</a>
 <a href="cvelist.html">CVE List</a>
 <a href="networkscan.html">Network Scan</a>
+<a href="history.php">History</a>
 </p>
 <hr class="solid">
 <style>
@@ -245,7 +267,10 @@ EOF
 cat > $RDIR/cvelist.html << EOF
 <!DOCTYPE html>
 <html>
+<head>
+<title>LastControl CVE List</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
 <body>
 <p style="color: #000000; font-size: 25px; font-weight: bold; background-color:blue; text-align:center;">
 LastControl Kernel Based CVE Check Result</p>
@@ -272,6 +297,7 @@ background-color: gray;
 <a href="inventory.html">Inventory List</a>
 <a href="cvelist.html">CVE List</a>
 <a href="networkscan.html">Network Scan</a>
+<a href="history.php">History</a>
 </p>
 <hr class="solid">
 <style>
@@ -319,9 +345,9 @@ while [ "$i" -le $NUMMACHINE ]; do
     fi
 
     if [ $pingReturn -eq 0 ] && [ $sshReturn -eq 0 ]; then
-        scp -P22 -i /root/.ssh/lastcontrol $WDIR/lastcontrol.sh root@$MACHINE:/tmp/
-        scp -P22 -i /root/.ssh/lastcontrol $WDIR/cve_check root@$MACHINE:/tmp/
-        scp -P22 -i /root/.ssh/lastcontrol $WDIR/chkrootkit/chkrootkit root@$MACHINE:/tmp/
+	scp -P22 -i /root/.ssh/lastcontrol $WDIR/lastcontrol.sh root@$MACHINE:/tmp/
+	scp -P22 -i /root/.ssh/lastcontrol $WDIR/cve_check root@$MACHINE:/tmp/
+	scp -P22 -i /root/.ssh/lastcontrol $WDIR/chkrootkit/chkrootkit root@$MACHINE:/tmp/
         ssh -p22 -i /root/.ssh/lastcontrol root@$MACHINE -- bash /tmp/lastcontrol.sh
         scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.txt $RDIR/
 
@@ -336,19 +362,19 @@ while [ "$i" -le $NUMMACHINE ]; do
         VIRT=$(perl -ne'12..12 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
         OS=$(perl -ne'13..13 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
         OS_VER=$(perl -ne'14..14 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-        LAST_BOOT=$(perl -ne'16..16 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-        NUMPROCESS=$(perl -ne'19..19 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-        INVCHECK=$(perl -ne'22..22 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-        CVE_LIST=$(perl -ne'26..26 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-        KERNEL_VER=$(perl -ne'24..24 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	LAST_BOOT=$(perl -ne'16..16 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	NUMPROCESS=$(perl -ne'19..19 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	INVCHECK=$(perl -ne'22..22 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	CVE_LIST=$(perl -ne'26..26 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	KERNEL_VER=$(perl -ne'24..24 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
 
         # create cvelist.html
-        echo "<tr>" >> $RDIR/cvelist.html
-        echo "<td>$MACHINE_NAME</td>" >> $RDIR/cvelist.html
-        echo "<td>$KERNEL_VER</td>" >> $RDIR/cvelist.html
-        echo "<td>$CVE_LIST</td>" >> $RDIR/cvelist.html
+	echo "<tr>" >> $RDIR/cvelist.html
+	echo "<td>$MACHINE_NAME</td>" >> $RDIR/cvelist.html
+	echo "<td>$KERNEL_VER</td>" >> $RDIR/cvelist.html
+	echo "<td>$CVE_LIST</td>" >> $RDIR/cvelist.html
 
-        #create inventory.html
+	# create inventory.html
         echo "<tr>" >> $RDIR/inventory.html
         echo "<td>$MACHINE_NAME</td>" >> $RDIR/inventory.html
         echo "<td>$CPU</td>" >> $RDIR/inventory.html
@@ -418,6 +444,7 @@ echo "</html>" |tee -a $RDIR/report.html $RDIR/redlist.html $RDIR/orangelist.htm
 
 rm -r /var/www/html/reports
 mkdir -p /var/www/html/reports
+cp $WDIR/history/history.php $RDIR/
 RDIR=/var/www/html/reports
 cp /tmp/reports/* $RDIR/
 
@@ -440,7 +467,7 @@ text-decoration: none;
 display: inline-block;
 }
 a:hover, a:active {
-background-color: gray;
+CVE Lisund-color: gray;
 }
 </style>
 <a href="mainpage.html">Main Page</a>
@@ -450,6 +477,7 @@ background-color: gray;
 <a href="greenlist.html">Green List</a>
 <a href="inventory.html">Inventory List</a>
 <a href="networkscan.html">Network Scan</a>
+<a href="history.php">History</a>
 </p>
 <hr class="solid">
 EOF
