@@ -15,6 +15,8 @@ apt-get -y install ack
 apt-get -y install nmap
 apt-get -y install xsltproc
 apt-get -y install sqlite3
+apt-get -y install php
+apt-get -y install php-db php-sqlite3
 
 git clone https://github.com/eesmer/LastControl.git
 cp -R LastControl /usr/local/lastcontrol/
