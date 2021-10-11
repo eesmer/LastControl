@@ -27,7 +27,7 @@ if [ $REP = YUM ]; then
 fi
 
 DATE=$(date)
-HOST_NAME=$(hostname -f)
+HOST_NAME=$(hostname)
 
 ip a |grep "inet " > /tmp/ipoutput && sed -i '/127.0/d' /tmp/ipoutput
 IPADDRESS=$(cat /tmp/ipoutput) && rm /tmp/ipoutput
