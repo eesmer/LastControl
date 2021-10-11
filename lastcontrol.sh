@@ -230,7 +230,7 @@ fi
 #--------------------------
 # checking empty password
 #--------------------------
-EMPTYPASSOUTPUT=$($SUDO_CMD cat $FILE | awk -F: '($2 == "" ) { print $1 }')
+EMPTYPASSOUTPUT=$(cat /etc/passwd | awk -F: '($2 == "" ) { print $1 }')
 if [ ! -z "$EMPTYPASSOUTPUT" ]; then
 	CHECKEMPTYPASS="Some accounts have an empty password"
 else
