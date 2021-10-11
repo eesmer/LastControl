@@ -459,7 +459,7 @@ echo "--------------------------------------------------------------------------
 echo "                  :::... REPOs LIST ...:::" >> /tmp/$HOST_NAME.txt
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 cat /tmp/repo_list.txt >> /tmp/$HOST_NAME.txt
-echo "" >> /tmp/$HOST_NAME.txt && /tmp/repo_list.txt
+echo "" >> /tmp/$HOST_NAME.txt && rm /tmp/repo_list.txt
 
 if [ $REP = APT ];then
 	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
