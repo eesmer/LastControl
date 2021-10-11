@@ -325,14 +325,6 @@ EOF
 echo "" >> /tmp/$HOST_NAME.txt
 echo "" >> /tmp/$HOST_NAME.txt
 
-#if [ $ROOTKITCHECK != "0" ]; then
-#	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-#	echo "                          :::... ROOTKIT NOTIFICATION !!! ....:::" >> /tmp/$HOST_NAME.txt
-#	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-#	echo $ROOTKITLIST
-#fi
-#echo "" >> /tmp/$HOST_NAME.txt
-
 if [ $INVCHECK = DETECTED ]; then
 	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 	echo "                          :::... CHANGE HARDWARE NOTIFICATION !!! ....:::" >> /tmp/$HOST_NAME.txt
