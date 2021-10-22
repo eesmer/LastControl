@@ -18,7 +18,8 @@ DBPATH="/usr/local/lastcontrol/db/lastcontrol.sqlite"
 
 #------------------------------------------------------------------------------------
 # report files
-rm -r $RDIR && mkdir -p $RDIR
+rm -r $RDIR
+mkdir -p $RDIR
 
 cat > $RDIR/mainpage.html << EOF
 <!DOCTYPE html>
