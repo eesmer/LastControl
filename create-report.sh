@@ -47,28 +47,29 @@ background-color: gray;
 }
 </style>
 <a href="mainpage.html">Main Page</a>
-<a href="report.html">Report</a>
+<a href="generalreport.html">General Report</a>
 <a href="redlist.html">Red List</a>
 <a href="orangelist.html">Orange List</a>
 <a href="greenlist.html">Green List</a>
 <a href="inventory.html">Inventory List</a>
 <a href="cvelist.html">CVE List</a>
+<a href="machine-report.html">Machine Report</a>
 <a href="networkscan.html">Network Scan</a>
 <a href="history.php">History</a>
 </p>
 <hr class="solid">
 EOF
 
-cat > $RDIR/report.html << EOF
+cat > $RDIR/machine-report.html << EOF
 <!DOCTYPE html>
 <html>
 <head>
-<title>LastControl Report</title>
+<title>LastControl Machine Report</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 <body>
-<p style="color: #000000; font-size: 25px; font-weight: bold; text-align:center;">
-LastControl Report</p>
+<p style="color: #000000; font-size: 25px; font-weight: bold; background-color: #8D6E63; text-align:center;">
+LastControl Machine Report</p>
 <p style="text-align:center;">$RDATE</p>
 <p style="text-align:right;">
 <style>
@@ -85,12 +86,13 @@ background-color: gray;
 }
 </style>
 <a href="mainpage.html">Main Page</a>
-<a href="report.html">Report</a>
+<a href="generalreport.html">General Report</a>
 <a href="redlist.html">Red List</a>
 <a href="orangelist.html">Orange List</a>
 <a href="greenlist.html">Green List</a>
 <a href="inventory.html">Inventory List</a>
 <a href="cvelist.html">CVE List</a>
+<a href="machine-report.html">Machine Report</a>
 <a href="networkscan.html">Network Scan</a>
 <a href="history.php">History</a>
 </p>
@@ -105,7 +107,7 @@ cat > $RDIR/redlist.html << EOF
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 <body>
-<p style="color: #000000; font-size: 25px; font-weight: bold; background-color:Red; text-align:center;">
+<p style="color: #000000; font-size: 25px; font-weight: bold; background-color: #df1c44; text-align:center;">
 LastControl Red List</p>
 <p style="text-align:center;">$RDATE</p>
 <p style="text-align:right;">
@@ -123,12 +125,13 @@ background-color: gray;
 }
 </style>
 <a href="mainpage.html">Main Page</a>
-<a href="report.html">Report</a>
+<a href="generalreport.html">General Report</a>
 <a href="redlist.html">Red List</a>
 <a href="orangelist.html">Orange List</a>
 <a href="greenlist.html">Green List</a>
 <a href="inventory.html">Inventory List</a>
 <a href="cvelist.html">CVE List</a>
+<a href="machine-report.html">Machine Report</a>
 <a href="networkscan.html">Network Scan</a>
 <a href="history.php">History</a>
 </p>
@@ -143,7 +146,7 @@ cat > $RDIR/orangelist.html << EOF
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 <body>
-<p style="color: #000000; font-size: 25px; font-weight: bold; background-color:orange; text-align:center;">
+<p style="color: #000000; font-size: 25px; font-weight: bold; background-color: #E65100; text-align:center;">
 LastControl Orange List</p>
 <p style="text-align:center;">$RDATE</p>
 <p style="text-align:right;">
@@ -161,12 +164,13 @@ background-color: gray;
 }
 </style>
 <a href="mainpage.html">Main Page</a>
-<a href="report.html">Report</a>
+<a href="generalreport.html">General Report</a>
 <a href="redlist.html">Red List</a>
 <a href="orangelist.html">Orange List</a>
 <a href="greenlist.html">Green List</a>
 <a href="inventory.html">Inventory List</a>
 <a href="cvelist.html">CVE List</a>
+<a href="machine-report.html">Machine Report</a>
 <a href="networkscan.html">Network Scan</a>
 <a href="history.php">History</a>
 </p>
@@ -181,7 +185,7 @@ cat > $RDIR/greenlist.html << EOF
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 <body>
-<p style="color: #000000; font-size: 25px; font-weight: bold; background-color:green; text-align:center;">
+<p style="color: #000000; font-size: 25px; font-weight: bold; background-color: #1B5E20; text-align:center;">
 LastControl Green List</p>
 <p style="text-align:center;">$RDATE</p>
 <p style="text-align:right;">
@@ -199,12 +203,13 @@ background-color: gray;
 }
 </style>
 <a href="mainpage.html">Main Page</a>
-<a href="report.html">Report</a>
+<a href="generalreport.html">General Report</a>
 <a href="redlist.html">Red List</a>
 <a href="orangelist.html">Orange List</a>
 <a href="greenlist.html">Green List</a>
 <a href="inventory.html">Inventory List</a>
 <a href="cvelist.html">CVE List</a>
+<a href="machine-report.html">Machine Report</a>
 <a href="networkscan.html">Network Scan</a>
 <a href="history.php">History</a>
 </p>
@@ -219,7 +224,7 @@ cat > $RDIR/inventory.html << EOF
 </head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <body>
-<p style="color: #000000; font-size: 25px; font-weight: bold; background-color:gray; text-align:center;">
+<p style="color: #000000; font-size: 25px; font-weight: bold; background-color: #607D8B; text-align:center;">
 LastControl Inventory</p>
 <p style="text-align:center;">$RDATE</p>
 <p style="text-align:right;">
@@ -237,12 +242,13 @@ background-color: gray;
 }
 </style>
 <a href="mainpage.html">Main Page</a>
-<a href="report.html">Report</a>
+<a href="generalreport.html">General Report</a>
 <a href="redlist.html">Red List</a>
 <a href="orangelist.html">Orange List</a>
 <a href="greenlist.html">Green List</a>
 <a href="inventory.html">Inventory List</a>
 <a href="cvelist.html">CVE List</a>
+<a href="machine-report.html">Machine Report</a>
 <a href="networkscan.html">Network Scan</a>
 <a href="history.php">History</a>
 </p>
@@ -273,7 +279,7 @@ cat > $RDIR/cvelist.html << EOF
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 <body>
-<p style="color: #000000; font-size: 25px; font-weight: bold; background-color:blue; text-align:center;">
+<p style="color: #000000; font-size: 25px; font-weight: bold; background-color: #194a8d; text-align:center;">
 LastControl Kernel Based CVE Check Result</p>
 <p style="text-align:center;">$RDATE</p>
 <p style="text-align:right;">
@@ -291,12 +297,13 @@ background-color: gray;
 }
 </style>
 <a href="mainpage.html">Main Page</a>
-<a href="report.html">Report</a>
+<a href="generalreport.html">General Report</a>
 <a href="redlist.html">Red List</a>
 <a href="orangelist.html">Orange List</a>
 <a href="greenlist.html">Green List</a>
 <a href="inventory.html">Inventory List</a>
 <a href="cvelist.html">CVE List</a>
+<a href="machine-report.html">Machine Report</a>
 <a href="networkscan.html">Network Scan</a>
 <a href="history.php">History</a>
 </p>
@@ -313,6 +320,60 @@ border: 5px solid lightgray;
 <th style="text-align:left">CVE CHECK RESULT</th>
 </tr>
 EOF
+
+cat > $RDIR/generalreport.html << EOF
+<!DOCTYPE html>
+<html>
+<head>
+<title>LastControl General Report</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+<p style="color: #000000; font-size: 25px; font-weight: bold; background-color:#03A9F4; text-align:center;">
+LastControl General Report</p>
+<p style="text-align:center;">$RDATE</p>
+<p style="text-align:right;">
+<style>
+a:link, a:visited {
+background-color: #1C1C1C;
+color: white;
+padding: 5px 10px;
+text-align: center;
+text-decoration: none;
+display: inline-block;
+}
+a:hover, a:active {
+background-color: gray;
+}
+</style>
+<a href="mainpage.html">Main Page</a>
+<a href="generalreport.html">General Report</a>
+<a href="redlist.html">Red List</a>
+<a href="orangelist.html">Orange List</a>
+<a href="greenlist.html">Green List</a>
+<a href="inventory.html">Inventory List</a>
+<a href="cvelist.html">CVE List</a>
+<a href="machine-report.html">Machine Report</a>
+<a href="networkscan.html">Network Scan</a>
+<a href="history.php">History</a>
+</p>
+<hr class="solid">
+<style>
+table, th, td {
+border: 5px solid lightgray;
+}
+</style>
+<table id="tblinventory">
+<tr>
+<th style="text-align:left">MACHINE NAME</th>
+<th style="text-align:left">SYSTEM SCORE</th>
+<th style="text-align:left">NETWORK SCORE</th>
+<th style="text-align:left">SSH SCORE</th>
+<th style="text-align:left">MACHINE GROUP</th>
+</tr>
+EOF
+
+
 #------------------------------------------------------------------------------------
 
 function savedb () {
@@ -363,17 +424,21 @@ while [ "$i" -le $NUMMACHINE ]; do
         VIRT=$(perl -ne'12..12 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
         OS=$(perl -ne'13..13 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
         OS_VER=$(perl -ne'14..14 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	LAST_BOOT=$(perl -ne'16..16 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	NUMPROCESS=$(perl -ne'19..19 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	INVCHECK=$(perl -ne'22..22 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	CVE_LIST=$(perl -ne'26..26 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	KERNEL_VER=$(perl -ne'24..24 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	LAST_BOOT=$(perl -ne'17..17 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	NUMPROCESS=$(perl -ne'20..20 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	INVCHECK=$(perl -ne'40..40 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	CVE_LIST=$(perl -ne'44..44 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	KERNEL_VER=$(perl -ne'42..42 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	SYS_SCORE=$(perl -ne'36..36 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	NW_SCORE=$(perl -ne'37..37 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	SSH_SCORE=$(perl -ne'38..38 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
 
         # create cvelist.html
 	echo "<tr>" >> $RDIR/cvelist.html
 	echo "<td>$MACHINE_NAME</td>" >> $RDIR/cvelist.html
 	echo "<td>$KERNEL_VER</td>" >> $RDIR/cvelist.html
 	echo "<td>$CVE_LIST</td>" >> $RDIR/cvelist.html
+        echo "</tr>" >> $RDIR/cvelist.html
 
 	# create inventory.html
         echo "<tr>" >> $RDIR/inventory.html
@@ -387,26 +452,43 @@ while [ "$i" -le $NUMMACHINE ]; do
         echo "<td>$OS_VER</td>" >> $RDIR/inventory.html
         echo "</tr>" >> $RDIR/inventory.html
 
-        # create OrangeList & GreenList
-        if [ $UPDATE_CHECK = EXIST ] || [ $INVCHECK = DETECTED ] || [ ! -z "$CVE_LIST" ]; then
-            echo "<ul><li><a href=report.html#$MACHINE>Details</a>  &nbsp; | &nbsp; $MACHINE_NAME $LINE</li></ul>" >> $RDIR/orangelist.html && ORANGEMACHINE=$((ORANGEMACHINE+1))
+	# create generalreport.html
+	echo "<tr>" >> $RDIR/generalreport.html
+        echo "<td>$MACHINE_NAME</td>" >> $RDIR/generalreport.html
+        echo "<td>$SYS_SCORE</td>" >> $RDIR/generalreport.html
+        echo "<td>$NW_SCORE</td>" >> $RDIR/generalreport.html
+        echo "<td>$SSH_SCORE</td>" >> $RDIR/generalreport.html
+		
+	echo "<h2 id="'"'$MACHINE'"'">$MACHINE</h2>| &nbsp; <a href=$MACHINE.txt>More</a>&nbsp; | &nbsp;<br><br>" >> $RDIR/machine-report.html && TOTALMACHINE=$((TOTALMACHINE+1))
+        #echo "$OS &nbsp; | &nbsp; $OS_VER <br>" >> $RDIR/machine-report.html
+        echo "<b>Uptime:</b> $UPTIME <br>" >> $RDIR/machine-report.html
+        echo "<b>Update Check:</b> $UPDATE_CHECK <br>" >> $RDIR/machine-report.html
+        echo "<b>Number of Running Process:</b> $NUMPROCESS <br>" >> $RDIR/machine-report.html
+        echo "<b>CVE Check:</b> $CVE_LIST <br>" >> $RDIR/machine-report.html
+        echo "<b>Inventory Check:</b> $INVCHECK <br>" >> $RDIR/machine-report.html
+        echo "<b>System Score:</b> $SYS_SCORE <br>" >> $RDIR/machine-report.html
+        echo "<b>Network Score:</b> $NW_SCORE <br>" >> $RDIR/machine-report.html
+        echo "<b>SSH Score:</b> $SSH_SCORE <br>" >> $RDIR/machine-report.html
+        echo "$LINE <br>" >> $RDIR/machine-report.html
+        echo "$LINE <br>" >> $RDIR/machine-report.html
+
+	# create OrangeList & GreenList
+	SYS_SCORE=$(echo $SYS_SCORE |cut -d "/" -f1)
+	NW_SCORE=$(echo $NW_SCORE |cut -d "/" -f1)
+	SSH_SCORE=$(echo $SSH_SCORE |cut -d "/" -f1)
+        if [ $UPDATE_CHECK = EXIST ] || [ $INVCHECK = DETECTED ] || [ ! -z "$CVE_LIST" ] || [ $SYS_SCORE -lt 70 ] || [ $NW_SCORE -lt 80 ] || [ $SSH_SCORE -lt 100 ]; then
+            echo "<ul><li><a href=machine-report.html#$MACHINE>Details</a>  &nbsp; | &nbsp; $MACHINE_NAME $LINE</li></ul>" >> $RDIR/orangelist.html && ORANGEMACHINE=$((ORANGEMACHINE+1))
 	    MACHINEGROUP=ORANGE
 	    savedb
         elif [ $UPDATE_CHECK = NONE ] || [ $INVCHECK = NOTDETECTED ] || [ -z "$CVE_LIST" ]; then
-	    echo "<ul><li><a href=report.html#$MACHINE>Details</a>  &nbsp; | &nbsp; $MACHINE_NAME $LINE</li></ul>" >> $RDIR/greenlist.html && GREENMACHINE=$((GREENMACHINE+1))
+	    echo "<ul><li><a href=machine-report.html#$MACHINE>Details</a>  &nbsp; | &nbsp; $MACHINE_NAME $LINE</li></ul>" >> $RDIR/greenlist.html && GREENMACHINE=$((GREENMACHINE+1))
 	    MACHINEGROUP=GREEN
 	    savedb
         fi
 
-        echo "<h2 id="'"'$MACHINE'"'">$MACHINE</h2>| &nbsp; <a href=$MACHINE.txt>More</a>&nbsp; | &nbsp;<br><br>" >> $RDIR/report.html && TOTALMACHINE=$((TOTALMACHINE+1))
-        echo "$OS &nbsp; | &nbsp; $OS_VER <br>" >> $RDIR/report.html
-        echo "<b>Uptime:</b> $UPTIME <br>" >> $RDIR/report.html
-        echo "<b>Update Check:</b> $UPDATE_CHECK <br>" >> $RDIR/report.html
-        echo "<b>Number of Running Process:</b> $NUMPROCESS <br>" >> $RDIR/report.html
-        echo "<b>CVE Check:</b> $CVE_LIST <br>" >> $RDIR/report.html
-        echo "<b>Inventory Check:</b> $INVCHECK <br>" >> $RDIR/report.html
-        echo "$LINE <br>" >> $RDIR/report.html
-        echo "$LINE <br>" >> $RDIR/report.html
+	# generalreport.html
+	echo "<td>$MACHINEGROUP</td>" >> $RDIR/generalreport.html
+	echo "</tr>" >> $RDIR/generalreport.html
 
     elif [ $sshReturn -eq 255 ]; then
         echo "<ul><li>Connection request has been rejected. &nbsp; | &nbsp; $MACHINE $LINE</li></ul>" >> $RDIR/redlist.html && REDMACHINE=$((REDMACHINE+1))
@@ -417,7 +499,7 @@ while [ "$i" -le $NUMMACHINE ]; do
 	MACHINEGROUP=RED
 	savedb
     fi
-
+	
 i=$(( i + 1 ))
 done
 
@@ -440,8 +522,10 @@ SCORE <br>
 EOF
 
 echo "</table>" >> $RDIR/inventory.html
-echo "</body>" |tee -a $RDIR/report.html $RDIR/redlist.html $RDIR/orangelist.html $RDIR/greenlist.html $RDIR/inventory.html $RDIR/mainpage.html >/dev/null
-echo "</html>" |tee -a $RDIR/report.html $RDIR/redlist.html $RDIR/orangelist.html $RDIR/greenlist.html $RDIR/inventory.html $RDIR/mainpage.html >/dev/null
+echo "</table>" >> $RDIR/cvelist.html
+echo "</table>" >> $RDIR/generalreport.html
+echo "</body>" |tee -a $RDIR/machine-report.html $RDIR/redlist.html $RDIR/orangelist.html $RDIR/greenlist.html $RDIR/inventory.html $RDIR/cvelist.html $RDIR/generalreport.html $RDIR/mainpage.html >/dev/null
+echo "</html>" |tee -a $RDIR/machine-report.html $RDIR/redlist.html $RDIR/orangelist.html $RDIR/greenlist.html $RDIR/inventory.html $RDIR/cvelist.html $RDIR/generalreport.html $RDIR/mainpage.html >/dev/null
 
 rm -r /var/www/html/reports
 mkdir -p /var/www/html/reports
@@ -472,11 +556,12 @@ CVE Lisund-color: gray;
 }
 </style>
 <a href="mainpage.html">Main Page</a>
-<a href="report.html">Report</a>
+<a href="machine-report.html">Machine Report</a>
 <a href="redlist.html">Red List</a>
 <a href="orangelist.html">Orange List</a>
 <a href="greenlist.html">Green List</a>
 <a href="inventory.html">Inventory List</a>
+<a href="generalreport.html">General Report</a>
 <a href="networkscan.html">Network Scan</a>
 <a href="history.php">History</a>
 </p>
