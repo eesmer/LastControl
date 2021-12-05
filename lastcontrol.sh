@@ -45,7 +45,7 @@ if [ -f "/dev/kvm" ]; then $VIRT_CONTROL=ON; fi
 OS_KERNEL=$(uname -a)
 OS_VER=$(cat /etc/os-release |grep PRETTY_NAME | cut -d '=' -f2 |cut -d '"' -f2)
 LAST_BOOT=$(who -b | awk '{print $3,$4}')
-UPTIME=$(uptime)
+UPTIME=$(uptime) && UPTIME_MIN=$(awk '{ print "up " $1 /60 " minutes"}' /proc/uptime)
 
 #---------------------------
 # System conf. check
@@ -106,10 +106,10 @@ if [ $REP = APT ];then
 		sed -i -e '1d;2d;3d' /tmp/broken_pack_list.txt
 		SYS_SCORE=$(($SYS_SCORE + 10))
 	fi
-    ALLOWUNAUTH=$(grep -v "^#" /etc/apt/ -r | grep -c "AllowUnauthenticated")
-    if [ $ALLOWUNAUTH = 0 ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
-    DEBSIG=$(grep -v "^#" /etc/dpkg/dpkg.cfg |grep -c no-debsig)
-    if [ $DEBSIG = 1 ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
+	ALLOWUNAUTH=$(grep -v "^#" /etc/apt/ -r | grep -c "AllowUnauthenticated")
+	if [ $ALLOWUNAUTH = 0 ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
+	DEBSIG=$(grep -v "^#" /etc/dpkg/dpkg.cfg |grep -c no-debsig)
+	if [ $DEBSIG = 1 ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
 fi
 
 #--------------------------
@@ -335,7 +335,7 @@ $HOST_NAME LastControl Report $DATE
 |Check Update:      |$CHECK_UPDATE
 |Update Count:      |$UPDATE_COUNT
 |Last Boot:         |$LAST_BOOT
-|Uptime	            |$UPTIME
+|Uptime	            |$UPTIME | $UPTIME_MIN
 ------------------------------------------------------------------------------------------------------
 |Running Process:   |$NUMPROCESS
 |Uses the Most Load |Process: $MOSTPROCESS | Cpu: $MOSTCPU | Ram: $MOSTRAM
