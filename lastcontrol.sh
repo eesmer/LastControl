@@ -438,34 +438,11 @@ echo "--------------------------------------------------------------------------
 echo $CHECKEMPTYPASS >> /tmp/$HOST_NAME.txt
 echo "" >> /tmp/$HOST_NAME.txt
 
-#echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-#echo "			:::... SYSTEM SECURITY ...:::" >> /tmp/$HOST_NAME.txt
-#echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-#echo "Allow Unauthenticated Check: $ALLOWUNAUTH" >> /tmp/$HOST_NAME.txt
-#echo "Deb package signature      : $DEBSIG" >> /tmp/$HOST_NAME.txt
-#echo "Set Max Logins             : $SETMAXLOGINS" >> /tmp/$HOST_NAME.txt
-#echo "SUID File Check            : $SUIDCHECK" >> /tmp/$HOST_NAME.txt
-#echo "SGID File Check            : $SGIDCHECK" >> /tmp/$HOST_NAME.txt
-#echo "passwd File Perms.         : $PASSWDFILEPERMS | $PASSWDFILEOWNER:$PASSWDFILEGRP" >> /tmp/$HOST_NAME.txt
-#echo "shadow File Perms.         : $SHADOWFILEPERMS | $SHADOWFILEOWNER:$SHADOWFILEGRP" >> /tmp/$HOST_NAME.txt
-#echo "group File Perms.          : $GROUPFILEPERMS  | $GROUPFILEOWNER:$GROUPFILEGRP" >> /tmp/$HOST_NAME.txt
-#echo "gshadow File Perms.        : $GSHADOWFILEPERMS| $GSHADOWFILEOWNER:$GSHADOWFILEGRP" >> /tmp/$HOST_NAME.txt
-#echo "Unowned File Check         : $UNOWNEDFILECHECK" >> /tmp/$HOST_NAME.txt
-#echo "Ungrouped File Check       : $UNGROUPEDFILECHECK" >> /tmp/$HOST_NAME.txt
-#echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-#echo "" >> /tmp/$HOST_NAME.txt
-
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 echo "			:::... Filesystem Configuration Check ...:::" >> /tmp/$HOST_NAME.txt
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 cat /tmp/fs_conf.txt >> /tmp/$HOST_NAME.txt && rm /tmp/fs_conf.txt
 echo "" >> /tmp/$HOST_NAME.txt
-
-#echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-#echo "SSH Config Check" >> /tmp/$HOST_NAME.txt
-#echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-#cat /tmp/sshconfig.txt >> /tmp/$HOST_NAME.txt && rm /tmp/sshconfig.txt
-#echo "" >> /tmp/$HOST_NAME.txt
 
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 echo "                  :::... REPOs LIST ...:::" >> /tmp/$HOST_NAME.txt
