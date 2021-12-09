@@ -32,11 +32,10 @@ HOST_NAME=$(hostnamectl --static)
 #---------------------------
 # Inventory
 #---------------------------
-ip a |grep "inet " > /tmp/ipoutput && sed -i '/127.0/d' /tmp/ipoutput
-IPADDRESS=$(cat /tmp/ipoutput) && rm /tmp/ipoutput
+IPADDRESS=$(hostname -I)
 CPUINFO=$(cat /proc/cpuinfo |grep "model name" |cut -d ':' -f2 > /tmp/cpuinfooutput.txt && tail -n1 /tmp/cpuinfooutput.txt > /tmp/cpuinfo.txt && rm /tmp/cpuinfooutput.txt && cat /tmp/cpuinfo.txt) && rm /tmp/cpuinfo.txt
-RAM_TOTAL=$(free -m |awk 'NR == 2 {print "" $2*1.024}' |cut -d "." -f1)
-RAM_USAGE=$(free -m |awk 'NR == 2 {print "" $3*1.024}' |cut -d "." -f1)
+RAM_TOTAL=$(free -m | head -2 | tail -1| awk '{print $2}')
+RAM_USAGE=$(free -m | head -2 | tail -1| awk '{print $3}')
 GPU=$(lspci | grep VGA | cut -d ":" -f3);GPURAM=$(cardid=$(lspci | grep VGA |cut -d " " -f1);lspci -v -s $cardid | grep " prefetchable"| awk '{print $6}' | head -1)
 VGA_CONTROLLER="$GPU $GPURAM"
 DISK_LIST=$(df -H | grep -vE 'Filesystem|tmpfs|cdrom|udev' | awk '{ print $5" "$1"("$2"  "$3")" " --- "}' | sed -e :a -e N -e 's/\n/ /' -e ta)
@@ -198,8 +197,8 @@ NW_SCORE="$NW_SCORE/130"
 # PRIVATE HOST KEY
 SSH_SCORE=0
 SSHCONF1=$(stat /etc/ssh/sshd_config |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ $SSHCONF1 = 0600 ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
-SSHCONF2=$(stat /etc/ssh/ssh_host_rsa_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ $SSHCONF2 = 0600 ]; then SSHS_CORE=$(($SSHS_CORE + 10)); fi
-SSHCONF3=$(stat /etc/ssh/ssh_host_ecdsa_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ $SSHCONF3 = 0600 ]; then SSHS_CORE=$(($SSH_SCORE + 10)); fi
+SSHCONF2=$(stat /etc/ssh/ssh_host_rsa_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ $SSHCONF2 = 0600 ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
+SSHCONF3=$(stat /etc/ssh/ssh_host_ecdsa_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ $SSHCONF3 = 0600 ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
 SSHCONF4=$(stat /etc/ssh/ssh_host_ed25519_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ $SSHCONF4 = 0600 ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
 # PUBLIC HOST KEY
 SSHCONF5=$(stat /etc/ssh/ssh_host_rsa_key.pub |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ $SSHCONF5 = 0644 ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
@@ -215,7 +214,6 @@ SSHCONF13=$(sshd -T | grep permitrootlogin |cut -d " " -f2) && if [ $SSHCONF13 =
 SSHCONF14=$(sshd -T | grep permitemptypasswords |cut -d " " -f2) && if [ $SSHCONF14 = no ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
 SSHCONF15=$(sshd -T | grep permituserenvironment |cut -d " " -f2) && if [ $SSHCONF15 = no ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
 SSH_SCORE="$SSH_SCORE/150"
-
 
 #--------------------------
 # CVE Check
