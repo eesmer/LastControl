@@ -27,7 +27,7 @@ if [ $REP = YUM ]; then
 fi
 
 DATE=$(date)
-HOST_NAME=$(hostname)
+HOST_NAME=$(hostnamectl --static)
 
 #---------------------------
 # Inventory
