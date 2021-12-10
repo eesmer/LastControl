@@ -153,7 +153,7 @@ if [ -f /etc/sudoers ]; then
 		SYS_SCORE=$(($SYS_SCORE + 10))
 	fi
 fi
-SYS_SCORE="$SYS_SCORE/80"
+SYS_SCORE="$SYS_SCORE/110"
 
 #--------------------------
 # FS Conf. check
