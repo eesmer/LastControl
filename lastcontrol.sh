@@ -20,10 +20,10 @@ rm /tmp/distrocheck
 # install packages
 #--------------------------
 if [ $REP = APT ]; then
-	apt-get -y install net-tools rsync
+	apt-get -y install net-tools rsync smartmontools
 fi
 if [ $REP = YUM ]; then
-	yum -y install net-tools rsync perl
+	yum -y install net-tools rsync perl smartmontools
 fi
 
 DATE=$(date)
@@ -152,6 +152,10 @@ if [ -f /etc/sudoers ]; then
 	if [ $SUDOMEMBERCOUNT = 0 ]; then
 		SYS_SCORE=$(($SYS_SCORE + 10))
 	fi
+else
+	SUDOMEMBERCOUNT=0
+	SYS_SCORE=$(($SYS_SCORE + 10))
+
 fi
 SYS_SCORE="$SYS_SCORE/110"
 
@@ -171,6 +175,33 @@ for part in ${parts[*]}; do
 	out="$(mount | grep $part)"
 	part_check $part $out >> /tmp/fs_conf.txt
 done
+
+#---------------------------
+# S.M.A.R.T check
+#---------------------------
+df -H | grep -vE 'Filesystem|tmpfs|cdrom|udev|mapper' |cut -d " " -f1 > /tmp/disklist.txt
+NUMDISK=$(cat /tmp/disklist.txt | wc -l)
+i=1
+
+while [ "$i" -le $NUMDISK ]; do
+DISK=$(ls -l |sed -n $i{p} /tmp/disklist.txt)
+smartctl -i -a $DISK > /tmp/DISK$i.txt
+
+cat /tmp/DISK$i.txt |grep "SMART support is: Available" > /dev/null && SMART_SUPPORT="available"
+
+if [ $SMART_SUPPORT = "available" ]; then
+SMART_RESULT=$(cat /tmp/DISK$i.txt |grep "SMART overall-health self-assessment test result:" |cut -d: -f2 |cut -d " " -f2)
+else
+	SMART_RESULT="Not Passed"
+fi
+
+echo "$DISK: $SMART_RESULT" >> /tmp/smartcheck-result.txt
+
+i=$(( i + 1 ))
+SMART=$(cat /tmp/smartcheck-result.txt)
+done
+rm /tmp/smartcheck-result.txt
+SMART=$(echo $SMART)
 
 #---------------------------
 # Network conf. check
@@ -341,8 +372,6 @@ $HOST_NAME LastControl Report $DATE
 |Listening Conn.:   |$LISTENINGCONN
 |Established Conn.: |$ESTABLISHEDCONN
 |Connected User:    |$CONNUSERCOUNT
-|Local User Count:  |$LOCALUSERCOUNT
-|SUDO Member Count  |$SUDOMEMBERCOUNT
 ------------------------------------------------------------------------------------------------------
 |Ram Use:           |$RAM_USE_PERCENTAGE%
 |Swap Use:          |$SWAP_USE_PERCENTAGE%
@@ -354,6 +383,8 @@ $HOST_NAME LastControl Report $DATE
 |System Score:      |$SYS_SCORE
 |Network Score:     |$NW_SCORE
 |SSH Score:         |$SSH_SCORE
+------------------------------------------------------------------------------------------------------
+|S.M.A.R.T          |$SMART
 ------------------------------------------------------------------------------------------------------
 |Inventory Check:   |$INVCHECK
 ------------------------------------------------------------------------------------------------------
