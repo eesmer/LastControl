@@ -414,7 +414,7 @@ while [ "$i" -le $NUMMACHINE ]; do
         scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.txt $RDIR/
 
         UPDATE_CHECK=$(perl -ne'15..15 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-        UPTIME=$(perl -ne'17..17 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+        UPTIME=$(perl -ne'18..18 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
         # for inventory.html
         MACHINE_NAME=$(perl -ne'6..6 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
         CPU=$(perl -ne'8..8 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
@@ -429,9 +429,9 @@ while [ "$i" -le $NUMMACHINE ]; do
 	INVCHECK=$(perl -ne'40..40 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
 	CVE_LIST=$(perl -ne'44..44 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
 	KERNEL_VER=$(perl -ne'42..42 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	SYS_SCORE=$(perl -ne'36..36 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	NW_SCORE=$(perl -ne'37..37 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	SSH_SCORE=$(perl -ne'38..38 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	SYS_SCORE=$(perl -ne'34..34 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	NW_SCORE=$(perl -ne'35..35 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	SSH_SCORE=$(perl -ne'36..36 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
 
         # create cvelist.html
 	echo "<tr>" >> $RDIR/cvelist.html
