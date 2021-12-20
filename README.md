@@ -8,7 +8,12 @@ LastControl is a work around for health checking on linux machines. <br>
 - Checks for updates
 - Looks at running services and load status
 - Takes out inventory
+  - Adds to the report if there is an inventory change
 - Checks configurations according to hardening policies. https://www.cisecurity.org/
+  - Generates score for system healthy
+  - Generates score for network settings
+  - Generates score for ssh settings
+  - Checks disks S.M.A.R.T
 - It scans for kernel-based exploits and CVE Ref. gives https://github.com/InteliSecureLabs/Linux_Exploit_Suggester
 - It only performs a fast scan with nmap on the subnet.
 - All these outputs with a web page; It shows the reports on a single screen by categorizing the machines as 'red' 'green' and 'orange'
