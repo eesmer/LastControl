@@ -10,7 +10,7 @@ LastControl is a work around for health checking on linux machines. <br>
 - Takes out inventory
   - Adds to the report if there is an inventory change
 - Checks configurations according to hardening policies. https://www.cisecurity.org/
-  - Generates score for system healthy
+  - Generates score for system health
   - Generates score for network settings
   - Generates score for ssh settings
   - Checks disks S.M.A.R.T
