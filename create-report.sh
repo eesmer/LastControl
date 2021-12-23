@@ -265,7 +265,6 @@ border: 5px solid lightgray;
 <th style="text-align:left">RAM</th>
 <th style="text-align:left">VGA</th>
 <th style="text-align:left">HDD</th>
-<th style="text-align:left">Virtualization</th>
 <th style="text-align:left">OS</th>
 <th style="text-align:left">OS VERSION</th>
 </tr>
@@ -447,7 +446,6 @@ while [ "$i" -le $NUMMACHINE ]; do
         echo "<td>$RAM</td>" >> $RDIR/inventory.html
         echo "<td>$VGA</td>" >> $RDIR/inventory.html
         echo "<td>$HDD</td>" >> $RDIR/inventory.html
-        echo "<td>$VIRT</td>" >> $RDIR/inventory.html
         echo "<td>$OS</td>" >> $RDIR/inventory.html
         echo "<td>$OS_VER</td>" >> $RDIR/inventory.html
         echo "</tr>" >> $RDIR/inventory.html
