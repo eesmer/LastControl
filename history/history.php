@@ -22,12 +22,13 @@ background-color: gray;
 }
 </style>
 <a href="mainpage.html">Main Page</a>
-<a href="report.html">Report</a>
+<a href="generalreport.html">General Report</a>
 <a href="redlist.html">Red List</a>
 <a href="orangelist.html">Orange List</a>
 <a href="greenlist.html">Green List</a>
 <a href="inventory.html">Inventory List</a>
 <a href="cvelist.html">CVE List</a>
+<a href="machine-report.html">Machine Report</a>
 <a href="networkscan.html">Network Scan</a>
 <a href="history.php">History</a>
 </p>

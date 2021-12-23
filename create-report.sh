@@ -502,21 +502,23 @@ i=$(( i + 1 ))
 done
 
 TOTALMACHINE=$((TOTALMACHINE+REDMACHINE))
-SCORE=$((200 * $GREENMACHINE/$TOTALMACHINE -  100 * $GREENMACHINE/$TOTALMACHINE ))
+GREEN_SCORE=$((200 * $GREENMACHINE/$TOTALMACHINE -  100 * $GREENMACHINE/$TOTALMACHINE ))
+
+GREEN_SCORE=$((100 * $GREENMACHINE/$TOTALMACHINE))
+ORANGE_SCORE=$((100 * $ORANGEMACHINE/$TOTALMACHINE))
+RED_SCORE=$((100 * $REDMACHINE/$TOTALMACHINE))
 
 cat >> $RDIR/mainpage.html << EOF
 <p style="color: #088A08; font-size: 22px; font-weight: bold; text-align: left;">
-Green Machine: &nbsp; &nbsp; &nbsp; $GREENMACHINE</p>
+Green Machine: &nbsp; &nbsp; &nbsp; $GREENMACHINE &nbsp; &nbsp; &nbsp; Score: %$GREEN_SCORE </p>
 <p style="color: #FF8000; font-size: 22px; font-weight: bold; text-align: left;">
-Orange Machine: &nbsp; &nbsp; $ORANGEMACHINE</p>
+Orange Machine: &nbsp; &nbsp; $ORANGEMACHINE &nbsp; &nbsp; &nbsp; Score: %$ORANGE_SCORE </p>
 <p style="color: #FF0000; font-size: 22px; font-weight: bold; text-align:left;">
-Red Machine: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; $REDMACHINE</p>
+Red Machine: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; $REDMACHINE &nbsp; &nbsp; &nbsp; Score: %$RED_SCORE </p>
 <hr class="solid">
 <p style="color: #000000; font-size: 22px; font-weight: bold; text-align:left;">
 Total Machine: &nbsp; &nbsp; &nbsp; &nbsp; $TOTALMACHINE</p>
-<p style="color: #4B088A; font-size: 45px; font-weight: bold; text-align:center;">
-SCORE <br>
-% $SCORE </p>
+<hr class="solid">
 EOF
 
 echo "</table>" >> $RDIR/inventory.html
