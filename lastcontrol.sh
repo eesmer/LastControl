@@ -47,9 +47,11 @@ LAST_BOOT=$(who -b | awk '{print $3,$4}')
 UPTIME=$(uptime) && UPTIME_MIN=$(awk '{ print "up " $1 /60 " minutes"}' /proc/uptime)
 
 #---------------------------
+# for SYSTEM SCORE
 # System conf. check
 #---------------------------
 SYS_SCORE=0
+
 RAM_FREE=$( expr $RAM_TOTAL - $RAM_USAGE)
 RAM_FREE_PERCENTAGE=$((100 * $RAM_FREE/$RAM_TOTAL))
 RAM_USE_PERCENTAGE=$(expr 100 - $RAM_FREE_PERCENTAGE) && if [ $RAM_USE_PERCENTAGE -lt 40 ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
@@ -58,26 +60,26 @@ SWAP_VALUE=$(free -m |grep Swap: |cut -d ":" -f2)
 SWAP_TOTAL=$(echo $SWAP_VALUE |cut -d " " -f1)
 SWAP_USE=$(echo $SWAP_VALUE |cut -d " " -f2)
 SWAP_USE_PERCENTAGE=$((100 * $SWAP_USE/$SWAP_TOTAL)) && if [ $SWAP_USE_PERCENTAGE = 0 ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
-#--------------------------
-# check load
-#--------------------------
-top -b -n1 | head -17 | tail -11 > /tmp/systemload.txt
-sed -i '1d' /tmp/systemload.txt
-MOSTPROCESS=$(cat /tmp/systemload.txt |awk '{print $9, $10, $12}' |head -1 |cut -d " " -f3)
-MOSTRAM=$(cat /tmp/systemload.txt |awk '{print $9, $10, $12}' |head -1 |cut -d " " -f2)
-MOSTCPU=$(cat /tmp/systemload.txt |awk '{print $9, $10, $12}' |head -1 |cut -d " " -f1)
+
+	#--------------------------
+	# check load
+	#--------------------------
+	top -b -n1 | head -17 | tail -11 > /tmp/systemload.txt
+	sed -i '1d' /tmp/systemload.txt
+	MOSTPROCESS=$(cat /tmp/systemload.txt |awk '{print $9, $10, $12}' |head -1 |cut -d " " -f3)
+	MOSTRAM=$(cat /tmp/systemload.txt |awk '{print $9, $10, $12}' |head -1 |cut -d " " -f2)
+	MOSTCPU=$(cat /tmp/systemload.txt |awk '{print $9, $10, $12}' |head -1 |cut -d " " -f1)
+
 #--------------------------
 # Check Update
 #--------------------------
 if [ $REP = APT ]; then
-	apt-get update 2>/dev/null |grep upgradable |cut -d '.' -f1 > /tmp/update_list.txt
-	UPDATE_COUNT=$(cat /tmp/update_list.txt |wc -l)
-		
-	CHECK_UPDATE=EXIST
-	if [ $UPDATE_COUNT = 0 ];then
-		CHECK_UPDATE=NONE
-		SYS_SCORE=$(($SYS_SCORE + 10))
-	fi
+	CHECK_UPDATE=NONE
+	UPDATE_COUNT=0
+	echo "n" |apt-get upgrade > /tmp/update_list.txt
+	cat /tmp/update_list.txt |grep "The following packages will be upgraded:" >> /dev/null && CHECK_UPDATE=EXIST \
+		&& UPDATE_COUNT=$(cat /tmp/update_list.txt |grep "upgraded," |cut -d " " -f1)
+	if [ $CHECK_UPDATE = EXIST ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi	
 
 elif [ $REP = YUM ]; then
 	yum check-update > /tmp/update_list.txt
@@ -95,28 +97,77 @@ elif [ $REP = YUM ]; then
 	fi
 fi
 #------------------------------
-# broken package list for APT
+# broken package list
 #------------------------------
 if [ $REP = APT ];then
-	dpkg -l | grep -v "^ii" >> /dev/null && BROKEN_PACK=EXIST
+	dpkg -l | grep -v "^ii" >> /dev/null > /tmp/broken_pack_list.txt
+	sed -i -e '1d;2d;3d;4d;5d' /tmp/broken_pack_list.txt
+	BROKEN_COUNT=$(wc -l /tmp/broken_pack_list.txt)
+	if [ $BROKEN_COUNT = 0 ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
 
-	if [ $BROKEN_PACK = EXIST ]; then
-		dpkg -l | grep -v "^ii" > /tmp/broken_pack_list.txt
-		sed -i -e '1d;2d;3d' /tmp/broken_pack_list.txt
-		SYS_SCORE=$(($SYS_SCORE + 10))
-	fi
-	ALLOWUNAUTH=$(grep -v "^#" /etc/apt/ -r | grep -c "AllowUnauthenticated")
-	if [ $ALLOWUNAUTH = 0 ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
-	DEBSIG=$(grep -v "^#" /etc/dpkg/dpkg.cfg |grep -c no-debsig)
-	if [ $DEBSIG = 1 ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
+	### ALLOWUNAUTH=$(grep -v "^#" /etc/apt/ -r | grep -c "AllowUnauthenticated")
+	### if [ $ALLOWUNAUTH = 0 ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
+	### DEBSIG=$(grep -v "^#" /etc/dpkg/dpkg.cfg |grep -c no-debsig)
+	### if [ $DEBSIG = 1 ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
 fi
 
-#--------------------------
-# max. login check
-#--------------------------
-OPTIONS='maxsyslogins'
-SETMAXLOGINS=$(sed -e '/^#/d' -e '/^[ \t][ \t]*#/d' -e 's/#.*$//' -e '/^$/d' /etc/security/limits.conf | grep "${OPTIONS}" | wc -l)
-if [ ! $SETMAXLOGINS = 0 ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
+if [ $REP = YUM ];then
+	rpm -Va >> /dev/null > /tmp/broken_pack_list.txt
+	BROKEN_COUNT=$(wc -l /tmp/broken_pack_list.txt)
+	if [ $BROKEN_COUNT = 0 ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
+fi
+
+#------------------------------------
+# check local users,limits and sudo
+#------------------------------------
+getent passwd {1000..6000} > /tmp/localusers.txt
+LOCALUSER_COUNT=$(wc -l /tmp/localusers.txt |cut -d " " -f1)
+if [ $LOCALUSER_COUNT = 0 ]; then
+	SYS_SCORE=$(($SYS_SCORE + 10))
+	rm /tmp/localusers.txt
+else
+	# check login limits
+	CHECK_LIMITS=NONE
+	i=1
+	while [ "$i" -le $LOCALUSER_COUNT ]; do
+		USER=$(ls -l |sed -n $i{p} /tmp/localusers.txt)
+		cat /etc/security/limits.conf |grep $USER >> /dev/null
+		if [ ! $? = 0 ]; then CHECK_LIMITS=EXIST; fi
+	i=$(( i + 1 ))
+	done
+	if [ ! $CHECK_LIMITS = EXIST ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
+
+	# sudo members check
+	if [ -f /etc/sudoers ]; then
+		SUDOMEMBERCOUNT=$(cat /etc/sudoers |grep ALL= |grep -v % |grep -v root |wc -l)
+		if [ $SUDOMEMBERCOUNT = 0 ]; then
+			SYS_SCORE=$(($SYS_SCORE + 10))
+		else
+			cat /etc/sudoers |grep ALL= |grep -v % |grep -v root > /tmp/sudomembers.txt
+		fi
+	else
+		SUDOMEMBERCOUNT=0
+		SYS_SCORE=$(($SYS_SCORE + 10))
+	fi
+fi
+
+######--------------------------
+###### sudo members check
+######--------------------------
+#####if [ -f /etc/sudoers ]; then
+#####	SUDOMEMBERCOUNT=$(cat /etc/sudoers |grep ALL= |grep -v % |grep -v root |wc -l)
+#####	if [ $SUDOMEMBERCOUNT = 0 ]; then
+#####		SYS_SCORE=$(($SYS_SCORE + 10))
+#####	else
+#####		cat /etc/sudoers |grep ALL= |grep -v % |grep -v root > /tmp/sudomembers.txt
+#####	fi
+#####else
+#####	SUDOMEMBERCOUNT=0
+#####	SYS_SCORE=$(($SYS_SCORE + 10))
+#####
+#####fi
+
+
 #--------------------------
 # passwd, shadow, group file
 #--------------------------
@@ -125,38 +176,67 @@ SHADOWFILEPERMS=$(ls -l /etc/shadow |cut -d ' ' -f1) && SHADOWFILEOWNER=$(ls -l 
 GROUPFILEPERMS=$(ls -l /etc/group |cut -d ' ' -f1) && GROUPFILEOWNER=$(ls -l /etc/group |cut -d ' ' -f3) && GROUPFILEGRP=$(ls -l /etc/group |cut -d ' ' -f4)
 GSHADOWFILEPERMS=$(ls -l /etc/gshadow |cut -d ' ' -f1) && GSHADOWFILEOWNER=$(ls -l /etc/gshadow |cut -d ' ' -f3) && GSHADOWFILEGRP=$(ls -l /etc/gshadow |cut -d ' ' -f4)
 
-#--------------------------
-# checking empty password
-#--------------------------
-EMPTYPASSOUTPUT=$(cat /etc/passwd | awk -F: '($2 == "" ) { print $1 }')
-if [ ! -z "$EMPTYPASSOUTPUT" ]; then
-	CHECKEMPTYPASS="Some accounts have an empty password"
-else
-	CHECKEMPTYPASS="All accounts have a password"
-	SYS_SCORE=$(($SYS_SCORE + 10))
-fi
+PASSWD_CHECK=NONE
+SHADOW_CHECK=NONE
+GROUP_CHECK=NONE
+GSHADOW_CHECK=NONE
 
-#--------------------------
-# find local users
-#--------------------------
-getent passwd {1000..6000} > /tmp/localusers.txt
-LOCALUSERCOUNT=$(wc -l /tmp/localusers.txt |cut -d " " -f1)
-if [ $LOCALUSERCOUNT = 0 ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
-
-#--------------------------
-# sudo members check
-#--------------------------
-if [ -f /etc/sudoers ]; then
-	cat /etc/sudoers |grep ALL= |grep -v % |grep -v root > /tmp/sudomembers.txt
-	SUDOMEMBERCOUNT=$(wc -l /tmp/sudomembers.txt |cut -d " " -f1)
-	if [ $SUDOMEMBERCOUNT = 0 ]; then
-		SYS_SCORE=$(($SYS_SCORE + 10))
+if [ $REP = APT ];then
+	if [ $PASSWDFILEPERMS = "-rw-r--r--" ] && [ $PASSWDFILEOWNER = "root" ] && [ $PASSWDFILEGRP = "root" ]; then
+		PASSWD_CHECK=PASSED
+	else
+		PASSWD_CHECK=NOTPASSED
 	fi
-else
-	SUDOMEMBERCOUNT=0
-	SYS_SCORE=$(($SYS_SCORE + 10))
 
+	if [ $SHADOWFILEPERMS = "-rw-r-----" ] && [ $SHADOWFILEOWNER = "root" ] && [ $SHADOWFILEGRP = "shadow" ]; then
+		SHADOW_CHECK=PASS
+	else
+		SHADOW_CHECK=NOTPASSED
+	fi
+
+	if [ $GROUPFILEPERMS = "-rw-r--r--" ] && [ $GROUPFILEOWNER = "root" ] && [ $GROUPFILEGRP = "root" ]; then
+		GROUP_CHECK=PASSED
+	else
+		GROUP_CHECK=NOTPASSED
+	fi
+	
+	if [ $GSHADOWFILEPERMS = "-rw-r-----" ] && [ $GSHADOWFILEOWNER = "root" ] && [ $GSHADOWFILEGRP = "shadow" ]; then
+		GSHADOW_CHECK=PASSED
+	else
+		GSHADOW_CHECK=NOTPASSED
+	fi
 fi
+
+if [ $REP = YUM ];then
+	if [ $PASSWDFILEPERMS = "-rw-r--r--." ] && [ $PASSWDFILEOWNER = "root" ] && [ $PASSWDFILEGRP = "root" ]; then
+		PASSWD_CHECK=PASSED
+	else
+		PASSWD_CHECK=NOTPASSED
+	fi
+
+	if [ $SHADOWFILEPERMS = "----------." ] && [ $SHADOWFILEOWNER = "root" ] && [ $SHADOWFILEGRP = "root" ]; then
+		SHADOW_CHECK=PASS
+	else
+		SHADOW_CHECK=NOTPASSED
+	fi
+
+	if [ $GROUPFILEPERMS = "-rw-r--r--." ] && [ $GROUPFILEOWNER = "root" ] && [ $GROUPFILEGRP = "root" ]; then
+		GROUP_CHECK=PASSED
+	else
+		GROUP_CHECK=NOTPASSED
+	fi
+
+	if [ $GSHADOWFILEPERMS = "----------." ] && [ $GSHADOWFILEOWNER = "root" ] && [ $GSHADOWFILEGRP = "root" ]; then
+		GSHADOW_CHECK=PASSED
+	else
+		GSHADOW_CHECK=NOTPASSED
+	fi
+fi
+
+if [ $PASSWD_CHECK = "PASSED" ] && [ $SHADOW_CHECK = "PASSED" ] && [ $GROUP_CHECK = "PASSED" ] && [ $GSHADOW_CHECK = "PASSED" ]; then
+	SYS_SCORE=$(($SYS_SCORE + 10))
+fi
+
 SYS_SCORE="$SYS_SCORE/110"
 
 #--------------------------
@@ -179,29 +259,40 @@ done
 #---------------------------
 # S.M.A.R.T check
 #---------------------------
+rm /tmp/smartcheck-result.txt
 df -H | grep -vE 'Filesystem|tmpfs|cdrom|udev|mapper' |cut -d " " -f1 > /tmp/disklist.txt
 NUMDISK=$(cat /tmp/disklist.txt | wc -l)
 i=1
 
 while [ "$i" -le $NUMDISK ]; do
 DISK=$(ls -l |sed -n $i{p} /tmp/disklist.txt)
-smartctl -i -a $DISK > /tmp/DISK$i.txt
+smartctl -i -x $DISK > /tmp/DISK$i.txt
 
-cat /tmp/DISK$i.txt |grep "SMART support is: Available" > /dev/null && SMART_SUPPORT="available"
+cat /tmp/DISK$i.txt |grep "SMART support is: Available" > /dev/null && SMART_SUPPORT="Available"
+DISK_TEMPERATURE=$(cat /tmp/DISK$i.txt |grep "Temperature_Celsius" |cut -d " " -f24)
+if [ -z "$DISK_TEMPERATURE" ]; then DISK_TEMPERATURE="0 C"; fi
+DISK_STATE=$(cat /tmp/DISK$1.txt |grep "Device State" |cut -d: -f2)
+if [ -z "$DISK_STATE" ]; then DISK_STATE="Not Support"; fi
 
-if [ $SMART_SUPPORT = "available" ]; then
+if [ $SMART_SUPPORT = "Available" ]; then
 SMART_RESULT=$(cat /tmp/DISK$i.txt |grep "SMART overall-health self-assessment test result:" |cut -d: -f2 |cut -d " " -f2)
+DISK_TEMPERATURE=$(cat /tmp/DISK$i.txt |grep "Temperature_Celsius" |cut -d " " -f24)
 else
+	SMART_SUPPORT="Not Support"
 	SMART_RESULT="Not Passed"
+	DISK_STATE="Not Support"
 fi
 
-echo "$DISK: $SMART_RESULT" >> /tmp/smartcheck-result.txt
+echo "$DISK : Support: $SMART_SUPPORT" >> /tmp/smartcheck-result.txt
+echo "State: $DISK_STATE" >> /tmp/smartcheck-result.txt
+echo "Temperature: $DISK_TEMPERATURE" >> /tmp/smartcheck-result.txt
+echo "Result: $SMART_RESULT" >> /tmp/smartcheck-result.txt
 
 i=$(( i + 1 ))
 SMART=$(cat /tmp/smartcheck-result.txt)
 done
-rm /tmp/smartcheck-result.txt
-SMART=$(echo $SMART)
+####rm /tmp/smartcheck-result.txt
+#SMART=$(echo $SMART)
 
 #---------------------------
 # Network conf. check
@@ -305,7 +396,6 @@ LISTENINGCONN=$(wc -l /tmp/listeningconn.txt |cut -d " " -f1)
 w > /tmp/connectedusers.txt
 CONNUSERCOUNT=$(w |grep up |cut -d " " -f7)
 
-
 #--------------------------
 # integrity check
 #--------------------------
@@ -349,11 +439,12 @@ rm /tmp/$HOST_NAME.txt
 cat > /tmp/$HOST_NAME.txt << EOF
 $HOST_NAME LastControl Report $DATE
 =======================================================================================================================================================================
-------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------
 				:::... MACHINE INVENTORY ...:::
-------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------
 |Hostname:          |$HOST_NAME
-------------------------------------------------------------------------------------------------------
+|IP Address:        |$IPADDRESS
+--------------------------------------------------------------------------------------------------------------------------
 |CPU Info:          |$CPUINFO
 |RAM:               |Total:$RAM_TOTAL | Usage:$RAM_USAGE
 |VGA Controller:    |$VGA_CONTROLLER
@@ -365,41 +456,40 @@ $HOST_NAME LastControl Report $DATE
 |Update Count:      |$UPDATE_COUNT
 |Last Boot:         |$LAST_BOOT
 |Uptime	            |$UPTIME | $UPTIME_MIN
-------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------
 |Running Process:   |$NUMPROCESS
 |Uses the Most Load |Process: $MOSTPROCESS | Cpu: $MOSTCPU | Ram: $MOSTRAM
-------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------
 |Listening Conn.:   |$LISTENINGCONN
 |Established Conn.: |$ESTABLISHEDCONN
 |Connected User:    |$CONNUSERCOUNT
-------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------
 |Ram Use:           |$RAM_USE_PERCENTAGE%
 |Swap Use:          |$SWAP_USE_PERCENTAGE%
 |Disk Use:          |$DISK_USAGE%
-------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------
 |SUDO Member Count: |$SUDOMEMBERCOUNT
-|Local User Count:  |$LOCALUSERCOUNT
-------------------------------------------------------------------------------------------------------
+|Local User Count:  |$LOCALUSER_COUNT
+--------------------------------------------------------------------------------------------------------------------------
 |System Score:      |$SYS_SCORE
 |Network Score:     |$NW_SCORE
 |SSH Score:         |$SSH_SCORE
-------------------------------------------------------------------------------------------------------
-|S.M.A.R.T          |$SMART
-------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------
 |Inventory Check:   |$INVCHECK
-------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------
 |Kernel Version:    |$KERNELVER
-------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------
 |CVE List:          |$CVELIST
-------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------
 |Rootkit infected   |$ROOTKITCHECK
 |Rootkit List:      |$ROOTKITLIST
-------------------------------------------------------------------------------------------------------
-|IP Address:        |$IPADDRESS
-------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------
+|S.M.A.R.T          |
+--------------------------------------------------------------------------------------------------------------------------
+$SMART
+--------------------------------------------------------------------------------------------------------------------------
 EOF
 
-echo >> /tmp/$HOST_NAME.txt
 echo >> /tmp/$HOST_NAME.txt
 
 if [ $INVCHECK = DETECTED ]; then
@@ -455,45 +545,39 @@ echo "--------------------------------------------------------------------------
 lslogins -u >> /tmp/$HOST_NAME.txt
 echo "" >> /tmp/$HOST_NAME.txt
 
-echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-echo "sudo members" >> /tmp/$HOST_NAME.txt
-echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-cat /tmp/sudomembers.txt >> /tmp/$HOST_NAME.txt && rm /tmp/sudomembers.txt
+if [ ! $LOCALUSER_COUNT = 0 ]; then
+        echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+        echo "Local User List" >> /tmp/$HOST_NAME.txt
+        echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+	cat /tmp/localusers.txt >> /tmp/$HOST_NAME.txt && rm /tmp/localusers.txt
+        echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+	echo "sudo members" >> /tmp/$HOST_NAME.txt
+	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+	cat /tmp/sudomembers.txt >> /tmp/$HOST_NAME.txt && rm /tmp/sudomembers.txt
 echo "" >> /tmp/$HOST_NAME.txt
-
-echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-echo "Checking Empty Password" >> /tmp/$HOST_NAME.txt
-echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-echo $CHECKEMPTYPASS >> /tmp/$HOST_NAME.txt
-echo "" >> /tmp/$HOST_NAME.txt
-
-echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-echo "			:::... Filesystem Configuration Check ...:::" >> /tmp/$HOST_NAME.txt
-echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-cat /tmp/fs_conf.txt >> /tmp/$HOST_NAME.txt && rm /tmp/fs_conf.txt
-echo "" >> /tmp/$HOST_NAME.txt
+fi
 
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 echo "                  :::... REPOs LIST ...:::" >> /tmp/$HOST_NAME.txt
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-cat /tmp/repo_list.txt >> /tmp/$HOST_NAME.txt
-echo "" >> /tmp/$HOST_NAME.txt && rm /tmp/repo_list.txt
+cat /tmp/repo_list.txt >> /tmp/$HOST_NAME.txt && rm /tmp/repo_list.txt
+echo "" >> /tmp/$HOST_NAME.txt
 
-if [ $REP = APT ];then
+if [ ! $BROKEN_COUNT = 0 ]; then
 	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 	echo "			:::... BROKEN PACKAGE LIST ...:::" >> /tmp/$HOST_NAME.txt
 	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 	echo "" >> /tmp/$HOST_NAME.txt
-	cat /tmp/package_list.txt >> /tmp/$HOST_NAME.txt && rm /tmp/package_list.txt
-	echo "" >> /tmp/$HOST_NAME.txt
+	cat /tmp/broken_pack_list.txt >> /tmp/$HOST_NAME.txt && rm /tmp/broken_pack_list.txt
+echo "" >> /tmp/$HOST_NAME.txt
 fi
 
-echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-echo "			:::... INTEGRITY CHECK ...:::" >> /tmp/$HOST_NAME.txt
-echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-echo "Warnings" >> /tmp/$HOST_NAME.txt
-echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-cat /tmp/integritycheck.txt >> /tmp/$HOST_NAME.txt && rm /tmp/integritycheck.txt
-echo "" >> /tmp/$HOST_NAME.txt
+#echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+#echo "			:::... INTEGRITY CHECK ...:::" >> /tmp/$HOST_NAME.txt
+#echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+#echo "Warnings" >> /tmp/$HOST_NAME.txt
+#echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+#cat /tmp/integritycheck.txt >> /tmp/$HOST_NAME.txt && rm /tmp/integritycheck.txt
+#echo "" >> /tmp/$HOST_NAME.txt
 
 echo "=======================================================================================================================================================================" >> /tmp/$HOST_NAME.txt

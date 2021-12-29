@@ -29,7 +29,7 @@ cat > $RDIR/mainpage.html << EOF
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 <body>
-<p style="color: #000000; font-size: 25px; font-weight: bold; text-align:center;">
+<p style="color: #000000; font-size: 30px; font-weight: bold; text-align:center;">
 LastControl Main Page</p>
 <p style="text-align:center;">$RDATE</p>
 <p style="text-align:right;">
@@ -412,25 +412,25 @@ while [ "$i" -le $NUMMACHINE ]; do
         ssh -p22 -i /root/.ssh/lastcontrol root@$MACHINE -- bash /tmp/lastcontrol.sh
         scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.txt $RDIR/
 
-        UPDATE_CHECK=$(perl -ne'15..15 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-        UPTIME=$(perl -ne'18..18 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+        UPDATE_CHECK=$(perl -ne'16..16 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+        UPTIME=$(perl -ne'19..19 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
         # for inventory.html
         MACHINE_NAME=$(perl -ne'6..6 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-        CPU=$(perl -ne'8..8 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-        RAM=$(perl -ne'9..9 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-        VGA=$(perl -ne'10..10 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-        HDD=$(perl -ne'11..11 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-        VIRT=$(perl -ne'12..12 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-        OS=$(perl -ne'13..13 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-        OS_VER=$(perl -ne'14..14 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	LAST_BOOT=$(perl -ne'17..17 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	NUMPROCESS=$(perl -ne'20..20 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	INVCHECK=$(perl -ne'40..40 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	CVE_LIST=$(perl -ne'44..44 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	KERNEL_VER=$(perl -ne'42..42 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	SYS_SCORE=$(perl -ne'34..34 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	NW_SCORE=$(perl -ne'35..35 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	SSH_SCORE=$(perl -ne'36..36 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+        CPU=$(perl -ne'9..9 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+        RAM=$(perl -ne'10..10 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+        VGA=$(perl -ne'11..11 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+        HDD=$(perl -ne'12..12 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+        VIRT=$(perl -ne'13..13 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+        OS=$(perl -ne'14..14 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+        OS_VER=$(perl -ne'15..15 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	LAST_BOOT=$(perl -ne'18..18 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	NUMPROCESS=$(perl -ne'21..21 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	INVCHECK=$(perl -ne'39..39 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	CVE_LIST=$(perl -ne'43..43 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	KERNEL_VER=$(perl -ne'41..41 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	SYS_SCORE=$(perl -ne'35..35 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	NW_SCORE=$(perl -ne'36..36 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	SSH_SCORE=$(perl -ne'37..37 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
 
         # create cvelist.html
 	echo "<tr>" >> $RDIR/cvelist.html
@@ -509,14 +509,14 @@ ORANGE_SCORE=$((100 * $ORANGEMACHINE/$TOTALMACHINE))
 RED_SCORE=$((100 * $REDMACHINE/$TOTALMACHINE))
 
 cat >> $RDIR/mainpage.html << EOF
-<p style="color: #088A08; font-size: 22px; font-weight: bold; text-align: left;">
+<p style="color: #088A08; font-size: 40px; font-weight: bold; text-align:left;">
 Green Machine: &nbsp; &nbsp; &nbsp; $GREENMACHINE &nbsp; &nbsp; &nbsp; Score: %$GREEN_SCORE </p>
-<p style="color: #FF8000; font-size: 22px; font-weight: bold; text-align: left;">
+<p style="color: #FF8000; font-size: 40px; font-weight: bold; text-align:left;">
 Orange Machine: &nbsp; &nbsp; $ORANGEMACHINE &nbsp; &nbsp; &nbsp; Score: %$ORANGE_SCORE </p>
-<p style="color: #FF0000; font-size: 22px; font-weight: bold; text-align:left;">
+<p style="color: #FF0000; font-size: 40px; font-weight: bold; text-align:left;">
 Red Machine: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; $REDMACHINE &nbsp; &nbsp; &nbsp; Score: %$RED_SCORE </p>
 <hr class="solid">
-<p style="color: #000000; font-size: 22px; font-weight: bold; text-align:left;">
+<p style="color: #000000; font-size: 30px; font-weight: bold; text-align:left;">
 Total Machine: &nbsp; &nbsp; &nbsp; &nbsp; $TOTALMACHINE</p>
 <hr class="solid">
 EOF
