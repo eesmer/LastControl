@@ -242,40 +242,35 @@ PART_CHECK=$(cat /tmp/fs_conf.txt |grep "not in separated partition." |wc -l)
 #---------------------------
 # S.M.A.R.T check
 #---------------------------
-rm /tmp/smartcheck-result.txt
 df -H | grep -vE 'Filesystem|tmpfs|cdrom|udev|mapper' |cut -d " " -f1 > /tmp/disklist.txt
 NUMDISK=$(cat /tmp/disklist.txt | wc -l)
 i=1
 
 while [ "$i" -le $NUMDISK ]; do
 DISK=$(ls -l |sed -n $i{p} /tmp/disklist.txt)
-smartctl -i -x $DISK > /tmp/DISK$i.txt
 
-cat /tmp/DISK$i.txt |grep "SMART support is: Available" > /dev/null && SMART_SUPPORT="Available"
-DISK_TEMPERATURE=$(cat /tmp/DISK$i.txt |grep "Temperature_Celsius" |cut -d " " -f24)
-if [ -z "$DISK_TEMPERATURE" ]; then DISK_TEMPERATURE="0 C"; fi
-DISK_STATE=$(cat /tmp/DISK$1.txt |grep "Device State" |cut -d: -f2)
-if [ -z "$DISK_STATE" ]; then DISK_STATE="Not Support"; fi
+smartctl -i -x $DISK >> /dev/null > /tmp/DISK$i.txt
+SMART_SUPPORT=0
+egrep "SMART support is: Available - device has SMART capability." /tmp/DISK$i.txt >> /dev/null && SMART_SUPPORT=1
 
-if [ $SMART_SUPPORT = "Available" ]; then
-SMART_RESULT=$(cat /tmp/DISK$i.txt |grep "SMART overall-health self-assessment test result:" |cut -d: -f2 |cut -d " " -f2)
-DISK_TEMPERATURE=$(cat /tmp/DISK$i.txt |grep "Temperature_Celsius" |cut -d " " -f24)
+if [ "$SMART_SUPPORT" = "1" ]; then
+	SMART_SUPPORT="Available - device has SMART capability."
+	SMART_RESULT=$(cat /tmp/DISK$i.txt |grep "SMART overall-health self-assessment test result:" |cut -d: -f2 |cut -d " " -f2)
 else
-	SMART_SUPPORT="Not Support"
+	SMART_SUPPORT="Unavailable - device lacks SMART capability."
 	SMART_RESULT="Not Passed"
-	DISK_STATE="Not Support"
 fi
 
-echo "$DISK : Support: $SMART_SUPPORT" >> /tmp/smartcheck-result.txt
-echo "State: $DISK_STATE" >> /tmp/smartcheck-result.txt
-echo "Temperature: $DISK_TEMPERATURE" >> /tmp/smartcheck-result.txt
+echo "-> $DISK" >> /tmp/smartcheck-result.txt 
+echo "Support: $SMART_SUPPORT" >> /tmp/smartcheck-result.txt
 echo "Result: $SMART_RESULT" >> /tmp/smartcheck-result.txt
+echo  "" >> /tmp/smartcheck-result.txt
 
 i=$(( i + 1 ))
 SMART=$(cat /tmp/smartcheck-result.txt)
 done
-####rm /tmp/smartcheck-result.txt
-#SMART=$(echo $SMART)
+rm /tmp/smartcheck-result.txt
+SMART=$(echo $SMART)
 
 SYS_SCORE="$SYS_SCORE/110"
 
