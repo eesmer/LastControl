@@ -151,23 +151,6 @@ else
 	fi
 fi
 
-######--------------------------
-###### sudo members check
-######--------------------------
-#####if [ -f /etc/sudoers ]; then
-#####	SUDOMEMBERCOUNT=$(cat /etc/sudoers |grep ALL= |grep -v % |grep -v root |wc -l)
-#####	if [ $SUDOMEMBERCOUNT = 0 ]; then
-#####		SYS_SCORE=$(($SYS_SCORE + 10))
-#####	else
-#####		cat /etc/sudoers |grep ALL= |grep -v % |grep -v root > /tmp/sudomembers.txt
-#####	fi
-#####else
-#####	SUDOMEMBERCOUNT=0
-#####	SYS_SCORE=$(($SYS_SCORE + 10))
-#####
-#####fi
-
-
 #--------------------------
 # passwd, shadow, group file
 #--------------------------
@@ -237,7 +220,6 @@ if [ $PASSWD_CHECK = "PASSED" ] && [ $SHADOW_CHECK = "PASSED" ] && [ $GROUP_CHEC
 	SYS_SCORE=$(($SYS_SCORE + 10))
 fi
 
-SYS_SCORE="$SYS_SCORE/110"
 
 #--------------------------
 # FS Conf. check
@@ -247,7 +229,7 @@ if [ "$#" != "1" ]; then
 		options="$(echo $@ | awk 'BEGIN{FS="[()]"}{print $2}')"
 	echo "[+]$@"
 else
-	echo "[-]\"$1\" not in separated partition. -Ref. CIS-"
+	echo "[-]\"$1\" not in separated partition."
 fi
 }
 parts=(/tmp /var /var/tmp /var/log /var/log/audit /home /dev/shm)
@@ -255,6 +237,7 @@ for part in ${parts[*]}; do
 	out="$(mount | grep $part)"
 	part_check $part $out >> /tmp/fs_conf.txt
 done
+PART_CHECK=$(cat /tmp/fs_conf.txt |grep "not in separated partition." |wc -l)
 
 #---------------------------
 # S.M.A.R.T check
@@ -293,6 +276,8 @@ SMART=$(cat /tmp/smartcheck-result.txt)
 done
 ####rm /tmp/smartcheck-result.txt
 #SMART=$(echo $SMART)
+
+SYS_SCORE="$SYS_SCORE/110"
 
 #---------------------------
 # Network conf. check
@@ -345,16 +330,6 @@ perl /tmp/cve_check -k $KERNELVER > /tmp/cve_list
 CVELIST=$(cat /tmp/cve_list |grep CVE) && echo $CVELIST > /tmp/cve_list && CVELIST=$(cat /tmp/cve_list) && rm /tmp/cve_list && rm /tmp/cve_check
 
 #--------------------------
-# Rootkit Check
-#--------------------------
-bash /tmp/chkrootkit > /tmp/rootkit.txt
-cat /tmp/rootkit.txt |grep "INFECTED" > /tmp/rootkit_result.txt
-cat /tmp/rootkit.txt |grep "Warning" >> /tmp/rootkit_result.txt
-ROOTKITCHECK=$(wc -l /tmp/rootkit_result.txt |cut -d " " -f1)
-ROOTKITLIST=$(cat /tmp/rootkit_result.txt)
-rm /tmp/rootkit.txt /tmp/rootkit_result.txt
-
-#--------------------------
 # for notification
 #--------------------------
 #--------------------------
@@ -391,12 +366,6 @@ ESTABLISHEDCONN=$(wc -l /tmp/establishedconn.txt |cut -d " " -f1)
 LISTENINGCONN=$(wc -l /tmp/listeningconn.txt |cut -d " " -f1)
 
 #--------------------------
-# connected users
-#--------------------------
-w > /tmp/connectedusers.txt
-CONNUSERCOUNT=$(w |grep up |cut -d " " -f7)
-
-#--------------------------
 # integrity check
 #--------------------------
 LOCALDIR="/usr/local/lastcontrol/data/etc"
@@ -429,7 +398,7 @@ cp /tmp/inventory.txt $LOCALFILE
 INVCHECK="CREATED"
 else
 INVCHECK="DETECTED"
-diff $LOCALFILE /tmp/inventory.txt > /dev/null && INVCHECK="NOTDETECTED"
+diff $LOCALFILE /tmp/inventory.txt >> /dev/null && INVCHECK="NOTDETECTED"
 fi
 
 #--------------------------
@@ -462,7 +431,6 @@ $HOST_NAME LastControl Report $DATE
 --------------------------------------------------------------------------------------------------------------------------
 |Listening Conn.:   |$LISTENINGCONN
 |Established Conn.: |$ESTABLISHEDCONN
-|Connected User:    |$CONNUSERCOUNT
 --------------------------------------------------------------------------------------------------------------------------
 |Ram Use:           |$RAM_USE_PERCENTAGE%
 |Swap Use:          |$SWAP_USE_PERCENTAGE%
@@ -481,9 +449,6 @@ $HOST_NAME LastControl Report $DATE
 --------------------------------------------------------------------------------------------------------------------------
 |CVE List:          |$CVELIST
 --------------------------------------------------------------------------------------------------------------------------
-|Rootkit infected   |$ROOTKITCHECK
-|Rootkit List:      |$ROOTKITLIST
---------------------------------------------------------------------------------------------------------------------------
 |S.M.A.R.T          |
 --------------------------------------------------------------------------------------------------------------------------
 $SMART
@@ -496,11 +461,10 @@ if [ $INVCHECK = DETECTED ]; then
 	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 	echo "                          :::... CHANGE HARDWARE NOTIFICATION !!! ....:::" >> /tmp/$HOST_NAME.txt
 	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-	diff $LOCALFILE /tmp/inventory.txt >> /tmp/$HOST_NAME.txt
+	diff $LOCALFILE /tmp/inventory.txt >> /tmp/$HOST_NAME.txt && rm /tmp/inventory.txt
 	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+	echo "" >> /tmp/$HOST_NAME.txt
 fi
-rm /tmp/inventory.txt
-echo "" >> /tmp/$HOST_NAME.txt
 
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 echo "				:::... SYSTEM LOAD ....:::" >> /tmp/$HOST_NAME.txt
@@ -510,7 +474,7 @@ echo "" >> /tmp/$HOST_NAME.txt
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 echo "Running Process/Apps." >> /tmp/$HOST_NAME.txt
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-cat /tmp/runningservices.txt >> /tmp/$HOST_NAME.txt ##&& rm /tmp/runningservices.txt
+cat /tmp/runningservices.txt >> /tmp/$HOST_NAME.txt && rm /tmp/runningservices.txt
 echo "" >> /tmp/$HOST_NAME.txt
 
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
@@ -521,21 +485,21 @@ echo "" >> /tmp/$HOST_NAME.txt
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 echo "Listening Ports" >> /tmp/$HOST_NAME.txt
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-cat /tmp/listeningconn.txt >> /tmp/$HOST_NAME.txt ##&& rm /tmp/listeningconn.txt
+cat /tmp/listeningconn.txt >> /tmp/$HOST_NAME.txt && rm /tmp/listeningconn.txt
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 echo "" >> /tmp/$HOST_NAME.txt
 
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 echo "Established Connections" >> /tmp/$HOST_NAME.txt
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-cat /tmp/establishedconn.txt >> /tmp/$HOST_NAME.txt ##&& rm /tmp/establishedconn.txt
+cat /tmp/establishedconn.txt >> /tmp/$HOST_NAME.txt && rm /tmp/establishedconn.txt
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 echo "" >> /tmp/$HOST_NAME.txt
 
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 echo "Connected Users" >> /tmp/$HOST_NAME.txt
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-cat /tmp/connectedusers.txt >> /tmp/$HOST_NAME.txt
+cat /tmp/connectedusers.txt >> /tmp/$HOST_NAME.txt && rm /tmp/connectedusers.txt
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 echo "" >> /tmp/$HOST_NAME.txt
 
@@ -554,7 +518,7 @@ if [ ! $LOCALUSER_COUNT = 0 ]; then
 	echo "sudo members" >> /tmp/$HOST_NAME.txt
 	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 	cat /tmp/sudomembers.txt >> /tmp/$HOST_NAME.txt && rm /tmp/sudomembers.txt
-echo "" >> /tmp/$HOST_NAME.txt
+	echo "" >> /tmp/$HOST_NAME.txt
 fi
 
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
@@ -569,7 +533,15 @@ if [ ! $BROKEN_COUNT = 0 ]; then
 	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 	echo "" >> /tmp/$HOST_NAME.txt
 	cat /tmp/broken_pack_list.txt >> /tmp/$HOST_NAME.txt && rm /tmp/broken_pack_list.txt
-echo "" >> /tmp/$HOST_NAME.txt
+	echo "" >> /tmp/$HOST_NAME.txt
+fi
+
+if [ ! $PART_CHECK = 0 ]; then
+	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+	echo "                  :::... SYSTEM PARTITION Conf. CHECK...:::" >> /tmp/$HOST_NAME.txt
+	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+	cat /tmp/fs_conf.txt >> /tmp/$HOST_NAME.txt && rm /tmp/fs_conf.txt
+	echo "" >> /tmp/$HOST_NAME.txt
 fi
 
 #echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt

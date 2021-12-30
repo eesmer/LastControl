@@ -416,6 +416,7 @@ while [ "$i" -le $NUMMACHINE ]; do
         UPTIME=$(perl -ne'19..19 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
         # for inventory.html
         MACHINE_NAME=$(perl -ne'6..6 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+        IP_ADDRESS=$(perl -ne'7..7 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
         CPU=$(perl -ne'9..9 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
         RAM=$(perl -ne'10..10 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
         VGA=$(perl -ne'11..11 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
@@ -425,12 +426,12 @@ while [ "$i" -le $NUMMACHINE ]; do
         OS_VER=$(perl -ne'15..15 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
 	LAST_BOOT=$(perl -ne'18..18 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
 	NUMPROCESS=$(perl -ne'21..21 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	INVCHECK=$(perl -ne'39..39 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	CVE_LIST=$(perl -ne'43..43 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	KERNEL_VER=$(perl -ne'41..41 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	SYS_SCORE=$(perl -ne'35..35 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	NW_SCORE=$(perl -ne'36..36 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	SSH_SCORE=$(perl -ne'37..37 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	INVCHECK=$(perl -ne'38..38 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	CVE_LIST=$(perl -ne'42..42 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	KERNEL_VER=$(perl -ne'40..40 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	SYS_SCORE=$(perl -ne'34..34 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	NW_SCORE=$(perl -ne'35..35 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	SSH_SCORE=$(perl -ne'36..36 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
 
         # create cvelist.html
 	echo "<tr>" >> $RDIR/cvelist.html
