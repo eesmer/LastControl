@@ -50,9 +50,9 @@ UPTIME=$(uptime) && UPTIME_MIN=$(awk '{ print "up " $1 /60 " minutes"}' /proc/up
 # for SYSTEM SCORE
 # System conf. check
 #---------------------------
-SYS_SCORE=1
-NW_SCORE=1
-SSH_SCORE=1
+SYS_SCORE=0
+NW_SCORE=0
+SSH_SCORE=0
 
 RAM_FREE=$( expr $RAM_TOTAL - $RAM_USAGE)
 RAM_FREE_PERCENTAGE=$((100 * $RAM_FREE/$RAM_TOTAL))
