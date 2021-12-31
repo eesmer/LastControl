@@ -292,8 +292,9 @@ NWCONF9=$(sysctl net.ipv4.icmp_echo_ignore_broadcasts |cut -d "=" -f2) && if [ "
 NWCONF10=$(sysctl net.ipv4.icmp_ignore_bogus_error_responses |cut -d "=" -f2) && if [ "$NWCONF10" = "1" ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
 NWCONF11=$(sysctl net.ipv4.conf.all.rp_filter |cut -d "=" -f2) && if [ "$NWCONF11" = "1" ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
 NWCONF12=$(sysctl net.ipv4.tcp_syncookies |cut -d "=" -f2) && if [ "$NWCONF12" = "1" ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
-NWCONF13=$(sysctl net.ipv6.conf.all.accept_ra |cut -d "=" -f2) && if [ "$NWCONF13" = "0" ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
-NW_SCORE="$NW_SCORE/130"
+# ipv6 controls
+NWCONF13=$(sysctl net.ipv6.conf.all.disable_ipv6 |cut -d "=" -f2) && if [ "$NWCONF13" = "1" ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
+NWCONF14=$(sysctl net.ipv6.conf.all.accept_ra |cut -d "=" -f2) && if [ "$NWCONF14" = "0" ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
 
 #---------------------------
 # SSH conf. check
@@ -317,7 +318,6 @@ SSHCONF12=$(sshd -T | grep hostbasedauthentication |cut -d " " -f2) && if [ "$SS
 SSHCONF13=$(sshd -T | grep permitrootlogin |cut -d " " -f2) && if [ "$SSHCONF13" = "no" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
 SSHCONF14=$(sshd -T | grep permitemptypasswords |cut -d " " -f2) && if [ "$SSHCONF14" = "no" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
 SSHCONF15=$(sshd -T | grep permituserenvironment |cut -d " " -f2) && if [ "$SSHCONF15" = "no" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
-SSH_SCORE="$SSH_SCORE/150"
 
 #--------------------------
 # CVE Check
