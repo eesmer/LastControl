@@ -19,10 +19,10 @@ rm /tmp/distrocheck
 #--------------------------
 # install packages
 #--------------------------
-if [ $REP = APT ]; then
+if [ "$REP" = "APT" ]; then
 	apt-get -y install net-tools rsync smartmontools
 fi
-if [ $REP = YUM ]; then
+if [ "$REP" = "YUM" ]; then
 	yum -y install net-tools rsync perl smartmontools
 fi
 
@@ -54,12 +54,12 @@ SYS_SCORE=0
 
 RAM_FREE=$( expr $RAM_TOTAL - $RAM_USAGE)
 RAM_FREE_PERCENTAGE=$((100 * $RAM_FREE/$RAM_TOTAL))
-RAM_USE_PERCENTAGE=$(expr 100 - $RAM_FREE_PERCENTAGE) && if [ $RAM_USE_PERCENTAGE -lt 40 ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
-DISK_USAGE=$(df -H | grep -vE 'Filesystem|tmpfs|cdrom|udev' | awk '{ print $5" "$1"("$2"  "$3")" " --- "}' | sed -e :a -e N -e 's/\n/ /' -e ta |cut -d "%" -f1) && if [ $DISK_USAGE -lt 40 ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
+RAM_USE_PERCENTAGE=$(expr 100 - $RAM_FREE_PERCENTAGE) && if [ "$RAM_USE_PERCENTAGE" -lt "40" ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
+DISK_USAGE=$(df -H | grep -vE 'Filesystem|tmpfs|cdrom|udev' | awk '{ print $5" "$1"("$2"  "$3")" " --- "}' | sed -e :a -e N -e 's/\n/ /' -e ta |cut -d "%" -f1) && if [ "$DISK_USAGE" -lt "40" ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
 SWAP_VALUE=$(free -m |grep Swap: |cut -d ":" -f2)
 SWAP_TOTAL=$(echo $SWAP_VALUE |cut -d " " -f1)
 SWAP_USE=$(echo $SWAP_VALUE |cut -d " " -f2)
-SWAP_USE_PERCENTAGE=$((100 * $SWAP_USE/$SWAP_TOTAL)) && if [ $SWAP_USE_PERCENTAGE = 0 ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
+SWAP_USE_PERCENTAGE=$((100 * $SWAP_USE/$SWAP_TOTAL)) && if [ "$SWAP_USE_PERCENTAGE" = "0" ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
 
 	#--------------------------
 	# check load
@@ -69,19 +69,20 @@ SWAP_USE_PERCENTAGE=$((100 * $SWAP_USE/$SWAP_TOTAL)) && if [ $SWAP_USE_PERCENTAG
 	MOSTPROCESS=$(cat /tmp/systemload.txt |awk '{print $9, $10, $12}' |head -1 |cut -d " " -f3)
 	MOSTRAM=$(cat /tmp/systemload.txt |awk '{print $9, $10, $12}' |head -1 |cut -d " " -f2)
 	MOSTCPU=$(cat /tmp/systemload.txt |awk '{print $9, $10, $12}' |head -1 |cut -d " " -f1)
+	rm -f /tmp/systemload.txt
 
 #--------------------------
 # Check Update
 #--------------------------
-if [ $REP = APT ]; then
+if [ "$REP" = "APT" ]; then
 	CHECK_UPDATE=NONE
 	UPDATE_COUNT=0
 	echo "n" |apt-get upgrade > /tmp/update_list.txt
 	cat /tmp/update_list.txt |grep "The following packages will be upgraded:" >> /dev/null && CHECK_UPDATE=EXIST \
 		&& UPDATE_COUNT=$(cat /tmp/update_list.txt |grep "upgraded," |cut -d " " -f1)
-	if [ $CHECK_UPDATE = EXIST ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi	
+	if [ "$CHECK_UPDATE" = "EXIST" ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi	
 
-elif [ $REP = YUM ]; then
+elif [ "$REP" = "YUM" ]; then
 	yum check-update > /tmp/update_list.txt
 	sed -i '/Loaded/d' /tmp/update_list.txt
 	sed -i '/Loading/d' /tmp/update_list.txt
@@ -91,19 +92,20 @@ elif [ $REP = YUM ]; then
 	UPDATE_COUNT=$(cat /tmp/update_list.txt |wc -l)
 
 	CHECK_UPDATE=EXIST
-	if [ $UPDATE_COUNT = 0 ]; then
+	if [ "$UPDATE_COUNT" = "0" ]; then
 		CHECK_UPDATE=NONE
 		SYS_SCORE=$(($SYS_SCORE + 10))
 	fi
+rm -f /tmp/update_list.txt
 fi
 #------------------------------
 # broken package list
 #------------------------------
-if [ $REP = APT ];then
+if [ "$REP" = "APT" ];then
 	dpkg -l | grep -v "^ii" >> /dev/null > /tmp/broken_pack_list.txt
 	sed -i -e '1d;2d;3d;4d;5d' /tmp/broken_pack_list.txt
 	BROKEN_COUNT=$(wc -l /tmp/broken_pack_list.txt)
-	if [ $BROKEN_COUNT = 0 ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
+	if [ "$BROKEN_COUNT" = "0" ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
 
 	### ALLOWUNAUTH=$(grep -v "^#" /etc/apt/ -r | grep -c "AllowUnauthenticated")
 	### if [ $ALLOWUNAUTH = 0 ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
@@ -111,10 +113,10 @@ if [ $REP = APT ];then
 	### if [ $DEBSIG = 1 ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
 fi
 
-if [ $REP = YUM ];then
+if [ "$REP" = "YUM" ];then
 	rpm -Va >> /dev/null > /tmp/broken_pack_list.txt
 	BROKEN_COUNT=$(wc -l /tmp/broken_pack_list.txt)
-	if [ $BROKEN_COUNT = 0 ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
+	if [ "$BROKEN_COUNT" = "0" ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
 fi
 
 #------------------------------------
@@ -122,7 +124,7 @@ fi
 #------------------------------------
 getent passwd {1000..6000} > /tmp/localusers.txt
 LOCALUSER_COUNT=$(wc -l /tmp/localusers.txt |cut -d " " -f1)
-if [ $LOCALUSER_COUNT = 0 ]; then
+if [ "$LOCALUSER_COUNT" = "0" ]; then
 	SYS_SCORE=$(($SYS_SCORE + 10))
 	rm /tmp/localusers.txt
 else
@@ -132,15 +134,15 @@ else
 	while [ "$i" -le $LOCALUSER_COUNT ]; do
 		USER=$(ls -l |sed -n $i{p} /tmp/localusers.txt)
 		cat /etc/security/limits.conf |grep $USER >> /dev/null
-		if [ ! $? = 0 ]; then CHECK_LIMITS=EXIST; fi
+		if [ ! "$?" = "0" ]; then CHECK_LIMITS=EXIST; fi
 	i=$(( i + 1 ))
 	done
-	if [ ! $CHECK_LIMITS = EXIST ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
+	if [ ! "$CHECK_LIMITS" = "EXIST" ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
 
 	# sudo members check
-	if [ -f /etc/sudoers ]; then
+	if [ -f "/etc/sudoers" ]; then
 		SUDOMEMBERCOUNT=$(cat /etc/sudoers |grep ALL= |grep -v % |grep -v root |wc -l)
-		if [ $SUDOMEMBERCOUNT = 0 ]; then
+		if [ "$SUDOMEMBERCOUNT" = "0" ]; then
 			SYS_SCORE=$(($SYS_SCORE + 10))
 		else
 			cat /etc/sudoers |grep ALL= |grep -v % |grep -v root > /tmp/sudomembers.txt
@@ -164,62 +166,61 @@ SHADOW_CHECK=NONE
 GROUP_CHECK=NONE
 GSHADOW_CHECK=NONE
 
-if [ $REP = APT ];then
-	if [ $PASSWDFILEPERMS = "-rw-r--r--" ] && [ $PASSWDFILEOWNER = "root" ] && [ $PASSWDFILEGRP = "root" ]; then
+if [ "$REP" = "APT" ];then
+	if [ "$PASSWDFILEPERMS" = "-rw-r--r--" ] && [ "$PASSWDFILEOWNER" = "root" ] && [ "$PASSWDFILEGRP" = "root" ]; then
 		PASSWD_CHECK=PASSED
 	else
 		PASSWD_CHECK=NOTPASSED
 	fi
 
-	if [ $SHADOWFILEPERMS = "-rw-r-----" ] && [ $SHADOWFILEOWNER = "root" ] && [ $SHADOWFILEGRP = "shadow" ]; then
+	if [ "$SHADOWFILEPERMS" = "-rw-r-----" ] && [ "$SHADOWFILEOWNER" = "root" ] && [ "$SHADOWFILEGRP" = "shadow" ]; then
 		SHADOW_CHECK=PASS
 	else
 		SHADOW_CHECK=NOTPASSED
 	fi
 
-	if [ $GROUPFILEPERMS = "-rw-r--r--" ] && [ $GROUPFILEOWNER = "root" ] && [ $GROUPFILEGRP = "root" ]; then
+	if [ "$GROUPFILEPERMS" = "-rw-r--r--" ] && [ "$GROUPFILEOWNER" = "root" ] && [ "$GROUPFILEGRP" = "root" ]; then
 		GROUP_CHECK=PASSED
 	else
 		GROUP_CHECK=NOTPASSED
 	fi
 	
-	if [ $GSHADOWFILEPERMS = "-rw-r-----" ] && [ $GSHADOWFILEOWNER = "root" ] && [ $GSHADOWFILEGRP = "shadow" ]; then
+	if [ "$GSHADOWFILEPERMS" = "-rw-r-----" ] && [ "$GSHADOWFILEOWNER" = "root" ] && [ "$GSHADOWFILEGRP" = "shadow" ]; then
 		GSHADOW_CHECK=PASSED
 	else
 		GSHADOW_CHECK=NOTPASSED
 	fi
 fi
 
-if [ $REP = YUM ];then
-	if [ $PASSWDFILEPERMS = "-rw-r--r--." ] && [ $PASSWDFILEOWNER = "root" ] && [ $PASSWDFILEGRP = "root" ]; then
+if [ "$REP" = "YUM" ];then
+	if [ "$PASSWDFILEPERMS" = "-rw-r--r--." ] && [ "$PASSWDFILEOWNER" = "root" ] && [ "$PASSWDFILEGRP" = "root" ]; then
 		PASSWD_CHECK=PASSED
 	else
 		PASSWD_CHECK=NOTPASSED
 	fi
 
-	if [ $SHADOWFILEPERMS = "----------." ] && [ $SHADOWFILEOWNER = "root" ] && [ $SHADOWFILEGRP = "root" ]; then
+	if [ "$SHADOWFILEPERMS" = "----------." ] && [ "$SHADOWFILEOWNER" = "root" ] && [ "$SHADOWFILEGRP" = "root" ]; then
 		SHADOW_CHECK=PASS
 	else
 		SHADOW_CHECK=NOTPASSED
 	fi
 
-	if [ $GROUPFILEPERMS = "-rw-r--r--." ] && [ $GROUPFILEOWNER = "root" ] && [ $GROUPFILEGRP = "root" ]; then
+	if [ "$GROUPFILEPERMS" = "-rw-r--r--." ] && [ "$GROUPFILEOWNER" = "root" ] && [ "$GROUPFILEGRP" = "root" ]; then
 		GROUP_CHECK=PASSED
 	else
 		GROUP_CHECK=NOTPASSED
 	fi
 
-	if [ $GSHADOWFILEPERMS = "----------." ] && [ $GSHADOWFILEOWNER = "root" ] && [ $GSHADOWFILEGRP = "root" ]; then
+	if [ "$GSHADOWFILEPERMS" = "----------." ] && [ "$GSHADOWFILEOWNER" = "root" ] && [ "$GSHADOWFILEGRP" = "root" ]; then
 		GSHADOW_CHECK=PASSED
 	else
 		GSHADOW_CHECK=NOTPASSED
 	fi
 fi
 
-if [ $PASSWD_CHECK = "PASSED" ] && [ $SHADOW_CHECK = "PASSED" ] && [ $GROUP_CHECK = "PASSED" ] && [ $GSHADOW_CHECK = "PASSED" ]; then
+if [ "$PASSWD_CHECK" = "PASSED" ] && [ "$SHADOW_CHECK" = "PASSED" ] && [ "$GROUP_CHECK" = "PASSED" ] && [ "$GSHADOW_CHECK" = "PASSED" ]; then
 	SYS_SCORE=$(($SYS_SCORE + 10))
 fi
-
 
 #--------------------------
 # FS Conf. check
@@ -246,7 +247,7 @@ df -H | grep -vE 'Filesystem|tmpfs|cdrom|udev|mapper' |cut -d " " -f1 > /tmp/dis
 NUMDISK=$(cat /tmp/disklist.txt | wc -l)
 i=1
 
-while [ "$i" -le $NUMDISK ]; do
+while [ "$i" -le "$NUMDISK" ]; do
 DISK=$(ls -l |sed -n $i{p} /tmp/disklist.txt)
 
 smartctl -i -x $DISK >> /dev/null > /tmp/DISK$i.txt
@@ -269,8 +270,9 @@ echo  "" >> /tmp/smartcheck-result.txt
 i=$(( i + 1 ))
 SMART=$(cat /tmp/smartcheck-result.txt)
 done
-rm /tmp/smartcheck-result.txt
-SMART=$(echo $SMART)
+rm -f /tmp/smartcheck-result.txt
+rm -f /tmp/disklist.txt
+#SMART=$(echo $SMART)
 
 SYS_SCORE="$SYS_SCORE/110"
 
@@ -278,19 +280,19 @@ SYS_SCORE="$SYS_SCORE/110"
 # Network conf. check
 #---------------------------
 NW_SCORE=0
-NWCONF1=$(sysctl net.ipv4.ip_forward |cut -d "=" -f2) && if [ $NWCONF1 = 0 ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
-NWCONF2=$(sysctl net.ipv4.conf.all.send_redirects |cut -d "=" -f2) && if [ $NWCONF2 = 0 ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
-NWCONF3=$(sysctl net.ipv4.conf.all.accept_source_route |cut -d "=" -f2) && if [ $NWCONF3 = 0 ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
-NWCONF4=$(sysctl net.ipv4.conf.default.accept_source_route |cut -d "=" -f2) && if [ $NWCONF4 = 0 ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
-NWCONF5=$(sysctl net.ipv4.conf.all.accept_redirects |cut -d "=" -f2) && if [ $NWCONF5 = 0 ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
-NWCONF6=$(sysctl net.ipv4.conf.default.accept_redirects |cut -d "=" -f2) && if [ $NWCONF6 = 0 ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
-NWCONF7=$(sysctl net.ipv4.conf.all.secure_redirects |cut -d "=" -f2) && if [ $NWCONF7 = 0 ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
-NWCONF8=$(sysctl net.ipv4.conf.default.secure_redirects |cut -d "=" -f2) && if [ $NWCONF8 = 0 ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
-NWCONF9=$(sysctl net.ipv4.icmp_echo_ignore_broadcasts |cut -d "=" -f2) && if [ $NWCONF9 = 1 ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
-NWCONF10=$(sysctl net.ipv4.icmp_ignore_bogus_error_responses |cut -d "=" -f2) && if [ $NWCONF10 = 1 ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
-NWCONF11=$(sysctl net.ipv4.conf.all.rp_filter |cut -d "=" -f2) && if [ $NWCONF11 = 1 ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
-NWCONF12=$(sysctl net.ipv4.tcp_syncookies |cut -d "=" -f2) && if [ $NWCONF12 = 1 ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
-NWCONF13=$(sysctl net.ipv6.conf.all.accept_ra |cut -d "=" -f2) && if [ $NWCONF13 = 0 ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
+NWCONF1=$(sysctl net.ipv4.ip_forward |cut -d "=" -f2) && if [ "$NWCONF1" = "0" ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
+NWCONF2=$(sysctl net.ipv4.conf.all.send_redirects |cut -d "=" -f2) && if [ "$NWCONF2" = "0" ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
+NWCONF3=$(sysctl net.ipv4.conf.all.accept_source_route |cut -d "=" -f2) && if [ "$NWCONF3" = "0" ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
+NWCONF4=$(sysctl net.ipv4.conf.default.accept_source_route |cut -d "=" -f2) && if [ "$NWCONF4" = "0" ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
+NWCONF5=$(sysctl net.ipv4.conf.all.accept_redirects |cut -d "=" -f2) && if [ "$NWCONF5" = "0" ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
+NWCONF6=$(sysctl net.ipv4.conf.default.accept_redirects |cut -d "=" -f2) && if [ "$NWCONF6" = "0" ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
+NWCONF7=$(sysctl net.ipv4.conf.all.secure_redirects |cut -d "=" -f2) && if [ "$NWCONF7" = "0" ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
+NWCONF8=$(sysctl net.ipv4.conf.default.secure_redirects |cut -d "=" -f2) && if [ "$NWCONF8" = "0" ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
+NWCONF9=$(sysctl net.ipv4.icmp_echo_ignore_broadcasts |cut -d "=" -f2) && if [ "$NWCONF9" = "1" ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
+NWCONF10=$(sysctl net.ipv4.icmp_ignore_bogus_error_responses |cut -d "=" -f2) && if [ "$NWCONF10" = "1" ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
+NWCONF11=$(sysctl net.ipv4.conf.all.rp_filter |cut -d "=" -f2) && if [ "$NWCONF11" = "1" ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
+NWCONF12=$(sysctl net.ipv4.tcp_syncookies |cut -d "=" -f2) && if [ "$NWCONF12" = "1" ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
+NWCONF13=$(sysctl net.ipv6.conf.all.accept_ra |cut -d "=" -f2) && if [ "$NWCONF13" = "0" ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
 NW_SCORE="$NW_SCORE/130"
 
 #---------------------------
@@ -298,23 +300,23 @@ NW_SCORE="$NW_SCORE/130"
 #---------------------------
 # PRIVATE HOST KEY
 SSH_SCORE=0
-SSHCONF1=$(stat /etc/ssh/sshd_config |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ $SSHCONF1 = 0600 ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
-SSHCONF2=$(stat /etc/ssh/ssh_host_rsa_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ $SSHCONF2 = 0600 ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
-SSHCONF3=$(stat /etc/ssh/ssh_host_ecdsa_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ $SSHCONF3 = 0600 ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
-SSHCONF4=$(stat /etc/ssh/ssh_host_ed25519_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ $SSHCONF4 = 0600 ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
+SSHCONF1=$(stat /etc/ssh/sshd_config |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ "$SSHCONF1" = "0600" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
+SSHCONF2=$(stat /etc/ssh/ssh_host_rsa_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ "$SSHCONF2" = "0600" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
+SSHCONF3=$(stat /etc/ssh/ssh_host_ecdsa_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ "$SSHCONF3" = "0600" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
+SSHCONF4=$(stat /etc/ssh/ssh_host_ed25519_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ "$SSHCONF4" = "0600" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
 # PUBLIC HOST KEY
-SSHCONF5=$(stat /etc/ssh/ssh_host_rsa_key.pub |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ $SSHCONF5 = 0644 ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
-SSHCONF6=$(stat /etc/ssh/ssh_host_ed25519_key.pub |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ $SSHCONF6 = 0644 ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
-SSHCONF7=$(stat /etc/ssh/ssh_host_ed25519_key.pub |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ $SSHCONF7 = 0644 ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
-grep ^Protocol /etc/ssh/sshd_config > /dev/null && if [ "$?= 0" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
-SSHCONF8=$(sshd -T | grep loglevel |cut -d " " -f2) && if [ $SSHCONF8 = INFO ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
-SSHCONF9=$(sshd -T | grep x11forwarding |cut -d " " -f2) && if [ $SSHCONF9 = no ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
-SSHCONF10=$(sshd -T | grep maxauthtries |cut -d " " -f2) && if [ $SSHCONF10 -lt 4 ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
-SSHCONF11=$(sshd -T | grep ignorerhosts |cut -d " " -f2) && if [ $SSHCONF11 = yes ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
-SSHCONF12=$(sshd -T | grep hostbasedauthentication |cut -d " " -f2) && if [ $SSHCONF12 = no ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
-SSHCONF13=$(sshd -T | grep permitrootlogin |cut -d " " -f2) && if [ $SSHCONF13 = no ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
-SSHCONF14=$(sshd -T | grep permitemptypasswords |cut -d " " -f2) && if [ $SSHCONF14 = no ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
-SSHCONF15=$(sshd -T | grep permituserenvironment |cut -d " " -f2) && if [ $SSHCONF15 = no ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
+SSHCONF5=$(stat /etc/ssh/ssh_host_rsa_key.pub |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ "$SSHCONF5" = "0644" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
+SSHCONF6=$(stat /etc/ssh/ssh_host_ed25519_key.pub |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ "$SSHCONF6" = "0644" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
+SSHCONF7=$(stat /etc/ssh/ssh_host_ed25519_key.pub |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ "$SSHCONF7" = "0644" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
+grep ^Protocol /etc/ssh/sshd_config > /dev/null && if [ "$?" = "0" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
+SSHCONF8=$(sshd -T | grep loglevel |cut -d " " -f2) && if [ "$SSHCONF8" = "INFO" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
+SSHCONF9=$(sshd -T | grep x11forwarding |cut -d " " -f2) && if [ "$SSHCONF9" = "no" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
+SSHCONF10=$(sshd -T | grep maxauthtries |cut -d " " -f2) && if [ "$SSHCONF10" -lt "4" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
+SSHCONF11=$(sshd -T | grep ignorerhosts |cut -d " " -f2) && if [ "$SSHCONF11" = "yes" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
+SSHCONF12=$(sshd -T | grep hostbasedauthentication |cut -d " " -f2) && if [ "$SSHCONF12" = "no" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
+SSHCONF13=$(sshd -T | grep permitrootlogin |cut -d " " -f2) && if [ "$SSHCONF13" = "no" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
+SSHCONF14=$(sshd -T | grep permitemptypasswords |cut -d " " -f2) && if [ "$SSHCONF14" = "no" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
+SSHCONF15=$(sshd -T | grep permituserenvironment |cut -d " " -f2) && if [ "$SSHCONF15" = "no" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
 SSH_SCORE="$SSH_SCORE/150"
 
 #--------------------------
@@ -330,7 +332,7 @@ CVELIST=$(cat /tmp/cve_list |grep CVE) && echo $CVELIST > /tmp/cve_list && CVELI
 #--------------------------
 # repo list
 #--------------------------
-if [ $REP = APT ]; then
+if [ "$REP" = "APT" ]; then
 	cat /etc/apt/sources.list > /tmp/repo_list.txt
 	shopt -s nullglob dotglob
 	files=(/etc/apt/sources.list.d/*)
@@ -340,7 +342,7 @@ if [ $REP = APT ]; then
 	echo "----------------------------------------------" >> /tmp/repo_list.txt
 	cat /etc/apt/sources.list.d/* >> /tmp/repo_list.txt
 	fi
-elif [ $REP = YUM ]; then
+elif [ "$REP" = "YUM" ]; then
 	yum repolist > /tmp/repo_list.txt
 fi
 #--------------------------
@@ -386,7 +388,7 @@ CPU:$CPUINFO
 RAM:$RAM_TOTAL
 VGA:$VGA_CONTROLLER
 EOF
-cat /tmp/hddlist.txt >> /tmp/inventory.txt && rm /tmp/hddlist.txt
+cat /tmp/hddlist.txt >> /tmp/inventory.txt && rm -f /tmp/hddlist.txt
 
 if [ ! -f "$LOCALFILE" ]; then
 cp /tmp/inventory.txt $LOCALFILE
@@ -452,13 +454,15 @@ EOF
 
 echo >> /tmp/$HOST_NAME.txt
 
-if [ $INVCHECK = DETECTED ]; then
+if [ "$INVCHECK" = "DETECTED" ]; then
 	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 	echo "                          :::... CHANGE HARDWARE NOTIFICATION !!! ....:::" >> /tmp/$HOST_NAME.txt
 	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-	diff $LOCALFILE /tmp/inventory.txt >> /tmp/$HOST_NAME.txt && rm /tmp/inventory.txt
+	diff $LOCALFILE /tmp/inventory.txt >> /tmp/$HOST_NAME.txt && rm -f /tmp/inventory.txt
 	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 	echo "" >> /tmp/$HOST_NAME.txt
+else
+	rm -f /tmp/inventory.txt
 fi
 
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
@@ -469,7 +473,7 @@ echo "" >> /tmp/$HOST_NAME.txt
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 echo "Running Process/Apps." >> /tmp/$HOST_NAME.txt
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-cat /tmp/runningservices.txt >> /tmp/$HOST_NAME.txt && rm /tmp/runningservices.txt
+cat /tmp/runningservices.txt >> /tmp/$HOST_NAME.txt && rm -f /tmp/runningservices.txt
 echo "" >> /tmp/$HOST_NAME.txt
 
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
@@ -480,21 +484,21 @@ echo "" >> /tmp/$HOST_NAME.txt
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 echo "Listening Ports" >> /tmp/$HOST_NAME.txt
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-cat /tmp/listeningconn.txt >> /tmp/$HOST_NAME.txt && rm /tmp/listeningconn.txt
+cat /tmp/listeningconn.txt >> /tmp/$HOST_NAME.txt && rm -f /tmp/listeningconn.txt
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 echo "" >> /tmp/$HOST_NAME.txt
 
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 echo "Established Connections" >> /tmp/$HOST_NAME.txt
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-cat /tmp/establishedconn.txt >> /tmp/$HOST_NAME.txt && rm /tmp/establishedconn.txt
+cat /tmp/establishedconn.txt >> /tmp/$HOST_NAME.txt && rm -f /tmp/establishedconn.txt
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 echo "" >> /tmp/$HOST_NAME.txt
 
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 echo "Connected Users" >> /tmp/$HOST_NAME.txt
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-cat /tmp/connectedusers.txt >> /tmp/$HOST_NAME.txt && rm /tmp/connectedusers.txt
+cat /tmp/connectedusers.txt >> /tmp/$HOST_NAME.txt && rm -f /tmp/connectedusers.txt
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 echo "" >> /tmp/$HOST_NAME.txt
 
@@ -504,38 +508,40 @@ echo "--------------------------------------------------------------------------
 lslogins -u >> /tmp/$HOST_NAME.txt
 echo "" >> /tmp/$HOST_NAME.txt
 
-if [ ! $LOCALUSER_COUNT = 0 ]; then
+if [ ! "$LOCALUSER_COUNT" = "0" ]; then
         echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
         echo "Local User List" >> /tmp/$HOST_NAME.txt
         echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-	cat /tmp/localusers.txt >> /tmp/$HOST_NAME.txt && rm /tmp/localusers.txt
+	cat /tmp/localusers.txt >> /tmp/$HOST_NAME.txt && rm -f /tmp/localusers.txt
         echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 	echo "sudo members" >> /tmp/$HOST_NAME.txt
 	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-	cat /tmp/sudomembers.txt >> /tmp/$HOST_NAME.txt && rm /tmp/sudomembers.txt
+	cat /tmp/sudomembers.txt >> /tmp/$HOST_NAME.txt && rm -f /tmp/sudomembers.txt
 	echo "" >> /tmp/$HOST_NAME.txt
 fi
 
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 echo "                  :::... REPOs LIST ...:::" >> /tmp/$HOST_NAME.txt
 echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-cat /tmp/repo_list.txt >> /tmp/$HOST_NAME.txt && rm /tmp/repo_list.txt
+cat /tmp/repo_list.txt >> /tmp/$HOST_NAME.txt && rm -f /tmp/repo_list.txt
 echo "" >> /tmp/$HOST_NAME.txt
 
-if [ ! $BROKEN_COUNT = 0 ]; then
+if [ ! "$BROKEN_COUNT" = "0" ]; then
 	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 	echo "			:::... BROKEN PACKAGE LIST ...:::" >> /tmp/$HOST_NAME.txt
 	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 	echo "" >> /tmp/$HOST_NAME.txt
-	cat /tmp/broken_pack_list.txt >> /tmp/$HOST_NAME.txt && rm /tmp/broken_pack_list.txt
+	cat /tmp/broken_pack_list.txt >> /tmp/$HOST_NAME.txt && rm -f /tmp/broken_pack_list.txt
 	echo "" >> /tmp/$HOST_NAME.txt
+else
+	rm -f /tmp/broken_pack_list.txt
 fi
 
-if [ ! $PART_CHECK = 0 ]; then
+if [ ! "$PART_CHECK" = "0" ]; then
 	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 	echo "                  :::... SYSTEM PARTITION Conf. CHECK...:::" >> /tmp/$HOST_NAME.txt
 	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-	cat /tmp/fs_conf.txt >> /tmp/$HOST_NAME.txt && rm /tmp/fs_conf.txt
+	cat /tmp/fs_conf.txt >> /tmp/$HOST_NAME.txt && rm -f /tmp/fs_conf.txt
 	echo "" >> /tmp/$HOST_NAME.txt
 fi
 
@@ -544,7 +550,8 @@ fi
 #echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 #echo "Warnings" >> /tmp/$HOST_NAME.txt
 #echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-#cat /tmp/integritycheck.txt >> /tmp/$HOST_NAME.txt && rm /tmp/integritycheck.txt
+#cat /tmp/integritycheck.txt >> /tmp/$HOST_NAME.txt && rm -f /tmp/integritycheck.txt
 #echo "" >> /tmp/$HOST_NAME.txt
+rm -f /tmp/integritycheck.txt
 
 echo "=======================================================================================================================================================================" >> /tmp/$HOST_NAME.txt
