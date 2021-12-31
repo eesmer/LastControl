@@ -32,7 +32,7 @@ cat > $RDIR/mainpage.html << EOF
 <p style="color: #000000; font-size: 30px; font-weight: bold; text-align:center;">
 LastControl Main Page</p>
 <p style="text-align:center;">$RDATE</p>
-<p style="text-align:right;">
+<p style="text-align:left;">
 <style>
 a:link, a:visited {
 background-color: #1C1C1C;
@@ -71,7 +71,7 @@ cat > $RDIR/machine-report.html << EOF
 <p style="color: #000000; font-size: 25px; font-weight: bold; background-color: #8D6E63; text-align:center;">
 LastControl Machine Report</p>
 <p style="text-align:center;">$RDATE</p>
-<p style="text-align:right;">
+<p style="text-align:left;">
 <style>
 a:link, a:visited {
 background-color: #1C1C1C;
@@ -110,7 +110,7 @@ cat > $RDIR/redlist.html << EOF
 <p style="color: #000000; font-size: 25px; font-weight: bold; background-color: #df1c44; text-align:center;">
 LastControl Red List</p>
 <p style="text-align:center;">$RDATE</p>
-<p style="text-align:right;">
+<p style="text-align:left;">
 <style>
 a:link, a:visited {
 background-color: #1C1C1C;
@@ -149,7 +149,7 @@ cat > $RDIR/orangelist.html << EOF
 <p style="color: #000000; font-size: 25px; font-weight: bold; background-color: #E65100; text-align:center;">
 LastControl Orange List</p>
 <p style="text-align:center;">$RDATE</p>
-<p style="text-align:right;">
+<p style="text-align:left;">
 <style>
 a:link, a:visited {
 background-color: #1C1C1C;
@@ -188,7 +188,7 @@ cat > $RDIR/greenlist.html << EOF
 <p style="color: #000000; font-size: 25px; font-weight: bold; background-color: #1B5E20; text-align:center;">
 LastControl Green List</p>
 <p style="text-align:center;">$RDATE</p>
-<p style="text-align:right;">
+<p style="text-align:left;">
 <style>
 a:link, a:visited {
 background-color: #1C1C1C;
@@ -227,7 +227,7 @@ cat > $RDIR/inventory.html << EOF
 <p style="color: #000000; font-size: 25px; font-weight: bold; background-color: #607D8B; text-align:center;">
 LastControl Inventory</p>
 <p style="text-align:center;">$RDATE</p>
-<p style="text-align:right;">
+<p style="text-align:left;">
 <style>
 a:link, a:visited {
 background-color: #1C1C1C;
@@ -281,7 +281,7 @@ cat > $RDIR/cvelist.html << EOF
 <p style="color: #000000; font-size: 25px; font-weight: bold; background-color: #194a8d; text-align:center;">
 LastControl Kernel Based CVE Check Result</p>
 <p style="text-align:center;">$RDATE</p>
-<p style="text-align:right;">
+<p style="text-align:left;">
 <style>
 a:link, a:visited {
 background-color: #1C1C1C;
@@ -331,7 +331,7 @@ cat > $RDIR/generalreport.html << EOF
 <p style="color: #000000; font-size: 25px; font-weight: bold; background-color:#03A9F4; text-align:center;">
 LastControl General Report</p>
 <p style="text-align:center;">$RDATE</p>
-<p style="text-align:right;">
+<p style="text-align:left;">
 <style>
 a:link, a:visited {
 background-color: #1C1C1C;
@@ -475,7 +475,7 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	SYS_SCORE=$(echo $SYS_SCORE |cut -d "/" -f1)
 	NW_SCORE=$(echo $NW_SCORE |cut -d "/" -f1)
 	SSH_SCORE=$(echo $SSH_SCORE |cut -d "/" -f1)
-        if [ "$UPDATE_CHECK" = "EXIST" ] || [ "$INVCHECK" = "DETECTED" ] || [ ! -z "$CVE_LIST" ] || [ "$SYS_SCORE" -lt 70 ] || [ "$NW_SCORE" -lt 80 ] || [ "$SSH_SCORE" -lt 100 ]; then
+        if [ "$UPDATE_CHECK" = "EXIST" ] || [ "$INVCHECK" = "DETECTED" ] || [ ! -z "$CVE_LIST" ] || [ "$SYS_SCORE" -lt "70" ] || [ "$NW_SCORE" -lt "80" ] || [ "$SSH_SCORE" -lt "100" ]; then
             echo "<ul><li><a href=machine-report.html#$MACHINE>Details</a>  &nbsp; | &nbsp; $MACHINE_NAME $LINE</li></ul>" >> $RDIR/orangelist.html && ORANGEMACHINE=$((ORANGEMACHINE+1))
 	    MACHINEGROUP=ORANGE
 	    savedb
@@ -510,11 +510,11 @@ ORANGE_SCORE=$((100 * $ORANGEMACHINE/$TOTALMACHINE))
 RED_SCORE=$((100 * $REDMACHINE/$TOTALMACHINE))
 
 cat >> $RDIR/mainpage.html << EOF
-<p style="color: #088A08; font-size: 40px; font-weight: bold; text-align:left;">
+<p style="color: #088A08; font-size: 30px; font-weight: bold; text-align:left;">
 Green Machine: &nbsp; &nbsp; &nbsp; $GREENMACHINE &nbsp; &nbsp; &nbsp; Score: %$GREEN_SCORE </p>
-<p style="color: #FF8000; font-size: 40px; font-weight: bold; text-align:left;">
+<p style="color: #FF8000; font-size: 30px; font-weight: bold; text-align:left;">
 Orange Machine: &nbsp; &nbsp; $ORANGEMACHINE &nbsp; &nbsp; &nbsp; Score: %$ORANGE_SCORE </p>
-<p style="color: #FF0000; font-size: 40px; font-weight: bold; text-align:left;">
+<p style="color: #FF0000; font-size: 30px; font-weight: bold; text-align:left;">
 Red Machine: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; $REDMACHINE &nbsp; &nbsp; &nbsp; Score: %$RED_SCORE </p>
 <hr class="solid">
 <p style="color: #000000; font-size: 30px; font-weight: bold; text-align:left;">
@@ -542,7 +542,7 @@ nmap -Pn -F -oX /tmp/networkscan.xml $SRVSUBNET
 xsltproc /tmp/networkscan.xml -o /tmp/networkscan.html && cp /tmp/networkscan.html $RDIR/
 
 cat > /tmp/buttons.txt << EOF
-<p style="text-align:right;">
+<p style="text-align:left;">
 <style>
 a:link, a:visited {
 background-color: #1C1C1C;
