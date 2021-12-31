@@ -51,6 +51,8 @@ UPTIME=$(uptime) && UPTIME_MIN=$(awk '{ print "up " $1 /60 " minutes"}' /proc/up
 # System conf. check
 #---------------------------
 SYS_SCORE=0
+NW_SCORE=0
+SSH_SCORE=0
 
 RAM_FREE=$( expr $RAM_TOTAL - $RAM_USAGE)
 RAM_FREE_PERCENTAGE=$((100 * $RAM_FREE/$RAM_TOTAL))
@@ -279,7 +281,6 @@ SYS_SCORE="$SYS_SCORE/110"
 #---------------------------
 # Network conf. check
 #---------------------------
-NW_SCORE=0
 NWCONF1=$(sysctl net.ipv4.ip_forward |cut -d "=" -f2) && if [ "$NWCONF1" = "0" ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
 NWCONF2=$(sysctl net.ipv4.conf.all.send_redirects |cut -d "=" -f2) && if [ "$NWCONF2" = "0" ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
 NWCONF3=$(sysctl net.ipv4.conf.all.accept_source_route |cut -d "=" -f2) && if [ "$NWCONF3" = "0" ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
@@ -300,7 +301,6 @@ NWCONF14=$(sysctl net.ipv6.conf.all.accept_ra |cut -d "=" -f2) && if [ "$NWCONF1
 # SSH conf. check
 #---------------------------
 # PRIVATE HOST KEY
-SSH_SCORE=0
 SSHCONF1=$(stat /etc/ssh/sshd_config |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ "$SSHCONF1" = "0600" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
 SSHCONF2=$(stat /etc/ssh/ssh_host_rsa_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ "$SSHCONF2" = "0600" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
 SSHCONF3=$(stat /etc/ssh/ssh_host_ecdsa_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ "$SSHCONF3" = "0600" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
