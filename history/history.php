@@ -7,7 +7,7 @@
 <body>
 <p style="color: #000000; font-size: 25px; font-weight: bold; background-color:yellow; text-align:center;">
 LastControl History</p>
-<p style="text-align:right;">
+<p style="text-align:left;">
 <style>
 a:link, a:visited {
 background-color: #1C1C1C;
