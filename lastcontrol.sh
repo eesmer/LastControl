@@ -10,10 +10,12 @@
 # determine distro
 #--------------------------
 cat /etc/redhat-release > /tmp/distrocheck || cat /etc/*-release > /tmp/distrocheck || cat /etc/issue > /tmp/distrocheck
-grep -i debian /tmp/distrocheck 2>/dev/null && REP=APT
-grep -i ubuntu /tmp/distrocheck 2>/dev/null && REP=APT
-grep -i centos /tmp/distrocheck 2>/dev/null && REP=YUM
+grep -i "debian" /tmp/distrocheck 2>/dev/null && REP=APT
+grep -i "ubuntu" /tmp/distrocheck 2>/dev/null && REP=APT
+grep -i "centos" /tmp/distrocheck 2>/dev/null && REP=YUM
 grep -i "red hat" /tmp/distrocheck 2>/dev/null && REP=YUM
+grep -i "rocky" /tmp/distrocheck 2>/dev/null && REP=YUM
+
 rm /tmp/distrocheck
 
 #--------------------------
