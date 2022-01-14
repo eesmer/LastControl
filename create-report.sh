@@ -365,14 +365,9 @@ border: 5px solid lightgray;
 <table id="tblinventory">
 <tr>
 <th style="text-align:left">MACHINE NAME</th>
-<th style="text-align:left">SYSTEM SCORE</th>
-<th style="text-align:left">NETWORK SCORE</th>
-<th style="text-align:left">SSH SCORE</th>
-<th style="text-align:left">MACHINE GROUP</th>
+<th style="text-align:left">LOGs</th>
 </tr>
 EOF
-
-
 #------------------------------------------------------------------------------------
 
 function savedb () {
@@ -411,6 +406,7 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	scp -P22 -i /root/.ssh/lastcontrol $WDIR/chkrootkit/chkrootkit root@$MACHINE:/tmp/
         ssh -p22 -i /root/.ssh/lastcontrol root@$MACHINE -- bash /tmp/lastcontrol.sh
         scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.txt $RDIR/
+        scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.log $RDIR/
 
         UPDATE_CHECK=$(perl -ne'16..16 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
         UPTIME=$(perl -ne'19..19 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
@@ -432,7 +428,7 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	SYS_SCORE=$(perl -ne'34..34 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
 	NW_SCORE=$(perl -ne'35..35 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
 	SSH_SCORE=$(perl -ne'36..36 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-
+	
         # create cvelist.html
 	echo "<tr>" >> $RDIR/cvelist.html
 	echo "<td>$MACHINE_NAME</td>" >> $RDIR/cvelist.html
@@ -454,9 +450,9 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	# create generalreport.html
 	echo "<tr>" >> $RDIR/generalreport.html
         echo "<td>$MACHINE_NAME</td>" >> $RDIR/generalreport.html
-        echo "<td>$SYS_SCORE</td>" >> $RDIR/generalreport.html
-        echo "<td>$NW_SCORE</td>" >> $RDIR/generalreport.html
-        echo "<td>$SSH_SCORE</td>" >> $RDIR/generalreport.html
+        #echo "<td>$SYS_SCORE</td>" >> $RDIR/generalreport.html
+        #echo "<td>$NW_SCORE</td>" >> $RDIR/generalreport.html
+        #echo "<td>$SSH_SCORE</td>" >> $RDIR/generalreport.html
 		
 	echo "<h2 id="'"'$MACHINE'"'">$MACHINE</h2>| &nbsp; <a href=$MACHINE.txt>More</a>&nbsp; | &nbsp;<br><br>" >> $RDIR/machine-report.html && TOTALMACHINE=$((TOTALMACHINE+1))
         #echo "$OS &nbsp; | &nbsp; $OS_VER <br>" >> $RDIR/machine-report.html
@@ -484,11 +480,7 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	    MACHINEGROUP=GREEN
 	    savedb
         fi
-
-	# generalreport.html
-	echo "<td>$MACHINEGROUP</td>" >> $RDIR/generalreport.html
-	echo "</tr>" >> $RDIR/generalreport.html
-
+	
     elif [ "$sshReturn" -eq "255" ]; then
         echo "<ul><li>Connection request has been rejected. &nbsp; | &nbsp; $MACHINE $LINE</li></ul>" >> $RDIR/redlist.html && REDMACHINE=$((REDMACHINE+1))
 	MACHINEGROUP=RED
@@ -498,7 +490,20 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	MACHINEGROUP=RED
 	savedb
     fi
-	
+
+# generalreport.html
+echo "<td>" >> $RDIR/generalreport.html
+
+	LOGSLINE=$(cat $RDIR/$MACHINE.log | wc -l)
+	m=1
+	while [ "$m" -le "$LOGSLINE" ]; do
+		CURRENTLINE=$(ls -l |sed -n $m{p} $RDIR/$MACHINE.log)
+		echo "$CURRENTLINE <br>" >> $RDIR/generalreport.html
+		m=$(( m + 1 ))
+	done
+echo "</td>" >> $RDIR/generalreport.html
+echo "</tr>" >> $RDIR/generalreport.html
+
 i=$(( i + 1 ))
 done
 

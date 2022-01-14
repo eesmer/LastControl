@@ -56,14 +56,31 @@ SYS_SCORE=0
 NW_SCORE=0
 SSH_SCORE=0
 
+rm /tmp/$HOST_NAME.log
+
 RAM_FREE=$( expr $RAM_TOTAL - $RAM_USAGE)
 RAM_FREE_PERCENTAGE=$((100 * $RAM_FREE/$RAM_TOTAL))
-RAM_USE_PERCENTAGE=$(expr 100 - $RAM_FREE_PERCENTAGE) && if [ "$RAM_USE_PERCENTAGE" -lt "40" ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
-DISK_USAGE=$(df -H | grep -vE 'Filesystem|tmpfs|cdrom|udev' | awk '{ print $5" "$1"("$2"  "$3")" " --- "}' | sed -e :a -e N -e 's/\n/ /' -e ta |cut -d "%" -f1) && if [ "$DISK_USAGE" -lt "40" ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
+RAM_USE_PERCENTAGE=$(expr 100 - $RAM_FREE_PERCENTAGE)
+	if [ "$RAM_USE_PERCENTAGE" -lt "40" ]; then 
+		SYS_SCORE=$(($SYS_SCORE + 10))
+	else
+		echo "Ram usage Not Passed. %$RAM_USE_PERCENTAGE usage." >> /tmp/$HOST_NAME.log
+	fi
+DISK_USAGE=$(df -H | grep -vE 'Filesystem|tmpfs|cdrom|udev' | awk '{ print $5" "$1"("$2"  "$3")" " --- "}' | sed -e :a -e N -e 's/\n/ /' -e ta |cut -d "%" -f1)
+	if [ "$DISK_USAGE" -lt "40" ]; then
+		SYS_SCORE=$(($SYS_SCORE + 10))
+	else 
+		echo "Disk usage Not Passed. %$DISK_USAGE usage." >> /tmp/$HOST_NAME.log
+	fi
 SWAP_VALUE=$(free -m |grep Swap: |cut -d ":" -f2)
 SWAP_TOTAL=$(echo $SWAP_VALUE |cut -d " " -f1)
 SWAP_USE=$(echo $SWAP_VALUE |cut -d " " -f2)
-SWAP_USE_PERCENTAGE=$((100 * $SWAP_USE/$SWAP_TOTAL)) && if [ "$SWAP_USE_PERCENTAGE" = "0" ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
+SWAP_USE_PERCENTAGE=$((100 * $SWAP_USE/$SWAP_TOTAL))
+	if [ "$SWAP_USE_PERCENTAGE" = "0" ]; then
+		SYS_SCORE=$(($SYS_SCORE + 10))
+	else
+		echo "Swap usage Not Passed. %$SWAP_USE_PERCENTAGE usage." >> /tmp/$HOST_NAME.log
+	fi
 
 	#--------------------------
 	# check load
@@ -84,7 +101,11 @@ if [ "$REP" = "APT" ]; then
 	echo "n" |apt-get upgrade > /tmp/update_list.txt
 	cat /tmp/update_list.txt |grep "The following packages will be upgraded:" >> /dev/null && CHECK_UPDATE=EXIST \
 		&& UPDATE_COUNT=$(cat /tmp/update_list.txt |grep "upgraded," |cut -d " " -f1)
-	if [ "$CHECK_UPDATE" = "EXIST" ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi	
+	if [ "$CHECK_UPDATE" = "NONE" ]; then 
+		SYS_SCORE=$(($SYS_SCORE + 10))
+	else
+		echo "Update check Not Passed. $CHECK_UPDATE" >> /tmp/$HOST_NAME.log
+	fi
 
 elif [ "$REP" = "YUM" ]; then
 	yum check-update > /tmp/update_list.txt
@@ -99,6 +120,8 @@ elif [ "$REP" = "YUM" ]; then
 	if [ "$UPDATE_COUNT" = "0" ]; then
 		CHECK_UPDATE=NONE
 		SYS_SCORE=$(($SYS_SCORE + 10))
+	else
+		echo "Update check Not Passed. $CHECK_UPDATE" >> /tmp/$HOST_NAME.log
 	fi
 rm -f /tmp/update_list.txt
 fi
@@ -108,8 +131,12 @@ fi
 if [ "$REP" = "APT" ];then
 	dpkg -l | grep -v "^ii" >> /dev/null > /tmp/broken_pack_list.txt
 	sed -i -e '1d;2d;3d;4d;5d' /tmp/broken_pack_list.txt
-	BROKEN_COUNT=$(wc -l /tmp/broken_pack_list.txt)
-	if [ "$BROKEN_COUNT" = "0" ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
+	BROKEN_COUNT=$(wc -l /tmp/broken_pack_list.txt |cut -d " " -f1)
+	if [ "$BROKEN_COUNT" = "0" ]; then
+		SYS_SCORE=$(($SYS_SCORE + 10))
+	else
+		echo "Package Check Not Passed. $BROKEN_COUNT package(s) is a broken" >> /tmp/$HOST_NAME.log
+	fi
 
 	### ALLOWUNAUTH=$(grep -v "^#" /etc/apt/ -r | grep -c "AllowUnauthenticated")
 	### if [ $ALLOWUNAUTH = 0 ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
@@ -119,8 +146,12 @@ fi
 
 if [ "$REP" = "YUM" ];then
 	rpm -Va >> /dev/null > /tmp/broken_pack_list.txt
-	BROKEN_COUNT=$(wc -l /tmp/broken_pack_list.txt)
-	if [ "$BROKEN_COUNT" = "0" ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
+	BROKEN_COUNT=$(wc -l /tmp/broken_pack_list.txt |cut -d " " -f1)
+	if [ "$BROKEN_COUNT" = "0" ]; then
+		SYS_SCORE=$(($SYS_SCORE + 10))
+	else
+		echo "Package Check Not Passed. $BROKEN_COUNT package(s) is a broken" >> /tmp/$HOST_NAME.log
+	fi
 fi
 
 #------------------------------------
@@ -133,6 +164,7 @@ if [ "$LOCALUSER_COUNT" = "0" ]; then
 	rm /tmp/localusers.txt
 else
 	# check login limits
+	echo "Local User Check Not Passed. $LOCALUSER_COUNT user(s) exist." >> /tmp/$HOST_NAME.log
 	CHECK_LIMITS=NONE
 	i=1
 	while [ "$i" -le $LOCALUSER_COUNT ]; do
@@ -141,7 +173,11 @@ else
 		if [ ! "$?" = "0" ]; then CHECK_LIMITS=EXIST; fi
 	i=$(( i + 1 ))
 	done
-	if [ ! "$CHECK_LIMITS" = "EXIST" ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
+	if [ ! "$CHECK_LIMITS" = "EXIST" ]; then
+		SYS_SCORE=$(($SYS_SCORE + 10))
+	else
+		echo "Local User Limit Check Not Passed. Limit not exist for local user(s)." >> /tmp/$HOST_NAME.log
+	fi
 
 	# sudo members check
 	if [ -f "/etc/sudoers" ]; then
@@ -150,6 +186,7 @@ else
 			SYS_SCORE=$(($SYS_SCORE + 10))
 		else
 			cat /etc/sudoers |grep ALL= |grep -v % |grep -v root > /tmp/sudomembers.txt
+			echo "Sudo Check Not Passed. $SUDOMEMBERCOUNT user(s) have sudo privileges." >> /tmp/$HOST_NAME.log
 		fi
 	else
 		SUDOMEMBERCOUNT=0
@@ -178,7 +215,7 @@ if [ "$REP" = "APT" ];then
 	fi
 
 	if [ "$SHADOWFILEPERMS" = "-rw-r-----" ] && [ "$SHADOWFILEOWNER" = "root" ] && [ "$SHADOWFILEGRP" = "shadow" ]; then
-		SHADOW_CHECK=PASS
+		SHADOW_CHECK=PASSED
 	else
 		SHADOW_CHECK=NOTPASSED
 	fi
@@ -204,7 +241,7 @@ if [ "$REP" = "YUM" ];then
 	fi
 
 	if [ "$SHADOWFILEPERMS" = "----------." ] && [ "$SHADOWFILEOWNER" = "root" ] && [ "$SHADOWFILEGRP" = "root" ]; then
-		SHADOW_CHECK=PASS
+		SHADOW_CHECK=PASSED
 	else
 		SHADOW_CHECK=NOTPASSED
 	fi
@@ -224,6 +261,10 @@ fi
 
 if [ "$PASSWD_CHECK" = "PASSED" ] && [ "$SHADOW_CHECK" = "PASSED" ] && [ "$GROUP_CHECK" = "PASSED" ] && [ "$GSHADOW_CHECK" = "PASSED" ]; then
 	SYS_SCORE=$(($SYS_SCORE + 10))
+else
+	echo "User and Group File Check Not Passed. \
+		/etc/passwd access:$PASSWD_CHECK | /etc/shadow access:$SHADOW_CHECK | /etc/group access:$GROUP_CHECK | /etc/gshadow access:$GSHADOW_CHECK" \
+		>> /tmp/$HOST_NAME.log
 fi
 
 #--------------------------
@@ -243,12 +284,18 @@ for part in ${parts[*]}; do
 	part_check $part $out >> /tmp/fs_conf.txt
 done
 PART_CHECK=$(cat /tmp/fs_conf.txt |grep "not in separated partition." |wc -l)
+if [ "$PART_CHECK" = "0" ]; then
+	SYS_SCORE=$(($SYS_SCORE + 10))
+else
+	echo "Partition Check Not Passed. $PART_CHECK not in separated partition." >> /tmp/$HOST_NAME.log
+fi
 
 #---------------------------
 # S.M.A.R.T check
 #---------------------------
 df -H | grep -vE 'Filesystem|tmpfs|cdrom|udev|mapper' |cut -d " " -f1 > /tmp/disklist.txt
 NUMDISK=$(cat /tmp/disklist.txt | wc -l)
+SMART_SCORE=0
 i=1
 
 while [ "$i" -le "$NUMDISK" ]; do
@@ -266,6 +313,10 @@ else
 	SMART_RESULT="Not Passed"
 fi
 
+if [ "$SMART_SUPPORT" = "1" ] && [ "$SMART_RESULT" = "pass" ]; then
+	SMART_SCORE=$(($SMART_SCORE + 1))
+fi
+
 echo "-> $DISK" >> /tmp/smartcheck-result.txt 
 echo "Support: $SMART_SUPPORT" >> /tmp/smartcheck-result.txt
 echo "Result: $SMART_RESULT" >> /tmp/smartcheck-result.txt
@@ -278,7 +329,9 @@ rm -f /tmp/smartcheck-result.txt
 rm -f /tmp/disklist.txt
 #SMART=$(echo $SMART)
 
-SYS_SCORE="$SYS_SCORE/110"
+if [ "$SMART_SCORE" = "0" ]; then
+	echo "S.M.A.R.T Check Not Passed. Could not perform S.M.A.R.T check or there are disks that failed the test." >> /tmp/$HOST_NAME.log
+fi
 
 #---------------------------
 # Network conf. check
