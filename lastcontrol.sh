@@ -308,13 +308,10 @@ egrep "SMART support is: Available - device has SMART capability." /tmp/DISK$i.t
 if [ "$SMART_SUPPORT" = "1" ]; then
 	SMART_SUPPORT="Available - device has SMART capability."
 	SMART_RESULT=$(cat /tmp/DISK$i.txt |grep "SMART overall-health self-assessment test result:" |cut -d: -f2 |cut -d " " -f2)
+        if [ $SMART_RESULT == "PASSED" ]; then SMART_SCORE=$(($SMART_SCORE + 1)); fi
 else
 	SMART_SUPPORT="Unavailable - device lacks SMART capability."
 	SMART_RESULT="Not Passed"
-fi
-
-if [ "$SMART_SUPPORT" = "1" ] && [ "$SMART_RESULT" = "pass" ]; then
-	SMART_SCORE=$(($SMART_SCORE + 1))
 fi
 
 echo "-> $DISK" >> /tmp/smartcheck-result.txt 
