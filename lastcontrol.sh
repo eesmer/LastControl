@@ -308,10 +308,13 @@ egrep "SMART support is: Available - device has SMART capability." /tmp/DISK$i.t
 if [ "$SMART_SUPPORT" = "1" ]; then
 	SMART_SUPPORT="Available - device has SMART capability."
 	SMART_RESULT=$(cat /tmp/DISK$i.txt |grep "SMART overall-health self-assessment test result:" |cut -d: -f2 |cut -d " " -f2)
-        if [ $SMART_RESULT == "PASSED" ]; then SMART_SCORE=$(($SMART_SCORE + 1)); fi
 else
 	SMART_SUPPORT="Unavailable - device lacks SMART capability."
 	SMART_RESULT="Not Passed"
+fi
+
+if [ "$SMART_SUPPORT" = "1" ] && [ "$SMART_RESULT" = "pass" ]; then
+	SMART_SCORE=$(($SMART_SCORE + 1))
 fi
 
 echo "-> $DISK" >> /tmp/smartcheck-result.txt 
@@ -372,11 +375,28 @@ SSHCONF14=$(sshd -T | grep permitemptypasswords |cut -d " " -f2) && if [ "$SSHCO
 SSHCONF15=$(sshd -T | grep permituserenvironment |cut -d " " -f2) && if [ "$SSHCONF15" = "no" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
 
 #--------------------------
-# CVE Check
+# Vulnerability Check
 #--------------------------
+# Kernel based CVE Check
 KERNELVER=$(uname -a |cut -d " " -f3 |cut -d "-" -f1)
 perl /tmp/cve_check -k $KERNELVER > /tmp/cve_list
 CVELIST=$(cat /tmp/cve_list |grep CVE) && echo $CVELIST > /tmp/cve_list && CVELIST=$(cat /tmp/cve_list) && rm /tmp/cve_list && rm /tmp/cve_check
+
+# LOG4J/LOG4SHELL check
+find / -iname "log4j*" > /tmp/log4j_exist.txt && sed -i '/log4j_exist.txt/d' /tmp/log4j_exist.txt
+if [ -s "/tmp/log4j_exist.txt" ]; then
+	LOG4J_EXIST="USE"
+        echo "LOG4J is use." >> /tmp/$HOST_NAME.log
+        echo "-----------------------------------------------------" >> /tmp/$HOST_NAME.log
+        cat /tmp/log4j_exist.txt >> /tmp/$HOST_NAME.log
+        echo "-----------------------------------------------------" >> /tmp/$HOST_NAME.log
+	find /var/log/ -name '*.gz' -type f -exec sh -c "zcat {} | sed -e 's/\${lower://'g | tr -d '}' | egrep -i 'jndi:(ldap[s]?|rmi|dns|nis|iiop|corba|nds|http):'" \; \
+		>> /tmp/$HOST_NAME.log
+        echo "-----------------------------------------------------" >> /tmp/$HOST_NAME.log
+else
+LOG4J_EXIST=NOT_USE
+rm -f /tmp/log4j_exist.txt
+fi
 
 #--------------------------
 # for notification
@@ -496,9 +516,12 @@ $HOST_NAME LastControl Report $DATE
 --------------------------------------------------------------------------------------------------------------------------
 |Kernel Version:    |$KERNELVER
 --------------------------------------------------------------------------------------------------------------------------
-|CVE List:          |$CVELIST
+|Vulnerability Check
 --------------------------------------------------------------------------------------------------------------------------
-|S.M.A.R.T          |
+|CVE List:          |$CVELIST
+|Log4j/Log4Shell    |$LOG4J_EXIST
+--------------------------------------------------------------------------------------------------------------------------
+|S.M.A.R.T
 --------------------------------------------------------------------------------------------------------------------------
 $SMART
 --------------------------------------------------------------------------------------------------------------------------
