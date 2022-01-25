@@ -64,13 +64,13 @@ RAM_USE_PERCENTAGE=$(expr 100 - $RAM_FREE_PERCENTAGE)
 	if [ "$RAM_USE_PERCENTAGE" -lt "40" ]; then 
 		SYS_SCORE=$(($SYS_SCORE + 10))
 	else
-		echo "Ram usage Not Passed. %$RAM_USE_PERCENTAGE usage." >> /tmp/$HOST_NAME.log
+		echo "- Ram usage (-) %$RAM_USE_PERCENTAGE usage." >> /tmp/$HOST_NAME.log
 	fi
 DISK_USAGE=$(df -H | grep -vE 'Filesystem|tmpfs|cdrom|udev' | awk '{ print $5" "$1"("$2"  "$3")" " --- "}' | sed -e :a -e N -e 's/\n/ /' -e ta |cut -d "%" -f1)
 	if [ "$DISK_USAGE" -lt "40" ]; then
 		SYS_SCORE=$(($SYS_SCORE + 10))
 	else 
-		echo "Disk usage Not Passed. %$DISK_USAGE usage." >> /tmp/$HOST_NAME.log
+		echo "- Disk usage (-) %$DISK_USAGE usage." >> /tmp/$HOST_NAME.log
 	fi
 SWAP_VALUE=$(free -m |grep Swap: |cut -d ":" -f2)
 SWAP_TOTAL=$(echo $SWAP_VALUE |cut -d " " -f1)
@@ -79,7 +79,7 @@ SWAP_USE_PERCENTAGE=$((100 * $SWAP_USE/$SWAP_TOTAL))
 	if [ "$SWAP_USE_PERCENTAGE" = "0" ]; then
 		SYS_SCORE=$(($SYS_SCORE + 10))
 	else
-		echo "Swap usage Not Passed. %$SWAP_USE_PERCENTAGE usage." >> /tmp/$HOST_NAME.log
+		echo "- Swap usage (-) %$SWAP_USE_PERCENTAGE usage." >> /tmp/$HOST_NAME.log
 	fi
 
 	#--------------------------
@@ -104,7 +104,7 @@ if [ "$REP" = "APT" ]; then
 	if [ "$CHECK_UPDATE" = "NONE" ]; then 
 		SYS_SCORE=$(($SYS_SCORE + 10))
 	else
-		echo "Update check Not Passed. $CHECK_UPDATE" >> /tmp/$HOST_NAME.log
+		echo "- Update check (-) $CHECK_UPDATE" >> /tmp/$HOST_NAME.log
 	fi
 
 elif [ "$REP" = "YUM" ]; then
@@ -121,7 +121,7 @@ elif [ "$REP" = "YUM" ]; then
 		CHECK_UPDATE=NONE
 		SYS_SCORE=$(($SYS_SCORE + 10))
 	else
-		echo "Update check Not Passed. $CHECK_UPDATE" >> /tmp/$HOST_NAME.log
+		echo "- Update check (-) $CHECK_UPDATE" >> /tmp/$HOST_NAME.log
 	fi
 rm -f /tmp/update_list.txt
 fi
@@ -135,7 +135,7 @@ if [ "$REP" = "APT" ];then
 	if [ "$BROKEN_COUNT" = "0" ]; then
 		SYS_SCORE=$(($SYS_SCORE + 10))
 	else
-		echo "Package Check Not Passed. $BROKEN_COUNT package(s) is a broken" >> /tmp/$HOST_NAME.log
+		echo "- Package Check (-) $BROKEN_COUNT package(s) is a broken" >> /tmp/$HOST_NAME.log
 	fi
 
 	### ALLOWUNAUTH=$(grep -v "^#" /etc/apt/ -r | grep -c "AllowUnauthenticated")
@@ -150,7 +150,7 @@ if [ "$REP" = "YUM" ];then
 	if [ "$BROKEN_COUNT" = "0" ]; then
 		SYS_SCORE=$(($SYS_SCORE + 10))
 	else
-		echo "Package Check Not Passed. $BROKEN_COUNT package(s) is a broken" >> /tmp/$HOST_NAME.log
+		echo "- Package Check (-) $BROKEN_COUNT package(s) is a broken" >> /tmp/$HOST_NAME.log
 	fi
 fi
 
@@ -164,7 +164,7 @@ if [ "$LOCALUSER_COUNT" = "0" ]; then
 	rm /tmp/localusers.txt
 else
 	# check login limits
-	echo "Local User Check Not Passed. $LOCALUSER_COUNT user(s) exist." >> /tmp/$HOST_NAME.log
+	echo "- Local User Check (-) $LOCALUSER_COUNT user(s) exist." >> /tmp/$HOST_NAME.log
 	CHECK_LIMITS=NONE
 	i=1
 	while [ "$i" -le $LOCALUSER_COUNT ]; do
@@ -176,7 +176,7 @@ else
 	if [ ! "$CHECK_LIMITS" = "EXIST" ]; then
 		SYS_SCORE=$(($SYS_SCORE + 10))
 	else
-		echo "Local User Limit Check Not Passed. Limit not exist for local user(s)." >> /tmp/$HOST_NAME.log
+		echo "- Local User Limit Check (-) Limit not used." >> /tmp/$HOST_NAME.log
 	fi
 
 	# sudo members check
@@ -186,7 +186,7 @@ else
 			SYS_SCORE=$(($SYS_SCORE + 10))
 		else
 			cat /etc/sudoers |grep ALL= |grep -v % |grep -v root > /tmp/sudomembers.txt
-			echo "Sudo Check Not Passed. $SUDOMEMBERCOUNT user(s) have sudo privileges." >> /tmp/$HOST_NAME.log
+			echo "- Sudo Check (-) $SUDOMEMBERCOUNT user(s) have sudo privileges." >> /tmp/$HOST_NAME.log
 		fi
 	else
 		SUDOMEMBERCOUNT=0
@@ -262,7 +262,7 @@ fi
 if [ "$PASSWD_CHECK" = "PASSED" ] && [ "$SHADOW_CHECK" = "PASSED" ] && [ "$GROUP_CHECK" = "PASSED" ] && [ "$GSHADOW_CHECK" = "PASSED" ]; then
 	SYS_SCORE=$(($SYS_SCORE + 10))
 else
-	echo "User and Group File Check Not Passed. \
+	echo "- User and Group File Check (-) \
 		/etc/passwd access:$PASSWD_CHECK | /etc/shadow access:$SHADOW_CHECK | /etc/group access:$GROUP_CHECK | /etc/gshadow access:$GSHADOW_CHECK" \
 		>> /tmp/$HOST_NAME.log
 fi
@@ -287,7 +287,7 @@ PART_CHECK=$(cat /tmp/fs_conf.txt |grep "not in separated partition." |wc -l)
 if [ "$PART_CHECK" = "0" ]; then
 	SYS_SCORE=$(($SYS_SCORE + 10))
 else
-	echo "Partition Check Not Passed. $PART_CHECK not in separated partition." >> /tmp/$HOST_NAME.log
+	echo "- Partition Check (-) $PART_CHECK not in separated partition." >> /tmp/$HOST_NAME.log
 fi
 
 #---------------------------
@@ -330,7 +330,7 @@ rm -f /tmp/disklist.txt
 #SMART=$(echo $SMART)
 
 if [ "$SMART_SCORE" = "0" ]; then
-	echo "S.M.A.R.T Check Not Passed. Could not perform S.M.A.R.T check or there are disks that failed the test." >> /tmp/$HOST_NAME.log
+	echo "- S.M.A.R.T Check (-) Failed or not tested." >> /tmp/$HOST_NAME.log
 fi
 
 #---------------------------
@@ -377,16 +377,16 @@ SSHCONF15=$(sshd -T | grep permituserenvironment |cut -d " " -f2) && if [ "$SSHC
 #--------------------------
 # Vulnerability Check
 #--------------------------
-# Kernel based CVE Check
+# kernel based cve check
 KERNELVER=$(uname -a |cut -d " " -f3 |cut -d "-" -f1)
 perl /tmp/cve_check -k $KERNELVER > /tmp/cve_list
 CVELIST=$(cat /tmp/cve_list |grep CVE) && echo $CVELIST > /tmp/cve_list && CVELIST=$(cat /tmp/cve_list) && rm /tmp/cve_list && rm /tmp/cve_check
 
-# LOG4J/LOG4SHELL check
+# jog4j check
 find / -iname "log4j*" > /tmp/log4j_exist.txt && sed -i '/log4j_exist.txt/d' /tmp/log4j_exist.txt
 if [ -s "/tmp/log4j_exist.txt" ]; then
 	LOG4J_EXIST="USE"
-        echo "LOG4J is use." >> /tmp/$HOST_NAME.log
+        echo "LOG4J/LOG4SHELL is use." >> /tmp/$HOST_NAME.log
         echo "-----------------------------------------------------" >> /tmp/$HOST_NAME.log
         cat /tmp/log4j_exist.txt >> /tmp/$HOST_NAME.log
         echo "-----------------------------------------------------" >> /tmp/$HOST_NAME.log
@@ -394,8 +394,7 @@ if [ -s "/tmp/log4j_exist.txt" ]; then
 		>> /tmp/$HOST_NAME.log
         echo "-----------------------------------------------------" >> /tmp/$HOST_NAME.log
 else
-LOG4J_EXIST=NOT_USE
-rm -f /tmp/log4j_exist.txt
+	LOG4J_EXIST=NOT_USE
 fi
 
 #--------------------------
@@ -440,11 +439,12 @@ LISTENINGCONN=$(wc -l /tmp/listeningconn.txt |cut -d " " -f1)
 LOCALDIR="/usr/local/lastcontrol/data/etc"
 if [ ! -d "$LOCALDIR" ]; then
 mkdir -p $LOCALDIR
-rsync -a /etc/ $LOCALDIR
+rsync -a /etc/ $LOCALDIR && INT_CHECK=INITIAL
+else
+	rsync -av /etc/ $LOCALDIR > /tmp/integritycheck.txt
+	sed -i -e :a -e '$d;N;2,2ba' -e 'P;D' /tmp/integritycheck.txt && sed -i '/^$/d' /tmp/integritycheck.txt && sed -i '1d' /tmp/integritycheck.txt
+	if [ -s "/tmp/integritycheck.txt" ]; then INT_CHECK=DETECTED; else INT_CHECK=NOTDETECTED; fi
 fi
-rsync -a -n -v /etc/ $LOCALDIR > /tmp/integritycheck.txt
-sed -i -e :a -e '$d;N;2,2ba' -e 'P;D' /tmp/integritycheck.txt
-sed -i '1d' /tmp/integritycheck.txt
 
 #--------------------------
 # inventory check
@@ -464,10 +464,10 @@ cat /tmp/hddlist.txt >> /tmp/inventory.txt && rm -f /tmp/hddlist.txt
 
 if [ ! -f "$LOCALFILE" ]; then
 cp /tmp/inventory.txt $LOCALFILE
-INVCHECK="CREATED"
+INV_CHECK="CREATED"
 else
-INVCHECK="DETECTED"
-diff $LOCALFILE /tmp/inventory.txt >> /dev/null && INVCHECK="NOTDETECTED"
+INV_CHECK="DETECTED"
+diff $LOCALFILE /tmp/inventory.txt >> /dev/null && INV_CHECK="NOTDETECTED"
 fi
 
 #--------------------------
@@ -512,16 +512,17 @@ $HOST_NAME LastControl Report $DATE
 |Network Score:     |$NW_SCORE
 |SSH Score:         |$SSH_SCORE
 --------------------------------------------------------------------------------------------------------------------------
-|Inventory Check:   |$INVCHECK
+|Inventory Check:   |$INV_CHECK
+|Integrity Check:   |$INT_CHECK
 --------------------------------------------------------------------------------------------------------------------------
 |Kernel Version:    |$KERNELVER
 --------------------------------------------------------------------------------------------------------------------------
 |Vulnerability Check
 --------------------------------------------------------------------------------------------------------------------------
 |CVE List:          |$CVELIST
-|Log4j/Log4Shell    |$LOG4J_EXIST
+|LOG4J/LOG4SHELL    |$LOG4J_EXIST
 --------------------------------------------------------------------------------------------------------------------------
-|S.M.A.R.T
+|S.M.A.R.T          |
 --------------------------------------------------------------------------------------------------------------------------
 $SMART
 --------------------------------------------------------------------------------------------------------------------------
@@ -529,7 +530,7 @@ EOF
 
 echo >> /tmp/$HOST_NAME.txt
 
-if [ "$INVCHECK" = "DETECTED" ]; then
+if [ "$INV_CHECK" = "DETECTED" ]; then
 	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 	echo "                          :::... CHANGE HARDWARE NOTIFICATION !!! ....:::" >> /tmp/$HOST_NAME.txt
 	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
@@ -620,13 +621,14 @@ if [ ! "$PART_CHECK" = "0" ]; then
 	echo "" >> /tmp/$HOST_NAME.txt
 fi
 
-#echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-#echo "			:::... INTEGRITY CHECK ...:::" >> /tmp/$HOST_NAME.txt
-#echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-#echo "Warnings" >> /tmp/$HOST_NAME.txt
-#echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-#cat /tmp/integritycheck.txt >> /tmp/$HOST_NAME.txt && rm -f /tmp/integritycheck.txt
-#echo "" >> /tmp/$HOST_NAME.txt
-rm -f /tmp/integritycheck.txt
-
-echo "=======================================================================================================================================================================" >> /tmp/$HOST_NAME.txt
+if [ $INT_CHECK = "DETECTED" ]; then
+	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+	echo "			:::... INTEGRITY CHECK ...:::" >> /tmp/$HOST_NAME.txt
+	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+	echo "Warnings" >> /tmp/$HOST_NAME.txt
+	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+	cat /tmp/integritycheck.txt >> /tmp/$HOST_NAME.txt && rm -f /tmp/integritycheck.txt
+	echo "" >> /tmp/$HOST_NAME.txt
+	rm -f /tmp/integritycheck.txt
+	echo "=======================================================================================================================================================================" >> /tmp/$HOST_NAME.txt
+fi
