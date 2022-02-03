@@ -49,36 +49,26 @@ LAST_BOOT=$(who -b | awk '{print $3,$4}')
 UPTIME=$(uptime) && UPTIME_MIN=$(awk '{ print "up " $1 /60 " minutes"}' /proc/uptime)
 
 #---------------------------
-# for SYSTEM SCORE
 # System conf. check
 #---------------------------
-SYS_SCORE=0
-NW_SCORE=0
-SSH_SCORE=0
 
 rm /tmp/$HOST_NAME.log
 
 RAM_FREE=$( expr $RAM_TOTAL - $RAM_USAGE)
 RAM_FREE_PERCENTAGE=$((100 * $RAM_FREE/$RAM_TOTAL))
 RAM_USE_PERCENTAGE=$(expr 100 - $RAM_FREE_PERCENTAGE)
-	if [ "$RAM_USE_PERCENTAGE" -lt "40" ]; then 
-		SYS_SCORE=$(($SYS_SCORE + 10))
-	else
+	if [ $RAM_USE_PERCENTAGE -gt "40" ]; then 
 		echo "- Ram usage (-) %$RAM_USE_PERCENTAGE usage." >> /tmp/$HOST_NAME.log
 	fi
 DISK_USAGE=$(df -H | grep -vE 'Filesystem|tmpfs|cdrom|udev' | awk '{ print $5" "$1"("$2"  "$3")" " --- "}' | sed -e :a -e N -e 's/\n/ /' -e ta |cut -d "%" -f1)
-	if [ "$DISK_USAGE" -lt "40" ]; then
-		SYS_SCORE=$(($SYS_SCORE + 10))
-	else 
+	if [ $DISK_USAGE -gt "40" ]; then
 		echo "- Disk usage (-) %$DISK_USAGE usage." >> /tmp/$HOST_NAME.log
 	fi
 SWAP_VALUE=$(free -m |grep Swap: |cut -d ":" -f2)
 SWAP_TOTAL=$(echo $SWAP_VALUE |cut -d " " -f1)
 SWAP_USE=$(echo $SWAP_VALUE |cut -d " " -f2)
 SWAP_USE_PERCENTAGE=$((100 * $SWAP_USE/$SWAP_TOTAL))
-	if [ "$SWAP_USE_PERCENTAGE" = "0" ]; then
-		SYS_SCORE=$(($SYS_SCORE + 10))
-	else
+	if [ $SWAP_USE_PERCENTAGE -gt "0" ]; then
 		echo "- Swap usage (-) %$SWAP_USE_PERCENTAGE usage." >> /tmp/$HOST_NAME.log
 	fi
 
@@ -87,9 +77,12 @@ SWAP_USE_PERCENTAGE=$((100 * $SWAP_USE/$SWAP_TOTAL))
 	#--------------------------
 	top -b -n1 | head -17 | tail -11 > /tmp/systemload.txt
 	sed -i '1d' /tmp/systemload.txt
-	MOSTPROCESS=$(cat /tmp/systemload.txt |awk '{print $9, $10, $12}' |head -1 |cut -d " " -f3)
-	MOSTRAM=$(cat /tmp/systemload.txt |awk '{print $9, $10, $12}' |head -1 |cut -d " " -f2)
-	MOSTCPU=$(cat /tmp/systemload.txt |awk '{print $9, $10, $12}' |head -1 |cut -d " " -f1)
+	MOST_PROCESS=$(cat /tmp/systemload.txt |awk '{print $9, $10, $12}' |head -1 |cut -d " " -f3)
+	MOST_RAM=$(cat /tmp/systemload.txt |awk '{print $9, $10, $12}' |head -1 |cut -d " " -f2)
+	MOST_CPU=$(cat /tmp/systemload.txt |awk '{print $9, $10, $12}' |head -1 |cut -d " " -f1)
+	echo "- Using the most Resource: $MOST_PROCESS" >> /tmp/$HOST_NAME.log
+	echo "- Using the most Ram: $MOST_RAM" >> /tmp/$HOST_NAME.log
+	echo "- Using the most Cpu: $MOST_CPU" >> /tmp/$HOST_NAME.log		
 	rm -f /tmp/systemload.txt
 
 #--------------------------
@@ -101,9 +94,7 @@ if [ "$REP" = "APT" ]; then
 	echo "n" |apt-get upgrade > /tmp/update_list.txt
 	cat /tmp/update_list.txt |grep "The following packages will be upgraded:" >> /dev/null && CHECK_UPDATE=EXIST \
 		&& UPDATE_COUNT=$(cat /tmp/update_list.txt |grep "upgraded," |cut -d " " -f1)
-	if [ "$CHECK_UPDATE" = "NONE" ]; then 
-		SYS_SCORE=$(($SYS_SCORE + 10))
-	else
+	if [  $CHECK_UPDATE = "EXIST" ]; then 
 		echo "- Update check (-) $CHECK_UPDATE" >> /tmp/$HOST_NAME.log
 	fi
 
@@ -117,14 +108,14 @@ elif [ "$REP" = "YUM" ]; then
 	UPDATE_COUNT=$(cat /tmp/update_list.txt |wc -l)
 
 	CHECK_UPDATE=EXIST
-	if [ "$UPDATE_COUNT" = "0" ]; then
-		CHECK_UPDATE=NONE
-		SYS_SCORE=$(($SYS_SCORE + 10))
+	if [ $UPDATE_COUNT -gt "0" ]; then
+		echo "- Update Check (-) $CHECK_UPDATE" >> /tmp/$HOST_NAME.log
 	else
-		echo "- Update check (-) $CHECK_UPDATE" >> /tmp/$HOST_NAME.log
+		CHECK_UPDATE=NONE
 	fi
 rm -f /tmp/update_list.txt
 fi
+
 #------------------------------
 # broken package list
 #------------------------------
@@ -132,9 +123,7 @@ if [ "$REP" = "APT" ];then
 	dpkg -l | grep -v "^ii" >> /dev/null > /tmp/broken_pack_list.txt
 	sed -i -e '1d;2d;3d;4d;5d' /tmp/broken_pack_list.txt
 	BROKEN_COUNT=$(wc -l /tmp/broken_pack_list.txt |cut -d " " -f1)
-	if [ "$BROKEN_COUNT" = "0" ]; then
-		SYS_SCORE=$(($SYS_SCORE + 10))
-	else
+	if [ $BROKEN_COUNT -gt "0" ]; then
 		echo "- Package Check (-) $BROKEN_COUNT package(s) is a broken" >> /tmp/$HOST_NAME.log
 	fi
 
@@ -147,9 +136,7 @@ fi
 if [ "$REP" = "YUM" ];then
 	rpm -Va >> /dev/null > /tmp/broken_pack_list.txt
 	BROKEN_COUNT=$(wc -l /tmp/broken_pack_list.txt |cut -d " " -f1)
-	if [ "$BROKEN_COUNT" = "0" ]; then
-		SYS_SCORE=$(($SYS_SCORE + 10))
-	else
+	if [ $BROKEN_COUNT -gt "0" ]; then
 		echo "- Package Check (-) $BROKEN_COUNT package(s) is a broken" >> /tmp/$HOST_NAME.log
 	fi
 fi
@@ -159,8 +146,7 @@ fi
 #------------------------------------
 getent passwd {1000..6000} > /tmp/localusers.txt
 LOCALUSER_COUNT=$(wc -l /tmp/localusers.txt |cut -d " " -f1)
-if [ "$LOCALUSER_COUNT" = "0" ]; then
-	SYS_SCORE=$(($SYS_SCORE + 10))
+if [ $LOCALUSER_COUNT = "0" ]; then
 	rm /tmp/localusers.txt
 else
 	# check login limits
@@ -173,24 +159,19 @@ else
 		if [ ! "$?" = "0" ]; then CHECK_LIMITS=EXIST; fi
 	i=$(( i + 1 ))
 	done
-	if [ ! "$CHECK_LIMITS" = "EXIST" ]; then
-		SYS_SCORE=$(($SYS_SCORE + 10))
-	else
+	if [ $CHECK_LIMITS = "EXIST" ]; then
 		echo "- Local User Limit Check (-) Limit not used." >> /tmp/$HOST_NAME.log
 	fi
 
 	# sudo members check
 	if [ -f "/etc/sudoers" ]; then
 		SUDOMEMBERCOUNT=$(cat /etc/sudoers |grep ALL= |grep -v % |grep -v root |wc -l)
-		if [ "$SUDOMEMBERCOUNT" = "0" ]; then
-			SYS_SCORE=$(($SYS_SCORE + 10))
-		else
+		if [ $SUDOMEMBERCOUNT -gt "0" ]; then
 			cat /etc/sudoers |grep ALL= |grep -v % |grep -v root > /tmp/sudomembers.txt
 			echo "- Sudo Check (-) $SUDOMEMBERCOUNT user(s) have sudo privileges." >> /tmp/$HOST_NAME.log
 		fi
 	else
 		SUDOMEMBERCOUNT=0
-		SYS_SCORE=$(($SYS_SCORE + 10))
 	fi
 fi
 
@@ -208,25 +189,25 @@ GROUP_CHECK=NONE
 GSHADOW_CHECK=NONE
 
 if [ "$REP" = "APT" ];then
-	if [ "$PASSWDFILEPERMS" = "-rw-r--r--" ] && [ "$PASSWDFILEOWNER" = "root" ] && [ "$PASSWDFILEGRP" = "root" ]; then
+	if [ $PASSWDFILEPERMS = "-rw-r--r--" ] && [ $PASSWDFILEOWNER = "root" ] && [ $PASSWDFILEGRP = "root" ]; then
 		PASSWD_CHECK=PASSED
 	else
 		PASSWD_CHECK=NOTPASSED
 	fi
 
-	if [ "$SHADOWFILEPERMS" = "-rw-r-----" ] && [ "$SHADOWFILEOWNER" = "root" ] && [ "$SHADOWFILEGRP" = "shadow" ]; then
+	if [ $SHADOWFILEPERMS = "-rw-r-----" ] && [ $SHADOWFILEOWNER = "root" ] && [ $SHADOWFILEGRP = "shadow" ]; then
 		SHADOW_CHECK=PASSED
 	else
 		SHADOW_CHECK=NOTPASSED
 	fi
 
-	if [ "$GROUPFILEPERMS" = "-rw-r--r--" ] && [ "$GROUPFILEOWNER" = "root" ] && [ "$GROUPFILEGRP" = "root" ]; then
+	if [ $GROUPFILEPERMS = "-rw-r--r--" ] && [ $GROUPFILEOWNER = "root" ] && [ $GROUPFILEGRP = "root" ]; then
 		GROUP_CHECK=PASSED
 	else
 		GROUP_CHECK=NOTPASSED
 	fi
 	
-	if [ "$GSHADOWFILEPERMS" = "-rw-r-----" ] && [ "$GSHADOWFILEOWNER" = "root" ] && [ "$GSHADOWFILEGRP" = "shadow" ]; then
+	if [ $GSHADOWFILEPERMS = "-rw-r-----" ] && [ $GSHADOWFILEOWNER = "root" ] && [ $GSHADOWFILEGRP = "shadow" ]; then
 		GSHADOW_CHECK=PASSED
 	else
 		GSHADOW_CHECK=NOTPASSED
@@ -234,34 +215,32 @@ if [ "$REP" = "APT" ];then
 fi
 
 if [ "$REP" = "YUM" ];then
-	if [ "$PASSWDFILEPERMS" = "-rw-r--r--." ] && [ "$PASSWDFILEOWNER" = "root" ] && [ "$PASSWDFILEGRP" = "root" ]; then
+	if [ $PASSWDFILEPERMS = "-rw-r--r--." ] && [ $PASSWDFILEOWNER = "root" ] && [ $PASSWDFILEGRP = "root" ]; then
 		PASSWD_CHECK=PASSED
 	else
 		PASSWD_CHECK=NOTPASSED
 	fi
 
-	if [ "$SHADOWFILEPERMS" = "----------." ] && [ "$SHADOWFILEOWNER" = "root" ] && [ "$SHADOWFILEGRP" = "root" ]; then
+	if [ $SHADOWFILEPERMS = "----------." ] && [ $SHADOWFILEOWNER = "root" ] && [ $SHADOWFILEGRP = "root" ]; then
 		SHADOW_CHECK=PASSED
 	else
 		SHADOW_CHECK=NOTPASSED
 	fi
 
-	if [ "$GROUPFILEPERMS" = "-rw-r--r--." ] && [ "$GROUPFILEOWNER" = "root" ] && [ "$GROUPFILEGRP" = "root" ]; then
+	if [ $GROUPFILEPERMS = "-rw-r--r--." ] && [ $GROUPFILEOWNER = "root" ] && [ $GROUPFILEGRP = "root" ]; then
 		GROUP_CHECK=PASSED
 	else
 		GROUP_CHECK=NOTPASSED
 	fi
 
-	if [ "$GSHADOWFILEPERMS" = "----------." ] && [ "$GSHADOWFILEOWNER" = "root" ] && [ "$GSHADOWFILEGRP" = "root" ]; then
+	if [ $GSHADOWFILEPERMS = "----------." ] && [ $GSHADOWFILEOWNER = "root" ] && [ $GSHADOWFILEGRP = "root" ]; then
 		GSHADOW_CHECK=PASSED
 	else
 		GSHADOW_CHECK=NOTPASSED
 	fi
 fi
 
-if [ "$PASSWD_CHECK" = "PASSED" ] && [ "$SHADOW_CHECK" = "PASSED" ] && [ "$GROUP_CHECK" = "PASSED" ] && [ "$GSHADOW_CHECK" = "PASSED" ]; then
-	SYS_SCORE=$(($SYS_SCORE + 10))
-else
+if [ $PASSWD_CHECK = "NOTPASSED" ] && [ $SHADOW_CHECK = "NOTPASSED" ] && [ $GROUP_CHECK = "NOTPASSED" ] && [ $GSHADOW_CHECK = "NOTPASSED" ]; then
 	echo "- User and Group File Check (-) \
 		/etc/passwd access:$PASSWD_CHECK | /etc/shadow access:$SHADOW_CHECK | /etc/group access:$GROUP_CHECK | /etc/gshadow access:$GSHADOW_CHECK" \
 		>> /tmp/$HOST_NAME.log
@@ -284,9 +263,7 @@ for part in ${parts[*]}; do
 	part_check $part $out >> /tmp/fs_conf.txt
 done
 PART_CHECK=$(cat /tmp/fs_conf.txt |grep "not in separated partition." |wc -l)
-if [ "$PART_CHECK" = "0" ]; then
-	SYS_SCORE=$(($SYS_SCORE + 10))
-else
+if [ $PART_CHECK -gt "0" ]; then
 	echo "- Partition Check (-) $PART_CHECK not in separated partition." >> /tmp/$HOST_NAME.log
 fi
 
@@ -329,28 +306,28 @@ rm -f /tmp/smartcheck-result.txt
 rm -f /tmp/disklist.txt
 #SMART=$(echo $SMART)
 
-if [ "$SMART_SCORE" = "0" ]; then
+if [ $SMART_SCORE = "0" ]; then
 	echo "- S.M.A.R.T Check (-) Failed or not tested." >> /tmp/$HOST_NAME.log
 fi
 
 #---------------------------
 # Network conf. check
 #---------------------------
-NWCONF1=$(sysctl net.ipv4.ip_forward |cut -d "=" -f2) && if [ "$NWCONF1" = "0" ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
-NWCONF2=$(sysctl net.ipv4.conf.all.send_redirects |cut -d "=" -f2) && if [ "$NWCONF2" = "0" ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
-NWCONF3=$(sysctl net.ipv4.conf.all.accept_source_route |cut -d "=" -f2) && if [ "$NWCONF3" = "0" ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
-NWCONF4=$(sysctl net.ipv4.conf.default.accept_source_route |cut -d "=" -f2) && if [ "$NWCONF4" = "0" ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
-NWCONF5=$(sysctl net.ipv4.conf.all.accept_redirects |cut -d "=" -f2) && if [ "$NWCONF5" = "0" ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
-NWCONF6=$(sysctl net.ipv4.conf.default.accept_redirects |cut -d "=" -f2) && if [ "$NWCONF6" = "0" ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
-NWCONF7=$(sysctl net.ipv4.conf.all.secure_redirects |cut -d "=" -f2) && if [ "$NWCONF7" = "0" ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
-NWCONF8=$(sysctl net.ipv4.conf.default.secure_redirects |cut -d "=" -f2) && if [ "$NWCONF8" = "0" ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
-NWCONF9=$(sysctl net.ipv4.icmp_echo_ignore_broadcasts |cut -d "=" -f2) && if [ "$NWCONF9" = "1" ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
-NWCONF10=$(sysctl net.ipv4.icmp_ignore_bogus_error_responses |cut -d "=" -f2) && if [ "$NWCONF10" = "1" ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
-NWCONF11=$(sysctl net.ipv4.conf.all.rp_filter |cut -d "=" -f2) && if [ "$NWCONF11" = "1" ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
-NWCONF12=$(sysctl net.ipv4.tcp_syncookies |cut -d "=" -f2) && if [ "$NWCONF12" = "1" ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
+NWCONF1=$(sysctl net.ipv4.ip_forward |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF1 = "0" ]; then echo "- ipv4 IP Forward Check: Not Passed" >> /tmp/$HOST_NAME.log; fi
+NWCONF2=$(sysctl net.ipv4.conf.all.send_redirects |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF2 = "0" ]; then echo "- ipv4 Send Redirects: Not Passed" >> /tmp/$HOST_NAME.log; fi
+NWCONF3=$(sysctl net.ipv4.conf.all.accept_source_route |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF3 = "0" ]; then echo "- ipv4 All Accept Source Route: Not Passed" >> /tmp/$HOST_NAME.log; fi
+NWCONF4=$(sysctl net.ipv4.conf.default.accept_source_route |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF4 = "0" ]; then echo "- ipv4 Default Accept Source Route: Not Passed" >> /tmp/$HOST_NAME.log; fi
+NWCONF5=$(sysctl net.ipv4.conf.all.accept_redirects |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF5 = "0" ]; then echo "- ipv4 All Accept Redirects: Not Passed" >> /tmp/$HOST_NAME.log; fi
+NWCONF6=$(sysctl net.ipv4.conf.default.accept_redirects |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF6 = "0" ]; then echo "- ipv4 Default Accept Redirects: Not Passed" >> /tmp/$HOST_NAME.log; fi
+NWCONF7=$(sysctl net.ipv4.conf.all.secure_redirects |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF7 = "0" ]; then echo "- ipv4 All Secure Redirects: Not Passed" >> /tmp/$HOST_NAME.log; fi
+NWCONF8=$(sysctl net.ipv4.conf.default.secure_redirects |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF8 = "0" ]; then echo "- ipv4 Default Secure Redirects: Not Passed" >> /tmp/$HOST_NAME.log; fi
+NWCONF9=$(sysctl net.ipv4.icmp_echo_ignore_broadcasts |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF9 = "1" ]; then echo "- ipv4 Ignore Broadcast: Not Passed" >> /tmp/$HOST_NAME.log; fi
+NWCONF10=$(sysctl net.ipv4.icmp_ignore_bogus_error_responses |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF10 = "1" ]; then echo "- ipv4 Ignore Bogus Error Resp.: Not Passed" >> /tmp/$HOST_NAME.log; fi
+NWCONF11=$(sysctl net.ipv4.conf.all.rp_filter |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF11 = "1" ]; then echo "- ipv4 All rp Filter: Not Passed" >> /tmp/$HOST_NAME.log; fi
+NWCONF12=$(sysctl net.ipv4.tcp_syncookies |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF12 = "1" ]; then echo "- ipv4 TCP Syncookies: Not Passed" >> /tmp/$HOST_NAME.log; fi
 # ipv6 controls
-NWCONF13=$(sysctl net.ipv6.conf.all.disable_ipv6 |cut -d "=" -f2) && if [ "$NWCONF13" = "1" ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
-NWCONF14=$(sysctl net.ipv6.conf.all.accept_ra |cut -d "=" -f2) && if [ "$NWCONF14" = "0" ]; then NW_SCORE=$(($NW_SCORE + 10)); fi
+NWCONF13=$(sysctl net.ipv6.conf.all.disable_ipv6 |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF13 = "1" ]; then echo "- ipv6 Disable IPv6: Not Passed" >> /tmp/$HOST_NAME.log; fi
+NWCONF14=$(sysctl net.ipv6.conf.all.accept_ra |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF14 = "0" ]; then echo "- ipv6 All Accept ra: Not Passed" >> /tmp/$HOST_NAME.log; fi
 
 #---------------------------
 # SSH conf. check
@@ -444,6 +421,8 @@ else
 	rsync -av /etc/ $LOCALDIR > /tmp/integritycheck.txt
 	sed -i -e :a -e '$d;N;2,2ba' -e 'P;D' /tmp/integritycheck.txt && sed -i '/^$/d' /tmp/integritycheck.txt && sed -i '1d' /tmp/integritycheck.txt
 	if [ -s "/tmp/integritycheck.txt" ]; then INT_CHECK=DETECTED; else INT_CHECK=NOTDETECTED; fi
+	#sed -i -e :a -e '$d;N;2,2ba' -e 'P;D' /tmp/integritycheck.txt
+	#sed -i '1d' /tmp/integritycheck.txt
 fi
 
 #--------------------------
