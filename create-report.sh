@@ -288,20 +288,20 @@ while [ "$i" -le "$NUMMACHINE" ]; do
     ping $MACHINE -c 1 &> /dev/null
     pingReturn=$?
 
-    if [ "$pingReturn" -eq 0 ]; then
+    if [ $pingReturn -eq 0 ]; then
         ssh -p22 -i /root/.ssh/lastcontrol -o "StrictHostKeyChecking no" root@$MACHINE -- exit
         sshReturn=$?
-    elif [ "$pingReturn" -eq 1 ]; then
+    elif [ $pingReturn -eq 1 ]; then
         echo "<ul><li>Destination Host Unreachable. &nbsp; | &nbsp; $MACHINE $LINE</li></ul>" >> $RDIR/redlist.html && REDMACHINE=$((REDMACHINE+1))
 	MACHINEGROUP=RED
 	savedb
-    elif [ "$pingReturn" -eq 2 ]; then
+    elif [ $pingReturn -eq 2 ]; then
         echo "<ul><li>Hostname could not be resolved. &nbsp; | &nbsp; $MACHINE $LINE</li></ul>" >> $RDIR/redlist.html && REDMACHINE=$((REDMACHINE+1))
 	MACHINEGROUP=RED
 	savedb
     fi
 
-    if [ "$pingReturn" -eq 0 ] && [ "$sshReturn" -eq 0 ]; then
+    if [ $pingReturn -eq 0 ] && [ $sshReturn -eq 0 ]; then
 	scp -P22 -i /root/.ssh/lastcontrol $WDIR/lastcontrol.sh root@$MACHINE:/tmp/
 	scp -P22 -i /root/.ssh/lastcontrol $WDIR/cve_check root@$MACHINE:/tmp/
 	scp -P22 -i /root/.ssh/lastcontrol $WDIR/chkrootkit/chkrootkit root@$MACHINE:/tmp/
@@ -351,7 +351,7 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	SYS_SCORE=$(echo $SYS_SCORE |cut -d "/" -f1)
 	NW_SCORE=$(echo $NW_SCORE |cut -d "/" -f1)
 	SSH_SCORE=$(echo $SSH_SCORE |cut -d "/" -f1)
-        if [ "$UPDATE_CHECK" = "EXIST" ] || [ "$INVCHECK" = "DETECTED" ] || [ ! -z "$CVE_LIST" ] || [ "$SYS_SCORE" -lt "70" ] || [ "$NW_SCORE" -lt "80" ] || [ "$SSH_SCORE" -lt "100" ]; then
+        if [ $UPDATE_CHECK = "EXIST" ] || [ $INVCHECK = "DETECTED" ] || [ ! -z $CVE_LIST ] || [ $SYS_SCORE -lt "70" ] || [ $NW_SCORE -lt "80" ] || [ $SSH_SCORE -lt "100" ]; then
             echo "<ul><li><a href=$MACHINE.txt>Details</a>  &nbsp; | &nbsp; $MACHINE_NAME $LINE</li></ul>" >> $RDIR/orangelist.html && ORANGEMACHINE=$((ORANGEMACHINE+1))
 	    MACHINEGROUP=ORANGE
 	    savedb
@@ -368,7 +368,7 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 		echo "</td>" >> $RDIR/generalreport.html
 		echo "</tr>" >> $RDIR/generalreport.html
 
-	elif [ "$UPDATE_CHECK" = "NONE" ] || [ "$INVCHECK" = "NOTDETECTED" ] || [ -z "$CVE_LIST" ]; then
+	elif [ $UPDATE_CHECK = "NONE" ] || [ $INVCHECK = "NOTDETECTED" ] || [ -z $CVE_LIST ]; then
 	    echo "<ul><li><a href=$MACHINE.txt>Details</a>  &nbsp; | &nbsp; $MACHINE_NAME $LINE</li></ul>" >> $RDIR/greenlist.html && GREENMACHINE=$((GREENMACHINE+1))
 	    MACHINEGROUP=GREEN
 	    savedb
@@ -386,11 +386,11 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 		echo "</tr>" >> $RDIR/generalreport.html
 	fi
 	
-    elif [ "$sshReturn" -eq "255" ]; then
+    elif [ $sshReturn -eq "255" ]; then
         echo "<ul><li>Connection request has been rejected. &nbsp; | &nbsp; $MACHINE $LINE</li></ul>" >> $RDIR/redlist.html && REDMACHINE=$((REDMACHINE+1))
 	MACHINEGROUP=RED
 	savedb
-    elif [ "$sshReturn" -eq "130" ]; then
+    elif [ $sshReturn -eq "130" ]; then
         echo "<ul><li>Permission denied. &nbsp; | &nbsp; $MACHINE $LINE</li></ul>" >> $RDIR/redlist.html && REDMACHINE=$((REDMACHINE+1))
 	MACHINEGROUP=RED
 	savedb
