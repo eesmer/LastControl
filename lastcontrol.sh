@@ -58,18 +58,18 @@ RAM_FREE=$( expr $RAM_TOTAL - $RAM_USAGE)
 RAM_FREE_PERCENTAGE=$((100 * $RAM_FREE/$RAM_TOTAL))
 RAM_USE_PERCENTAGE=$(expr 100 - $RAM_FREE_PERCENTAGE)
 	if [ $RAM_USE_PERCENTAGE -gt "40" ]; then 
-		echo "- Ram usage (-) %$RAM_USE_PERCENTAGE usage." >> /tmp/$HOST_NAME.log
+		echo "<p1 style='background-color:#DEB887;'>- Ram usage: %$RAM_USE_PERCENTAGE usage.</p1>" >> /tmp/$HOST_NAME.log
 	fi
 DISK_USAGE=$(df -H | grep -vE 'Filesystem|tmpfs|cdrom|udev' | awk '{ print $5" "$1"("$2"  "$3")" " --- "}' | sed -e :a -e N -e 's/\n/ /' -e ta |cut -d "%" -f1)
 	if [ $DISK_USAGE -gt "40" ]; then
-		echo "- Disk usage (-) %$DISK_USAGE usage." >> /tmp/$HOST_NAME.log
+		echo "<p1 style='background-color:#DEB887;'>- Disk usage: %$DISK_USAGE usage.</p1>" >> /tmp/$HOST_NAME.log
 	fi
 SWAP_VALUE=$(free -m |grep Swap: |cut -d ":" -f2)
 SWAP_TOTAL=$(echo $SWAP_VALUE |cut -d " " -f1)
 SWAP_USE=$(echo $SWAP_VALUE |cut -d " " -f2)
 SWAP_USE_PERCENTAGE=$((100 * $SWAP_USE/$SWAP_TOTAL))
 	if [ $SWAP_USE_PERCENTAGE -gt "0" ]; then
-		echo "- Swap usage (-) %$SWAP_USE_PERCENTAGE usage." >> /tmp/$HOST_NAME.log
+		echo "<p1 style='background-color:#DEB887;'>- Swap usage: %$SWAP_USE_PERCENTAGE usage.</p1>" >> /tmp/$HOST_NAME.log
 	fi
 
 	#--------------------------
@@ -80,9 +80,9 @@ SWAP_USE_PERCENTAGE=$((100 * $SWAP_USE/$SWAP_TOTAL))
 	MOST_PROCESS=$(cat /tmp/systemload.txt |awk '{print $9, $10, $12}' |head -1 |cut -d " " -f3)
 	MOST_RAM=$(cat /tmp/systemload.txt |awk '{print $9, $10, $12}' |head -1 |cut -d " " -f2)
 	MOST_CPU=$(cat /tmp/systemload.txt |awk '{print $9, $10, $12}' |head -1 |cut -d " " -f1)
-	echo "- Using the most Resource: $MOST_PROCESS" >> /tmp/$HOST_NAME.log
-	echo "- Using the most Ram: $MOST_RAM" >> /tmp/$HOST_NAME.log
-	echo "- Using the most Cpu: $MOST_CPU" >> /tmp/$HOST_NAME.log		
+	echo "<p1 style='background-color:#DEB887;'>- Using the most Resource: $MOST_PROCESS</p1>" >> /tmp/$HOST_NAME.log
+	echo "<p1 style='background-color:#DEB887;'>- Using the most Ram: $MOST_RAM</p1>" >> /tmp/$HOST_NAME.log
+	echo "<p1 style='background-color:#DEB887;'>- Using the most Cpu: $MOST_CPU</p1>" >> /tmp/$HOST_NAME.log		
 	rm -f /tmp/systemload.txt
 
 #--------------------------
@@ -95,7 +95,7 @@ if [ "$REP" = "APT" ]; then
 	cat /tmp/update_list.txt |grep "The following packages will be upgraded:" >> /dev/null && CHECK_UPDATE=EXIST \
 		&& UPDATE_COUNT=$(cat /tmp/update_list.txt |grep "upgraded," |cut -d " " -f1)
 	if [  $CHECK_UPDATE = "EXIST" ]; then 
-		echo "- Update check (-) $CHECK_UPDATE" >> /tmp/$HOST_NAME.log
+		echo "<p1 style='background-color:#D2B48C;'>-Update check: $CHECK_UPDATE | Count: $UPDATE_COUNT</p1>" >> /tmp/$HOST_NAME.log
 	fi
 
 elif [ "$REP" = "YUM" ]; then
@@ -109,7 +109,7 @@ elif [ "$REP" = "YUM" ]; then
 
 	CHECK_UPDATE=EXIST
 	if [ $UPDATE_COUNT -gt "0" ]; then
-		echo "- Update Check (-) $CHECK_UPDATE" >> /tmp/$HOST_NAME.log
+		echo "<p1 style='background-color:#D2B48C;'>- Update Check: $CHECK_UPDATE | Count: $UPDATE_COUNT</p1>" >> /tmp/$HOST_NAME.log
 	else
 		CHECK_UPDATE=NONE
 	fi
@@ -124,7 +124,7 @@ if [ "$REP" = "APT" ];then
 	sed -i -e '1d;2d;3d;4d;5d' /tmp/broken_pack_list.txt
 	BROKEN_COUNT=$(wc -l /tmp/broken_pack_list.txt |cut -d " " -f1)
 	if [ $BROKEN_COUNT -gt "0" ]; then
-		echo "- Package Check (-) $BROKEN_COUNT package(s) is a broken" >> /tmp/$HOST_NAME.log
+		echo "<p1 style='background-color:#D2B48C;'>- Package Check: $BROKEN_COUNT package(s) is a broken</p1>" >> /tmp/$HOST_NAME.log
 	fi
 
 	### ALLOWUNAUTH=$(grep -v "^#" /etc/apt/ -r | grep -c "AllowUnauthenticated")
@@ -137,7 +137,7 @@ if [ "$REP" = "YUM" ];then
 	rpm -Va >> /dev/null > /tmp/broken_pack_list.txt
 	BROKEN_COUNT=$(wc -l /tmp/broken_pack_list.txt |cut -d " " -f1)
 	if [ $BROKEN_COUNT -gt "0" ]; then
-		echo "- Package Check (-) $BROKEN_COUNT package(s) is a broken" >> /tmp/$HOST_NAME.log
+		echo "<p1 style='background-color:#D2B48C;'>- Package Check: $BROKEN_COUNT package(s) is a broken</p1>" >> /tmp/$HOST_NAME.log
 	fi
 fi
 
@@ -150,7 +150,7 @@ if [ $LOCALUSER_COUNT = "0" ]; then
 	rm /tmp/localusers.txt
 else
 	# check login limits
-	echo "- Local User Check (-) $LOCALUSER_COUNT user(s) exist." >> /tmp/$HOST_NAME.log
+	echo "<p1 style='background-color:#BC8F8F;'>- Local User: $LOCALUSER_COUNT user(s) exist.</p1>" >> /tmp/$HOST_NAME.log
 	CHECK_LIMITS=NONE
 	i=1
 	while [ "$i" -le $LOCALUSER_COUNT ]; do
@@ -160,7 +160,7 @@ else
 	i=$(( i + 1 ))
 	done
 	if [ $CHECK_LIMITS = "EXIST" ]; then
-		echo "- Local User Limit Check (-) Limit not used." >> /tmp/$HOST_NAME.log
+		echo "<p1 style='background-color:#BC8F8F;'>- Local User Limit: Limit not used.</p1>" >> /tmp/$HOST_NAME.log
 	fi
 
 	# sudo members check
@@ -168,7 +168,7 @@ else
 		SUDOMEMBERCOUNT=$(cat /etc/sudoers |grep ALL= |grep -v % |grep -v root |wc -l)
 		if [ $SUDOMEMBERCOUNT -gt "0" ]; then
 			cat /etc/sudoers |grep ALL= |grep -v % |grep -v root > /tmp/sudomembers.txt
-			echo "- Sudo Check (-) $SUDOMEMBERCOUNT user(s) have sudo privileges." >> /tmp/$HOST_NAME.log
+			echo "<p1 style='background-color:#BC8F8F;'>- Sudo: $SUDOMEMBERCOUNT user(s) have sudo privileges.</p1>" >> /tmp/$HOST_NAME.log
 		fi
 	else
 		SUDOMEMBERCOUNT=0
@@ -241,8 +241,8 @@ if [ "$REP" = "YUM" ];then
 fi
 
 if [ $PASSWD_CHECK = "NOTPASSED" ] && [ $SHADOW_CHECK = "NOTPASSED" ] && [ $GROUP_CHECK = "NOTPASSED" ] && [ $GSHADOW_CHECK = "NOTPASSED" ]; then
-	echo "- User and Group File Check (-) \
-		/etc/passwd access:$PASSWD_CHECK | /etc/shadow access:$SHADOW_CHECK | /etc/group access:$GROUP_CHECK | /etc/gshadow access:$GSHADOW_CHECK" \
+	echo "<p1 style='background-color:#F4A460;'>- User,Group File: \
+		/etc/passwd access:$PASSWD_CHECK | /etc/shadow access:$SHADOW_CHECK | /etc/group access:$GROUP_CHECK | /etc/gshadow access:$GSHADOW_CHECK</p1>" \
 		>> /tmp/$HOST_NAME.log
 fi
 
@@ -264,7 +264,7 @@ for part in ${parts[*]}; do
 done
 PART_CHECK=$(cat /tmp/fs_conf.txt |grep "not in separated partition." |wc -l)
 if [ $PART_CHECK -gt "0" ]; then
-	echo "- Partition Check (-) $PART_CHECK not in separated partition." >> /tmp/$HOST_NAME.log
+	echo "<p1 style='background-color:#DAA520;'>- Partition: $PART_CHECK not in separated partition.</p1>" >> /tmp/$HOST_NAME.log
 fi
 
 #---------------------------
@@ -307,49 +307,48 @@ rm -f /tmp/disklist.txt
 #SMART=$(echo $SMART)
 
 if [ $SMART_SCORE = "0" ]; then
-	echo "- S.M.A.R.T Check (-) Failed or not tested." >> /tmp/$HOST_NAME.log
+	echo "<p1 style='background-color:#B8860B;'>- S.M.A.R.T: Failed or not tested.</p1>" >> /tmp/$HOST_NAME.log
 fi
 
 #---------------------------
 # Network conf. check
 #---------------------------
-NWCONF1=$(sysctl net.ipv4.ip_forward |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF1 = "0" ]; then echo "- ipv4 IP Forward Check: Not Passed" >> /tmp/$HOST_NAME.log; fi
-NWCONF2=$(sysctl net.ipv4.conf.all.send_redirects |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF2 = "0" ]; then echo "- ipv4 Send Redirects: Not Passed" >> /tmp/$HOST_NAME.log; fi
-NWCONF3=$(sysctl net.ipv4.conf.all.accept_source_route |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF3 = "0" ]; then echo "- ipv4 All Accept Source Route: Not Passed" >> /tmp/$HOST_NAME.log; fi
-NWCONF4=$(sysctl net.ipv4.conf.default.accept_source_route |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF4 = "0" ]; then echo "- ipv4 Default Accept Source Route: Not Passed" >> /tmp/$HOST_NAME.log; fi
-NWCONF5=$(sysctl net.ipv4.conf.all.accept_redirects |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF5 = "0" ]; then echo "- ipv4 All Accept Redirects: Not Passed" >> /tmp/$HOST_NAME.log; fi
-NWCONF6=$(sysctl net.ipv4.conf.default.accept_redirects |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF6 = "0" ]; then echo "- ipv4 Default Accept Redirects: Not Passed" >> /tmp/$HOST_NAME.log; fi
-NWCONF7=$(sysctl net.ipv4.conf.all.secure_redirects |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF7 = "0" ]; then echo "- ipv4 All Secure Redirects: Not Passed" >> /tmp/$HOST_NAME.log; fi
-NWCONF8=$(sysctl net.ipv4.conf.default.secure_redirects |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF8 = "0" ]; then echo "- ipv4 Default Secure Redirects: Not Passed" >> /tmp/$HOST_NAME.log; fi
-NWCONF9=$(sysctl net.ipv4.icmp_echo_ignore_broadcasts |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF9 = "1" ]; then echo "- ipv4 Ignore Broadcast: Not Passed" >> /tmp/$HOST_NAME.log; fi
-NWCONF10=$(sysctl net.ipv4.icmp_ignore_bogus_error_responses |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF10 = "1" ]; then echo "- ipv4 Ignore Bogus Error Resp.: Not Passed" >> /tmp/$HOST_NAME.log; fi
-NWCONF11=$(sysctl net.ipv4.conf.all.rp_filter |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF11 = "1" ]; then echo "- ipv4 All rp Filter: Not Passed" >> /tmp/$HOST_NAME.log; fi
-NWCONF12=$(sysctl net.ipv4.tcp_syncookies |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF12 = "1" ]; then echo "- ipv4 TCP Syncookies: Not Passed" >> /tmp/$HOST_NAME.log; fi
+NWCONF1=$(sysctl net.ipv4.ip_forward |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF1 = "0" ]; then echo "<p1 style='background-color:#CD853F;'>- ipv4 IP Forward Check: Not Passed</p1>" >> /tmp/$HOST_NAME.log; fi
+NWCONF2=$(sysctl net.ipv4.conf.all.send_redirects |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF2 = "0" ]; then echo "<p1 style='background-color:#CD853F;'>- ipv4 Send Redirects: Not Passed</p1>" >> /tmp/$HOST_NAME.log; fi
+NWCONF3=$(sysctl net.ipv4.conf.all.accept_source_route |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF3 = "0" ]; then echo "<p1 style='background-color:#CD853F;'>- ipv4 All Accept Source Route: Not Passed</p1>" >> /tmp/$HOST_NAME.log; fi
+NWCONF4=$(sysctl net.ipv4.conf.default.accept_source_route |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF4 = "0" ]; then echo "<p1 style='background-color:#CD853F;'>- ipv4 Default Accept Source Route: Not Passed</p1>" >> /tmp/$HOST_NAME.log; fi
+NWCONF5=$(sysctl net.ipv4.conf.all.accept_redirects |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF5 = "0" ]; then echo "<p1 style='background-color:#CD853F;'>- ipv4 All Accept Redirects: Not Passed</p1>" >> /tmp/$HOST_NAME.log; fi
+NWCONF6=$(sysctl net.ipv4.conf.default.accept_redirects |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF6 = "0" ]; then echo "<p1 style='background-color:#CD853F;'>- ipv4 Default Accept Redirects: Not Passed</p1>" >> /tmp/$HOST_NAME.log; fi
+NWCONF7=$(sysctl net.ipv4.conf.all.secure_redirects |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF7 = "0" ]; then echo "<p1 style='background-color:#CD853F;'>- ipv4 All Secure Redirects: Not Passed</p1>" >> /tmp/$HOST_NAME.log; fi
+NWCONF8=$(sysctl net.ipv4.conf.default.secure_redirects |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF8 = "0" ]; then echo "<p1 style='background-color:#CD853F;'>- ipv4 Default Secure Redirects: Not Passed</p1>" >> /tmp/$HOST_NAME.log; fi
+NWCONF9=$(sysctl net.ipv4.icmp_echo_ignore_broadcasts |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF9 = "1" ]; then echo "<p1 style='background-color:#CD853F;'>- ipv4 Ignore Broadcast: Not Passed</p1>" >> /tmp/$HOST_NAME.log; fi
+NWCONF10=$(sysctl net.ipv4.icmp_ignore_bogus_error_responses |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF10 = "1" ]; then echo "<p1 style='background-color:#CD853F;'>- ipv4 Ignore Bogus Error Resp.: Not Passed</p1>" >> /tmp/$HOST_NAME.log; fi
+NWCONF11=$(sysctl net.ipv4.conf.all.rp_filter |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF11 = "1" ]; then echo "<p1 style='background-color:#CD853F;'>- ipv4 All rp Filter: Not Passed</p1>" >> /tmp/$HOST_NAME.log; fi
+NWCONF12=$(sysctl net.ipv4.tcp_syncookies |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF12 = "1" ]; then echo "<p1 style='background-color:#CD853F;'>- ipv4 TCP Syncookies: Not Passed</p1>" >> /tmp/$HOST_NAME.log; fi
 # ipv6 controls
-NWCONF13=$(sysctl net.ipv6.conf.all.disable_ipv6 |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF13 = "1" ]; then echo "- ipv6 Disable IPv6: Not Passed" >> /tmp/$HOST_NAME.log; fi
-NWCONF14=$(sysctl net.ipv6.conf.all.accept_ra |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF14 = "0" ]; then echo "- ipv6 All Accept ra: Not Passed" >> /tmp/$HOST_NAME.log; fi
+NWCONF13=$(sysctl net.ipv6.conf.all.disable_ipv6 |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF13 = "1" ]; then echo "<p1 style='background-color:#CD853F;'>- ipv6 Disable IPv6: Not Passed</p1>" >> /tmp/$HOST_NAME.log; fi
+NWCONF14=$(sysctl net.ipv6.conf.all.accept_ra |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF14 = "0" ]; then echo "<p1 style='background-color:#CD853F;'>- ipv6 All Accept ra: Not Passed</p1>" >> /tmp/$HOST_NAME.log; fi
 
 #---------------------------
 # SSH conf. check
 #---------------------------
 # PRIVATE HOST KEY
-SSHCONF1=$(stat /etc/ssh/sshd_config |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ "$SSHCONF1" = "0600" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
-SSHCONF2=$(stat /etc/ssh/ssh_host_rsa_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ "$SSHCONF2" = "0600" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
-SSHCONF3=$(stat /etc/ssh/ssh_host_ecdsa_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ "$SSHCONF3" = "0600" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
-SSHCONF4=$(stat /etc/ssh/ssh_host_ed25519_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ "$SSHCONF4" = "0600" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
+SSHCONF1=$(stat /etc/ssh/sshd_config |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ ! $SSHCONF1 = "0600" ]; then echo "<p1 style='background-color:#D2691E;'>- sshd_config uid: Not Passed</p1>" >> /tmp/$HOST_NAME.log; fi
+SSHCONF2=$(stat /etc/ssh/ssh_host_rsa_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ ! $SSHCONF2 = "0600" ]; then echo "<p1 style='background-color:#D2691E;'>- ssh_host_rsa_key uid: Not Passed</p1>" >> /tmp/$HOST_NAME.log; fi
+SSHCONF3=$(stat /etc/ssh/ssh_host_ecdsa_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ ! $SSHCONF3 = "0600" ]; then echo "<p1 style='background-color:#D2691E;'>- ssh_host_ecdsa_key uid: Not Passed</p1>" >> /tmp/$HOST_NAME.log; fi
+SSHCONF4=$(stat /etc/ssh/ssh_host_ed25519_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ ! $SSHCONF4 = "0600" ]; then echo "<p1 style='background-color:#D2691E;'>- ssh_host_ed25519_key uid: Not Passed</p1>" >> /tmp/$HOST_NAME.log; fi
 # PUBLIC HOST KEY
-SSHCONF5=$(stat /etc/ssh/ssh_host_rsa_key.pub |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ "$SSHCONF5" = "0644" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
-SSHCONF6=$(stat /etc/ssh/ssh_host_ed25519_key.pub |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ "$SSHCONF6" = "0644" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
-SSHCONF7=$(stat /etc/ssh/ssh_host_ed25519_key.pub |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ "$SSHCONF7" = "0644" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
-grep ^Protocol /etc/ssh/sshd_config > /dev/null && if [ "$?" = "0" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
-SSHCONF8=$(sshd -T | grep loglevel |cut -d " " -f2) && if [ "$SSHCONF8" = "INFO" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
-SSHCONF9=$(sshd -T | grep x11forwarding |cut -d " " -f2) && if [ "$SSHCONF9" = "no" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
-SSHCONF10=$(sshd -T | grep maxauthtries |cut -d " " -f2) && if [ "$SSHCONF10" -lt "4" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
-SSHCONF11=$(sshd -T | grep ignorerhosts |cut -d " " -f2) && if [ "$SSHCONF11" = "yes" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
-SSHCONF12=$(sshd -T | grep hostbasedauthentication |cut -d " " -f2) && if [ "$SSHCONF12" = "no" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
-SSHCONF13=$(sshd -T | grep permitrootlogin |cut -d " " -f2) && if [ "$SSHCONF13" = "no" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
-SSHCONF14=$(sshd -T | grep permitemptypasswords |cut -d " " -f2) && if [ "$SSHCONF14" = "no" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
-SSHCONF15=$(sshd -T | grep permituserenvironment |cut -d " " -f2) && if [ "$SSHCONF15" = "no" ]; then SSH_SCORE=$(($SSH_SCORE + 10)); fi
+SSHCONF5=$(stat /etc/ssh/ssh_host_rsa_key.pub |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ ! $SSHCONF5 = "0644" ]; then echo "<p1 style='background-color:#D2691E;'>- ssh_host_rsa_key.pub uid: Not Passed</p1>" >> /tmp/$HOST_NAME.log; fi
+SSHCONF6=$(stat /etc/ssh/ssh_host_ed25519_key.pub |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ ! $SSHCONF6 = "0644" ]; then echo "<p1 style='background-color:#D2691E;'>- ssh_host_ed25519_key.pub uid: Not Passed</p1>" >> /tmp/$HOST_NAME.log; fi
+grep ^Protocol /etc/ssh/sshd_config > /dev/null && if [ ! $? = "0" ]; then echo "<p1 style='background-color:#D2691E;'>- sshd_config Protocol2 setting: Not Passed</p1>" >> /tmp/$HOST_NAME.log; fi
+SSHCONF8=$(sshd -T | grep loglevel |cut -d " " -f2) && if [ ! $SSHCONF8 = "INFO" ]; then echo "<p1 style='background-color:#D2691E;'>- sshd_config LogLevel setting: Not Passed</p1>" >> /tmp/$HOST_NAME.log; fi
+SSHCONF9=$(sshd -T | grep x11forwarding |cut -d " " -f2) && if [ ! $SSHCONF9 = "no" ]; then echo "<p1 style='background-color:#D2691E;'>- sshd_config x11Forwarding setting: Not Passed</p1>" >> /tmp/$HOST_NAME.log; fi
+SSHCONF10=$(sshd -T | grep maxauthtries |cut -d " " -f2) && if [ ! $SSHCONF10 -lt "4" ]; then echo "<p1 style='background-color:#D2691E;'>- sshd_config MaxAuthtries setting: Not Passed</p1>" >> /tmp/$HOST_NAME.log; fi
+SSHCONF11=$(sshd -T | grep ignorerhosts |cut -d " " -f2) && if [ ! $SSHCONF11 = "yes" ]; then echo "<p1 style='background-color:#D2691E;'>- sshd_config IgnorerHosts setting: Not Passed</p1>" >> /tmp/$HOST_NAME.log; fi
+SSHCONF12=$(sshd -T | grep hostbasedauthentication |cut -d " " -f2) && if [ ! $SSHCONF12 = "no" ]; then echo "<p1 style='background-color:#D2691E;'>- sshd_config HostBasedAuth. setting: Not Passed</p1>" >> /tmp/$HOST_NAME.log; fi
+SSHCONF13=$(sshd -T | grep permitrootlogin |cut -d " " -f2) && if [ ! $SSHCONF13 = "no" ]; then echo "<p1 style='background-color:#D2691E;'>- sshd_config PermitRootLogin setting: Not Passed</p1>" >> /tmp/$HOST_NAME.log; fi
+SSHCONF14=$(sshd -T | grep permitemptypasswords |cut -d " " -f2) && if [ ! $SSHCONF14 = "no" ]; then echo "<p1 style='background-color:#D2691E;'>- sshd_config PermitEmptyPass setting: Not Passed</p1>" >> /tmp/$HOST_NAME.log; fi
+SSHCONF15=$(sshd -T | grep permituserenvironment |cut -d " " -f2) && if [ ! $SSHCONF15 = "no" ]; then echo "<p1 style='background-color:#D2691E;'>- sshd_config PermitUserEnv. setting: Not Passed</p1>" >> /tmp/$HOST_NAME.log; fi
 
 #--------------------------
 # Vulnerability Check
@@ -363,13 +362,10 @@ CVELIST=$(cat /tmp/cve_list |grep CVE) && echo $CVELIST > /tmp/cve_list && CVELI
 find / -iname "log4j*" > /tmp/log4j_exist.txt && sed -i '/log4j_exist.txt/d' /tmp/log4j_exist.txt
 if [ -s "/tmp/log4j_exist.txt" ]; then
 	LOG4J_EXIST="USE"
-        echo "LOG4J/LOG4SHELL is use." >> /tmp/$HOST_NAME.log
-        echo "-----------------------------------------------------" >> /tmp/$HOST_NAME.log
+        echo "<p1 style='background-color:#808000;'>- LOG4J/LOG4SHELL is use.</p1" >> /tmp/$HOST_NAME.log
         cat /tmp/log4j_exist.txt >> /tmp/$HOST_NAME.log
-        echo "-----------------------------------------------------" >> /tmp/$HOST_NAME.log
 	find /var/log/ -name '*.gz' -type f -exec sh -c "zcat {} | sed -e 's/\${lower://'g | tr -d '}' | egrep -i 'jndi:(ldap[s]?|rmi|dns|nis|iiop|corba|nds|http):'" \; \
 		>> /tmp/$HOST_NAME.log
-        echo "-----------------------------------------------------" >> /tmp/$HOST_NAME.log
 else
 	LOG4J_EXIST=NOT_USE
 fi
