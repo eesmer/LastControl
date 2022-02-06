@@ -6,18 +6,20 @@ LastControl is a work around for health checking on linux machines. <br>
 Debian, Ubuntu, Centos, RedHat, Oracle Linux, Rocky Linux
 
 ## Features
-- Checks for updates
-- Looks at running services and load status
 - Takes out inventory
   - Adds to the report if there is an inventory change
+- Checks for updates
+- Controls listening and established connections
+- Looks at running services and load status
+- Ram, swap and disk uses (S.M.A.R.T check for disk)
+- Controls local user management (local user,limit and sudo privileges)
+- Controls system, network and access (ssh) settings
 - Checks configurations according to hardening policies. https://www.cisecurity.org/
-  - Generates score for system health
-  - Generates score for network settings
-  - Generates score for ssh settings
-  - Checks disks S.M.A.R.T
-- It scans for kernel-based exploits and CVE Ref. gives https://github.com/InteliSecureLabs/Linux_Exploit_Suggester
+
+- Checks log4j usage and vulnerability
+ 
 - It only performs a fast scan with nmap on the subnet.
-- All these outputs with a web page; It shows the reports on a single screen by categorizing the machines as 'red' 'green' and 'orange'
+- All these outputs with a web page; It shows the reports on a single screen by categorizing the machines as 'red' 'green' and 'orange' and General Reports.
 
 ## Requirements
 It works in Debian environment. Desktop environment is not required.
