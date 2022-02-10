@@ -34,7 +34,7 @@ Use LastControl with root user
 $ wget https://raw.githubusercontent.com/eesmer/LastControl/main/lastcontrol-installer.sh
 $ bash lastcontrol-installer.sh
 ```
-![alt text](screenshot/LastControl_main_page.png "LastControl Main Page")
+![alt text](screenshot/LastControl_MainPage.png "LastControl Main Page")
 
 **Access Page:** http://$LASTCONTROL_IP
 
