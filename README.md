@@ -36,6 +36,8 @@ $ bash lastcontrol-installer.sh
 ```
 ![alt text](screenshot/LastControl_MainPage.png "LastControl Main Page")
 
+<br>
+
 **Access Page:** http://$LASTCONTROL_IP
 
 #### add/remove machine
