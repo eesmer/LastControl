@@ -38,6 +38,10 @@ $ bash lastcontrol-installer.sh
 
 <br>
 
+![alt text](screenshot/LastControl_inventory.png "LastControl Inventory Page")
+
+<br>
+
 **Access Page:** http://$LASTCONTROL_IP
 
 #### add/remove machine
