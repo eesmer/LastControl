@@ -58,7 +58,10 @@ RAM_FREE=$( expr $RAM_TOTAL - $RAM_USAGE)
 RAM_FREE_PERCENTAGE=$((100 * $RAM_FREE/$RAM_TOTAL))
 RAM_USE_PERCENTAGE=$(expr 100 - $RAM_FREE_PERCENTAGE)
 	if [ $RAM_USE_PERCENTAGE -gt "40" ]; then 
-		echo "<p1 style='background-color:#DEB887;'>- Ram usage: %$RAM_USE_PERCENTAGE usage.</p1>" >> /tmp/$HOST_NAME.log
+		echo "<p1 style='background-color:#DEB887;'>- Ram usage: %$RAM_USE_PERCENTAGE usage</p1>" >> /tmp/$HOST_NAME.log
+		OOM=0
+		grep -i -r 'out of memory' /var/log/ > /dev/null && OOM=1
+		if [ ! $OOM = "1" ]; then echo "<p1 style='background-color:#CD853F;'>- Ram usage: out of memory message log found</p1>" >> /tmp/$HOST_NAME.log; fi	
 	fi
 DISK_USAGE=$(df -H | grep -vE 'Filesystem|tmpfs|cdrom|udev' | awk '{ print $5" "$1"("$2"  "$3")" " --- "}' | sed -e :a -e N -e 's/\n/ /' -e ta |cut -d "%" -f1)
 	if [ $DISK_USAGE -gt "40" ]; then
