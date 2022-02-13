@@ -4,12 +4,6 @@ The document contains detailed information about the use for the LastControl
 <br>
 
 - [1. Installation and Usage](#1-installation)
-  - Requirements
-  - Installation
-  - Usage
-  - add/remove machine
-  - install lastcontrol.pub ssh-key file
-  - How it works
 - [2. Reporting](#2-reporting)<br>
   The "Checking Result" explanations in the LastControl Handbook guide you by answering the following quesions.<br>
   - [If Ram Usage is reported](#-ram_usage_is_reported)<br>
