@@ -122,9 +122,52 @@ https://www.linuxatemyram.com/
 <br>
 <br>
 **Conclusion:** In fact, if LastControl reports this situation frequently; <br>
-This means that the resource is insufficient for the service provided by the machine.
+This means that the resource is insufficient for the service provided by the machine. <br>
 
 #### -Swap_Usage_is_Reported
+If LastControl reported the swap usage, the swap usage was probably required due to lack of memory. <br>
+This warning is added to the report if the swap usage is not 0. <br>
+<br>
+The following can be used to investigate the swap usage status in the system. <br>
+<br>
+**smem package** <br>
+On Debian based system; <br>
+```sh
+$ apt -y install smem
+```
+On RedHat based system; <br>
+```sh
+$ yum -y install smem
+(from epel-release repository)
+```
+**smem** <br>
+Lists swap usage per PID,User and process <br>
+**PID &nbsp; User &nbsp; Command &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Swap &nbsp; USS &nbsp; PSS &nbsp; RSS** <br>
+461 &nbsp; root &nbsp; /sbin/agetty -o -p -- \u --  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 0 &nbsp; &nbsp; &nbsp; 316 &nbsp; 414 &nbsp; 2064 <br>
+394 &nbsp; root &nbsp; /usr/sbin/cron -f &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 0 &nbsp; &nbsp; 360 &nbsp; 604 &nbsp; 2736 <br>
+360 &nbsp; messagebus &nbsp; /usr/bin/dbus-daemon --syst &nbsp; &nbsp; 0 &nbsp; &nbsp; 1080 &nbsp; 1506 &nbsp; 4324 <br>
+3909 &nbsp; www-data &nbsp; /usr/sbin/apache2 -k start &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 0 &nbsp; &nbsp; 200 &nbsp; 1617 &nbsp; 11164 <br>
+3910 &nbsp; www-data &nbsp; /usr/sbin/apache2 -k start &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 0 &nbsp; &nbsp; 200 &nbsp; 1617 &nbsp; 11164 <br>
+479 &nbsp; ntp &nbsp; &nbsp; /usr/sbin/ntpd -p /var/run/ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 0 &nbsp; 1372 &nbsp; 1658 &nbsp; 4308 <br>
+187 &nbsp; postfix &nbsp; qmgr -l -t unix -u &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 0 &nbsp; 1176 &nbsp; 1208 &nbsp; 1620 <br>
+635 &nbsp; dbus &nbsp; /usr/bin/dbus-daemon --syst &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 192 &nbsp; &nbsp; 792 &nbsp; 928 &nbsp; 1612 <br>
+<br>
+
+**smem -u** <br>
+With the parameter, the swap usage is listed on a per user basis. <br>
+**smem -m** <br>
+With the parameter, swap usage dump of each PID can be taken. <br>
+**smem -p** <br>
+With the parameter, PID, user, and used command basis usage is listed show a percentage. <br>
+**smem --processfilter="apache"** <br>
+apache process can be filtered <br>
+<br>
+https://linux.die.net/man/8/smem
+<br>
+<br>
+**Conclusion:** In fact, if LastControl reports this situation frequently; <br>
+This means that the resource is insufficient for the service provided by the machine. <br>
+  
 #### -Disk_Usage_is_Reported
 #### -Update_Check_is_Reported
 #### -Log4j_Usage_is_Reported
