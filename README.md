@@ -38,5 +38,5 @@ It shows the reports on a single screen by categorizing the machines as 'red' 'g
 <br>
 
 ## for Installation and Usage
-![LastControl Handbook](https://github.com/eesmer/LastControl/blob/main/LastControl-HandBook.md)
+[LastControl Handbook](https://github.com/eesmer/LastControl/blob/main/LastControl-HandBook.md)
 
