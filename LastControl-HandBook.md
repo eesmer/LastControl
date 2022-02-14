@@ -54,7 +54,9 @@ $ systemctl restart lastcontrol.service
 ```
 
 ### 2. Reporting
+---
 #### -Ram_Usage_is_Reported
+---
 LastControl reports if the system's memory usage is greater than 50%. <br>
 <br>
 In Linux systems, the system takes all of the physical memory and distributes it according to the service it provides. <br>
@@ -123,8 +125,10 @@ https://www.linuxatemyram.com/
 <br>
 **Conclusion:** In fact, if LastControl reports this situation frequently; <br>
 This means that the resource is insufficient for the service provided by the machine. <br>
-
+  
+---
 #### -Swap_Usage_is_Reported
+---
 If LastControl reported the swap usage, the swap usage was probably required due to lack of memory. <br>
 This warning is added to the report if the swap usage is not 0. <br>
 <br>
