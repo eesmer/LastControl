@@ -13,7 +13,7 @@ The document contains detailed information about the use for the LastControl
   - [If Log4j Usage is reported](#-log4j_usage_is_reported)<br>
 ---
 
-### 1. Installation
+## 1. Installation
 
 **Requirements**<br>
 It works in Debian environment. Desktop environment is not required.<br>
@@ -53,9 +53,9 @@ If you want to trigger the operation manually;<br>
 $ systemctl restart lastcontrol.service
 ```
 
-### 2. Reporting
+## 2. Reporting
 ---
-#### -Ram_Usage_is_Reported
+### -Ram_Usage_is_Reported
 ---
 LastControl reports if the system's memory usage is greater than 50%. <br>
 <br>
@@ -73,7 +73,7 @@ With this program, you can observe the resource used by an application or proces
 **grep -i -r 'out of memory' /var/log/** <br>
 This command will list if there is an "out of memory" record in the logs under the /var/log directory. <br>
 
-#### Extras
+## Extras
 These notes contain additional information for this topic. It is not a recommendation for use or solution. <br>
 <br>
 **OOM Score:** <br>
@@ -127,7 +127,7 @@ https://www.linuxatemyram.com/
 This means that the resource is insufficient for the service provided by the machine. <br>
   
 ---
-#### -Swap_Usage_is_Reported
+### -Swap_Usage_is_Reported
 ---
 If LastControl reported the swap usage, the swap usage was probably required due to lack of memory. <br>
 This warning is added to the report if the swap usage is not 0. <br>
@@ -173,7 +173,7 @@ https://linux.die.net/man/8/smem
 This means that the resource is insufficient for the service provided by the machine. <br>
 
 ---
-#### -Disk_Usage_is_Reported
+### -Disk_Usage_is_Reported
 ---
 LastControl reports if the disk usage on which the system is installed is more than 50%. <br>
 You should check the system or increase the space in case the remaining disk size is running out quickly. <br>
@@ -221,10 +221,6 @@ $ find / -xdev -name core -ls -o  -path "/lib*" -prune
 <br>
 
 **Conclusion:** The 50% rate may not matter if it does not continue to grow. For manual deletions though, the above can be considered.
-
-
-
-
 
 
 #### -Update_Check_is_Reported
