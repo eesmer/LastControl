@@ -9,6 +9,9 @@ The document contains detailed information about the use for the LastControl
   - [If Ram Usage is reported](#-ram_usage_is_reported)<br>
   - [If Swap Usage is reported](#-swap_usage_is_reported)<br>
   - [If Disk Usage is reported](#-disk_usage_is_reported)<br>
+  - [Using the most Resource](#-using_the_most_resource)<br>
+  - [Using the most Ram](#-using_the_most_ram)<br>
+  - [Using the most Cpu](#-using_the_most_cpu)<br>
   - [If Update Check is reported](#-update_check_is_reported)<br>
   - [If Log4j Usage is reported](#-log4j_usage_is_reported)<br>
 ---
@@ -222,6 +225,21 @@ $ find / -xdev -name core -ls -o  -path "/lib*" -prune
 
 **Conclusion:** The 50% rate may not matter if it does not continue to grow. For manual deletions though, the above can be considered.
 
+---
+### -Using_the_most_Resource
+### -Using_the_most_Ram
+### -Using_the_most_Cpu
+---
+
+**Using the most Resource:** Among the services running on the system, the process that uses the most resource is displayed instantly. <br>
+**Using the most Ram:** Among the services running on the system, the process that uses the most RAM is displayed instantly. <br>
+**Using the most Cpu:** Among the services running on the system, the process that uses the most CPU is displayed instantly. <br>
+<br>
+
+Lists the most resource uses services (top 10) <br>
+```sh
+$ top -b -n1 | head -17 | tail -10
+```
 
 #### -Update_Check_is_Reported
 #### -Log4j_Usage_is_Reported
