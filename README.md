@@ -29,15 +29,23 @@ It shows the reports on a single screen by categorizing the machines as 'red' 'g
 
 <br>
 
+---
+
 ![alt text](screenshot/LastControl_MainPage.png "LastControl Main Page")
 
 <br>
 
+---
+
 ![alt text](screenshot/LastControl_inventory.png "LastControl Inventory Page")
+
+---
 
 <br>
 
 ![alt text](screenshot/LastControl_GeneralReports.png "LastControl General Reports")
+
+---
 
 ## for Installation and Usage
 [LastControl Handbook](https://github.com/eesmer/LastControl/blob/main/LastControl-HandBook.md)
