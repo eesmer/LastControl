@@ -279,8 +279,28 @@ On RedHat based systems; <br>
 ```sh
 $ dnf update or yum update
 ```
+---
+### -Log4j_Usage_is_Reported
+---
+Log4j is a java logging library. It has a very widespread use. <br>
+This use carries risks that can be exploited as described in CVE-2021-44228 <br>
 
-  
-#### -Log4j_Usage_is_Reported
+<br>
+
+Log4j 2.15 and earlier versions are vulnerable to this attack as they contain the corresponding feature. <br>
+Log4j 1.x versions do not support JNDI, so it is not affected if the JMSAppender class is not enabled. <br>
+
+<br>
+
+You must provide configuration and update and fix for the application using the log4j library. <br>
+Consider the resources below. <br>
+https://logging.apache.org/log4j/2.x/security.html <br>
+https://www.slf4j.org/log4shell.html <br>
+https://reload4j.qos.ch/ <br>
+
+<br>
+
+LastControl also performs a log scan on the machine where it detects log4j usage. <br>
+From this output, you can see if there has been an attempt to exploit the vulnerability. (general-report LOGs tab) <br>
 
 
