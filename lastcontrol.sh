@@ -30,6 +30,7 @@ fi
 
 DATE=$(date)
 HOST_NAME=$(hostnamectl --static)
+HANDBOOK=https://github.com/eesmer/LastControl/blob/main/LastControl-HandBook.md
 
 #---------------------------
 # Inventory
@@ -57,22 +58,22 @@ rm /tmp/$HOST_NAME.log
 RAM_FREE=$( expr $RAM_TOTAL - $RAM_USAGE)
 RAM_FREE_PERCENTAGE=$((100 * $RAM_FREE/$RAM_TOTAL))
 RAM_USE_PERCENTAGE=$(expr 100 - $RAM_FREE_PERCENTAGE)
-	if [ $RAM_USE_PERCENTAGE -gt "40" ]; then 
-		echo "<p1 style='background-color:#DEB887;'>- Ram usage: %$RAM_USE_PERCENTAGE usage</p1>" >> /tmp/$HOST_NAME.log
+	if [ $RAM_USE_PERCENTAGE -gt "50" ]; then 
+		echo "<a href='$HANDBOOK#-ram_usage_is_reported'>- Ram usage: %$RAM_USE_PERCENTAGE usage</a>" >> /tmp/$HOST_NAME.log
 		OOM=0
 		grep -i -r 'out of memory' /var/log/ > /dev/null && OOM=1
-		if [ ! $OOM = "1" ]; then echo "<p1 style='background-color:#CD853F;'>- Ram usage: out of memory message log found</p1>" >> /tmp/$HOST_NAME.log; fi	
+		if [ $OOM = "1" ]; then echo "<a href='$HANDBOOK#-ram_usage_is_reported'>- Ram usage: out of memory message log found</a>" >> /tmp/$HOST_NAME.log; fi	
 	fi
 DISK_USAGE=$(df -H | grep -vE 'Filesystem|tmpfs|cdrom|udev' | awk '{ print $5" "$1"("$2"  "$3")" " --- "}' | sed -e :a -e N -e 's/\n/ /' -e ta |cut -d "%" -f1)
-	if [ $DISK_USAGE -gt "40" ]; then
-		echo "<p1 style='background-color:#DEB887;'>- Disk usage: %$DISK_USAGE usage.</p1>" >> /tmp/$HOST_NAME.log
+	if [ $DISK_USAGE -gt "50" ]; then
+		echo "<a href='$HANDBOOK#-disk_usage_is_reported'>- Disk usage: %$DISK_USAGE usage.</a>" >> /tmp/$HOST_NAME.log
 	fi
 SWAP_VALUE=$(free -m |grep Swap: |cut -d ":" -f2)
 SWAP_TOTAL=$(echo $SWAP_VALUE |cut -d " " -f1)
 SWAP_USE=$(echo $SWAP_VALUE |cut -d " " -f2)
 SWAP_USE_PERCENTAGE=$((100 * $SWAP_USE/$SWAP_TOTAL))
 	if [ $SWAP_USE_PERCENTAGE -gt "0" ]; then
-		echo "<p1 style='background-color:#DEB887;'>- Swap usage: %$SWAP_USE_PERCENTAGE usage.</p1>" >> /tmp/$HOST_NAME.log
+		echo "<a href='$HANDBOOK#-swap_usage_is_reported'>- Swap usage: %$SWAP_USE_PERCENTAGE usage.</a>" >> /tmp/$HOST_NAME.log
 	fi
 
 	#--------------------------
@@ -83,9 +84,9 @@ SWAP_USE_PERCENTAGE=$((100 * $SWAP_USE/$SWAP_TOTAL))
 	MOST_PROCESS=$(cat /tmp/systemload.txt |awk '{print $9, $10, $12}' |head -1 |cut -d " " -f3)
 	MOST_RAM=$(cat /tmp/systemload.txt |awk '{print $9, $10, $12}' |head -1 |cut -d " " -f2)
 	MOST_CPU=$(cat /tmp/systemload.txt |awk '{print $9, $10, $12}' |head -1 |cut -d " " -f1)
-	echo "<p1 style='background-color:#DEB887;'>- Using the most Resource: $MOST_PROCESS</p1>" >> /tmp/$HOST_NAME.log
-	echo "<p1 style='background-color:#DEB887;'>- Using the most Ram: $MOST_RAM</p1>" >> /tmp/$HOST_NAME.log
-	echo "<p1 style='background-color:#DEB887;'>- Using the most Cpu: $MOST_CPU</p1>" >> /tmp/$HOST_NAME.log		
+	echo "<a href='$HANDBOOK#-using_the_most_resource'>- Using the most Resource: $MOST_PROCESS</a>" >> /tmp/$HOST_NAME.log
+	echo "<a href='$HANDBOOK#-using_the_most_ram'>- Using the most Ram: $MOST_RAM</a>" >> /tmp/$HOST_NAME.log
+	echo "<a href='$HANDBOOK#-using_the_most_cpu'>- Using the most Cpu: $MOST_CPU</a>" >> /tmp/$HOST_NAME.log		
 	rm -f /tmp/systemload.txt
 
 #--------------------------
@@ -98,7 +99,7 @@ if [ "$REP" = "APT" ]; then
 	cat /tmp/update_list.txt |grep "The following packages will be upgraded:" >> /dev/null && CHECK_UPDATE=EXIST \
 		&& UPDATE_COUNT=$(cat /tmp/update_list.txt |grep "upgraded," |cut -d " " -f1)
 	if [  $CHECK_UPDATE = "EXIST" ]; then 
-		echo "<p1 style='background-color:#D2B48C;'>-Update check: $CHECK_UPDATE | Count: $UPDATE_COUNT</p1>" >> /tmp/$HOST_NAME.log
+		echo "<a href='$HANDBOOK#-update_check_is_reported'>-Update check: $CHECK_UPDATE | Count: $UPDATE_COUNT</a>" >> /tmp/$HOST_NAME.log
 	fi
 
 elif [ "$REP" = "YUM" ]; then
@@ -112,7 +113,7 @@ elif [ "$REP" = "YUM" ]; then
 
 	CHECK_UPDATE=EXIST
 	if [ $UPDATE_COUNT -gt "0" ]; then
-		echo "<p1 style='background-color:#D2B48C;'>- Update Check: $CHECK_UPDATE | Count: $UPDATE_COUNT</p1>" >> /tmp/$HOST_NAME.log
+		echo "<a href='$HANDBOOK#-update_check_is_reported'>-Update check: $CHECK_UPDATE | Count: $UPDATE_COUNT</a>" >> /tmp/$HOST_NAME.log
 	else
 		CHECK_UPDATE=NONE
 	fi
@@ -365,7 +366,7 @@ CVELIST=$(cat /tmp/cve_list |grep CVE) && echo $CVELIST > /tmp/cve_list && CVELI
 find / -iname "log4j*" > /tmp/log4j_exist.txt && sed -i '/log4j_exist.txt/d' /tmp/log4j_exist.txt
 if [ -s "/tmp/log4j_exist.txt" ]; then
 	LOG4J_EXIST="USE"
-        echo "<p1 style='background-color:#808000;'>- LOG4J/LOG4SHELL is use.</p1" >> /tmp/$HOST_NAME.log
+        echo "<a href='$HANDBOOK#-log4j_usage_is_reported'>- LOG4J/LOG4SHELL is use.</a>" >> /tmp/$HOST_NAME.log
         cat /tmp/log4j_exist.txt >> /tmp/$HOST_NAME.log
 	find /var/log/ -name '*.gz' -type f -exec sh -c "zcat {} | sed -e 's/\${lower://'g | tr -d '}' | egrep -i 'jndi:(ldap[s]?|rmi|dns|nis|iiop|corba|nds|http):'" \; \
 		>> /tmp/$HOST_NAME.log

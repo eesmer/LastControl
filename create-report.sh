@@ -326,9 +326,6 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	INVCHECK=$(perl -ne'38..38 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
 	CVE_LIST=$(perl -ne'45..45 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
 	KERNEL_VER=$(perl -ne'41..41 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	SYS_SCORE=$(perl -ne'34..34 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	NW_SCORE=$(perl -ne'35..35 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	SSH_SCORE=$(perl -ne'36..36 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
 	
 	# create inventory.html
         echo "<tr>" >> $RDIR/inventory.html
@@ -343,7 +340,7 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 
 	# create generalreport.html
 	echo "<tr>" >> $RDIR/generalreport.html
-        echo "<td>$MACHINE_NAME</td>" >> $RDIR/generalreport.html
+	echo "<td><a href=$MACHINE.txt>$MACHINE</a></td>" >> $RDIR/generalreport.html
         echo "<td>$KERNEL_VER</td>" >> $RDIR/generalreport.html
         echo "<td>$CVE_LIST</td>" >> $RDIR/generalreport.html
 
@@ -351,7 +348,7 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	SYS_SCORE=$(echo $SYS_SCORE |cut -d "/" -f1)
 	NW_SCORE=$(echo $NW_SCORE |cut -d "/" -f1)
 	SSH_SCORE=$(echo $SSH_SCORE |cut -d "/" -f1)
-        if [ $UPDATE_CHECK = "EXIST" ] || [ $INVCHECK = "DETECTED" ] || [ ! -z $CVE_LIST ] || [ $SYS_SCORE -lt "70" ] || [ $NW_SCORE -lt "80" ] || [ $SSH_SCORE -lt "100" ]; then
+        if [ $UPDATE_CHECK = "EXIST" ] || [ $INVCHECK = "DETECTED" ] || [ ! -z $CVE_LIST ]; then
             echo "<ul><li><a href=$MACHINE.txt>Details</a>  &nbsp; | &nbsp; $MACHINE_NAME $LINE</li></ul>" >> $RDIR/orangelist.html && ORANGEMACHINE=$((ORANGEMACHINE+1))
 	    MACHINEGROUP=ORANGE
 	    savedb
