@@ -232,29 +232,6 @@ cat > $RDIR/generalreport.html << EOF
 <p style="color: #000000; font-size: 25px; font-weight: bold; background-color:#03A9F4; text-align:center;">
 LastControl General Report</p>
 <p style="text-align:center;">$RDATE</p>
-<p style="text-align:left;">
-<style>
-a:link, a:visited {
-background-color: #1C1C1C;
-color: white;
-padding: 5px 10px;
-text-align: center;
-text-decoration: none;
-display: inline-block;
-}
-a:hover, a:active {
-background-color: gray;
-}
-</style>
-<a href="mainpage.html">Main Page</a>
-<a href="generalreport.html">General Report</a>
-<a href="redlist.html">Red List</a>
-<a href="orangelist.html">Orange List</a>
-<a href="greenlist.html">Green List</a>
-<a href="inventory.html">Inventory List</a>
-<a href="networkscan.html">Network Scan</a>
-<a href="history.php">History</a>
-</p>
 <hr class="solid">
 <style>
 table, th, td {
@@ -265,8 +242,10 @@ border: 5px solid lightgray;
 <tr>
 <th style="text-align:left">MACHINE NAME</th>
 <th style="text-align:left">KERNEL VERSION</th>
-<th style="text-align:left">CVE CHECK RESULT</th>
-<th style="text-align:left">LOGs</th>
+<th style="text-align:left">LOGs CVE</th>
+<th style="text-align:left">LOGs System</th>
+<th style="text-align:left">LOGs Network</th>
+<th style="text-align:left">LOGs SSH</th>
 </tr>
 EOF
 #------------------------------------------------------------------------------------
@@ -305,9 +284,12 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	scp -P22 -i /root/.ssh/lastcontrol $WDIR/lastcontrol.sh root@$MACHINE:/tmp/
 	scp -P22 -i /root/.ssh/lastcontrol $WDIR/cve_check root@$MACHINE:/tmp/
 	scp -P22 -i /root/.ssh/lastcontrol $WDIR/chkrootkit/chkrootkit root@$MACHINE:/tmp/
-        ssh -p22 -i /root/.ssh/lastcontrol root@$MACHINE -- bash /tmp/lastcontrol.sh
-        scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.txt $RDIR/
-        scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.log $RDIR/
+    ssh -p22 -i /root/.ssh/lastcontrol root@$MACHINE -- bash /tmp/lastcontrol.sh
+    scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.txt $RDIR/
+    scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.cveout $RDIR/
+    scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.sysout $RDIR/
+    scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.nwout $RDIR/
+    scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.sshout $RDIR/
 
         UPDATE_CHECK=$(perl -ne'16..16 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
         UPTIME=$(perl -ne'19..19 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
@@ -345,9 +327,6 @@ while [ "$i" -le "$NUMMACHINE" ]; do
         echo "<td>$CVE_LIST</td>" >> $RDIR/generalreport.html
 
 	# create OrangeList & GreenList
-	SYS_SCORE=$(echo $SYS_SCORE |cut -d "/" -f1)
-	NW_SCORE=$(echo $NW_SCORE |cut -d "/" -f1)
-	SSH_SCORE=$(echo $SSH_SCORE |cut -d "/" -f1)
         if [ $UPDATE_CHECK = "EXIST" ] || [ $INVCHECK = "DETECTED" ] || [ ! -z $CVE_LIST ]; then
             echo "<ul><li><a href=$MACHINE.txt>Details</a>  &nbsp; | &nbsp; $MACHINE_NAME $LINE</li></ul>" >> $RDIR/orangelist.html && ORANGEMACHINE=$((ORANGEMACHINE+1))
 	    MACHINEGROUP=ORANGE
@@ -355,14 +334,35 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 
 		# generalreport.html
 		echo "<td>" >> $RDIR/generalreport.html
-		LOGSLINE=$(cat $RDIR/$MACHINE.log | wc -l)
-		m=1
-		while [ "$m" -le "$LOGSLINE" ]; do
-		CURRENTLINE=$(ls -l |sed -n $m{p} $RDIR/$MACHINE.log)
+		LOGSLINE=$(cat $RDIR/$MACHINE.sysout| wc -l)
+		SY=1
+		while [ "$SY" -le "$LOGSLINE" ]; do
+		CURRENTLINE=$(ls -l |sed -n $SY{p} $RDIR/$MACHINE.sysout)
 		echo "$CURRENTLINE <br>" >> $RDIR/generalreport.html
-		m=$(( m + 1 ))
+		SY=$(( SY + 1 ))
+		done
+		echo "</td>" >> $RDIR/generalreport.html	
+
+		echo "<td>" >> $RDIR/generalreport.html
+		LOGSLINE=$(cat $RDIR/$MACHINE.nwout| wc -l)
+		NW=1
+		while [ "$NW" -le "$LOGSLINE" ]; do
+		CURRENTLINE=$(ls -l |sed -n $NW{p} $RDIR/$MACHINE.nwout)
+		echo "$CURRENTLINE <br>" >> $RDIR/generalreport.html
+		NW=$(( NW + 1 ))
 		done
 		echo "</td>" >> $RDIR/generalreport.html
+
+		echo "<td>" >> $RDIR/generalreport.html
+		LOGSLINE=$(cat $RDIR/$MACHINE.sshout| wc -l)
+		SH=1
+		while [ "$SH" -le "$LOGSLINE" ]; do
+		CURRENTLINE=$(ls -l |sed -n $SH{p} $RDIR/$MACHINE.sshout)
+		echo "$CURRENTLINE <br>" >> $RDIR/generalreport.html
+		SH=$(( SH + 1 ))
+		done
+		echo "</td>" >> $RDIR/generalreport.html
+		
 		echo "</tr>" >> $RDIR/generalreport.html
 
 	elif [ $UPDATE_CHECK = "NONE" ] || [ $INVCHECK = "NOTDETECTED" ] || [ -z $CVE_LIST ]; then
@@ -372,14 +372,35 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	    
 		# generalreport.html
 		echo "<td>" >> $RDIR/generalreport.html
-		LOGSLINE=$(cat $RDIR/$MACHINE.log | wc -l)
-		m=1
-		while [ "$m" -le "$LOGSLINE" ]; do
-		CURRENTLINE=$(ls -l |sed -n $m{p} $RDIR/$MACHINE.log)
+		LOGSLINE=$(cat $RDIR/$MACHINE.sysout| wc -l)
+		SY=1
+		while [ "$SY" -le "$LOGSLINE" ]; do
+		CURRENTLINE=$(ls -l |sed -n $SY{p} $RDIR/$MACHINE.sysout)
 		echo "$CURRENTLINE <br>" >> $RDIR/generalreport.html
-		m=$(( m + 1 ))
+		SY=$(( SY + 1 ))
+		done
+		echo "</td>" >> $RDIR/generalreport.html	
+
+		echo "<td>" >> $RDIR/generalreport.html
+		LOGSLINE=$(cat $RDIR/$MACHINE.nwout| wc -l)
+		NW=1
+		while [ "$NW" -le "$LOGSLINE" ]; do
+		CURRENTLINE=$(ls -l |sed -n $NW{p} $RDIR/$MACHINE.nwout)
+		echo "$CURRENTLINE <br>" >> $RDIR/generalreport.html
+		NW=$(( NW + 1 ))
 		done
 		echo "</td>" >> $RDIR/generalreport.html
+
+		echo "<td>" >> $RDIR/generalreport.html
+		LOGSLINE=$(cat $RDIR/$MACHINE.sshout| wc -l)
+		SH=1
+		while [ "$SH" -le "$LOGSLINE" ]; do
+		CURRENTLINE=$(ls -l |sed -n $SH{p} $RDIR/$MACHINE.sshout)
+		echo "$CURRENTLINE <br>" >> $RDIR/generalreport.html
+		SH=$(( SH + 1 ))
+		done
+		echo "</td>" >> $RDIR/generalreport.html
+	
 		echo "</tr>" >> $RDIR/generalreport.html
 	fi
 	
