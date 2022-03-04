@@ -242,10 +242,9 @@ border: 5px solid lightgray;
 <tr>
 <th style="text-align:left">MACHINE NAME</th>
 <th style="text-align:left">KERNEL VERSION</th>
-<th style="text-align:left">LOGs CVE</th>
-<th style="text-align:left">LOGs System</th>
-<th style="text-align:left">LOGs Network</th>
-<th style="text-align:left">LOGs SSH</th>
+<th style="text-align:left">CVE</th>
+<th style="text-align:left">HEALTH CHECK LOGs</th>
+<th style="text-align:left">HARDENING CHECK LOGs</th>
 </tr>
 EOF
 #------------------------------------------------------------------------------------
@@ -284,12 +283,14 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	scp -P22 -i /root/.ssh/lastcontrol $WDIR/lastcontrol.sh root@$MACHINE:/tmp/
 	scp -P22 -i /root/.ssh/lastcontrol $WDIR/cve_check root@$MACHINE:/tmp/
 	scp -P22 -i /root/.ssh/lastcontrol $WDIR/chkrootkit/chkrootkit root@$MACHINE:/tmp/
-    ssh -p22 -i /root/.ssh/lastcontrol root@$MACHINE -- bash /tmp/lastcontrol.sh
-    scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.txt $RDIR/
-    scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.cveout $RDIR/
-    scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.sysout $RDIR/
-    scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.nwout $RDIR/
-    scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.sshout $RDIR/
+        ssh -p22 -i /root/.ssh/lastcontrol root@$MACHINE -- bash /tmp/lastcontrol.sh
+        scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.txt $RDIR/
+        scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.cve $RDIR/
+        scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.healthcheck $RDIR/
+        scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.hardening $RDIR/
+        
+	scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.localusers $RDIR/
+	scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.sudomembers $RDIR/
 
         UPDATE_CHECK=$(perl -ne'16..16 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
         UPTIME=$(perl -ne'19..19 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
@@ -334,32 +335,22 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 
 		# generalreport.html
 		echo "<td>" >> $RDIR/generalreport.html
-		LOGSLINE=$(cat $RDIR/$MACHINE.sysout| wc -l)
-		SY=1
-		while [ "$SY" -le "$LOGSLINE" ]; do
-		CURRENTLINE=$(ls -l |sed -n $SY{p} $RDIR/$MACHINE.sysout)
+		LOGSLINE=$(cat $RDIR/$MACHINE.healthcheck| wc -l)
+		HC=1
+		while [ "$HC" -le "$LOGSLINE" ]; do
+		CURRENTLINE=$(ls -l |sed -n $HC{p} $RDIR/$MACHINE.healthcheck)
 		echo "$CURRENTLINE <br>" >> $RDIR/generalreport.html
-		SY=$(( SY + 1 ))
+		HC=$(( HC + 1 ))
 		done
 		echo "</td>" >> $RDIR/generalreport.html	
 
 		echo "<td>" >> $RDIR/generalreport.html
-		LOGSLINE=$(cat $RDIR/$MACHINE.nwout| wc -l)
-		NW=1
-		while [ "$NW" -le "$LOGSLINE" ]; do
-		CURRENTLINE=$(ls -l |sed -n $NW{p} $RDIR/$MACHINE.nwout)
+		LOGSLINE=$(cat $RDIR/$MACHINE.hardening| wc -l)
+		HD=1
+		while [ "$HD" -le "$LOGSLINE" ]; do
+		CURRENTLINE=$(ls -l |sed -n $HD{p} $RDIR/$MACHINE.hardening)
 		echo "$CURRENTLINE <br>" >> $RDIR/generalreport.html
-		NW=$(( NW + 1 ))
-		done
-		echo "</td>" >> $RDIR/generalreport.html
-
-		echo "<td>" >> $RDIR/generalreport.html
-		LOGSLINE=$(cat $RDIR/$MACHINE.sshout| wc -l)
-		SH=1
-		while [ "$SH" -le "$LOGSLINE" ]; do
-		CURRENTLINE=$(ls -l |sed -n $SH{p} $RDIR/$MACHINE.sshout)
-		echo "$CURRENTLINE <br>" >> $RDIR/generalreport.html
-		SH=$(( SH + 1 ))
+		HD=$(( HD + 1 ))
 		done
 		echo "</td>" >> $RDIR/generalreport.html
 		
@@ -372,35 +363,25 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	    
 		# generalreport.html
 		echo "<td>" >> $RDIR/generalreport.html
-		LOGSLINE=$(cat $RDIR/$MACHINE.sysout| wc -l)
-		SY=1
-		while [ "$SY" -le "$LOGSLINE" ]; do
-		CURRENTLINE=$(ls -l |sed -n $SY{p} $RDIR/$MACHINE.sysout)
+		LOGSLINE=$(cat $RDIR/$MACHINE.healthcheck| wc -l)
+		HC=1
+		while [ "$HC" -le "$LOGSLINE" ]; do
+		CURRENTLINE=$(ls -l |sed -n $HC{p} $RDIR/$MACHINE.healthcheck)
 		echo "$CURRENTLINE <br>" >> $RDIR/generalreport.html
-		SY=$(( SY + 1 ))
+		HC=$(( HC + 1 ))
 		done
 		echo "</td>" >> $RDIR/generalreport.html	
 
 		echo "<td>" >> $RDIR/generalreport.html
-		LOGSLINE=$(cat $RDIR/$MACHINE.nwout| wc -l)
-		NW=1
-		while [ "$NW" -le "$LOGSLINE" ]; do
-		CURRENTLINE=$(ls -l |sed -n $NW{p} $RDIR/$MACHINE.nwout)
+		LOGSLINE=$(cat $RDIR/$MACHINE.hardening| wc -l)
+		HD=1
+		while [ "$HD" -le "$LOGSLINE" ]; do
+		CURRENTLINE=$(ls -l |sed -n $HD{p} $RDIR/$MACHINE.hardening)
 		echo "$CURRENTLINE <br>" >> $RDIR/generalreport.html
-		NW=$(( NW + 1 ))
+		HD=$(( HD + 1 ))
 		done
 		echo "</td>" >> $RDIR/generalreport.html
 
-		echo "<td>" >> $RDIR/generalreport.html
-		LOGSLINE=$(cat $RDIR/$MACHINE.sshout| wc -l)
-		SH=1
-		while [ "$SH" -le "$LOGSLINE" ]; do
-		CURRENTLINE=$(ls -l |sed -n $SH{p} $RDIR/$MACHINE.sshout)
-		echo "$CURRENTLINE <br>" >> $RDIR/generalreport.html
-		SH=$(( SH + 1 ))
-		done
-		echo "</td>" >> $RDIR/generalreport.html
-	
 		echo "</tr>" >> $RDIR/generalreport.html
 	fi
 	

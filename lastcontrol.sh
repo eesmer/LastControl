@@ -50,229 +50,30 @@ LAST_BOOT=$(who -b | awk '{print $3,$4}')
 UPTIME=$(uptime) && UPTIME_MIN=$(awk '{ print "up " $1 /60 " minutes"}' /proc/uptime)
 
 #---------------------------
-# System conf. check
+# HEALTHCHECK
 #---------------------------
-
-rm /tmp/$HOST_NAME.cveout
-rm /tmp/$HOST_NAME.sysout
-rm /tmp/$HOST_NAME.nwout
-rm /tmp/$HOST_NAME.sshout
+rm /tmp/$HOST_NAME.healthcheck
 
 RAM_FREE=$( expr $RAM_TOTAL - $RAM_USAGE)
 RAM_FREE_PERCENTAGE=$((100 * $RAM_FREE/$RAM_TOTAL))
 RAM_USE_PERCENTAGE=$(expr 100 - $RAM_FREE_PERCENTAGE)
 	if [ $RAM_USE_PERCENTAGE -gt "50" ]; then 
-		echo "<a href='$HANDBOOK#-ram_usage_is_reported'>Ram usage: %$RAM_USE_PERCENTAGE usage</a>" >> /tmp/$HOST_NAME.sysout
+		echo "<a href='$HANDBOOK#-ram_usage_is_reported'>WARN: Ram %$RAM_USE_PERCENTAGE usage</a>" >> /tmp/$HOST_NAME.healthcheck
 		OOM=0
 		grep -i -r 'out of memory' /var/log/ > /dev/null && OOM=1
-		if [ $OOM = "1" ]; then echo "<a href='$HANDBOOK#-ram_usage_is_reported'>Ram usage: out of memory message log found</a>" >> /tmp/$HOST_NAME.sysout; fi
+		if [ $OOM = "1" ]; then echo "<a href='$HANDBOOK#-ram_usage_is_reported'>WARN: out of memory message log found</a>" >> /tmp/$HOST_NAME.healthcheck; fi
 	fi
 DISK_USAGE=$(df -H | grep -vE 'Filesystem|tmpfs|cdrom|udev' | awk '{ print $5" "$1"("$2"  "$3")" " --- "}' | sed -e :a -e N -e 's/\n/ /' -e ta |cut -d "%" -f1)
 	if [ $DISK_USAGE -gt "50" ]; then
-		echo "<a href='$HANDBOOK#-disk_usage_is_reported'>Disk usage: %$DISK_USAGE usage.</a>" >> /tmp/$HOST_NAME.sysout
+		echo "<a href='$HANDBOOK#-disk_usage_is_reported'>WARN: Disk %$DISK_USAGE usage.</a>" >> /tmp/$HOST_NAME.healthcheck
 	fi
 SWAP_VALUE=$(free -m |grep Swap: |cut -d ":" -f2)
 SWAP_TOTAL=$(echo $SWAP_VALUE |cut -d " " -f1)
 SWAP_USE=$(echo $SWAP_VALUE |cut -d " " -f2)
 SWAP_USE_PERCENTAGE=$((100 * $SWAP_USE/$SWAP_TOTAL))
 	if [ $SWAP_USE_PERCENTAGE -gt "0" ]; then
-		echo "<a href='$HANDBOOK#-swap_usage_is_reported'>Swap usage: %$SWAP_USE_PERCENTAGE usage.</a>" >> /tmp/$HOST_NAME.sysout
+		echo "<a href='$HANDBOOK#-swap_usage_is_reported'>WARN: Swap %$SWAP_USE_PERCENTAGE usage</a>" >> /tmp/$HOST_NAME.healthcheck
 	fi
-
-	#--------------------------
-	# check load
-	#--------------------------
-	top -b -n1 | head -17 | tail -11 > /tmp/systemload.txt
-	sed -i '1d' /tmp/systemload.txt
-	MOST_PROCESS=$(cat /tmp/systemload.txt |awk '{print $9, $10, $12}' |head -1 |cut -d " " -f3)
-	MOST_RAM=$(cat /tmp/systemload.txt |awk '{print $9, $10, $12}' |head -1 |cut -d " " -f2)
-	MOST_CPU=$(cat /tmp/systemload.txt |awk '{print $9, $10, $12}' |head -1 |cut -d " " -f1)
-	echo "<a href='$HANDBOOK#-using_the_most_resource'>Using the most Resource: $MOST_PROCESS</a>" >> /tmp/$HOST_NAME.sysout
-	echo "<a href='$HANDBOOK#-using_the_most_ram'>Using the most Ram: $MOST_RAM</a>" >> /tmp/$HOST_NAME.sysout
-	echo "<a href='$HANDBOOK#-using_the_most_cpu'>Using the most Cpu: $MOST_CPU</a>" >> /tmp/$HOST_NAME.sysout	
-	rm -f /tmp/systemload.txt
-
-#--------------------------
-# Check Update
-#--------------------------
-if [ "$REP" = "APT" ]; then
-	CHECK_UPDATE=NONE
-	UPDATE_COUNT=0
-	echo "n" |apt-get upgrade > /tmp/update_list.txt
-	cat /tmp/update_list.txt |grep "The following packages will be upgraded:" >> /dev/null && CHECK_UPDATE=EXIST \
-		&& UPDATE_COUNT=$(cat /tmp/update_list.txt |grep "upgraded," |cut -d " " -f1)
-	if [  $CHECK_UPDATE = "EXIST" ]; then 
-		echo "<a href='$HANDBOOK#-update_check_is_reported'>Update check: $CHECK_UPDATE | Count: $UPDATE_COUNT</a>" >> /tmp/$HOST_NAME.sysout
-	fi
-
-elif [ "$REP" = "YUM" ]; then
-	yum check-update > /tmp/update_list.txt
-	sed -i '/Loaded/d' /tmp/update_list.txt
-	sed -i '/Loading/d' /tmp/update_list.txt
-	sed -i '/*/d' /tmp/update_list.txt
-	sed -i '/Last metadata/d' /tmp/update_list.txt
-	sed -i '/^$/d' /tmp/update_list.txt
-	UPDATE_COUNT=$(cat /tmp/update_list.txt |wc -l)
-
-	CHECK_UPDATE=EXIST
-	if [ $UPDATE_COUNT -gt "0" ]; then
-		echo "<a href='$HANDBOOK#-update_check_is_reported'>Update check: $CHECK_UPDATE | Count: $UPDATE_COUNT</a>" >> /tmp/$HOST_NAME.sysout
-	else
-		CHECK_UPDATE=NONE
-	fi
-rm -f /tmp/update_list.txt
-fi
-
-#------------------------------
-# broken package list
-#------------------------------
-if [ "$REP" = "APT" ];then
-	dpkg -l | grep -v "^ii" >> /dev/null > /tmp/broken_pack_list.txt
-	sed -i -e '1d;2d;3d;4d;5d' /tmp/broken_pack_list.txt
-	BROKEN_COUNT=$(wc -l /tmp/broken_pack_list.txt |cut -d " " -f1)
-	if [ $BROKEN_COUNT -gt "0" ]; then
-		echo "<p1 style='background-color:#D2B48C;'>Package Check: $BROKEN_COUNT package(s) is a broken</p1>" >> /tmp/$HOST_NAME.sysout
-	fi
-
-	### ALLOWUNAUTH=$(grep -v "^#" /etc/apt/ -r | grep -c "AllowUnauthenticated")
-	### if [ $ALLOWUNAUTH = 0 ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
-	### DEBSIG=$(grep -v "^#" /etc/dpkg/dpkg.cfg |grep -c no-debsig)
-	### if [ $DEBSIG = 1 ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
-fi
-
-if [ "$REP" = "YUM" ];then
-	rpm -Va >> /dev/null > /tmp/broken_pack_list.txt
-	BROKEN_COUNT=$(wc -l /tmp/broken_pack_list.txt |cut -d " " -f1)
-	if [ $BROKEN_COUNT -gt "0" ]; then
-		echo "<p1 style='background-color:#D2B48C;'>Package Check: $BROKEN_COUNT package(s) is a broken</p1>" >> /tmp/$HOST_NAME.sysout
-	fi
-fi
-
-#------------------------------------
-# check local users,limits and sudo
-#------------------------------------
-getent passwd {1000..6000} > /tmp/localusers.txt
-LOCALUSER_COUNT=$(wc -l /tmp/localusers.txt |cut -d " " -f1)
-if [ $LOCALUSER_COUNT = "0" ]; then
-	rm /tmp/localusers.txt
-else
-	# check login limits
-	echo "<p1 style='background-color:#BC8F8F;'>Local User: $LOCALUSER_COUNT user(s) exist.</p1>" >> /tmp/$HOST_NAME.sysout
-	CHECK_LIMITS=NONE
-	i=1
-	while [ "$i" -le $LOCALUSER_COUNT ]; do
-		USER=$(ls -l |sed -n $i{p} /tmp/localusers.txt)
-		cat /etc/security/limits.conf |grep $USER >> /dev/null
-		if [ ! "$?" = "0" ]; then CHECK_LIMITS=EXIST; fi
-	i=$(( i + 1 ))
-	done
-	if [ $CHECK_LIMITS = "EXIST" ]; then
-		echo "<p1 style='background-color:#BC8F8F;'>Local User Limit: Limit not used.</p1>" >> /tmp/$HOST_NAME.sysout
-	fi
-
-	# sudo members check
-	if [ -f "/etc/sudoers" ]; then
-		SUDOMEMBERCOUNT=$(cat /etc/sudoers |grep ALL= |grep -v % |grep -v root |wc -l)
-		if [ $SUDOMEMBERCOUNT -gt "0" ]; then
-			cat /etc/sudoers |grep ALL= |grep -v % |grep -v root > /tmp/sudomembers.txt
-			echo "<p1 style='background-color:#BC8F8F;'>Sudo: $SUDOMEMBERCOUNT user(s) have sudo privileges.</p1>" >> /tmp/$HOST_NAME.sysout
-		fi
-	else
-		SUDOMEMBERCOUNT=0
-	fi
-fi
-
-#--------------------------
-# passwd, shadow, group file
-#--------------------------
-PASSWDFILEPERMS=$(ls -l /etc/passwd |cut -d ' ' -f1) && PASSWDFILEOWNER=$(ls -l /etc/passwd |cut -d ' ' -f3) && PASSWDFILEGRP=$(ls -l /etc/passwd |cut -d ' ' -f4)
-SHADOWFILEPERMS=$(ls -l /etc/shadow |cut -d ' ' -f1) && SHADOWFILEOWNER=$(ls -l /etc/shadow |cut -d ' ' -f3) && SHADOWFILEGRP=$(ls -l /etc/shadow |cut -d ' ' -f4)
-GROUPFILEPERMS=$(ls -l /etc/group |cut -d ' ' -f1) && GROUPFILEOWNER=$(ls -l /etc/group |cut -d ' ' -f3) && GROUPFILEGRP=$(ls -l /etc/group |cut -d ' ' -f4)
-GSHADOWFILEPERMS=$(ls -l /etc/gshadow |cut -d ' ' -f1) && GSHADOWFILEOWNER=$(ls -l /etc/gshadow |cut -d ' ' -f3) && GSHADOWFILEGRP=$(ls -l /etc/gshadow |cut -d ' ' -f4)
-
-PASSWD_CHECK=NONE
-SHADOW_CHECK=NONE
-GROUP_CHECK=NONE
-GSHADOW_CHECK=NONE
-
-if [ "$REP" = "APT" ];then
-	if [ $PASSWDFILEPERMS = "-rw-r--r--" ] && [ $PASSWDFILEOWNER = "root" ] && [ $PASSWDFILEGRP = "root" ]; then
-		PASSWD_CHECK=PASSED
-	else
-		PASSWD_CHECK=NOTPASSED
-	fi
-
-	if [ $SHADOWFILEPERMS = "-rw-r-----" ] && [ $SHADOWFILEOWNER = "root" ] && [ $SHADOWFILEGRP = "shadow" ]; then
-		SHADOW_CHECK=PASSED
-	else
-		SHADOW_CHECK=NOTPASSED
-	fi
-
-	if [ $GROUPFILEPERMS = "-rw-r--r--" ] && [ $GROUPFILEOWNER = "root" ] && [ $GROUPFILEGRP = "root" ]; then
-		GROUP_CHECK=PASSED
-	else
-		GROUP_CHECK=NOTPASSED
-	fi
-	
-	if [ $GSHADOWFILEPERMS = "-rw-r-----" ] && [ $GSHADOWFILEOWNER = "root" ] && [ $GSHADOWFILEGRP = "shadow" ]; then
-		GSHADOW_CHECK=PASSED
-	else
-		GSHADOW_CHECK=NOTPASSED
-	fi
-fi
-
-if [ "$REP" = "YUM" ];then
-	if [ $PASSWDFILEPERMS = "-rw-r--r--." ] && [ $PASSWDFILEOWNER = "root" ] && [ $PASSWDFILEGRP = "root" ]; then
-		PASSWD_CHECK=PASSED
-	else
-		PASSWD_CHECK=NOTPASSED
-	fi
-
-	if [ $SHADOWFILEPERMS = "----------." ] && [ $SHADOWFILEOWNER = "root" ] && [ $SHADOWFILEGRP = "root" ]; then
-		SHADOW_CHECK=PASSED
-	else
-		SHADOW_CHECK=NOTPASSED
-	fi
-
-	if [ $GROUPFILEPERMS = "-rw-r--r--." ] && [ $GROUPFILEOWNER = "root" ] && [ $GROUPFILEGRP = "root" ]; then
-		GROUP_CHECK=PASSED
-	else
-		GROUP_CHECK=NOTPASSED
-	fi
-
-	if [ $GSHADOWFILEPERMS = "----------." ] && [ $GSHADOWFILEOWNER = "root" ] && [ $GSHADOWFILEGRP = "root" ]; then
-		GSHADOW_CHECK=PASSED
-	else
-		GSHADOW_CHECK=NOTPASSED
-	fi
-fi
-
-if [ $PASSWD_CHECK = "NOTPASSED" ] && [ $SHADOW_CHECK = "NOTPASSED" ] && [ $GROUP_CHECK = "NOTPASSED" ] && [ $GSHADOW_CHECK = "NOTPASSED" ]; then
-	echo "<p1 style='background-color:#F4A460;'>User,Group File: \
-		/etc/passwd access:$PASSWD_CHECK | /etc/shadow access:$SHADOW_CHECK | /etc/group access:$GROUP_CHECK | /etc/gshadow access:$GSHADOW_CHECK</p1>" \
-		>> /tmp/$HOST_NAME.sysout
-fi
-
-#--------------------------
-# FS Conf. check
-#--------------------------
-part_check () {
-if [ "$#" != "1" ]; then
-		options="$(echo $@ | awk 'BEGIN{FS="[()]"}{print $2}')"
-	echo "[+]$@"
-else
-	echo "[-]\"$1\" not in separated partition."
-fi
-}
-parts=(/tmp /var /var/tmp /var/log /var/log/audit /home /dev/shm)
-for part in ${parts[*]}; do
-	out="$(mount | grep $part)"
-	part_check $part $out >> /tmp/fs_conf.txt
-done
-PART_CHECK=$(cat /tmp/fs_conf.txt |grep "not in separated partition." |wc -l)
-if [ $PART_CHECK -gt "0" ]; then
-	echo "<p1 style='background-color:#DAA520;'>Partition: $PART_CHECK not in separated partition.</p1>" >> /tmp/$HOST_NAME.sysout
-fi
 
 #---------------------------
 # S.M.A.R.T check
@@ -314,8 +115,214 @@ rm -f /tmp/disklist.txt
 #SMART=$(echo $SMART)
 
 if [ $SMART_SCORE = "0" ]; then
-	echo "<p1 style='background-color:#B8860B;'>S.M.A.R.T: Failed or not tested.</p1>" >> /tmp/$HOST_NAME.sysout
+	echo "<a href='$HANDBOOK'>WARN: S.M.A.R.T Failed or not tested.</a>" >> /tmp/$HOST_NAME.healthcheck
 fi
+
+#----------------------------------
+# Resource usage CPU,Ram Load
+#----------------------------------
+top -b -n1 | head -17 | tail -11 > /tmp/systemload.txt
+sed -i '1d' /tmp/systemload.txt
+MOST_PROCESS=$(cat /tmp/systemload.txt |awk '{print $9, $10, $12}' |head -1 |cut -d " " -f3)
+MOST_RAM=$(cat /tmp/systemload.txt |awk '{print $9, $10, $12}' |head -1 |cut -d " " -f2)
+MOST_CPU=$(cat /tmp/systemload.txt |awk '{print $9, $10, $12}' |head -1 |cut -d " " -f1)
+echo "<a href='$HANDBOOK#-using_the_most_resource'>INFO:  Using the most Resource: $MOST_PROCESS</a>" >> /tmp/$HOST_NAME.sysout
+echo "<a href='$HANDBOOK#-using_the_most_ram'>INFO:  Using the most Ram: $MOST_RAM</a>" >> /tmp/$HOST_NAME.sysout
+echo "<a href='$HANDBOOK#-using_the_most_cpu'>INFO:  Using the most Cpu: $MOST_CPU</a>" >> /tmp/$HOST_NAME.sysout	
+rm -f /tmp/systemload.txt
+
+#--------------------------
+# Check Update
+#--------------------------
+if [ "$REP" = "APT" ]; then
+	CHECK_UPDATE=NONE
+	UPDATE_COUNT=0
+	echo "n" |apt-get upgrade > /tmp/update_list.txt
+	cat /tmp/update_list.txt |grep "The following packages will be upgraded:" >> /dev/null && CHECK_UPDATE=EXIST \
+		&& UPDATE_COUNT=$(cat /tmp/update_list.txt |grep "upgraded," |cut -d " " -f1)
+	if [  $CHECK_UPDATE = "EXIST" ]; then 
+		echo "<a href='$HANDBOOK#-update_check_is_reported'>INFO:  Update $CHECK_UPDATE | Count: $UPDATE_COUNT</a>" >> /tmp/$HOST_NAME.healthcheck
+	fi
+
+elif [ "$REP" = "YUM" ]; then
+	yum check-update > /tmp/update_list.txt
+	sed -i '/Loaded/d' /tmp/update_list.txt
+	sed -i '/Loading/d' /tmp/update_list.txt
+	sed -i '/*/d' /tmp/update_list.txt
+	sed -i '/Last metadata/d' /tmp/update_list.txt
+	sed -i '/^$/d' /tmp/update_list.txt
+	UPDATE_COUNT=$(cat /tmp/update_list.txt |wc -l)
+
+	CHECK_UPDATE=EXIST
+	if [ $UPDATE_COUNT -gt "0" ]; then
+		echo "<a href='$HANDBOOK#-update_check_is_reported'>INFO:  Update $CHECK_UPDATE | Count: $UPDATE_COUNT</a>" >> /tmp/$HOST_NAME.healthcheck
+	else
+		CHECK_UPDATE=NONE
+	fi
+rm -f /tmp/update_list.txt
+fi
+
+#------------------------------
+# broken package list
+#------------------------------
+if [ "$REP" = "APT" ];then
+	dpkg -l | grep -v "^ii" >> /dev/null > /tmp/broken_pack_list.txt
+	sed -i -e '1d;2d;3d;4d;5d' /tmp/broken_pack_list.txt
+	BROKEN_COUNT=$(wc -l /tmp/broken_pack_list.txt |cut -d " " -f1)
+	if [ $BROKEN_COUNT -gt "0" ]; then
+		echo "<a href='$HANDBOOK'>WARN: $BROKEN_COUNT package(s) is a broken</a>" >> /tmp/$HOST_NAME.healthcheck
+	fi
+
+	### ALLOWUNAUTH=$(grep -v "^#" /etc/apt/ -r | grep -c "AllowUnauthenticated")
+	### if [ $ALLOWUNAUTH = 0 ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
+	### DEBSIG=$(grep -v "^#" /etc/dpkg/dpkg.cfg |grep -c no-debsig)
+	### if [ $DEBSIG = 1 ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
+fi
+
+if [ "$REP" = "YUM" ];then
+	rpm -Va >> /dev/null > /tmp/broken_pack_list.txt
+	BROKEN_COUNT=$(wc -l /tmp/broken_pack_list.txt |cut -d " " -f1)
+	if [ $BROKEN_COUNT -gt "0" ]; then
+		echo "<a href='$HANDBOOK'>WARN: $BROKEN_COUNT package(s) is a broken</a>" >> /tmp/$HOST_NAME.healthcheck
+	fi
+fi
+
+#------------------------------------
+# HARDENING CHECK
+#------------------------------------
+rm /tmp/$HOST_NAME.hardening
+
+#------------------------------------
+# check local users,limits and sudo
+#------------------------------------
+####getent passwd {1000..6000} > /tmp/$HOST_NAME.localusers
+getent passwd {1000..6000} |cut -d ":" -f1 > /tmp/userlist
+LOCALUSER_COUNT=$(wc -l /tmp/userlist |cut -d " " -f1)
+if [ $LOCALUSER_COUNT = "0" ]; then
+	rm /tmp/userlist
+else
+	echo "<a href='$HOST_NAME.localusers'>INFO:  $LOCALUSER_COUNT local user(s) exist</a>" >> /tmp/$HOST_NAME.hardening
+	# check login limits
+	i=1
+	while [ $i -le $LOCALUSER_COUNT ]; do
+		USER=$(ls -l |sed -n $i{p} /tmp/userlist)
+		cat /etc/security/limits.conf |grep $USER >> /dev/null
+		if [ $? = "0" ]; then 
+			echo "$USER | Limit:Pass" >> /tmp/$HOST_NAME.localusers
+		else
+			echo "$USER | Limit:Fail" >> /tmp/$HOST_NAME.localusers
+		fi
+	i=$(( i + 1 ))
+	done
+        
+	cat /tmp/$HOST_NAME.localusers |grep Fail >> /dev/null
+	if [ $? = "0" ]; then
+		echo "<a href='$HANDBOOK'>INFO:  User Limit not used.</a>" >> /tmp/$HOST_NAME.hardening
+	fi
+
+	# sudo members check
+	if [ -f "/etc/sudoers" ]; then
+		SUDOMEMBERCOUNT=$(cat /etc/sudoers |grep ALL= |grep -v % |grep -v root |wc -l)
+		if [ $SUDOMEMBERCOUNT -gt "0" ]; then
+			cat /etc/sudoers |grep ALL= |grep -v % |grep -v root > /tmp/$HOST_NAME.sudomembers
+			echo "<a href='$HOST_NAME.sudomembers'>INFO:  $SUDOMEMBERCOUNT user(s) have SUDO privileges.</a>" >> /tmp/$HOST_NAME.hardening
+		fi
+	else
+		SUDOMEMBERCOUNT=0
+	fi
+fi
+
+#--------------------------
+# passwd, shadow, group file
+#--------------------------
+PASSWDFILEPERMS=$(ls -l /etc/passwd |cut -d ' ' -f1) && PASSWDFILEOWNER=$(ls -l /etc/passwd |cut -d ' ' -f3) && PASSWDFILEGRP=$(ls -l /etc/passwd |cut -d ' ' -f4)
+SHADOWFILEPERMS=$(ls -l /etc/shadow |cut -d ' ' -f1) && SHADOWFILEOWNER=$(ls -l /etc/shadow |cut -d ' ' -f3) && SHADOWFILEGRP=$(ls -l /etc/shadow |cut -d ' ' -f4)
+GROUPFILEPERMS=$(ls -l /etc/group |cut -d ' ' -f1) && GROUPFILEOWNER=$(ls -l /etc/group |cut -d ' ' -f3) && GROUPFILEGRP=$(ls -l /etc/group |cut -d ' ' -f4)
+GSHADOWFILEPERMS=$(ls -l /etc/gshadow |cut -d ' ' -f1) && GSHADOWFILEOWNER=$(ls -l /etc/gshadow |cut -d ' ' -f3) && GSHADOWFILEGRP=$(ls -l /etc/gshadow |cut -d ' ' -f4)
+
+PASSWD_CHECK=NONE
+SHADOW_CHECK=NONE
+GROUP_CHECK=NONE
+GSHADOW_CHECK=NONE
+
+if [ "$REP" = "APT" ];then
+	if [ $PASSWDFILEPERMS = "-rw-r--r--" ] && [ $PASSWDFILEOWNER = "root" ] && [ $PASSWDFILEGRP = "root" ]; then
+		PASSWD_CHECK=PASS
+	else
+		PASSWD_CHECK=FAIL
+	fi
+
+	if [ $SHADOWFILEPERMS = "-rw-r-----" ] && [ $SHADOWFILEOWNER = "root" ] && [ $SHADOWFILEGRP = "shadow" ]; then
+		SHADOW_CHECK=PASS
+	else
+		SHADOW_CHECK=FAIL
+	fi
+
+	if [ $GROUPFILEPERMS = "-rw-r--r--" ] && [ $GROUPFILEOWNER = "root" ] && [ $GROUPFILEGRP = "root" ]; then
+		GROUP_CHECK=PASS
+	else
+		GROUP_CHECK=FAIL
+	fi
+	
+	if [ $GSHADOWFILEPERMS = "-rw-r-----" ] && [ $GSHADOWFILEOWNER = "root" ] && [ $GSHADOWFILEGRP = "shadow" ]; then
+		GSHADOW_CHECK=PASS
+	else
+		GSHADOW_CHECK=FAIL
+	fi
+fi
+
+if [ "$REP" = "YUM" ];then
+	if [ $PASSWDFILEPERMS = "-rw-r--r--." ] && [ $PASSWDFILEOWNER = "root" ] && [ $PASSWDFILEGRP = "root" ]; then
+		PASSWD_CHECK=PASS
+	else
+		PASSWD_CHECK=FAIL
+	fi
+
+	if [ $SHADOWFILEPERMS = "----------." ] && [ $SHADOWFILEOWNER = "root" ] && [ $SHADOWFILEGRP = "root" ]; then
+		SHADOW_CHECK=PASS
+	else
+		SHADOW_CHECK=FAIL
+	fi
+
+	if [ $GROUPFILEPERMS = "-rw-r--r--." ] && [ $GROUPFILEOWNER = "root" ] && [ $GROUPFILEGRP = "root" ]; then
+		GROUP_CHECK=PASS
+	else
+		GROUP_CHECK=FAIL
+	fi
+
+	if [ $GSHADOWFILEPERMS = "----------." ] && [ $GSHADOWFILEOWNER = "root" ] && [ $GSHADOWFILEGRP = "root" ]; then
+		GSHADOW_CHECK=PASS
+	else
+		GSHADOW_CHECK=FAIL
+	fi
+fi
+
+if [ $PASSWD_CHECK = "FAIL" ] && [ $SHADOW_CHECK = "FAIL" ] && [ $GROUP_CHECK = "FAIL" ] && [ $GSHADOW_CHECK = "FAIL" ]; then
+	echo "<a href='$HANDBOOK'> WARN: passwd,shadow,group files: \
+		/etc/passwd access:$PASSWD_CHECK | /etc/shadow access:$SHADOW_CHECK | /etc/group access:$GROUP_CHECK | /etc/gshadow access:$GSHADOW_CHECK</a>" \
+		>> /tmp/$HOST_NAME.hardening
+fi
+
+#--------------------------
+# FS Conf. check
+#--------------------------
+###part_check () {
+###if [ "$#" != "1" ]; then
+###		options="$(echo $@ | awk 'BEGIN{FS="[()]"}{print $2}')"
+###	echo "[+]$@"
+###else
+###	echo "[-]\"$1\" not in separated partition."
+###fi
+###}
+###parts=(/tmp /var /var/tmp /var/log /var/log/audit /home /dev/shm)
+###for part in ${parts[*]}; do
+###	out="$(mount | grep $part)"
+###	part_check $part $out >> /tmp/fs_conf.txt
+###done
+###PART_CHECK=$(cat /tmp/fs_conf.txt |grep "not in separated partition." |wc -l)
+###if [ $PART_CHECK -gt "0" ]; then
+###	echo "<p1 style='background-color:#DAA520;'>Partition: $PART_CHECK not in separated partition.</p1>" >> /tmp/$HOST_NAME.sysout
+###fi
 
 #---------------------------
 # Network conf. check
@@ -358,8 +365,10 @@ SSHCONF14=$(sshd -T | grep permitemptypasswords |cut -d " " -f2) && if [ ! $SSHC
 SSHCONF15=$(sshd -T | grep permituserenvironment |cut -d " " -f2) && if [ ! $SSHCONF15 = "no" ]; then echo "<p1 style='background-color:#D2691E;'>sshd_config PermitUserEnv. setting: Not Passed</p1>" >> /tmp/$HOST_NAME.sshout; fi
 
 #--------------------------
-# Vulnerability Check
+# VULNEREBILITY CHECK
 #--------------------------
+rm /tmp/$HOST_NAME.cve
+
 # kernel based cve check
 KERNELVER=$(uname -a |cut -d " " -f3 |cut -d "-" -f1)
 perl /tmp/cve_check -k $KERNELVER > /tmp/cve_list
@@ -369,7 +378,7 @@ CVELIST=$(cat /tmp/cve_list |grep CVE) && echo $CVELIST > /tmp/cve_list && CVELI
 find / -iname "log4j*" > /tmp/log4j_exist.txt && sed -i '/log4j_exist.txt/d' /tmp/log4j_exist.txt
 if [ -s "/tmp/log4j_exist.txt" ]; then
 	LOG4J_EXIST="USE"
-        echo "<a href='$HANDBOOK#-log4j_usage_is_reported'>LOG4J/LOG4SHELL is use.</a>" >> /tmp/$HOST_NAME.cveout
+        echo "<a href='$HANDBOOK#-log4j_usage_is_reported'>LOG4J/LOG4SHELL is use.</a>" >> /tmp/$HOST_NAME.cve
         cat /tmp/log4j_exist.txt >> /tmp/$HOST_NAME.log
 	find /var/log/ -name '*.gz' -type f -exec sh -c "zcat {} | sed -e 's/\${lower://'g | tr -d '}' | egrep -i 'jndi:(ldap[s]?|rmi|dns|nis|iiop|corba|nds|http):'" \; \
 		>> /tmp/$HOST_NAME.log
@@ -570,11 +579,11 @@ if [ ! "$LOCALUSER_COUNT" = "0" ]; then
         echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
         echo "Local User List" >> /tmp/$HOST_NAME.txt
         echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-	cat /tmp/localusers.txt >> /tmp/$HOST_NAME.txt && rm -f /tmp/localusers.txt
+	cat /tmp/$HOST_NAME.localusers >> /tmp/$HOST_NAME.txt #&& rm -f /tmp/$HOST_NAME.localusers
         echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 	echo "sudo members" >> /tmp/$HOST_NAME.txt
 	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-	cat /tmp/sudomembers.txt >> /tmp/$HOST_NAME.txt && rm -f /tmp/sudomembers.txt
+	cat /tmp/$HOST_NAME.sudomembers >> /tmp/$HOST_NAME.txt #&& rm -f /tmp/$HOST_NAME.sudomembers
 	echo "" >> /tmp/$HOST_NAME.txt
 fi
 
