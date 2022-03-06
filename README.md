@@ -24,11 +24,6 @@ Debian, Ubuntu, Centos, RedHat, Oracle Linux, Rocky Linux
 
 <br>
 
-All these outputs with a web page;<br>
-It shows the reports on a single screen by categorizing the machines as 'red' 'green' and 'orange' and General Report.
-
-<br>
-
 ![alt text](screenshot/LastControl_reports.png "LastControl Reports")
 
 ---
