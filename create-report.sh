@@ -47,27 +47,23 @@ background-color: gray;
 }
 </style>
 <a href="mainpage.html">Main Page</a>
-<a href="generalreport.html">General Report</a>
-<a href="redlist.html">Red List</a>
-<a href="orangelist.html">Orange List</a>
-<a href="greenlist.html">Green List</a>
+<a href="generalreport.html">Report</a>
 <a href="inventory.html">Inventory List</a>
-<a href="networkscan.html">Network Scan</a>
-<a href="history.php">History</a>
+<a href="checkfailed.html">Check Failed</a>
 </p>
 <hr class="solid">
 EOF
 
-cat > $RDIR/redlist.html << EOF
+cat > $RDIR/checkfailed.html << EOF
 <!DOCTYPE html>
 <html>
 <head>
-<title>LastControl Red List</title>
+<title>LastControl Check Failed</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 <body>
 <p style="color: #000000; font-size: 25px; font-weight: bold; background-color: #df1c44; text-align:center;">
-LastControl Red List</p>
+LastControl Check Failed</p>
 <p style="text-align:center;">$RDATE</p>
 <p style="text-align:left;">
 <style>
@@ -84,87 +80,9 @@ background-color: gray;
 }
 </style>
 <a href="mainpage.html">Main Page</a>
-<a href="generalreport.html">General Report</a>
-<a href="redlist.html">Red List</a>
-<a href="orangelist.html">Orange List</a>
-<a href="greenlist.html">Green List</a>
+<a href="generalreport.html">Report</a>
 <a href="inventory.html">Inventory List</a>
-<a href="networkscan.html">Network Scan</a>
-<a href="history.php">History</a>
-</p>
-<hr class="solid">
-EOF
-
-cat > $RDIR/orangelist.html << EOF
-<!DOCTYPE html>
-<html>
-<head>
-<title>LastControl Orange List</title>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-</head>
-<body>
-<p style="color: #000000; font-size: 25px; font-weight: bold; background-color: #E65100; text-align:center;">
-LastControl Orange List</p>
-<p style="text-align:center;">$RDATE</p>
-<p style="text-align:left;">
-<style>
-a:link, a:visited {
-background-color: #1C1C1C;
-color: white;
-padding: 5px 10px;
-text-align: center;
-text-decoration: none;
-display: inline-block;
-}
-a:hover, a:active {
-background-color: gray;
-}
-</style>
-<a href="mainpage.html">Main Page</a>
-<a href="generalreport.html">General Report</a>
-<a href="redlist.html">Red List</a>
-<a href="orangelist.html">Orange List</a>
-<a href="greenlist.html">Green List</a>
-<a href="inventory.html">Inventory List</a>
-<a href="networkscan.html">Network Scan</a>
-<a href="history.php">History</a>
-</p>
-<hr class="solid">
-EOF
-
-cat > $RDIR/greenlist.html << EOF
-<!DOCTYPE html>
-<html>
-<head>
-<title>LastControl Green List</title>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-</head>
-<body>
-<p style="color: #000000; font-size: 25px; font-weight: bold; background-color: #1B5E20; text-align:center;">
-LastControl Green List</p>
-<p style="text-align:center;">$RDATE</p>
-<p style="text-align:left;">
-<style>
-a:link, a:visited {
-background-color: #1C1C1C;
-color: white;
-padding: 5px 10px;
-text-align: center;
-text-decoration: none;
-display: inline-block;
-}
-a:hover, a:active {
-background-color: gray;
-}
-</style>
-<a href="mainpage.html">Main Page</a>
-<a href="generalreport.html">General Report</a>
-<a href="redlist.html">Red List</a>
-<a href="orangelist.html">Orange List</a>
-<a href="greenlist.html">Green List</a>
-<a href="inventory.html">Inventory List</a>
-<a href="networkscan.html">Network Scan</a>
-<a href="history.php">History</a>
+<a href="checkfailed.html">Check Failed</a>
 </p>
 <hr class="solid">
 EOF
@@ -195,13 +113,9 @@ background-color: gray;
 }
 </style>
 <a href="mainpage.html">Main Page</a>
-<a href="generalreport.html">General Report</a>
-<a href="redlist.html">Red List</a>
-<a href="orangelist.html">Orange List</a>
-<a href="greenlist.html">Green List</a>
+<a href="generalreport.html">Report</a>
 <a href="inventory.html">Inventory List</a>
-<a href="networkscan.html">Network Scan</a>
-<a href="history.php">History</a>
+<a href="checkfailed.html">Check Failed</a>
 </p>
 <hr class="solid">
 <style>
@@ -225,7 +139,7 @@ cat > $RDIR/generalreport.html << EOF
 <!DOCTYPE html>
 <html>
 <head>
-<title>LastControl General Report</title>
+<title>LastControl Report</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 <body>
@@ -241,7 +155,6 @@ border: 5px solid lightgray;
 <table id="tblinventory">
 <tr>
 <th style="text-align:left">MACHINE NAME</th>
-<th style="text-align:left">KERNEL VERSION</th>
 <th style="text-align:left">CVE</th>
 <th style="text-align:left">HEALTH CHECK LOGs</th>
 <th style="text-align:left">HARDENING CHECK LOGs</th>
@@ -270,11 +183,11 @@ while [ "$i" -le "$NUMMACHINE" ]; do
         ssh -p22 -i /root/.ssh/lastcontrol -o "StrictHostKeyChecking no" root@$MACHINE -- exit
         sshReturn=$?
     elif [ $pingReturn -eq 1 ]; then
-        echo "<ul><li>Destination Host Unreachable. &nbsp; | &nbsp; $MACHINE $LINE</li></ul>" >> $RDIR/redlist.html && REDMACHINE=$((REDMACHINE+1))
+        echo "<ul><li>Destination Host Unreachable. &nbsp; | &nbsp; $MACHINE $LINE</li></ul>" >> $RDIR/checkfailed.html && REDMACHINE=$((REDMACHINE+1))
 	MACHINEGROUP=RED
 	savedb
     elif [ $pingReturn -eq 2 ]; then
-        echo "<ul><li>Hostname could not be resolved. &nbsp; | &nbsp; $MACHINE $LINE</li></ul>" >> $RDIR/redlist.html && REDMACHINE=$((REDMACHINE+1))
+        echo "<ul><li>Hostname could not be resolved. &nbsp; | &nbsp; $MACHINE $LINE</li></ul>" >> $RDIR/checkfailed.html && REDMACHINE=$((REDMACHINE+1))
 	MACHINEGROUP=RED
 	savedb
     fi
@@ -324,73 +237,38 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	# create generalreport.html
 	echo "<tr>" >> $RDIR/generalreport.html
 	echo "<td><a href=$MACHINE.txt>$MACHINE</a></td>" >> $RDIR/generalreport.html
-        echo "<td>$KERNEL_VER</td>" >> $RDIR/generalreport.html
+        ###echo "<td>$KERNEL_VER</td>" >> $RDIR/generalreport.html
         echo "<td>$CVE_LIST</td>" >> $RDIR/generalreport.html
 
-	# create OrangeList & GreenList
-        if [ $UPDATE_CHECK = "EXIST" ] || [ $INVCHECK = "DETECTED" ] || [ ! -z $CVE_LIST ]; then
-            echo "<ul><li><a href=$MACHINE.txt>Details</a>  &nbsp; | &nbsp; $MACHINE_NAME $LINE</li></ul>" >> $RDIR/orangelist.html && ORANGEMACHINE=$((ORANGEMACHINE+1))
-	    MACHINEGROUP=ORANGE
-	    savedb
-
-		# generalreport.html
-		echo "<td>" >> $RDIR/generalreport.html
-		LOGSLINE=$(cat $RDIR/$MACHINE.healthcheck| wc -l)
-		HC=1
-		while [ "$HC" -le "$LOGSLINE" ]; do
-		CURRENTLINE=$(ls -l |sed -n $HC{p} $RDIR/$MACHINE.healthcheck)
-		echo "$CURRENTLINE <br>" >> $RDIR/generalreport.html
-		HC=$(( HC + 1 ))
-		done
-		echo "</td>" >> $RDIR/generalreport.html	
-
-		echo "<td>" >> $RDIR/generalreport.html
-		LOGSLINE=$(cat $RDIR/$MACHINE.hardening| wc -l)
-		HD=1
-		while [ "$HD" -le "$LOGSLINE" ]; do
-		CURRENTLINE=$(ls -l |sed -n $HD{p} $RDIR/$MACHINE.hardening)
-		echo "$CURRENTLINE <br>" >> $RDIR/generalreport.html
-		HD=$(( HD + 1 ))
-		done
-		echo "</td>" >> $RDIR/generalreport.html
-		
-		echo "</tr>" >> $RDIR/generalreport.html
-
-	elif [ $UPDATE_CHECK = "NONE" ] || [ $INVCHECK = "NOTDETECTED" ] || [ -z $CVE_LIST ]; then
-	    echo "<ul><li><a href=$MACHINE.txt>Details</a>  &nbsp; | &nbsp; $MACHINE_NAME $LINE</li></ul>" >> $RDIR/greenlist.html && GREENMACHINE=$((GREENMACHINE+1))
-	    MACHINEGROUP=GREEN
-	    savedb
-	    
-		# generalreport.html
-		echo "<td>" >> $RDIR/generalreport.html
-		LOGSLINE=$(cat $RDIR/$MACHINE.healthcheck| wc -l)
-		HC=1
-		while [ "$HC" -le "$LOGSLINE" ]; do
-		CURRENTLINE=$(ls -l |sed -n $HC{p} $RDIR/$MACHINE.healthcheck)
-		echo "$CURRENTLINE <br>" >> $RDIR/generalreport.html
-		HC=$(( HC + 1 ))
-		done
-		echo "</td>" >> $RDIR/generalreport.html	
-
-		echo "<td>" >> $RDIR/generalreport.html
-		LOGSLINE=$(cat $RDIR/$MACHINE.hardening| wc -l)
-		HD=1
-		while [ "$HD" -le "$LOGSLINE" ]; do
-		CURRENTLINE=$(ls -l |sed -n $HD{p} $RDIR/$MACHINE.hardening)
-		echo "$CURRENTLINE <br>" >> $RDIR/generalreport.html
-		HD=$(( HD + 1 ))
-		done
-		echo "</td>" >> $RDIR/generalreport.html
-
-		echo "</tr>" >> $RDIR/generalreport.html
-	fi
+	# generalreport.html
+	echo "<td>" >> $RDIR/generalreport.html
+	LOGSLINE=$(cat $RDIR/$MACHINE.healthcheck| wc -l)
+	HC=1
+	while [ "$HC" -le "$LOGSLINE" ]; do
+	CURRENTLINE=$(ls -l |sed -n $HC{p} $RDIR/$MACHINE.healthcheck)
+	echo "$CURRENTLINE <br>" >> $RDIR/generalreport.html
+	HC=$(( HC + 1 ))
+	done
+	echo "</td>" >> $RDIR/generalreport.html	
 	
+	echo "<td>" >> $RDIR/generalreport.html
+	LOGSLINE=$(cat $RDIR/$MACHINE.hardening| wc -l)
+	HD=1
+	while [ "$HD" -le "$LOGSLINE" ]; do
+	CURRENTLINE=$(ls -l |sed -n $HD{p} $RDIR/$MACHINE.hardening)
+	echo "$CURRENTLINE <br>" >> $RDIR/generalreport.html
+	HD=$(( HD + 1 ))
+	done
+	echo "</td>" >> $RDIR/generalreport.html
+		
+	echo "</tr>" >> $RDIR/generalreport.html
+
     elif [ $sshReturn -eq "255" ]; then
-        echo "<ul><li>Connection request has been rejected. &nbsp; | &nbsp; $MACHINE $LINE</li></ul>" >> $RDIR/redlist.html && REDMACHINE=$((REDMACHINE+1))
+        echo "<ul><li>Connection request has been rejected. &nbsp; | &nbsp; $MACHINE $LINE</li></ul>" >> $RDIR/checkfailed.html && REDMACHINE=$((REDMACHINE+1))
 	MACHINEGROUP=RED
 	savedb
     elif [ $sshReturn -eq "130" ]; then
-        echo "<ul><li>Permission denied. &nbsp; | &nbsp; $MACHINE $LINE</li></ul>" >> $RDIR/redlist.html && REDMACHINE=$((REDMACHINE+1))
+        echo "<ul><li>Permission denied. &nbsp; | &nbsp; $MACHINE $LINE</li></ul>" >> $RDIR/checkfailed.html && REDMACHINE=$((REDMACHINE+1))
 	MACHINEGROUP=RED
 	savedb
     fi
@@ -398,29 +276,27 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 i=$(( i + 1 ))
 done
 
-TOTALMACHINE=0
-TOTALMACHINE=$(($GREENMACHINE+$ORANGEMACHINE+$REDMACHINE))
-GREEN_SCORE=$((100 * $GREENMACHINE/$TOTALMACHINE))
-ORANGE_SCORE=$((100 * $ORANGEMACHINE/$TOTALMACHINE))
+TOTALMACHINE=$(wc -l $WDIR/hostlist |cut -d " " -f1)
 RED_SCORE=$((100 * $REDMACHINE/$TOTALMACHINE))
+CHECKEDMACHINE=$(($TOTALMACHINE-$REDMACHINE))
+CHECKED_SCORE=$((100 * $CHECKEDMACHINE/$TOTALMACHINE))
 
 cat >> $RDIR/mainpage.html << EOF
-<p style="color: #088A08; font-size: 30px; font-weight: bold; text-align:left;">
-Green Machine: &nbsp; &nbsp; &nbsp; $GREENMACHINE &nbsp; &nbsp; &nbsp; Score: %$GREEN_SCORE </p>
-<p style="color: #FF8000; font-size: 30px; font-weight: bold; text-align:left;">
-Orange Machine: &nbsp; &nbsp; $ORANGEMACHINE &nbsp; &nbsp; &nbsp; Score: %$ORANGE_SCORE </p>
-<p style="color: #FF0000; font-size: 30px; font-weight: bold; text-align:left;">
-Red Machine: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; $REDMACHINE &nbsp; &nbsp; &nbsp; Score: %$RED_SCORE </p>
+<p style="color: #005500; font-size: 25px; font-weight: bold; text-align:left;">
+Checked Machine: &nbsp; &nbsp; &nbsp; $CHECKEDMACHINE &nbsp; &nbsp; &nbsp; Score: %$CHECKED_SCORE </p>
 <hr class="solid">
-<p style="color: #000000; font-size: 30px; font-weight: bold; text-align:left;">
-Total Machine: &nbsp; &nbsp; &nbsp; &nbsp; $TOTALMACHINE</p>
+<p style="color: #550000; background-color: #FFFFFF; font-size: 20px; font-weight: bold; text-align:left;">
+Could not be Checked: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; $REDMACHINE &nbsp; &nbsp; &nbsp; Score: %$RED_SCORE </p>
+<hr class="solid">
+<p style="color: #000000; font-size: 25px; font-weight: bold; text-align:left;">
+Total Machine: &nbsp; &nbsp; $TOTALMACHINE</p>
 <hr class="solid">
 EOF
 
 echo "</table>" >> $RDIR/inventory.html
 echo "</table>" >> $RDIR/generalreport.html
-echo "</body>" |tee -a $RDIR/redlist.html $RDIR/orangelist.html $RDIR/greenlist.html $RDIR/inventory.html $RDIR/generalreport.html $RDIR/mainpage.html >/dev/null
-echo "</html>" |tee -a $RDIR/redlist.html $RDIR/orangelist.html $RDIR/greenlist.html $RDIR/inventory.html $RDIR/generalreport.html $RDIR/mainpage.html >/dev/null
+echo "</body>" |tee -a $RDIR/inventory.html $RDIR/generalreport.html $RDIR/mainpage.html $RDIR/checkfailed.html >/dev/null
+echo "</html>" |tee -a $RDIR/inventory.html $RDIR/generalreport.html $RDIR/mainpage.html $RDIR/checkfailed.html >/dev/null
 
 rm -r /var/www/html/reports
 mkdir -p /var/www/html/reports
@@ -431,36 +307,36 @@ cp /tmp/reports/* $RDIR/
 #----------------
 # network scan
 #----------------
-SRVSUBNET=$(ip r |grep link |grep proto |cut -d' ' -f1)
-nmap -Pn -F -oX /tmp/networkscan.xml $SRVSUBNET
-xsltproc /tmp/networkscan.xml -o /tmp/networkscan.html && cp /tmp/networkscan.html $RDIR/
-
-cat > /tmp/buttons.txt << EOF
-<p style="text-align:left;">
-<style>
-a:link, a:visited {
-background-color: #1C1C1C;
-color: white;
-padding: 5px 10px;
-text-align: center;
-text-decoration: none;
-display: inline-block;
-}
-a:hover, a:active {
-CVE Lisund-color: gray;
-}
-</style>
-<a href="mainpage.html">Main Page</a>
-<a href="generalreport.html">General Report</a>
-<a href="redlist.html">Red List</a>
-<a href="orangelist.html">Orange List</a>
-<a href="greenlist.html">Green List</a>
-<a href="inventory.html">Inventory List</a>
-<a href="networkscan.html">Network Scan</a>
-<a href="history.php">History</a>
-</p>
-<hr class="solid">
-EOF
-
-sed -i $'/1>Nmap Scan Report/{e cat /tmp/buttons.txt\n}' $RDIR/networkscan.html && rm /tmp/buttons.txt
-sed -i 's/href="javascript:togglePorts'//g $RDIR/networkscan.html
+###SRVSUBNET=$(ip r |grep link |grep proto |cut -d' ' -f1)
+###nmap -Pn -F -oX /tmp/networkscan.xml $SRVSUBNET
+###xsltproc /tmp/networkscan.xml -o /tmp/networkscan.html && cp /tmp/networkscan.html $RDIR/
+###
+###cat > /tmp/buttons.txt << EOF
+###<p style="text-align:left;">
+###<style>
+###a:link, a:visited {
+###background-color: #1C1C1C;
+###color: white;
+###padding: 5px 10px;
+###text-align: center;
+###text-decoration: none;
+###display: inline-block;
+###}
+###a:hover, a:active {
+###CVE Lisund-color: gray;
+###}
+###</style>
+###<a href="mainpage.html">Main Page</a>
+###<a href="generalreport.html">General Report</a>
+###<a href="checkfailed.html">Red List</a>
+###<a href="orangelist.html">Orange List</a>
+###<a href="greenlist.html">Green List</a>
+###<a href="inventory.html">Inventory List</a>
+###<a href="networkscan.html">Network Scan</a>
+###<a href="history.php">History</a>
+###</p>
+###<hr class="solid">
+###EOF
+###
+###sed -i $'/1>Nmap Scan Report/{e cat /tmp/buttons.txt\n}' $RDIR/networkscan.html && rm /tmp/buttons.txt
+###sed -i 's/href="javascript:togglePorts'//g $RDIR/networkscan.html

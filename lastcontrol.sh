@@ -195,7 +195,6 @@ rm /tmp/$HOST_NAME.hardening
 #------------------------------------
 # check local users,limits and sudo
 #------------------------------------
-####getent passwd {1000..6000} > /tmp/$HOST_NAME.localusers
 getent passwd {1000..6000} |cut -d ":" -f1 > /tmp/userlist
 LOCALUSER_COUNT=$(wc -l /tmp/userlist |cut -d " " -f1)
 if [ $LOCALUSER_COUNT = "0" ]; then
@@ -208,9 +207,9 @@ else
 		USER=$(ls -l |sed -n $i{p} /tmp/userlist)
 		cat /etc/security/limits.conf |grep $USER >> /dev/null
 		if [ $? = "0" ]; then 
-			echo "$USER | Limit:Pass" >> /tmp/$HOST_NAME.localusers
+			echo "$USER | Limit:Pass" > /tmp/$HOST_NAME.localusers
 		else
-			echo "$USER | Limit:Fail" >> /tmp/$HOST_NAME.localusers
+			echo "$USER | Limit:Fail" > /tmp/$HOST_NAME.localusers
 		fi
 	i=$(( i + 1 ))
 	done
@@ -298,7 +297,7 @@ if [ "$REP" = "YUM" ];then
 fi
 
 if [ $PASSWD_CHECK = "FAIL" ] && [ $SHADOW_CHECK = "FAIL" ] && [ $GROUP_CHECK = "FAIL" ] && [ $GSHADOW_CHECK = "FAIL" ]; then
-	echo "<a href='$HANDBOOK'> WARN: passwd,shadow,group files: \
+	echo "<a href='$HANDBOOK'>WARN: passwd,shadow,group files: \
 		/etc/passwd access:$PASSWD_CHECK | /etc/shadow access:$SHADOW_CHECK | /etc/group access:$GROUP_CHECK | /etc/gshadow access:$GSHADOW_CHECK</a>" \
 		>> /tmp/$HOST_NAME.hardening
 fi
@@ -306,23 +305,23 @@ fi
 #--------------------------
 # FS Conf. check
 #--------------------------
-###part_check () {
-###if [ "$#" != "1" ]; then
-###		options="$(echo $@ | awk 'BEGIN{FS="[()]"}{print $2}')"
-###	echo "[+]$@"
-###else
-###	echo "[-]\"$1\" not in separated partition."
-###fi
-###}
-###parts=(/tmp /var /var/tmp /var/log /var/log/audit /home /dev/shm)
-###for part in ${parts[*]}; do
-###	out="$(mount | grep $part)"
-###	part_check $part $out >> /tmp/fs_conf.txt
-###done
-###PART_CHECK=$(cat /tmp/fs_conf.txt |grep "not in separated partition." |wc -l)
-###if [ $PART_CHECK -gt "0" ]; then
-###	echo "<p1 style='background-color:#DAA520;'>Partition: $PART_CHECK not in separated partition.</p1>" >> /tmp/$HOST_NAME.sysout
-###fi
+part_check () {
+if [ "$#" != "1" ]; then
+		options="$(echo $@ | awk 'BEGIN{FS="[()]"}{print $2}')"
+	echo "[+]$@"
+else
+	echo "[-]\"$1\" not in separated partition."
+fi
+}
+parts=(/tmp /var /var/tmp /var/log /var/log/audit /home /dev/shm)
+for part in ${parts[*]}; do
+	out="$(mount | grep $part)"
+	part_check $part $out >> /tmp/fs_conf.txt
+done
+PART_CHECK=$(cat /tmp/fs_conf.txt |grep "not in separated partition." |wc -l) && rm /tmp/fs_conf.txt
+if [ $PART_CHECK -gt "0" ]; then
+	echo "<a href='$HANDBOOK'>INFO: $PART_CHECK not in separated partition.</a>" >> /tmp/$HOST_NAME.hardening
+fi
 
 #---------------------------
 # Network conf. check
@@ -532,85 +531,85 @@ else
 	rm -f /tmp/inventory.txt
 fi
 
-echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-echo "				:::... SYSTEM LOAD ....:::" >> /tmp/$HOST_NAME.txt
-echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-echo "" >> /tmp/$HOST_NAME.txt
-
-echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-echo "Running Process/Apps." >> /tmp/$HOST_NAME.txt
-echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-cat /tmp/runningservices.txt >> /tmp/$HOST_NAME.txt && rm -f /tmp/runningservices.txt
-echo "" >> /tmp/$HOST_NAME.txt
-
-echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-echo "			:::... LISTENING PORTS & ESTABLISHED CONN. ...:::" >> /tmp/$HOST_NAME.txt
-echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-echo "" >> /tmp/$HOST_NAME.txt
-
-echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-echo "Listening Ports" >> /tmp/$HOST_NAME.txt
-echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-cat /tmp/listeningconn.txt >> /tmp/$HOST_NAME.txt && rm -f /tmp/listeningconn.txt
-echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-echo "" >> /tmp/$HOST_NAME.txt
-
-echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-echo "Established Connections" >> /tmp/$HOST_NAME.txt
-echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-cat /tmp/establishedconn.txt >> /tmp/$HOST_NAME.txt && rm -f /tmp/establishedconn.txt
-echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-echo "" >> /tmp/$HOST_NAME.txt
-
-echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-echo "Connected Users" >> /tmp/$HOST_NAME.txt
-echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-cat /tmp/connectedusers.txt >> /tmp/$HOST_NAME.txt && rm -f /tmp/connectedusers.txt
-echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-echo "" >> /tmp/$HOST_NAME.txt
-
-echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-echo "Login Information for all Users" >> /tmp/$HOST_NAME.txt
-echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-lslogins -u >> /tmp/$HOST_NAME.txt
-echo "" >> /tmp/$HOST_NAME.txt
-
-if [ ! "$LOCALUSER_COUNT" = "0" ]; then
-        echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-        echo "Local User List" >> /tmp/$HOST_NAME.txt
-        echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-	cat /tmp/$HOST_NAME.localusers >> /tmp/$HOST_NAME.txt #&& rm -f /tmp/$HOST_NAME.localusers
-        echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-	echo "sudo members" >> /tmp/$HOST_NAME.txt
-	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-	cat /tmp/$HOST_NAME.sudomembers >> /tmp/$HOST_NAME.txt #&& rm -f /tmp/$HOST_NAME.sudomembers
-	echo "" >> /tmp/$HOST_NAME.txt
-fi
-
-echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-echo "                  :::... REPOs LIST ...:::" >> /tmp/$HOST_NAME.txt
-echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-cat /tmp/repo_list.txt >> /tmp/$HOST_NAME.txt && rm -f /tmp/repo_list.txt
-echo "" >> /tmp/$HOST_NAME.txt
-
-if [ ! "$BROKEN_COUNT" = "0" ]; then
-	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-	echo "			:::... BROKEN PACKAGE LIST ...:::" >> /tmp/$HOST_NAME.txt
-	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-	echo "" >> /tmp/$HOST_NAME.txt
-	cat /tmp/broken_pack_list.txt >> /tmp/$HOST_NAME.txt && rm -f /tmp/broken_pack_list.txt
-	echo "" >> /tmp/$HOST_NAME.txt
-else
-	rm -f /tmp/broken_pack_list.txt
-fi
-
-if [ ! "$PART_CHECK" = "0" ]; then
-	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-	echo "                  :::... SYSTEM PARTITION Conf. CHECK...:::" >> /tmp/$HOST_NAME.txt
-	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
-	cat /tmp/fs_conf.txt >> /tmp/$HOST_NAME.txt && rm -f /tmp/fs_conf.txt
-	echo "" >> /tmp/$HOST_NAME.txt
-fi
+###echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+###echo "				:::... SYSTEM LOAD ....:::" >> /tmp/$HOST_NAME.txt
+###echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+###echo "" >> /tmp/$HOST_NAME.txt
+###
+###echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+###echo "Running Process/Apps." >> /tmp/$HOST_NAME.txt
+###echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+###cat /tmp/runningservices.txt >> /tmp/$HOST_NAME.txt && rm -f /tmp/runningservices.txt
+###echo "" >> /tmp/$HOST_NAME.txt
+###
+###echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+###echo "			:::... LISTENING PORTS & ESTABLISHED CONN. ...:::" >> /tmp/$HOST_NAME.txt
+###echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+###echo "" >> /tmp/$HOST_NAME.txt
+###
+###echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+###echo "Listening Ports" >> /tmp/$HOST_NAME.txt
+###echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+###cat /tmp/listeningconn.txt >> /tmp/$HOST_NAME.txt && rm -f /tmp/listeningconn.txt
+###echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+###echo "" >> /tmp/$HOST_NAME.txt
+###
+###echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+###echo "Established Connections" >> /tmp/$HOST_NAME.txt
+###echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+###cat /tmp/establishedconn.txt >> /tmp/$HOST_NAME.txt && rm -f /tmp/establishedconn.txt
+###echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+###echo "" >> /tmp/$HOST_NAME.txt
+###
+###echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+###echo "Connected Users" >> /tmp/$HOST_NAME.txt
+###echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+###cat /tmp/connectedusers.txt >> /tmp/$HOST_NAME.txt && rm -f /tmp/connectedusers.txt
+###echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+###echo "" >> /tmp/$HOST_NAME.txt
+###
+###echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+###echo "Login Information for all Users" >> /tmp/$HOST_NAME.txt
+###echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+###lslogins -u >> /tmp/$HOST_NAME.txt
+###echo "" >> /tmp/$HOST_NAME.txt
+###
+###if [ ! "$LOCALUSER_COUNT" = "0" ]; then
+###        echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+###        echo "Local User List" >> /tmp/$HOST_NAME.txt
+###        echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+###	cat /tmp/$HOST_NAME.localusers >> /tmp/$HOST_NAME.txt #&& rm -f /tmp/$HOST_NAME.localusers
+###        echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+###	echo "sudo members" >> /tmp/$HOST_NAME.txt
+###	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+###	cat /tmp/$HOST_NAME.sudomembers >> /tmp/$HOST_NAME.txt #&& rm -f /tmp/$HOST_NAME.sudomembers
+###	echo "" >> /tmp/$HOST_NAME.txt
+###fi
+###
+###echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+###echo "                  :::... REPOs LIST ...:::" >> /tmp/$HOST_NAME.txt
+###echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+###cat /tmp/repo_list.txt >> /tmp/$HOST_NAME.txt && rm -f /tmp/repo_list.txt
+###echo "" >> /tmp/$HOST_NAME.txt
+###
+###if [ ! "$BROKEN_COUNT" = "0" ]; then
+###	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+###	echo "			:::... BROKEN PACKAGE LIST ...:::" >> /tmp/$HOST_NAME.txt
+###	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+###	echo "" >> /tmp/$HOST_NAME.txt
+###	cat /tmp/broken_pack_list.txt >> /tmp/$HOST_NAME.txt && rm -f /tmp/broken_pack_list.txt
+###	echo "" >> /tmp/$HOST_NAME.txt
+###else
+###	rm -f /tmp/broken_pack_list.txt
+###fi
+###
+###if [ ! "$PART_CHECK" = "0" ]; then
+###	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+###	echo "                  :::... SYSTEM PARTITION Conf. CHECK...:::" >> /tmp/$HOST_NAME.txt
+###	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+###	cat /tmp/fs_conf.txt >> /tmp/$HOST_NAME.txt && rm -f /tmp/fs_conf.txt
+###	echo "" >> /tmp/$HOST_NAME.txt
+###fi
 
 if [ $INT_CHECK = "DETECTED" ]; then
 	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
