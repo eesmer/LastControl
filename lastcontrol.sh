@@ -9,12 +9,12 @@
 #--------------------------
 # determine distro
 #--------------------------
-cat /etc/redhat-release > /tmp/distrocheck || cat /etc/*-release > /tmp/distrocheck || cat /etc/issue > /tmp/distrocheck
-grep -i "debian" /tmp/distrocheck 2>/dev/null && REP=APT
-grep -i "ubuntu" /tmp/distrocheck 2>/dev/null && REP=APT
-grep -i "centos" /tmp/distrocheck 2>/dev/null && REP=YUM
-grep -i "red hat" /tmp/distrocheck 2>/dev/null && REP=YUM
-grep -i "rocky" /tmp/distrocheck 2>/dev/null && REP=YUM
+cat /etc/redhat-release > /tmp/distrocheck 2>/dev/null || cat /etc/*-release > /tmp/distrocheck 2>/dev/null || cat /etc/issue > /tmp/distrocheck 2>/dev/null
+grep -i "debian" /tmp/distrocheck &>/dev/null && REP=APT
+grep -i "ubuntu" /tmp/distrocheck &>/dev/null && REP=APT
+grep -i "centos" /tmp/distrocheck &>/dev/null && REP=YUM
+grep -i "red hat" /tmp/distrocheck &>/dev/null && REP=YUM
+grep -i "rocky" /tmp/distrocheck &>/dev/null && REP=YUM
 
 rm /tmp/distrocheck
 
