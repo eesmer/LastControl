@@ -22,10 +22,10 @@ rm /tmp/distrocheck
 # install packages
 #--------------------------
 if [ "$REP" = "APT" ]; then
-	apt-get -y install net-tools rsync smartmontools
+	apt-get -y install net-tools rsync smartmontools curl
 fi
 if [ "$REP" = "YUM" ]; then
-	yum -y install net-tools rsync perl smartmontools
+	yum -y install net-tools rsync perl smartmontools curl pciutils
 fi
 
 DATE=$(date)
@@ -35,7 +35,8 @@ HANDBOOK=https://github.com/eesmer/LastControl/blob/main/LastControl-HandBook.md
 #---------------------------
 # Inventory
 #---------------------------
-IPADDRESS=$(hostname -I)
+INT_IPADDR=$(hostname -I)
+EXT_IPADDR=$(curl -4 icanhazip.com)
 CPUINFO=$(cat /proc/cpuinfo |grep "model name" |cut -d ':' -f2 > /tmp/cpuinfooutput.txt && tail -n1 /tmp/cpuinfooutput.txt > /tmp/cpuinfo.txt && rm /tmp/cpuinfooutput.txt && cat /tmp/cpuinfo.txt) && rm /tmp/cpuinfo.txt
 RAM_TOTAL=$(free -m | head -2 | tail -1| awk '{print $2}')
 RAM_USAGE=$(free -m | head -2 | tail -1| awk '{print $3}')
@@ -48,6 +49,7 @@ OS_KERNEL=$(uname -a)
 OS_VER=$(cat /etc/os-release |grep PRETTY_NAME | cut -d '=' -f2 |cut -d '"' -f2)
 LAST_BOOT=$(who -b | awk '{print $3,$4}')
 UPTIME=$(uptime) && UPTIME_MIN=$(awk '{ print "up " $1 /60 " minutes"}' /proc/uptime)
+ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNECTED"
 
 #---------------------------
 # HEALTHCHECK
@@ -74,6 +76,20 @@ SWAP_USE_PERCENTAGE=$((100 * $SWAP_USE/$SWAP_TOTAL))
 	if [ $SWAP_USE_PERCENTAGE -gt "0" ]; then
 		echo "<a href='$HANDBOOK#-swap_usage_is_reported'>WARN: Swap %$SWAP_USE_PERCENTAGE usage</a>" >> /tmp/$HOST_NAME.healthcheck
 	fi
+
+NOC=$(nproc --all)
+LAST01=$(top -n 1 -b | grep "load average:" |awk '{print $12}')
+LAST05=$(top -n 1 -b | grep "load average:" |awk '{print $13}')
+LAST15=$(top -n 1 -b | grep "load average:" |awk '{print $14}')
+LOAD_AVG=$(echo Last 1 Min: $LAST01 && echo "-" && echo Last 5 Min: $LAST05 && echo "-" && echo Last 15 Min: $LAST15) && LOAD_AVG=$(echo $LOAD_AVG)
+
+# overload check
+LAST01=$(echo $LAST01 |cut -d "." -f1)
+LAST05=$(echo $LAST05 |cut -d "." -f1)
+LAST15=$(echo $LAST15 |cut -d "." -f1)
+if [ $LAST01 > $NOC ] || [ $LAST05 > $NOC ] || [ $LAST15 > $NOC ]; then
+	echo "<a href='$HANDBOOK#-swap_usage_is_reported'>WARN: Overload %$LOAD_AVG</a>" >> /tmp/$HOST_NAME.healthcheck
+fi
 
 #---------------------------
 # S.M.A.R.T check
@@ -364,12 +380,12 @@ SSHCONF14=$(sshd -T | grep permitemptypasswords |cut -d " " -f2) && if [ ! $SSHC
 SSHCONF15=$(sshd -T | grep permituserenvironment |cut -d " " -f2) && if [ ! $SSHCONF15 = "no" ]; then echo "<p1 style='background-color:#D2691E;'>sshd_config PermitUserEnv. setting: Not Passed</p1>" >> /tmp/$HOST_NAME.sshout; fi
 
 #--------------------------
-# VULNEREBILITY CHECK
+# VULNERABILITY CHECK
 #--------------------------
 rm /tmp/$HOST_NAME.cve
 
 # kernel based cve check
-KERNELVER=$(uname -a |cut -d " " -f3 |cut -d "-" -f1)
+KERNEL_VER=$(uname -r |cut -d "-" -f1)
 perl /tmp/cve_check -k $KERNELVER > /tmp/cve_list
 CVELIST=$(cat /tmp/cve_list |grep CVE) && echo $CVELIST > /tmp/cve_list && CVELIST=$(cat /tmp/cve_list) && rm /tmp/cve_list && rm /tmp/cve_check
 
@@ -471,7 +487,8 @@ $HOST_NAME LastControl Report $DATE
 				:::... MACHINE INVENTORY ...:::
 --------------------------------------------------------------------------------------------------------------------------
 |Hostname:          |$HOST_NAME
-|IP Address:        |$IPADDRESS
+|IP Address:        |$INT_IPADDR | $EXT_IPADDR
+|Internet Conn.     |$INTERNET
 --------------------------------------------------------------------------------------------------------------------------
 |CPU Info:          |$CPUINFO
 |RAM:               |Total:$RAM_TOTAL | Usage:$RAM_USAGE
@@ -486,6 +503,7 @@ $HOST_NAME LastControl Report $DATE
 |Uptime	            |$UPTIME | $UPTIME_MIN
 --------------------------------------------------------------------------------------------------------------------------
 |Running Process:   |$NUMPROCESS
+|Load Average:      |There are $NOC CPUs in the system | $LOAD_AVG
 |Uses the Most Load |Process: $MOSTPROCESS | Cpu: $MOSTCPU | Ram: $MOSTRAM
 --------------------------------------------------------------------------------------------------------------------------
 |Listening Conn.:   |$LISTENINGCONN
@@ -498,14 +516,10 @@ $HOST_NAME LastControl Report $DATE
 |SUDO Member Count: |$SUDOMEMBERCOUNT
 |Local User Count:  |$LOCALUSER_COUNT
 --------------------------------------------------------------------------------------------------------------------------
-|System Score:      |$SYS_SCORE
-|Network Score:     |$NW_SCORE
-|SSH Score:         |$SSH_SCORE
---------------------------------------------------------------------------------------------------------------------------
 |Inventory Check:   |$INV_CHECK
 |Integrity Check:   |$INT_CHECK
 --------------------------------------------------------------------------------------------------------------------------
-|Kernel Version:    |$KERNELVER
+|Kernel Version:    |$KERNEL_VER
 --------------------------------------------------------------------------------------------------------------------------
 |Vulnerability Check
 --------------------------------------------------------------------------------------------------------------------------
