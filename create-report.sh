@@ -206,7 +206,7 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.sudomembers $RDIR/
 
         UPDATE_CHECK=$(perl -ne'16..16 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-        UPTIME=$(perl -ne'19..19 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+        UPTIME=$(perl -ne'20..20 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
         # for inventory.html
         MACHINE_NAME=$(perl -ne'6..6 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
         IP_ADDRESS=$(perl -ne'7..7 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
@@ -218,10 +218,10 @@ while [ "$i" -le "$NUMMACHINE" ]; do
         OS=$(perl -ne'15..15 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
         OS_VER=$(perl -ne'16..16 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
 	LAST_BOOT=$(perl -ne'19..19 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	NUMPROCESS=$(perl -ne'22..22 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	INVCHECK=$(perl -ne'36..36 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	CVE_LIST=$(perl -ne'41..41 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
-	KERNEL_VER=$(perl -ne'39..39 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	NUMPROCESS=$(perl -ne'34..34 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	INVCHECK=$(perl -ne'56..56 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	CVE_LIST=$(perl -ne'53..53 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
+	KERNEL_VER=$(perl -ne'21..21 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
 	
 	# create inventory.html
         echo "<tr>" >> $RDIR/inventory.html

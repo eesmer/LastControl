@@ -6,9 +6,9 @@
 # However, it is your responsibility to run it on any system.
 #---------------------------------------------------------------------
 
-#--------------------------
+############################
 # determine distro
-#--------------------------
+############################
 cat /etc/redhat-release > /tmp/distrocheck 2>/dev/null || cat /etc/*-release > /tmp/distrocheck 2>/dev/null || cat /etc/issue > /tmp/distrocheck 2>/dev/null
 grep -i "debian" /tmp/distrocheck &>/dev/null && REP=APT
 grep -i "ubuntu" /tmp/distrocheck &>/dev/null && REP=APT
@@ -18,9 +18,9 @@ grep -i "rocky" /tmp/distrocheck &>/dev/null && REP=YUM
 
 rm /tmp/distrocheck
 
-#--------------------------
+############################
 # install packages
-#--------------------------
+############################
 if [ "$REP" = "APT" ]; then
 	apt-get -y install net-tools rsync smartmontools curl
 fi
@@ -32,9 +32,9 @@ DATE=$(date)
 HOST_NAME=$(hostnamectl --static)
 HANDBOOK=https://github.com/eesmer/LastControl/blob/main/LastControl-HandBook.md
 
-#---------------------------
-# Inventory
-#---------------------------
+############################
+# INVENTORY
+############################
 INT_IPADDR=$(hostname -I)
 EXT_IPADDR=$(curl -4 icanhazip.com)
 CPUINFO=$(cat /proc/cpuinfo |grep "model name" |cut -d ':' -f2 > /tmp/cpuinfooutput.txt && tail -n1 /tmp/cpuinfooutput.txt > /tmp/cpuinfo.txt && rm /tmp/cpuinfooutput.txt && cat /tmp/cpuinfo.txt) && rm /tmp/cpuinfo.txt
@@ -51,11 +51,14 @@ LAST_BOOT=$(who -b | awk '{print $3,$4}')
 UPTIME=$(uptime) && UPTIME_MIN=$(awk '{ print "up " $1 /60 " minutes"}' /proc/uptime)
 ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNECTED"
 
-#---------------------------
+############################
 # HEALTHCHECK
-#---------------------------
+############################
 rm /tmp/$HOST_NAME.healthcheck
 
+#----------------------
+# check ram usage
+#----------------------
 RAM_FREE=$( expr $RAM_TOTAL - $RAM_USAGE)
 RAM_FREE_PERCENTAGE=$((100 * $RAM_FREE/$RAM_TOTAL))
 RAM_USE_PERCENTAGE=$(expr 100 - $RAM_FREE_PERCENTAGE)
@@ -65,10 +68,10 @@ RAM_USE_PERCENTAGE=$(expr 100 - $RAM_FREE_PERCENTAGE)
 		grep -i -r 'out of memory' /var/log/ > /dev/null && OOM=1
 		if [ $OOM = "1" ]; then echo "<a href='$HANDBOOK#-ram_usage_is_reported'>WARN: out of memory message log found</a>" >> /tmp/$HOST_NAME.healthcheck; fi
 	fi
-DISK_USAGE=$(df -H | grep -vE 'Filesystem|tmpfs|cdrom|udev' | awk '{ print $5" "$1"("$2"  "$3")" " --- "}' | sed -e :a -e N -e 's/\n/ /' -e ta |cut -d "%" -f1)
-	if [ $DISK_USAGE -gt "50" ]; then
-		echo "<a href='$HANDBOOK#-disk_usage_is_reported'>WARN: Disk %$DISK_USAGE usage.</a>" >> /tmp/$HOST_NAME.healthcheck
-	fi
+
+#----------------------
+# check swap usage
+#----------------------
 SWAP_VALUE=$(free -m |grep Swap: |cut -d ":" -f2)
 SWAP_TOTAL=$(echo $SWAP_VALUE |cut -d " " -f1)
 SWAP_USE=$(echo $SWAP_VALUE |cut -d " " -f2)
@@ -77,23 +80,58 @@ SWAP_USE_PERCENTAGE=$((100 * $SWAP_USE/$SWAP_TOTAL))
 		echo "<a href='$HANDBOOK#-swap_usage_is_reported'>WARN: Swap %$SWAP_USE_PERCENTAGE usage</a>" >> /tmp/$HOST_NAME.healthcheck
 	fi
 
+#----------------------
+# check disk usage
+#----------------------
+DISK_USAGE=$(df -H | grep -vE 'Filesystem|tmpfs|cdrom|udev' | awk '{ print $5" "$1"("$2"  "$3")" " --- "}' | sed -e :a -e N -e 's/\n/ /' -e ta |cut -d "%" -f1)
+	if [ $DISK_USAGE -gt "50" ]; then
+		echo "<a href='$HANDBOOK#-disk_usage_is_reported'>WARN: Disk %$DISK_USAGE usage.</a>" >> /tmp/$HOST_NAME.healthcheck
+	fi
+
+#----------------------
+# check system load
+#----------------------
 NOC=$(nproc --all)
 LAST01=$(top -n 1 -b | grep "load average:" |awk '{print $12}')
 LAST05=$(top -n 1 -b | grep "load average:" |awk '{print $13}')
 LAST15=$(top -n 1 -b | grep "load average:" |awk '{print $14}')
 LOAD_AVG=$(echo Last 1 Min: $LAST01 && echo "-" && echo Last 5 Min: $LAST05 && echo "-" && echo Last 15 Min: $LAST15) && LOAD_AVG=$(echo $LOAD_AVG)
 
+#----------------------
 # overload check
+#----------------------
 LAST01=$(echo $LAST01 |cut -d "." -f1)
 LAST05=$(echo $LAST05 |cut -d "." -f1)
 LAST15=$(echo $LAST15 |cut -d "." -f1)
-if [ $LAST01 > $NOC ] || [ $LAST05 > $NOC ] || [ $LAST15 > $NOC ]; then
-	echo "<a href='$HANDBOOK#-swap_usage_is_reported'>WARN: Overload %$LOAD_AVG</a>" >> /tmp/$HOST_NAME.healthcheck
+if [ $LAST01 -gt $NOC ] || [ $LAST05 -gt $NOC ] || [ $LAST15 -gt $NOC ]; then
+	echo "<a href='$HANDBOOK'>WARN: Overload %$LOAD_AVG</a>" >> /tmp/$HOST_NAME.healthcheck
 fi
 
-#---------------------------
+top -b -n1 | head -17 | tail -11 > /tmp/systemload.txt
+sed -i '1d' /tmp/systemload.txt
+MOST_PROCESS=$(cat /tmp/systemload.txt |awk '{print $9, $10, $12}' |head -1 |cut -d " " -f3)
+MOST_RAM=$(cat /tmp/systemload.txt |awk '{print $9, $10, $12}' |head -1 |cut -d " " -f2)
+MOST_CPU=$(cat /tmp/systemload.txt |awk '{print $9, $10, $12}' |head -1 |cut -d " " -f1)
+echo "<a href='$HANDBOOK#-using_the_most_resource'>INFO:  Using the most Resource: $MOST_PROCESS</a>" >> /tmp/$HOST_NAME.sysout
+echo "<a href='$HANDBOOK#-using_the_most_ram'>INFO:  Using the most Ram: $MOST_RAM</a>" >> /tmp/$HOST_NAME.sysout
+echo "<a href='$HANDBOOK#-using_the_most_cpu'>INFO:  Using the most Cpu: $MOST_CPU</a>" >> /tmp/$HOST_NAME.sysout	
+rm -f /tmp/systemload.txt
+
+#----------------------
+# check zombie,stopped process
+#----------------------
+TO_PROCESS=$(top -n 1 -b |grep "Tasks:" |awk '{print $2}')
+RU_PROCESS=$(top -n 1 -b |grep "Tasks:" |awk '{print $4}')
+SL_PROCESS=$(top -n 1 -b |grep "Tasks:" |awk '{print $6}')
+ST_PROCESS=$(top -n 1 -b |grep "Tasks:" |awk '{print $8}')
+ZO_PROCESS=$(top -n 1 -b |grep "Tasks:" |awk '{print $10}')
+if [ $ZO_PROCESS -gt "0" ] || [ $ST_PROCESS -gt "0" ]; then
+	echo "<a href='$HANDBOOK'>WARN: Process - Zombie:$ZO_PROCESS | Stopped:$ST_PROCESS</a>" >> /tmp/$HOST_NAME.healthcheck
+fi
+
+#----------------------
 # S.M.A.R.T check
-#---------------------------
+#----------------------
 df -H | grep -vE 'Filesystem|tmpfs|cdrom|udev|mapper' |cut -d " " -f1 > /tmp/disklist.txt
 NUMDISK=$(cat /tmp/disklist.txt | wc -l)
 SMART_SCORE=0
@@ -134,22 +172,9 @@ if [ $SMART_SCORE = "0" ]; then
 	echo "<a href='$HANDBOOK'>WARN: S.M.A.R.T Failed or not tested.</a>" >> /tmp/$HOST_NAME.healthcheck
 fi
 
-#----------------------------------
-# Resource usage CPU,Ram Load
-#----------------------------------
-top -b -n1 | head -17 | tail -11 > /tmp/systemload.txt
-sed -i '1d' /tmp/systemload.txt
-MOST_PROCESS=$(cat /tmp/systemload.txt |awk '{print $9, $10, $12}' |head -1 |cut -d " " -f3)
-MOST_RAM=$(cat /tmp/systemload.txt |awk '{print $9, $10, $12}' |head -1 |cut -d " " -f2)
-MOST_CPU=$(cat /tmp/systemload.txt |awk '{print $9, $10, $12}' |head -1 |cut -d " " -f1)
-echo "<a href='$HANDBOOK#-using_the_most_resource'>INFO:  Using the most Resource: $MOST_PROCESS</a>" >> /tmp/$HOST_NAME.sysout
-echo "<a href='$HANDBOOK#-using_the_most_ram'>INFO:  Using the most Ram: $MOST_RAM</a>" >> /tmp/$HOST_NAME.sysout
-echo "<a href='$HANDBOOK#-using_the_most_cpu'>INFO:  Using the most Cpu: $MOST_CPU</a>" >> /tmp/$HOST_NAME.sysout	
-rm -f /tmp/systemload.txt
-
-#--------------------------
+#----------------------
 # Check Update
-#--------------------------
+#----------------------
 if [ "$REP" = "APT" ]; then
 	CHECK_UPDATE=NONE
 	UPDATE_COUNT=0
@@ -178,9 +203,9 @@ elif [ "$REP" = "YUM" ]; then
 rm -f /tmp/update_list.txt
 fi
 
-#------------------------------
+#--------------------------
 # broken package list
-#------------------------------
+#--------------------------
 if [ "$REP" = "APT" ];then
 	dpkg -l | grep -v "^ii" >> /dev/null > /tmp/broken_pack_list.txt
 	sed -i -e '1d;2d;3d;4d;5d' /tmp/broken_pack_list.txt
@@ -203,14 +228,14 @@ if [ "$REP" = "YUM" ];then
 	fi
 fi
 
-#------------------------------------
+############################
 # HARDENING CHECK
-#------------------------------------
+############################
 rm /tmp/$HOST_NAME.hardening
 
-#------------------------------------
+#--------------------------
 # check local users,limits and sudo
-#------------------------------------
+#--------------------------
 getent passwd {1000..6000} |cut -d ":" -f1 > /tmp/userlist
 LOCALUSER_COUNT=$(wc -l /tmp/userlist |cut -d " " -f1)
 if [ $LOCALUSER_COUNT = "0" ]; then
@@ -342,54 +367,86 @@ fi
 #---------------------------
 # Network conf. check
 #---------------------------
-NWCONF1=$(sysctl net.ipv4.ip_forward |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF1 = "0" ]; then echo "<p1 style='background-color:#CD853F;'>ipv4 IP Forward Check: Not Passed</p1>" >> /tmp/$HOST_NAME.nwout; fi
-NWCONF2=$(sysctl net.ipv4.conf.all.send_redirects |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF2 = "0" ]; then echo "<p1 style='background-color:#CD853F;'>ipv4 Send Redirects: Not Passed</p1>" >> /tmp/$HOST_NAME.nwout; fi
-NWCONF3=$(sysctl net.ipv4.conf.all.accept_source_route |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF3 = "0" ]; then echo "<p1 style='background-color:#CD853F;'>ipv4 All Accept Source Route: Not Passed</p1>" >> /tmp/$HOST_NAME.nwout; fi
-NWCONF4=$(sysctl net.ipv4.conf.default.accept_source_route |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF4 = "0" ]; then echo "<p1 style='background-color:#CD853F;'>ipv4 Default Accept Source Route: Not Passed</p1>" >> /tmp/$HOST_NAME.nwout; fi
-NWCONF5=$(sysctl net.ipv4.conf.all.accept_redirects |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF5 = "0" ]; then echo "<p1 style='background-color:#CD853F;'>ipv4 All Accept Redirects: Not Passed</p1>" >> /tmp/$HOST_NAME.nwout; fi
-NWCONF6=$(sysctl net.ipv4.conf.default.accept_redirects |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF6 = "0" ]; then echo "<p1 style='background-color:#CD853F;'>ipv4 Default Accept Redirects: Not Passed</p1>" >> /tmp/$HOST_NAME.nwout; fi
-NWCONF7=$(sysctl net.ipv4.conf.all.secure_redirects |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF7 = "0" ]; then echo "<p1 style='background-color:#CD853F;'>ipv4 All Secure Redirects: Not Passed</p1>" >> /tmp/$HOST_NAME.nwout; fi
-NWCONF8=$(sysctl net.ipv4.conf.default.secure_redirects |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF8 = "0" ]; then echo "<p1 style='background-color:#CD853F;'>ipv4 Default Secure Redirects: Not Passed</p1>" >> /tmp/$HOST_NAME.nwout; fi
-NWCONF9=$(sysctl net.ipv4.icmp_echo_ignore_broadcasts |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF9 = "1" ]; then echo "<p1 style='background-color:#CD853F;'>ipv4 Ignore Broadcast: Not Passed</p1>" >> /tmp/$HOST_NAME.nwout; fi
-NWCONF10=$(sysctl net.ipv4.icmp_ignore_bogus_error_responses |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF10 = "1" ]; then echo "<p1 style='background-color:#CD853F;'>ipv4 Ignore Bogus Error Resp.: Not Passed</p1>" >> /tmp/$HOST_NAME.nwout; fi
-NWCONF11=$(sysctl net.ipv4.conf.all.rp_filter |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF11 = "1" ]; then echo "<p1 style='background-color:#CD853F;'>ipv4 All rp Filter: Not Passed</p1>" >> /tmp/$HOST_NAME.nwout; fi
-NWCONF12=$(sysctl net.ipv4.tcp_syncookies |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF12 = "1" ]; then echo "<p1 style='background-color:#CD853F;'>ipv4 TCP Syncookies: Not Passed</p1>" >> /tmp/$HOST_NAME.nwout; fi
-# ipv6 controls
-NWCONF13=$(sysctl net.ipv6.conf.all.disable_ipv6 |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF13 = "1" ]; then echo "<p1 style='background-color:#CD853F;'>ipv6 Disable IPv6: Not Passed</p1>" >> /tmp/$HOST_NAME.nwout; fi
-NWCONF14=$(sysctl net.ipv6.conf.all.accept_ra |cut -d "=" -f2 |cut -d " " -f2) && if [ ! $NWCONF14 = "0" ]; then echo "<p1 style='background-color:#CD853F;'>ipv6 All Accept ra: Not Passed</p1>" >> /tmp/$HOST_NAME.nwout; fi
+NW_CHECK=$(sysctl net.ipv4.ip_forward |cut -d "=" -f2 |cut -d " " -f2)
+if [ ! $NW_CHECK = "0" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv4 Forward Check: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+NW_CHECK=$(sysctl net.ipv4.conf.all.send_redirects |cut -d "=" -f2 |cut -d " " -f2)
+if [ ! $NW_CHECK = "0" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv4 Send Redirects: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+NW_CHECK=$(sysctl net.ipv4.conf.all.accept_source_route |cut -d "=" -f2 |cut -d " " -f2)
+if [ ! $NW_CHECK = "0" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv4 All Accept Source Route: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+NW_CHECK=$(sysctl net.ipv4.conf.default.accept_source_route |cut -d "=" -f2 |cut -d " " -f2)
+if [ ! $NW_CHECK = "0" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv4 Default Accept Source Route: Not Passed</a>>" >> /tmp/$HOST_NAME.hardening; fi
+NW_CHECK=$(sysctl net.ipv4.conf.all.accept_redirects |cut -d "=" -f2 |cut -d " " -f2)
+if [ ! $NW_CHECK= "0" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv4 All Accept Redirects: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+NW_CHECK=$(sysctl net.ipv4.conf.default.accept_redirects |cut -d "=" -f2 |cut -d " " -f2)
+if [ ! $NW_CHECK = "0" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv4 Default Accept Redirects: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+NW_CHECK=$(sysctl net.ipv4.conf.all.secure_redirects |cut -d "=" -f2 |cut -d " " -f2)
+if [ ! $NW_CHECK = "0" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv4 All Secure Redirects: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+NW_CHECK=$(sysctl net.ipv4.conf.default.secure_redirects |cut -d "=" -f2 |cut -d " " -f2)
+if [ ! $NW_CHECK = "0" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv4 Default Secure Redirects: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+NW_CHECK=$(sysctl net.ipv4.icmp_echo_ignore_broadcasts |cut -d "=" -f2 |cut -d " " -f2)
+if [ ! $NW_CHECK = "1" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv4 Ignore Broadcast: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+NW_CHECK=$(sysctl net.ipv4.icmp_ignore_bogus_error_responses |cut -d "=" -f2 |cut -d " " -f2)
+if [ ! $NW_CHECK = "1" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv4 Ignore Bogus Error Resp.: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+NW_CHECK=$(sysctl net.ipv4.conf.all.rp_filter |cut -d "=" -f2 |cut -d " " -f2)
+if [ ! $NW_CHECK = "1" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv4 All rp Filter: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+NW_CHECK=$(sysctl net.ipv4.tcp_syncookies |cut -d "=" -f2 |cut -d " " -f2)
+if [ ! $NW_CHECK = "1" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv4 TCP Syncookies: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+NW_CHECK=$(sysctl net.ipv6.conf.all.disable_ipv6 |cut -d "=" -f2 |cut -d " " -f2)
+if [ ! $NW_CHECK = "1" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO:ipv6 Disable IPv6: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+NW_CHECK=$(sysctl net.ipv6.conf.all.accept_ra |cut -d "=" -f2 |cut -d " " -f2)
+if [ ! $NW_CHECK = "0" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv6 All Accept ra: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
 
 #---------------------------
 # SSH conf. check
 #---------------------------
 # PRIVATE HOST KEY
-SSHCONF1=$(stat /etc/ssh/sshd_config |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ ! $SSHCONF1 = "0600" ]; then echo "<p1 style='background-color:#D2691E;'>sshd_config uid: Not Passed</p1>" >> /tmp/$HOST_NAME.sshout; fi
-SSHCONF2=$(stat /etc/ssh/ssh_host_rsa_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ ! $SSHCONF2 = "0600" ]; then echo "<p1 style='background-color:#D2691E;'>ssh_host_rsa_key uid: Not Passed</p1>" >> /tmp/$HOST_NAME.sshout; fi
-SSHCONF3=$(stat /etc/ssh/ssh_host_ecdsa_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ ! $SSHCONF3 = "0600" ]; then echo "<p1 style='background-color:#D2691E;'>ssh_host_ecdsa_key uid: Not Passed</p1>" >> /tmp/$HOST_NAME.sshout; fi
-SSHCONF4=$(stat /etc/ssh/ssh_host_ed25519_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ ! $SSHCONF4 = "0600" ]; then echo "<p1 style='background-color:#D2691E;'>ssh_host_ed25519_key uid: Not Passed</p1>" >> /tmp/$HOST_NAME.sshout; fi
+SSH1=$(stat /etc/ssh/sshd_config |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
+if [ ! $SSH1 = "0600" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: sshd_config uid: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+SSH2=$(stat /etc/ssh/ssh_host_rsa_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
+if [ ! $SSH2 = "0600" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: ssh_host_rsa_key uid: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+SSH3=$(stat /etc/ssh/ssh_host_ecdsa_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
+if [ ! $SSH3 = "0600" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: ssh_host_ecdsa_key uid: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+SSH4=$(stat /etc/ssh/ssh_host_ed25519_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
+if [ ! $SSH4 = "0600" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: ssh_host_ed25519_key uid: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
 # PUBLIC HOST KEY
-SSHCONF5=$(stat /etc/ssh/ssh_host_rsa_key.pub |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ ! $SSHCONF5 = "0644" ]; then echo "<p1 style='background-color:#D2691E;'>ssh_host_rsa_key.pub uid: Not Passed</p1>" >> /tmp/$HOST_NAME.sshout; fi
-SSHCONF6=$(stat /etc/ssh/ssh_host_ed25519_key.pub |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1) && if [ ! $SSHCONF6 = "0644" ]; then echo "<p1 style='background-color:#D2691E;'>ssh_host_ed25519_key.pub uid: Not Passed</p1>" >> /tmp/$HOST_NAME.sshout; fi
-grep ^Protocol /etc/ssh/sshd_config > /dev/null && if [ ! $? = "0" ]; then echo "<p1 style='background-color:#D2691E;'>sshd_config Protocol2 setting: Not Passed</p1>" >> /tmp/$HOST_NAME.sshout; fi
-SSHCONF8=$(sshd -T | grep loglevel |cut -d " " -f2) && if [ ! $SSHCONF8 = "INFO" ]; then echo "<p1 style='background-color:#D2691E;'>sshd_config LogLevel setting: Not Passed</p1>" >> /tmp/$HOST_NAME.sshout; fi
-SSHCONF9=$(sshd -T | grep x11forwarding |cut -d " " -f2) && if [ ! $SSHCONF9 = "no" ]; then echo "<p1 style='background-color:#D2691E;'>sshd_config x11Forwarding setting: Not Passed</p1>" >> /tmp/$HOST_NAME.sshout; fi
-SSHCONF10=$(sshd -T | grep maxauthtries |cut -d " " -f2) && if [ ! $SSHCONF10 -lt "4" ]; then echo "<p1 style='background-color:#D2691E;'>- sshd_config MaxAuthtries setting: Not Passed</p1>" >> /tmp/$HOST_NAME.sshout; fi
-SSHCONF11=$(sshd -T | grep ignorerhosts |cut -d " " -f2) && if [ ! $SSHCONF11 = "yes" ]; then echo "<p1 style='background-color:#D2691E;'>sshd_config IgnorerHosts setting: Not Passed</p1>" >> /tmp/$HOST_NAME.sshout; fi
-SSHCONF12=$(sshd -T | grep hostbasedauthentication |cut -d " " -f2) && if [ ! $SSHCONF12 = "no" ]; then echo "<p1 style='background-color:#D2691E;'>sshd_config HostBasedAuth. setting: Not Passed</p1>" >> /tmp/$HOST_NAME.sshout; fi
-SSHCONF13=$(sshd -T | grep permitrootlogin |cut -d " " -f2) && if [ ! $SSHCONF13 = "no" ]; then echo "<p1 style='background-color:#D2691E;'>sshd_config PermitRootLogin setting: Not Passed</p1>" >> /tmp/$HOST_NAME.sshout; fi
-SSHCONF14=$(sshd -T | grep permitemptypasswords |cut -d " " -f2) && if [ ! $SSHCONF14 = "no" ]; then echo "<p1 style='background-color:#D2691E;'>sshd_config PermitEmptyPass setting: Not Passed</p1>" >> /tmp/$HOST_NAME.sshout; fi
-SSHCONF15=$(sshd -T | grep permituserenvironment |cut -d " " -f2) && if [ ! $SSHCONF15 = "no" ]; then echo "<p1 style='background-color:#D2691E;'>sshd_config PermitUserEnv. setting: Not Passed</p1>" >> /tmp/$HOST_NAME.sshout; fi
+SSH5=$(stat /etc/ssh/ssh_host_rsa_key.pub |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
+if [ ! $SSH5 = "0644" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: ssh_host_rsa_key.pub uid: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+SSH6=$(stat /etc/ssh/ssh_host_ed25519_key.pub |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
+if [ ! $SSH6 = "0644" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: ssh_host_ed25519_key.pub uid: Not Passed</p1>" >> /tmp/$HOST_NAME.hardening; fi
+grep ^Protocol /etc/ssh/sshd_config >> /dev/null
+if [ ! $? = "0" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: SSH Protocol2 setting: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+SSH7=$(sshd -T | grep loglevel |cut -d " " -f2)
+if [ ! $SSH7 = "INFO" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: SSH LogLevel setting: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+SSH8=$(sshd -T | grep x11forwarding |cut -d " " -f2)
+if [ ! $SSH8 = "no" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: SSH x11Forwarding setting: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+SSH9=$(sshd -T | grep maxauthtries |cut -d " " -f2)
+if [ ! $SSH9 -lt "4" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: SSH MaxAuthtries setting: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+SSH10=$(sshd -T | grep ignorerhosts |cut -d " " -f2)
+if [ ! $SSH10 = "yes" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: SSH IgnorerHosts setting: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+SSH11=$(sshd -T | grep hostbasedauthentication |cut -d " " -f2)
+if [ ! $SSH11 = "no" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: SSH HostBasedAuth. setting: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+SSH12=$(sshd -T | grep permitrootlogin |cut -d " " -f2)
+if [ ! $SSH12 = "no" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: SSH PermitRootLogin setting: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+SSH13=$(sshd -T | grep permitemptypasswords |cut -d " " -f2)
+if [ ! $SSH13 = "no" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: SSH PermitEmptyPass setting: Not Passed</p1>" >> /tmp/$HOST_NAME.hardening; fi
+SSH14=$(sshd -T | grep permituserenvironment |cut -d " " -f2)
+if [ ! $SSH14 = "no" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: SSH PermitUserEnv. setting: Not Passed</p1>" >> /tmp/$HOST_NAME.hardening; fi
 
-#--------------------------
+############################
 # VULNERABILITY CHECK
-#--------------------------
+############################
 rm /tmp/$HOST_NAME.cve
 
+#---------------------------
 # kernel based cve check
+#---------------------------
 KERNEL_VER=$(uname -r |cut -d "-" -f1)
 perl /tmp/cve_check -k $KERNELVER > /tmp/cve_list
 CVELIST=$(cat /tmp/cve_list |grep CVE) && echo $CVELIST > /tmp/cve_list && CVELIST=$(cat /tmp/cve_list) && rm /tmp/cve_list && rm /tmp/cve_check
 
+#---------------------------
 # jog4j check
+#---------------------------
 find / -iname "log4j*" > /tmp/log4j_exist.txt && sed -i '/log4j_exist.txt/d' /tmp/log4j_exist.txt
 if [ -s "/tmp/log4j_exist.txt" ]; then
 	LOG4J_EXIST="USE"
@@ -401,12 +458,9 @@ else
 	LOG4J_EXIST=NOT_USE
 fi
 
-#--------------------------
-# for notification
-#--------------------------
-#--------------------------
+############################
 # repo list
-#--------------------------
+############################
 if [ "$REP" = "APT" ]; then
 	cat /etc/apt/sources.list > /tmp/repo_list.txt
 	shopt -s nullglob dotglob
@@ -420,15 +474,15 @@ if [ "$REP" = "APT" ]; then
 elif [ "$REP" = "YUM" ]; then
 	yum repolist > /tmp/repo_list.txt
 fi
-#--------------------------
+############################
 # running services
-#--------------------------
+############################
 rm /tmp/runningservices.txt
-systemctl list-units --type service |grep running > /tmp/runningservices.txt && NUMPROCESS=$(wc -l /tmp/runningservices.txt |cut -d ' ' -f1)
+systemctl list-units --type service |grep running > /tmp/runningservices.txt && NUM_SERVICES=$(wc -l /tmp/runningservices.txt |cut -d ' ' -f1)
 
-#--------------------------
+############################
 # listening,established conn.
-#--------------------------
+############################
 rm /tmp/listeningconn.txt
 rm /tmp/establishedconn.txt
 netstat -tupl > /tmp/listeningconn.txt
@@ -437,9 +491,9 @@ sed -i '1d' /tmp/establishedconn.txt && sed -i '1d' /tmp/listeningconn.txt
 ESTABLISHEDCONN=$(wc -l /tmp/establishedconn.txt |cut -d " " -f1)
 LISTENINGCONN=$(wc -l /tmp/listeningconn.txt |cut -d " " -f1)
 
-#--------------------------
-# integrity check
-#--------------------------
+############################
+# INTEGRITY CHECK
+############################
 LOCALDIR="/usr/local/lastcontrol/data/etc"
 if [ ! -d "$LOCALDIR" ]; then
 mkdir -p $LOCALDIR
@@ -452,9 +506,9 @@ else
 	#sed -i '1d' /tmp/integritycheck.txt
 fi
 
-#--------------------------
-# inventory check
-#--------------------------
+############################
+# INVENTORY CHECK
+############################
 LOCALFILE="/usr/local/lastcontrol/data/inventory"
 #fdisk -l |grep "Disk /dev" > /tmp/hddlist.txt
 lsblk > /tmp/hddlist.txt
@@ -476,9 +530,9 @@ INV_CHECK="DETECTED"
 diff $LOCALFILE /tmp/inventory.txt >> /dev/null && INV_CHECK="NOTDETECTED"
 fi
 
-#--------------------------
+############################
 # report file
-#--------------------------
+############################
 rm /tmp/$HOST_NAME.txt
 cat > /tmp/$HOST_NAME.txt << EOF
 $HOST_NAME LastControl Report $DATE
@@ -501,30 +555,43 @@ $HOST_NAME LastControl Report $DATE
 |Update Count:      |$UPDATE_COUNT
 |Last Boot:         |$LAST_BOOT
 |Uptime	            |$UPTIME | $UPTIME_MIN
---------------------------------------------------------------------------------------------------------------------------
-|Running Process:   |$NUMPROCESS
-|Load Average:      |There are $NOC CPUs in the system | $LOAD_AVG
-|Uses the Most Load |Process: $MOSTPROCESS | Cpu: $MOSTCPU | Ram: $MOSTRAM
+|Kernel Version:    |$KERNEL_VER
 --------------------------------------------------------------------------------------------------------------------------
 |Listening Conn.:   |$LISTENINGCONN
 |Established Conn.: |$ESTABLISHEDCONN
+--------------------------------------------------------------------------------------------------------------------------
+| RESOURCE
 --------------------------------------------------------------------------------------------------------------------------
 |Ram Use:           |$RAM_USE_PERCENTAGE%
 |Swap Use:          |$SWAP_USE_PERCENTAGE%
 |Disk Use:          |$DISK_USAGE%
 --------------------------------------------------------------------------------------------------------------------------
+| SERVICES
+--------------------------------------------------------------------------------------------------------------------------
+|Running Services:  |$NUM_SERVICES
+|Services Info:     |Loaded: | Active: | Failed: | Inactive:
+--------------------------------------------------------------------------------------------------------------------------
+| PROCESS
+--------------------------------------------------------------------------------------------------------------------------
+|Process Info:      |Total:$TO_PROCESS | Running:$RU_PROCESS | Sleeping:$SL_PROCESS
+|Stopping Process:  |$ST_PROCESS
+|Zombie Process:    |$ZO_PROCESS
+--------------------------------------------------------------------------------------------------------------------------
+|Load Average:      |There are $NOC CPUs in the system | $LOAD_AVG
+|Uses the Most Load:|Process: $MOST_PROCESS | Cpu: $MOST_CPU | Ram: $MOST_RAM
+--------------------------------------------------------------------------------------------------------------------------
+| USERS
+--------------------------------------------------------------------------------------------------------------------------
 |SUDO Member Count: |$SUDOMEMBERCOUNT
 |Local User Count:  |$LOCALUSER_COUNT
 --------------------------------------------------------------------------------------------------------------------------
-|Inventory Check:   |$INV_CHECK
-|Integrity Check:   |$INT_CHECK
---------------------------------------------------------------------------------------------------------------------------
-|Kernel Version:    |$KERNEL_VER
---------------------------------------------------------------------------------------------------------------------------
-|Vulnerability Check
+| VULNERABILITY
 --------------------------------------------------------------------------------------------------------------------------
 |CVE List:          |$CVELIST
 |LOG4J/LOG4SHELL    |$LOG4J_EXIST
+--------------------------------------------------------------------------------------------------------------------------
+|Inventory Check:   |$INV_CHECK
+|Integrity Check:   |$INT_CHECK
 --------------------------------------------------------------------------------------------------------------------------
 |S.M.A.R.T          |
 --------------------------------------------------------------------------------------------------------------------------
