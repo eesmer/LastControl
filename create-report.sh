@@ -193,17 +193,19 @@ while [ "$i" -le "$NUMMACHINE" ]; do
     fi
 
     if [ $pingReturn -eq 0 ] && [ $sshReturn -eq 0 ]; then
-	scp -P22 -i /root/.ssh/lastcontrol $WDIR/lastcontrol.sh root@$MACHINE:/tmp/
-	scp -P22 -i /root/.ssh/lastcontrol $WDIR/cve_check root@$MACHINE:/tmp/
-	scp -P22 -i /root/.ssh/lastcontrol $WDIR/chkrootkit/chkrootkit root@$MACHINE:/tmp/
+	    scp -P22 -i /root/.ssh/lastcontrol $WDIR/lastcontrol.sh root@$MACHINE:/tmp/
+	    scp -P22 -i /root/.ssh/lastcontrol $WDIR/cve_check root@$MACHINE:/tmp/
+	    scp -P22 -i /root/.ssh/lastcontrol $WDIR/chkrootkit/chkrootkit root@$MACHINE:/tmp/
         ssh -p22 -i /root/.ssh/lastcontrol root@$MACHINE -- bash /tmp/lastcontrol.sh
         scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.txt $RDIR/
         scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.cve $RDIR/
         scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.healthcheck $RDIR/
         scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.hardening $RDIR/
         
-	scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.localusers $RDIR/
-	scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.sudomembers $RDIR/
+	    scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.localusers $RDIR/
+	    scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.sudomembers $RDIR/
+	    scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.spectre $RDIR/
+	    scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.log4j $RDIR/
 
         UPDATE_CHECK=$(perl -ne'16..16 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
         UPTIME=$(perl -ne'20..20 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
@@ -238,9 +240,19 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	echo "<tr>" >> $RDIR/generalreport.html
 	echo "<td><a href=$MACHINE.txt>$MACHINE</a></td>" >> $RDIR/generalreport.html
         ###echo "<td>$KERNEL_VER</td>" >> $RDIR/generalreport.html
-        echo "<td>$CVE_LIST</td>" >> $RDIR/generalreport.html
+        ###echo "<td>$CVE_LIST</td>" >> $RDIR/generalreport.html
 
 	# generalreport.html
+	echo "<td>" >> $RDIR/generalreport.html
+	LOGSLINE=$(cat $RDIR/$MACHINE.cve| wc -l)
+	CV=1
+	while [ "$CV" -le "$LOGSLINE" ]; do
+	CURRENTLINE=$(ls -l |sed -n $CV{p} $RDIR/$MACHINE.cve)
+	echo "$CURRENTLINE <br>" >> $RDIR/generalreport.html
+	CV=$(( CV + 1 ))
+	done
+	echo "</td>" >> $RDIR/generalreport.html	
+
 	echo "<td>" >> $RDIR/generalreport.html
 	LOGSLINE=$(cat $RDIR/$MACHINE.healthcheck| wc -l)
 	HC=1
