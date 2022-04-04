@@ -154,10 +154,12 @@ border: 5px solid lightgray;
 </style>
 <table id="tblinventory">
 <tr>
-<th style="text-align:left">MACHINE NAME</th>
+<th style="text-align:left">Machine Name</th>
 <th style="text-align:left">CVE</th>
-<th style="text-align:left">HEALTH CHECK LOGs</th>
-<th style="text-align:left">HARDENING CHECK LOGs</th>
+<th style="text-align:left">Health Check</th>
+<th style="text-align:left">Hardening Check System</th>
+<th style="text-align:left">Hardening Check Network</th>
+<th style="text-align:left">Hardening Check SSH</th>
 </tr>
 EOF
 #------------------------------------------------------------------------------------
@@ -193,19 +195,22 @@ while [ "$i" -le "$NUMMACHINE" ]; do
     fi
 
     if [ $pingReturn -eq 0 ] && [ $sshReturn -eq 0 ]; then
-	    scp -P22 -i /root/.ssh/lastcontrol $WDIR/lastcontrol.sh root@$MACHINE:/tmp/
-	    scp -P22 -i /root/.ssh/lastcontrol $WDIR/cve_check root@$MACHINE:/tmp/
-	    scp -P22 -i /root/.ssh/lastcontrol $WDIR/chkrootkit/chkrootkit root@$MACHINE:/tmp/
+	scp -P22 -i /root/.ssh/lastcontrol $WDIR/lastcontrol.sh root@$MACHINE:/tmp/
+	scp -P22 -i /root/.ssh/lastcontrol $WDIR/cve_check root@$MACHINE:/tmp/
+	scp -P22 -i /root/.ssh/lastcontrol $WDIR/chkrootkit/chkrootkit root@$MACHINE:/tmp/
         ssh -p22 -i /root/.ssh/lastcontrol root@$MACHINE -- bash /tmp/lastcontrol.sh
         scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.txt $RDIR/
         scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.cve $RDIR/
         scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.healthcheck $RDIR/
-        scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.hardening $RDIR/
+        scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.hardeningsys $RDIR/
+        scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.hardeningnw $RDIR/
+        scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.hardeningssh $RDIR/
         
-	    scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.localusers $RDIR/
-	    scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.sudomembers $RDIR/
-	    scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.spectre $RDIR/
-	    scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.log4j $RDIR/
+	scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.localusers $RDIR/
+	scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.sudomembers $RDIR/
+	scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.spectre $RDIR/
+	scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.log4j $RDIR/
+	scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.ebpf $RDIR/
 
         UPDATE_CHECK=$(perl -ne'16..16 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
         UPTIME=$(perl -ne'20..20 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
@@ -264,15 +269,35 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	echo "</td>" >> $RDIR/generalreport.html	
 	
 	echo "<td>" >> $RDIR/generalreport.html
-	LOGSLINE=$(cat $RDIR/$MACHINE.hardening| wc -l)
-	HD=1
-	while [ "$HD" -le "$LOGSLINE" ]; do
-	CURRENTLINE=$(ls -l |sed -n $HD{p} $RDIR/$MACHINE.hardening)
+	LOGSLINE=$(cat $RDIR/$MACHINE.hardeningsys| wc -l)
+	HDSY=1
+	while [ "$HDSY" -le "$LOGSLINE" ]; do
+	CURRENTLINE=$(ls -l |sed -n $HDSY{p} $RDIR/$MACHINE.hardeningsys)
 	echo "$CURRENTLINE <br>" >> $RDIR/generalreport.html
-	HD=$(( HD + 1 ))
+	HDSY=$(( HDSY + 1 ))
 	done
 	echo "</td>" >> $RDIR/generalreport.html
-		
+
+	echo "<td>" >> $RDIR/generalreport.html
+	LOGSLINE=$(cat $RDIR/$MACHINE.hardeningnw| wc -l)
+	HDNW=1
+	while [ "$HDNW" -le "$LOGSLINE" ]; do
+	CURRENTLINE=$(ls -l |sed -n $HDNW{p} $RDIR/$MACHINE.hardeningnw)
+	echo "$CURRENTLINE <br>" >> $RDIR/generalreport.html
+	HDNW=$(( HDNW + 1 ))
+	done
+	echo "</td>" >> $RDIR/generalreport.html
+
+	echo "<td>" >> $RDIR/generalreport.html
+	LOGSLINE=$(cat $RDIR/$MACHINE.hardeningssh| wc -l)
+	HDSH=1
+	while [ "$HDSH" -le "$LOGSLINE" ]; do
+	CURRENTLINE=$(ls -l |sed -n $HDSH{p} $RDIR/$MACHINE.hardeningssh)
+	echo "$CURRENTLINE <br>" >> $RDIR/generalreport.html
+	HDSH=$(( HDSH + 1 ))
+	done
+	echo "</td>" >> $RDIR/generalreport.html
+	
 	echo "</tr>" >> $RDIR/generalreport.html
 
     elif [ $sshReturn -eq "255" ]; then

@@ -112,9 +112,9 @@ sed -i '1d' /tmp/systemload.txt
 MOST_PROCESS=$(cat /tmp/systemload.txt |awk '{print $9, $10, $12}' |head -1 |cut -d " " -f3)
 MOST_RAM=$(cat /tmp/systemload.txt |awk '{print $9, $10, $12}' |head -1 |cut -d " " -f2)
 MOST_CPU=$(cat /tmp/systemload.txt |awk '{print $9, $10, $12}' |head -1 |cut -d " " -f1)
-echo "<a href='$HANDBOOK#-using_the_most_resource'>INFO:  Using the most Resource: $MOST_PROCESS</a>" >> /tmp/$HOST_NAME.sysout
-echo "<a href='$HANDBOOK#-using_the_most_ram'>INFO:  Using the most Ram: $MOST_RAM</a>" >> /tmp/$HOST_NAME.sysout
-echo "<a href='$HANDBOOK#-using_the_most_cpu'>INFO:  Using the most Cpu: $MOST_CPU</a>" >> /tmp/$HOST_NAME.sysout	
+echo "<a href='$HANDBOOK#-using_the_most_resource'>INFO:  Using the most Resource: $MOST_PROCESS</a>" >> /tmp/$HOST_NAME.healthcheck
+echo "<a href='$HANDBOOK#-using_the_most_ram'>INFO:  Using the most Ram: $MOST_RAM</a>" >> /tmp/$HOST_NAME.healthcheck
+echo "<a href='$HANDBOOK#-using_the_most_cpu'>INFO:  Using the most Cpu: $MOST_CPU</a>" >> /tmp/$HOST_NAME.healthcheck	
 rm -f /tmp/systemload.txt
 
 #----------------------
@@ -182,7 +182,7 @@ if [ "$REP" = "APT" ]; then
 	cat /tmp/update_list.txt |grep "The following packages will be upgraded:" >> /dev/null && CHECK_UPDATE=EXIST \
 		&& UPDATE_COUNT=$(cat /tmp/update_list.txt |grep "upgraded," |cut -d " " -f1)
 	if [  $CHECK_UPDATE = "EXIST" ]; then 
-		echo "<a href='$HANDBOOK#-update_check_is_reported'>INFO:  Update $CHECK_UPDATE | Count: $UPDATE_COUNT</a>" >> /tmp/$HOST_NAME.healthcheck
+		echo "<a href='$HANDBOOK#-update_check_is_reported'>INFO: Update $CHECK_UPDATE | Count: $UPDATE_COUNT</a>" >> /tmp/$HOST_NAME.healthcheck
 	fi
 
 elif [ "$REP" = "YUM" ]; then
@@ -196,7 +196,7 @@ elif [ "$REP" = "YUM" ]; then
 
 	CHECK_UPDATE=EXIST
 	if [ $UPDATE_COUNT -gt "0" ]; then
-		echo "<a href='$HANDBOOK#-update_check_is_reported'>INFO:  Update $CHECK_UPDATE | Count: $UPDATE_COUNT</a>" >> /tmp/$HOST_NAME.healthcheck
+		echo "<a href='$HANDBOOK#-update_check_is_reported'>INFO: Update $CHECK_UPDATE | Count: $UPDATE_COUNT</a>" >> /tmp/$HOST_NAME.healthcheck
 	else
 		CHECK_UPDATE=NONE
 	fi
@@ -231,18 +231,27 @@ fi
 ############################
 # HARDENING CHECK
 ############################
-rm /tmp/$HOST_NAME.hardening
+rm /tmp/$HOST_NAME.hardeningsys
+rm /tmp/$HOST_NAME.hardeningnw
+rm /tmp/$HOST_NAME.hardeningssh
 
 #---------------------------
 # check loaded kernel modules (filesystems)
 #---------------------------
-lsmod |grep cramfs > /tmp/kernel_modules.txt && CRAMFS=LOADED && if [ $CRAMFS = "LOADED" ]; then echo "<a href='$HANDBOOK#-hardening_loaded_kernel_modules'>INFO: CRAMFS Filesystem loaded</a>" >> /tmp/$HOST_NAME.hardening; fi
-lsmod |grep freevxfs > /tmp/kernel_modules.txt && FREEVXFS=LOADED && if [ $FREEVXFS = "LOADED" ]; then echo "<a href='$HANDBOOK#-hardening_loaded_kernel_modules'>INFO: FREEVXFS Filesystem loaded</a>" >> /tmp/$HOST_NAME.hardening; fi
-lsmod |grep jffs2 > /tmp/kernel_modules.txt && JFFS2=LOADED && if [ $JFFS2 = "LOADED" ]; then echo "<a href='$HANDBOOK#-hardening_loaded_kernel_modules'>INFO: JFFS2 Filesystem loaded</a>" >> /tmp/$HOST_NAME.hardening; fi
-lsmod |grep hfs > /tmp/kernel_modules.txt && HFS=LOADED && if [ $HFS = "LOADED" ]; then echo "<a href='$HANDBOOK#-hardening_loaded_kernel_modules'>INFO: HFS Filesystem loaded</a>" >> /tmp/$HOST_NAME.hardening; fi
-lsmod |grep hfsplus > /tmp/kernel_modules.txt && HFSPLUS=LOADED && if [ $HFSPLUS = "LOADED" ]; then echo "<a href='$HANDBOOK#-hardening_loaded_kernel_modules'>INFO: HFSPLUS Filesystem loaded</a>" >> /tmp/$HOST_NAME.hardening; fi
-lsmod |grep squashfs > /tmp/kernel_modules.txt && HFSPLUS=LOADED && if [ $HFSPLUS = "LOADED" ]; then echo "<a href='$HANDBOOK#-hardening_loaded_kernel_modules'>INFO: HFSPLUS Filesystem loaded</a>" >> /tmp/$HOST_NAME.hardening; fi
-lsmod |grep udf > /tmp/kernel_modules.txt && UDF=LOADED && if [ $UDF = "LOADED" ]; then echo "<a href='$HANDBOOK#-hardening_loaded_kernel_modules'>INFO: UDF Filesystem loaded</a>" >> /tmp/$HOST_NAME.hardening; fi
+lsmod |grep cramfs > /tmp/kernel_modules.txt && CRAMFS=LOADED
+if [ $CRAMFS = "LOADED" ]; then echo "<a href='$HANDBOOK#-hardening_loaded_kernel_modules'>INFO: CRAMFS Filesystem loaded</a>" >> /tmp/$HOST_NAME.hardeningsys; fi
+lsmod |grep freevxfs > /tmp/kernel_modules.txt && FREEVXFS=LOADED
+if [ $FREEVXFS = "LOADED" ]; then echo "<a href='$HANDBOOK#-hardening_loaded_kernel_modules'>INFO: FREEVXFS Filesystem loaded</a>" >> /tmp/$HOST_NAME.hardeningsys; fi
+lsmod |grep jffs2 > /tmp/kernel_modules.txt && JFFS2=LOADED
+if [ $JFFS2 = "LOADED" ]; then echo "<a href='$HANDBOOK#-hardening_loaded_kernel_modules'>INFO: JFFS2 Filesystem loaded</a>" >> /tmp/$HOST_NAME.hardeningsys; fi
+lsmod |grep hfs > /tmp/kernel_modules.txt && HFS=LOADED
+if [ $HFS = "LOADED" ]; then echo "<a href='$HANDBOOK#-hardening_loaded_kernel_modules'>INFO: HFS Filesystem loaded</a>" >> /tmp/$HOST_NAME.hardeningsys; fi
+lsmod |grep hfsplus > /tmp/kernel_modules.txt && HFSPLUS=LOADED
+if [ $HFSPLUS = "LOADED" ]; then echo "<a href='$HANDBOOK#-hardening_loaded_kernel_modules'>INFO: HFSPLUS Filesystem loaded</a>" >> /tmp/$HOST_NAME.hardeningsys; fi
+lsmod |grep squashfs > /tmp/kernel_modules.txt && HFSPLUS=LOADED
+if [ $HFSPLUS = "LOADED" ]; then echo "<a href='$HANDBOOK#-hardening_loaded_kernel_modules'>INFO: HFSPLUS Filesystem loaded</a>" >> /tmp/$HOST_NAME.hardeningsys; fi
+lsmod |grep udf > /tmp/kernel_modules.txt && UDF=LOADED
+if [ $UDF = "LOADED" ]; then echo "<a href='$HANDBOOK#-hardening_loaded_kernel_modules'>INFO: UDF Filesystem loaded</a>" >> /tmp/$HOST_NAME.hardeningsys; fi
 
 #---------------------------
 # directory check
@@ -254,8 +263,8 @@ if [ $REP = "YUM" ]; then TMPMNTPATH="/usr/lib/systemd/system/tmp.mount"; fi
 
 mount | grep -E '\s/tmp\s' >> /dev/null
 if [ $? = "1" ]; then
-	echo "<a href='$HANDBOOK#-hardening_tmp_directory'>INFO: /tmp directory is not mounted</a>" >> /tmp/$HOST_NAME.hardening
-	echo "<a href='$HANDBOOK#-hardening_tmp_directory'>INFO: /tmp directory is not configured</a>" >> /tmp/$HOST_NAME.hardening
+	echo "<a href='$HANDBOOK#-directory_conf_hardening'>INFO: /tmp directory is not mounted</a>" >> /tmp/$HOST_NAME.hardeningsys
+	echo "<a href='$HANDBOOK#-directory_conf_hardening'>INFO: /tmp directory is not configured</a>" >> /tmp/$HOST_NAME.hardeningsys
 else
 	#FSTABFILE=NONE
 	#egrep "/tmp" /etc/fstab >> /dev/null && FSTABFILE=EXIST
@@ -266,12 +275,33 @@ else
 fi
 
 if [ $TMPEXEC = "NONE" ] || [ $TMPSIZE = "NONE" ]; then
-	echo "<a href='$HANDBOOK#-hardening_tmp_directory'>INFO: /tmp directory is not configured</a>" >> /tmp/$HOST_NAME.hardening
+	echo "<a href='$HANDBOOK#-directory_conf_hardening'>INFO: /tmp directory is not configured</a>" >> /tmp/$HOST_NAME.hardeningsys
 fi
 
 # /var directory
-mount | grep -E '\s/var\s' >> /dev/null && if [ $= = "1" ]; then echo "<a href='$HANDBOOK#-hardening_var_directory'>INFO: /var directory is not configured</a>" >> /tmp/$HOST_NAME.hardening; fi
-mount | grep -E '\s/var/tmp\s' >> /dev/null && if [ $= = "1" ]; then echo "<a href='$HANDBOOK#-hardening_var_directory'>INFO: /var/tmp directory is not configured</a>" >> /tmp/$HOST_NAME.hardening; fi
+mount | grep -E '\s/var\s' >> /dev/null
+if [ $? "1" ]; then echo "<a href='$HANDBOOK#-directory_conf_hardening'>INFO: /var directory is not configured</a>" >> /tmp/$HOST_NAME.hardeningsys; fi
+mount | grep -E '\s/var/tmp\s' >> /dev/null
+if [ $? "1" ]; then echo "<a href='$HANDBOOK#-directory_conf_hardening'>INFO: /var/tmp directory is not configured</a>" >> /tmp/$HOST_NAME.hardeningsys; fi
+mount | grep -E '\s\/var\/log\s' >> /dev/null
+if [ $? "1" ]; then echo "<a href='$HANDBOOK#-directory_conf_hardening'>INFO: /var/log directory is not configured</a>" >> /tmp/$HOST_NAME.hardeningsys; fi
+
+# sticky bit for writable directories
+df --local -P | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev -type d \( -perm -0002 -a ! -perm -1000 \) 2>/dev/null
+if [ $? "1" ]; then echo "<a href='$HANDBOOK#-directory_conf_hardening'>INFO: Sticky bit is not configured for writable directory</a>" >> /tmp/$HOST_NAME.hardeningsys; fi
+
+
+#--------------------------
+# check automount
+#--------------------------
+if [ $REP = "APT" ]; then
+	dpkg -l |grep autofs >> /dev/null
+	if [ $? = "0" ]; then AUTOFSSTAT=$(systemctl status autofs.service  |grep Active: |cut -d ":" -f2 |cut -d " " -f2); fi
+elif [ $REP = "YUM" ]; then
+	yum list installed |grep autofs >> /dev/null
+	if [ $? = "0" ]; then AUTOFSSTAT=$(systemctl status autofs.service  |grep Active: |cut -d ":" -f2 |cut -d " " -f2); fi
+fi
+if [ $AUTOFSSTAT = "active" ]; then echo "<a href='$HANDBOOK#-directory_conf_hardening'>INFO: Autofs is actvie</a>" >> /tmp/$HOST_NAME.hardeningsys; fi
 
 #--------------------------
 # check local users,limits and sudo
@@ -281,7 +311,7 @@ LOCALUSER_COUNT=$(wc -l /tmp/userlist |cut -d " " -f1)
 if [ $LOCALUSER_COUNT = "0" ]; then
 	rm /tmp/userlist
 else
-	echo "<a href='$HOST_NAME.localusers'>INFO:  $LOCALUSER_COUNT local user(s) exist</a>" >> /tmp/$HOST_NAME.hardening
+	echo "<a href='$HOST_NAME.localusers'>INFO: $LOCALUSER_COUNT local user(s) exist</a>" >> /tmp/$HOST_NAME.hardeningsys
 	# check login limits
 	i=1
 	while [ $i -le $LOCALUSER_COUNT ]; do
@@ -297,7 +327,7 @@ else
         
 	cat /tmp/$HOST_NAME.localusers |grep Fail >> /dev/null
 	if [ $? = "0" ]; then
-		echo "<a href='$HANDBOOK'>INFO:  User Limit not used.</a>" >> /tmp/$HOST_NAME.hardening
+		echo "<a href='$HANDBOOK'>INFO: User Limit not used.</a>" >> /tmp/$HOST_NAME.hardeningsys
 	fi
 
 	# sudo members check
@@ -305,7 +335,7 @@ else
 		SUDOMEMBERCOUNT=$(cat /etc/sudoers |grep ALL= |grep -v % |grep -v root |wc -l)
 		if [ $SUDOMEMBERCOUNT -gt "0" ]; then
 			cat /etc/sudoers |grep ALL= |grep -v % |grep -v root > /tmp/$HOST_NAME.sudomembers
-			echo "<a href='$HOST_NAME.sudomembers'>INFO:  $SUDOMEMBERCOUNT user(s) have SUDO privileges.</a>" >> /tmp/$HOST_NAME.hardening
+			echo "<a href='$HOST_NAME.sudomembers'>INFO: $SUDOMEMBERCOUNT user(s) have SUDO privileges.</a>" >> /tmp/$HOST_NAME.hardeningsys
 		fi
 	else
 		SUDOMEMBERCOUNT=0
@@ -380,97 +410,76 @@ fi
 if [ $PASSWD_CHECK = "FAIL" ] && [ $SHADOW_CHECK = "FAIL" ] && [ $GROUP_CHECK = "FAIL" ] && [ $GSHADOW_CHECK = "FAIL" ]; then
 	echo "<a href='$HANDBOOK'>WARN: passwd,shadow,group files: \
 		/etc/passwd access:$PASSWD_CHECK | /etc/shadow access:$SHADOW_CHECK | /etc/group access:$GROUP_CHECK | /etc/gshadow access:$GSHADOW_CHECK</a>" \
-		>> /tmp/$HOST_NAME.hardening
+		>> /tmp/$HOST_NAME.hardeningsys
 fi
-
-#--------------------------
-# FS Conf. check
-#--------------------------
-###part_check () {
-###if [ "$#" != "1" ]; then
-###		options="$(echo $@ | awk 'BEGIN{FS="[()]"}{print $2}')"
-###	echo "[+]$@"
-###else
-###	echo "[-]\"$1\" not in separated partition."
-###fi
-###}
-###parts=(/tmp /var /var/tmp /var/log /var/log/audit /home /dev/shm)
-###for part in ${parts[*]}; do
-###	out="$(mount | grep $part)"
-###	part_check $part $out >> /tmp/fs_conf.txt
-###done
-###PART_CHECK=$(cat /tmp/fs_conf.txt |grep "not in separated partition." |wc -l) && rm /tmp/fs_conf.txt
-###if [ $PART_CHECK -gt "0" ]; then
-###	echo "<a href='$HANDBOOK'>INFO: $PART_CHECK not in separated partition.</a>" >> /tmp/$HOST_NAME.hardening
-###fi
 
 #---------------------------
 # Network conf. check
 #---------------------------
 NW_CHECK1=$(sysctl net.ipv4.ip_forward |cut -d "=" -f2 |cut -d " " -f2)
-if [ ! $NW_CHECK1 = "0" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv4 Forward Check: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+if [ ! $NW_CHECK1 = "0" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv4 Forward Check: Not Passed</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
 NW_CHECK2=$(sysctl net.ipv4.conf.all.send_redirects |cut -d "=" -f2 |cut -d " " -f2)
-if [ ! $NW_CHECK2 = "0" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv4 Send Redirects: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+if [ ! $NW_CHECK2 = "0" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv4 Send Redirects: Not Passed</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
 NW_CHECK3=$(sysctl net.ipv4.conf.all.accept_source_route |cut -d "=" -f2 |cut -d " " -f2)
-if [ ! $NW_CHECK3 = "0" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv4 All Accept Source Route: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+if [ ! $NW_CHECK3 = "0" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv4 All Accept Source Route: Not Passed</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
 NW_CHECK4=$(sysctl net.ipv4.conf.default.accept_source_route |cut -d "=" -f2 |cut -d " " -f2)
-if [ ! $NW_CHECK4 = "0" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv4 Default Accept Source Route: Not Passed</a>>" >> /tmp/$HOST_NAME.hardening; fi
+if [ ! $NW_CHECK4 = "0" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv4 Default Accept Source Route: Not Passed</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
 NW_CHECK5=$(sysctl net.ipv4.conf.all.accept_redirects |cut -d "=" -f2 |cut -d " " -f2)
-if [ ! $NW_CHECK5= "0" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv4 All Accept Redirects: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+if [ ! $NW_CHECK5= "0" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv4 All Accept Redirects: Not Passed</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
 NW_CHECK6=$(sysctl net.ipv4.conf.default.accept_redirects |cut -d "=" -f2 |cut -d " " -f2)
-if [ ! $NW_CHECK6 = "0" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv4 Default Accept Redirects: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+if [ ! $NW_CHECK6 = "0" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv4 Default Accept Redirects: Not Passed</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
 NW_CHECK7=$(sysctl net.ipv4.conf.all.secure_redirects |cut -d "=" -f2 |cut -d " " -f2)
-if [ ! $NW_CHECK7 = "0" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv4 All Secure Redirects: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+if [ ! $NW_CHECK7 = "0" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv4 All Secure Redirects: Not Passed</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
 NW_CHECK8=$(sysctl net.ipv4.conf.default.secure_redirects |cut -d "=" -f2 |cut -d " " -f2)
-if [ ! $NW_CHECK8 = "0" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv4 Default Secure Redirects: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+if [ ! $NW_CHECK8 = "0" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv4 Default Secure Redirects: Not Passed</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
 NW_CHECK9=$(sysctl net.ipv4.icmp_echo_ignore_broadcasts |cut -d "=" -f2 |cut -d " " -f2)
-if [ ! $NW_CHECK9 = "1" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv4 Ignore Broadcast: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+if [ ! $NW_CHECK9 = "1" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv4 Ignore Broadcast: Not Passed</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
 NW_CHECK10=$(sysctl net.ipv4.icmp_ignore_bogus_error_responses |cut -d "=" -f2 |cut -d " " -f2)
-if [ ! $NW_CHECK10 = "1" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv4 Ignore Bogus Error Resp.: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+if [ ! $NW_CHECK10 = "1" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv4 Ignore Bogus Error Resp.: Not Passed</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
 NW_CHECK11=$(sysctl net.ipv4.conf.all.rp_filter |cut -d "=" -f2 |cut -d " " -f2)
-if [ ! $NW_CHECK11 = "1" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv4 All rp Filter: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+if [ ! $NW_CHECK11 = "1" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv4 All rp Filter: Not Passed</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
 NW_CHECK12=$(sysctl net.ipv4.tcp_syncookies |cut -d "=" -f2 |cut -d " " -f2)
-if [ ! $NW_CHECK12 = "1" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv4 TCP Syncookies: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+if [ ! $NW_CHECK12 = "1" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv4 TCP Syncookies: Not Passed</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
 NW_CHECK13=$(sysctl net.ipv6.conf.all.disable_ipv6 |cut -d "=" -f2 |cut -d " " -f2)
-if [ ! $NW_CHECK13 = "1" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO:ipv6 Disable IPv6: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+if [ ! $NW_CHECK13 = "1" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO:ipv6 Disable IPv6: Not Passed</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
 NW_CHECK14=$(sysctl net.ipv6.conf.all.accept_ra |cut -d "=" -f2 |cut -d " " -f2)
-if [ ! $NW_CHECK14 = "0" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv6 All Accept ra: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+if [ ! $NW_CHECK14 = "0" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>INFO: ipv6 All Accept: Not Passed</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
 
 #---------------------------
 # SSH conf. check
 #---------------------------
 # PRIVATE HOST KEY
 SSH1=$(stat /etc/ssh/sshd_config |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
-if [ ! $SSH1 = "0600" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: sshd_config uid: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+if [ ! $SSH1 = "0600" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: sshd_config uid: Not Passed</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
 SSH2=$(stat /etc/ssh/ssh_host_rsa_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
-if [ ! $SSH2 = "0600" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: ssh_host_rsa_key uid: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+if [ ! $SSH2 = "0600" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: ssh_host_rsa_key uid: Not Passed</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
 SSH3=$(stat /etc/ssh/ssh_host_ecdsa_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
-if [ ! $SSH3 = "0600" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: ssh_host_ecdsa_key uid: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+if [ ! $SSH3 = "0600" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: ssh_host_ecdsa_key uid: Not Passed</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
 SSH4=$(stat /etc/ssh/ssh_host_ed25519_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
-if [ ! $SSH4 = "0600" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: ssh_host_ed25519_key uid: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+if [ ! $SSH4 = "0600" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: ssh_host_ed25519_key uid: Not Passed</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
 # PUBLIC HOST KEY
 SSH5=$(stat /etc/ssh/ssh_host_rsa_key.pub |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
-if [ ! $SSH5 = "0644" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: ssh_host_rsa_key.pub uid: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+if [ ! $SSH5 = "0644" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: ssh_host_rsa_key.pub uid: Not Passed</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
 SSH6=$(stat /etc/ssh/ssh_host_ed25519_key.pub |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
-if [ ! $SSH6 = "0644" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: ssh_host_ed25519_key.pub uid: Not Passed</p1>" >> /tmp/$HOST_NAME.hardening; fi
+if [ ! $SSH6 = "0644" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: ssh_host_ed25519_key.pub uid: Not Passed</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
 grep ^Protocol /etc/ssh/sshd_config >> /dev/null
-if [ ! $? = "0" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: SSH Protocol2 setting: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+if [ ! $? = "0" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: SSH Protocol2 setting: Not Passed</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
 SSH7=$(sshd -T | grep loglevel |cut -d " " -f2)
-if [ ! $SSH7 = "INFO" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: SSH LogLevel setting: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+if [ ! $SSH7 = "INFO" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: SSH LogLevel setting: Not Passed</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
 SSH8=$(sshd -T | grep x11forwarding |cut -d " " -f2)
-if [ ! $SSH8 = "no" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: SSH x11Forwarding setting: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+if [ ! $SSH8 = "no" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: SSH x11Forwarding setting: Not Passed</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
 SSH9=$(sshd -T | grep maxauthtries |cut -d " " -f2)
-if [ ! $SSH9 -lt "4" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: SSH MaxAuthtries setting: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+if [ ! $SSH9 -lt "4" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: SSH MaxAuthtries setting: Not Passed</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
 SSH10=$(sshd -T | grep ignorerhosts |cut -d " " -f2)
-if [ ! $SSH10 = "yes" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: SSH IgnorerHosts setting: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+if [ ! $SSH10 = "yes" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: SSH IgnorerHosts setting: Not Passed</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
 SSH11=$(sshd -T | grep hostbasedauthentication |cut -d " " -f2)
-if [ ! $SSH11 = "no" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: SSH HostBasedAuth. setting: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+if [ ! $SSH11 = "no" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: SSH HostBasedAuth. setting: Not Passed</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
 SSH12=$(sshd -T | grep permitrootlogin |cut -d " " -f2)
-if [ ! $SSH12 = "no" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: SSH PermitRootLogin setting: Not Passed</a>" >> /tmp/$HOST_NAME.hardening; fi
+if [ ! $SSH12 = "no" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: SSH PermitRootLogin setting: Not Passed</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
 SSH13=$(sshd -T | grep permitemptypasswords |cut -d " " -f2)
-if [ ! $SSH13 = "no" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: SSH PermitEmptyPass setting: Not Passed</p1>" >> /tmp/$HOST_NAME.hardening; fi
+if [ ! $SSH13 = "no" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: SSH PermitEmptyPass setting: Not Passed</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
 SSH14=$(sshd -T | grep permituserenvironment |cut -d " " -f2)
-if [ ! $SSH14 = "no" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: SSH PermitUserEnv. setting: Not Passed</p1>" >> /tmp/$HOST_NAME.hardening; fi
+if [ ! $SSH14 = "no" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>INFO: SSH PermitUserEnv. setting: Not Passed</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
 
 ############################
 # VULNERABILITY CHECK
@@ -512,6 +521,35 @@ if [ -s "/tmp/log4j_exist.txt" ]; then
 else
 	LOG4J_EXIST=NOT_USE
 fi
+
+#---------------------------
+# debian10 linux-source package check
+# Added for eBPF vulnerability in Debian 10 linux-source package
+#---------------------------
+DEB_V=$(cat /etc/debian_version |cut -d "." -f1)
+if [ $REP = "APT" ] && [ $DEB_V = "10" ]; then
+	EBPF_DISABLED=$(sysctl kernel.unprivileged_bpf_disabled |cut -d"=" -f2 |cut -d " " -f2)
+	DEB_U=$(dpkg -l |grep "linux-image-amd64" |cut -d "." -f2 |cut -d " " -f1 |cut -d "+" -f3)
+	if [ ! $EBPF_DISABLED = "0" ] && [ ! $DEB_U = "deb10u15" ]; then
+		echo "<a href='$HOST_NAME.ebpf'eBPF exist</a>" >> /tmp/$HOST_NAME.cve
+	fi
+
+cat > /tmp/$HOST_NAME.ebpf << EOF
+apt-listchanges: News
+---------------------
+linux-latest (105+deb10u14) buster-security; urgency=high
+* From Linux 4.19.232-1, the Extended Berkeley Packet Fillter (eBPF)
+facility is no longer enabled by default for users without the
+CAP_SYS_ADMIN capability (this normally means only the root user).
+
+eBPF can be used for speculative execution side-channel attacks, and
+earlier attempts to mitigate this have not completely succeeded.
+
+This can be overridden by setting the sysctl:
+kernel.unprivileged_bpf_disabled=0
+
+-- Ben Hutchings <benh@debian.org>  Mon, 07 Mar 2022 22:37:11 +0100
+EOF
 
 ############################
 # repo list
