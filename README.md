@@ -35,5 +35,5 @@ Debian, Ubuntu, Centos, RedHat, Oracle Linux, Rocky Linux
 ---
 
 ## for Installation and Usage
-[LastControl Handbook](https://github.com/eesmer/LastControl/blob/main/LastControl-HandBook.md)
+[LastControl Handbook](https://github.com/eesmer/LastControl/blob/main/docs/LastControl-HandBook.md)
 
