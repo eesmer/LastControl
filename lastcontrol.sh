@@ -236,6 +236,48 @@ rm /tmp/$HOST_NAME.hardeningnw
 rm /tmp/$HOST_NAME.hardeningssh
 
 #---------------------------
+# Find wifi or wireless adapter
+#---------------------------
+update-pciids
+lspci | egrep -i 'wifi|wireless' > /tmp/$HOST_NAME.wifi
+if [ -s /tmp/$HOST_NAME.wifi ];then
+	echo "<a href='$HOST_NAME.wifi'>Wireless adaptor found</a>" >> /tmp/$HOST_NAME.hardeningsys
+else
+	rm /tmp/$HOST_NAME.wifi
+fi
+
+#---------------------------
+# Check Time Sync
+#---------------------------
+TIMESYNC=$(timedatectl |grep "synchronized:" |cut -d ":" -f2 |cut -d " " -f2)
+if [ ! $TIMESYNC = "yes" ]; then echo "<a href='$HANDBOOK#-time_date_synchronization'>INFO: System clock is not synchronized</a>" >> /tmp/$HOST_NAME.hardeningsys; fi
+
+#---------------------------
+# Check syslog
+#---------------------------
+SYSLOGINSTALL=NOTINSTALLED
+if [ "$REP" = "APT" ]; then
+	dpkg -l |grep rsyslog >> /dev/null && SYSLOGINSTALL=INSTALLED
+fi
+if [ "$REP" = "YUM" ]; then
+	rpm -qa rsyslog >> /dev/null && SYSLOGINSTALL=INSTALLED
+
+fi
+
+if [ $SYSLOGINSTALL = "INSTALLED" ]; then
+	SYSLOGSERVICE=INACTIVE
+	systemctl status rsyslog.service |grep "active (running)" >> /dev/null && SYSLOGSERVICE=ACTIVE
+	SYSLOGSOCKET=INACTIVE
+	systemctl status syslog.socket |grep "active (running)" >> /dev/null && SYSLOGSOCKET=ACTIVE
+	SYSLOGSEND=NO
+	cat /etc/rsyslog.conf |grep "@" >> /dev/null && SYSLOGSEND=YES    #??? i will check it
+fi
+
+if [ $SYSLOGSERVICE = "INACTIVE" ] || [ $SYSLOGSOCKET = "INACTIVE" ] || [ $SYSLOGSEND = "NO" ]; then 
+	echo "<a href='$HANDBOOK#-forward_logs_to_remote_server'>SYSLOG: $SYSLOGINSTALL | $SYSLOGSERVICE | Socket:$SYSLOGSOCKET | Send:$SYSLOGSEND</a>" >> /tmp/$HOST_NAME.hardeningsys
+fi
+
+#---------------------------
 # check loaded kernel modules (filesystems)
 #---------------------------
 lsmod |grep cramfs > /tmp/kernel_modules.txt && CRAMFS=LOADED
@@ -524,7 +566,6 @@ fi
 
 #---------------------------
 # debian10 linux-source package check
-# Added for eBPF vulnerability in Debian 10 linux-source package
 #---------------------------
 DEB_V=$(cat /etc/debian_version |cut -d "." -f1)
 if [ $REP = "APT" ] && [ $DEB_V = "10" ]; then
