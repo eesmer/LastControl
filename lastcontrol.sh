@@ -278,6 +278,37 @@ if [ $SYSLOGSERVICE = "INACTIVE" ] || [ $SYSLOGSOCKET = "INACTIVE" ] || [ $SYSLO
 fi
 
 #---------------------------
+# check HTTP proxy server use 
+#---------------------------
+# http, https, ftp, no_proxy -> examples for definitions
+#---
+# export http_proxy=""http://10.10.1.20:8080/
+# export https_proxy="http://10.10.1.20:8080/"
+# export ftp_proxy="http://10.10.1.20:8080/"
+# export no_proxy="127.0.0.1,localhost"
+# Acquire::http::proxy "http://192.168.1.1:8080/";
+# Acquire::https::proxy "https://192.168.1.1:8080/";
+# Acquire::ftp::proxy "ftp://192.168.1.1:8080/";
+#---
+
+HTTPPROXY_USE=FALSE
+env |grep "http_proxy" >> /dev/null && HTTPPROXY_USE=TRUE
+grep -e "export http" /etc/profile |grep -v "#" >> /dev/null && HTTPPROXY_USE=TRUE
+grep -e "export http" /etc/profile.d/* |grep -v "#" >> /dev/null && HTTPPROXY_USE=TRUE
+
+if [ "$REP" = "APT" ]; then
+	grep -e "Acquire::http" /etc/apt/apt.conf.d/* |grep -v "#" >> /dev/null && HTTPPROXY_USE=TRUE
+elif [ "$REP" = "YUM" ]; then
+	grep -e "proxy=" /etc/yum.conf |grep -v "#" >> /dev/null && HTTPPROXY_USE=TRUE
+fi
+
+if [ $HTTPPROXY_USE = "TRUE" ]; then 
+	echo "<a href='$HANDBOOK'>INFO: HTTP Proxy is use</a>" >> /tmp/$HOST_NAME.hardeningsys
+else
+	echo "<a href='$HANDBOOK'>INFO: HTTP Proxy usage is not set</a>" >> /tmp/$HOST_NAME.hardeningsys
+fi
+
+#---------------------------
 # check loaded kernel modules (filesystems)
 #---------------------------
 lsmod |grep cramfs > /tmp/kernel_modules.txt && CRAMFS=LOADED
@@ -290,8 +321,8 @@ lsmod |grep hfs > /tmp/kernel_modules.txt && HFS=LOADED
 if [ $HFS = "LOADED" ]; then echo "<a href='$HANDBOOK#-hardening_loaded_kernel_modules'>INFO: HFS Filesystem loaded</a>" >> /tmp/$HOST_NAME.hardeningsys; fi
 lsmod |grep hfsplus > /tmp/kernel_modules.txt && HFSPLUS=LOADED
 if [ $HFSPLUS = "LOADED" ]; then echo "<a href='$HANDBOOK#-hardening_loaded_kernel_modules'>INFO: HFSPLUS Filesystem loaded</a>" >> /tmp/$HOST_NAME.hardeningsys; fi
-lsmod |grep squashfs > /tmp/kernel_modules.txt && HFSPLUS=LOADED
-if [ $HFSPLUS = "LOADED" ]; then echo "<a href='$HANDBOOK#-hardening_loaded_kernel_modules'>INFO: HFSPLUS Filesystem loaded</a>" >> /tmp/$HOST_NAME.hardeningsys; fi
+lsmod |grep squashfs > /tmp/kernel_modules.txt && SQUASHFS=LOADED
+if [ $SQUASHFS = "LOADED" ]; then echo "<a href='$HANDBOOK#-hardening_loaded_kernel_modules'>INFO: HFSPLUS Filesystem loaded</a>" >> /tmp/$HOST_NAME.hardeningsys; fi
 lsmod |grep udf > /tmp/kernel_modules.txt && UDF=LOADED
 if [ $UDF = "LOADED" ]; then echo "<a href='$HANDBOOK#-hardening_loaded_kernel_modules'>INFO: UDF Filesystem loaded</a>" >> /tmp/$HOST_NAME.hardeningsys; fi
 
@@ -348,7 +379,7 @@ if [ $AUTOFSSTAT = "active" ]; then echo "<a href='$HANDBOOK#-directory_conf_har
 #--------------------------
 # check local users,limits and sudo
 #--------------------------
-getent passwd {1000..6000} |cut -d ":" -f1 > /tmp/userlist
+getent passwd {1000..60000} |cut -d ":" -f1 > /tmp/userlist
 LOCALUSER_COUNT=$(wc -l /tmp/userlist |cut -d " " -f1)
 if [ $LOCALUSER_COUNT = "0" ]; then
 	rm /tmp/userlist
@@ -371,6 +402,15 @@ else
 	if [ $? = "0" ]; then
 		echo "<a href='$HANDBOOK'>INFO: User Limit not used.</a>" >> /tmp/$HOST_NAME.hardeningsys
 	fi
+
+	# /etc/login.defs
+	PASS_MAX=$(cat /etc/login.defs |grep PASS_MAX_DAYS |grep -v "Maximum number of days") && PASS_MAX=$(echo $PASS_MAX |cut -d " " -f2) && echo $PASS_MAX
+	PASS_MIN=$(cat /etc/login.defs |grep PASS_MIN_DAYS |grep -v "Minimum number of days") && PASS_MIN=$(echo $PASS_MIN |cut -d " " -f2) && echo $PASS_MIN
+	PASS_LEN=$(cat /etc/login.defs |grep PASS_MIN_LEN |grep -v "Minimum acceptable password") && PASS_LEN=$(echo $PASS_LEN |cut -d " " -f2) && echo $PASS_LEN
+
+	if [ ! $PASS_MAX -lt "99999" ]; then echo "<a href='$HANDBOOK>INFO: Local user password policy not configured</a>" >> /tmp/$HOST_NAME.hardeningsys; fi
+	if [ ! $PASS_MIN -gt "0" ]; then echo "<a href='$HANDBOOK>INFO: Local user password change interval not configured</a>" >> /tmp/$HOST_NAME.hardeningsys; fi
+	if [ ! $PASS_LEN -gt "5" ]; then echo "<a href='$HANDBOOK>INFO: Local user password length is not configured (according CIS) (<=5)</a>" >> /tmp/$HOST_NAME.hardeningsys; fi
 
 	# sudo members check
 	if [ -f "/etc/sudoers" ]; then
