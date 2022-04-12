@@ -249,8 +249,8 @@ fi
 #---------------------------
 # Check Time Sync
 #---------------------------
-TIMESYNC=$(timedatectl |grep "synchronized:" |cut -d ":" -f2 |cut -d " " -f2)
-if [ ! $TIMESYNC = "yes" ]; then echo "<a href='$HANDBOOK#-time_date_synchronization'>INFO: System clock is not synchronized</a>" >> /tmp/$HOST_NAME.hardeningsys; fi
+TIME_SYNC=$(timedatectl |grep "synchronized:" |cut -d ":" -f2 |cut -d " " -f2)
+if [ ! $TIME_SYNC = "yes" ]; then echo "<a href='$HANDBOOK#-time_date_synchronization'>INFO: System clock is not synchronized</a>" >> /tmp/$HOST_NAME.hardeningsys; fi
 
 #---------------------------
 # Check syslog
@@ -306,6 +306,28 @@ if [ $HTTPPROXY_USE = "TRUE" ]; then
 	echo "<a href='$HANDBOOK'>INFO: HTTP Proxy is use</a>" >> /tmp/$HOST_NAME.hardeningsys
 else
 	echo "<a href='$HANDBOOK'>INFO: HTTP Proxy usage is not set</a>" >> /tmp/$HOST_NAME.hardeningsys
+fi
+
+#---------------------------
+# Check usage Disk quota
+#---------------------------
+QUOTA_INSTALL=INSTALLED
+if ! [ "$(command -v quotacheck)" ]; then
+	QUOTA_INSTALL=NOT_INSTALLED
+fi
+USR_QUOTA=NOT_USAGED
+grep -i "usrquota" /etc/fstab >> /dev/null && USR_QUOTA=USAGED
+GRP_QUOTA=NOT_USAGED
+grep -i "grpquota" /etc/fstab >> /dev/null && GRP_QUOTA=USAGED
+MNT_QUOTA=NOT_FOUND
+mount |grep "quota" >> /dev/null && MNT_QUOTA=FOUND
+
+if [ $USR_QUOTA = "USAGED" ] || [ $GRP_QUOTA = "USAGED" ] || [ $MNT_QUOTA = "FOUND" ]; then
+	cat /etc/fstab |grep "quota" > /tmp/$HOST_NAME.quotamount
+	mount |grep "quota" >> /tmp/$HOST_NAME.quotamount
+	echo "<a href='$HOST_NAME.spectre'>Quota Usage:$QUOTA_INSTALL | Usr_Quota:$USR_QUOTA | Grp_Quota:$GRP_QUOTA | Mount:$MNT_QUOTA</a>" >> /tmp/$HOST_NAME.hardeningsys
+else
+	echo "<a href='$HANDBOOK'>Quota Usage:$QUOTA_INSTALL | Usr_Quota:$USR_QUOTA | Grp_Quota:$GRP_QUOTA | Mount:$MNT_QUOTA</a>" >> /tmp/$HOST_NAME.hardeningsys;
 fi
 
 #---------------------------
@@ -731,6 +753,10 @@ $HOST_NAME LastControl Report $DATE
 |Uptime	            |$UPTIME | $UPTIME_MIN
 |Kernel Version:    |$KERNEL_VER
 --------------------------------------------------------------------------------------------------------------------------
+|Date/Time Sync:    |System clock synchronized:$TIME_SYNC
+|Proxy Usage:       |HTTP: $HTTPPROXY_USE
+|SYSLOG Usage:      |$SYSLOGINSTALL | $SYSLOGSERVICE | Socket: $SYSLOGSOCKET | Send: $SYSLOGSEND
+--------------------------------------------------------------------------------------------------------------------------
 |Listening Conn.:   |$LISTENINGCONN
 |Established Conn.: |$ESTABLISHEDCONN
 --------------------------------------------------------------------------------------------------------------------------
@@ -767,6 +793,7 @@ $HOST_NAME LastControl Report $DATE
 |Inventory Check:   |$INV_CHECK
 |Integrity Check:   |$INT_CHECK
 --------------------------------------------------------------------------------------------------------------------------
+|Disk Quota Usage:  |$QUOTA_INSTALL | Usr_Quota: $USR_QUOTA | Grp_Quota: $GRP_QUOTA | Mount: $MNT_MOUNT
 |S.M.A.R.T          |
 --------------------------------------------------------------------------------------------------------------------------
 $SMART

@@ -212,6 +212,7 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.log4j $RDIR/
 	scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.ebpf $RDIR/
 	scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.wifi $RDIR/
+	scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.quotamount $RDIR/
 
         UPDATE_CHECK=$(perl -ne'16..16 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
         UPTIME=$(perl -ne'20..20 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
