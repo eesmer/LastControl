@@ -1,8 +1,5 @@
 ## LastControl-Handbook / User Guide
-This document contains details on disk usage issues.
-
-<br>
-
+This document contains details on disk usage issues.<br>
 If Lastcontrol reported an disk usage problemi, you can use this document.
 
 ---
