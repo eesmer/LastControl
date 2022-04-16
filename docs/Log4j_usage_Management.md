@@ -1,8 +1,5 @@
 ## LastControl-Handbook / User Guide
-This document contains details on log4j kullanımı issues.
-
-<br>
-
+This document contains details on log4j kullanımı issues.<br>
 If Lastcontrol reported an log4j usage, you can use this document.
 
 ---
