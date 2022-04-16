@@ -5,7 +5,6 @@ This document contains details on memory and swap usage issues.
 
 If Lastcontrol reported an ram and swap usage problemi, you can use this document.
 
-## 2. Reporting
 ---
 ### -Memory_usage_Management
 ---
