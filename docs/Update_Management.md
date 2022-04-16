@@ -1,8 +1,5 @@
 ## LastControl-Handbook / User Guide
-This document contains details on managing update issues.
-
-<br>
-
+This document contains details on managing update issues.<br>
 If Lastcontrol reported an update problem, you can use this document.
 
 ---
