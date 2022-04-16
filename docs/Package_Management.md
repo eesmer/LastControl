@@ -1,8 +1,5 @@
 ## LastControl-Handbook / User Guide
-This document contains details on managing package install and remove issues.
-
-<br>
-
+This document contains details on managing package install and remove issues.<br>
 If Lastcontrol reported an package check problem, you can use this document.
 
 --- 
