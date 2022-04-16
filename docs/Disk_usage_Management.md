@@ -1,9 +1,12 @@
 ## LastControl-Handbook / User Guide
-The document contains detailed information about the use for the LastControl
+This document contains details on disk usage issues.
 
-## 2. Reporting
+<br>
+
+If Lastcontrol reported an disk usage problemi, you can use this document.
+
 ---
-### -Disk_Usage_is_Reported
+### -Disk_Usage_Management
 ---
 LastControl reports if the disk usage on which the system is installed is more than 50%. <br>
 You should check the system or increase the space in case the remaining disk size is running out quickly. <br>

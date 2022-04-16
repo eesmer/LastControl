@@ -1,5 +1,9 @@
 ## LastControl-Handbook / User Guide
-The document contains detailed information about the use for the LastControl
+This document contains details on memory and swap usage issues.
+
+<br>
+
+If Lastcontrol reported an ram and swap usage problemi, you can use this document.
 
 ## 2. Reporting
 ---
