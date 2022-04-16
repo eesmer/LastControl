@@ -56,7 +56,7 @@ $ systemctl restart lastcontrol.service
 ---
 LastControl reports if the system's memory usage is greater than 50%. <br>
 <br>
-[Read More](https://github.com/eesmer/LastControl/blob/main/docs/Memory_Usage_Management.md)
+[Read More](https://github.com/eesmer/LastControl/blob/main/docs/Memory_usage_Management.md)
 
 ---
 ### -Disk_Usage_Management
@@ -64,7 +64,7 @@ LastControl reports if the system's memory usage is greater than 50%. <br>
 LastControl reports if the disk usage on which the system is installed is more than 50%. <br>
 You should check the system or increase the space in case the remaining disk size is running out quickly. <br>
 <br>
-[Read More](https://github.com/eesmer/LastControl/blob/main/docs/Disk_Usage_Management.md)
+[Read Mpre](https://github.com/eesmer/LastControl/blob/main/docs/Disk_usage_Management.md)
 
 ---
 ### -Update_Management
