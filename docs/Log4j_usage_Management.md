@@ -1,5 +1,8 @@
 ## LastControl-Handbook / User Guide
-This document contains details on log4j kullanımı issues.<br>
+This document contains details on log4j kullanımı issues.
+
+<br>
+
 If Lastcontrol reported an log4j usage, you can use this document.
 
 ---
@@ -10,8 +13,21 @@ This use carries risks that can be exploited as described in CVE-2021-44228 <br>
 
 <br>
 
+You can check whether the system log4j library exists as follows.<br>
+```
+find / -iname "log4j*"
+```
+
 Log4j 2.15 and earlier versions are vulnerable to this attack as they contain the corresponding feature. <br>
 Log4j 1.x versions do not support JNDI, so it is not affected if the JMSAppender class is not enabled. <br>
+
+<br>
+
+You can check the logs for log4j attack with the following command <br>
+
+```
+find /var/log/ -name '*.gz' -type f -exec sh -c "zcat {} | sed -e 's/\${lower://'g | tr -d '}' | egrep -i 'jndi:(ldap[s]?|rmi|dns|nis|iiop|corba|nds|http):'" \;
+```
 
 <br>
 
