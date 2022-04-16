@@ -89,5 +89,5 @@ Otherwise, there will be a problem with the package installation or update proce
 Log4j is a java logging library. It has a very widespread use. <br>
 This use carries risks that can be exploited as described in CVE-2021-44228 <br>
 <br>
-[Read More](https://github.com/eesmer/LastControl/blob/main/docs/Log4j_Usage_Management.md)
+[Read More](https://github.com/eesmer/LastControl/blob/main/docs/Log4j_usage_Management.md)
 
