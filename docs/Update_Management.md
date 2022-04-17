@@ -36,6 +36,15 @@ On Debian based systems; <br>
 $ apt update && apt upgrade
 ```
 **apt dist-upgrade vs apt full-upgrade** <br>
+**apt dist-upgrade:** <br>
+It updates the operating system by upgrading existing packages to be updated without installing additional packages. <br>
+That is, all upgrades ehere the dependencies do not change are applied.
+
+<br>
+
+**apt full-upgrade:** <br>
+If installing new packages conflicts with existing packages, it updates the system by removing existing packages ans installing new ones.
+
 
 On RedHat based systems; <br>
 ```sh
