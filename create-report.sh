@@ -181,20 +181,20 @@ while [ "$i" -le "$NUMMACHINE" ]; do
     ping $MACHINE -c 1 &> /dev/null
     pingReturn=$?
 
-    if [ $pingReturn -eq 0 ]; then
+    if [ "$pingReturn" -eq 0 ]; then
         ssh -p22 -i /root/.ssh/lastcontrol -o "StrictHostKeyChecking no" root@$MACHINE -- exit
         sshReturn=$?
-    elif [ $pingReturn -eq 1 ]; then
+    elif [ "$pingReturn" -eq 1 ]; then
         echo "<ul><li>Destination Host Unreachable. &nbsp; | &nbsp; $MACHINE $LINE</li></ul>" >> $RDIR/checkfailed.html && REDMACHINE=$((REDMACHINE+1))
 	MACHINEGROUP=RED
 	savedb
-    elif [ $pingReturn -eq 2 ]; then
+    elif [ "$pingReturn" -eq 2 ]; then
         echo "<ul><li>Hostname could not be resolved. &nbsp; | &nbsp; $MACHINE $LINE</li></ul>" >> $RDIR/checkfailed.html && REDMACHINE=$((REDMACHINE+1))
 	MACHINEGROUP=RED
 	savedb
     fi
 
-    if [ $pingReturn -eq 0 ] && [ $sshReturn -eq 0 ]; then
+    if [ "$pingReturn" -eq 0 ] && [ "$sshReturn" -eq 0 ]; then
 	scp -P22 -i /root/.ssh/lastcontrol $WDIR/lastcontrol.sh root@$MACHINE:/tmp/
 	scp -P22 -i /root/.ssh/lastcontrol $WDIR/cve_check root@$MACHINE:/tmp/
 	scp -P22 -i /root/.ssh/lastcontrol $WDIR/chkrootkit/chkrootkit root@$MACHINE:/tmp/
@@ -213,6 +213,8 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.ebpf $RDIR/
 	scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.wifi $RDIR/
 	scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.quotamount $RDIR/
+	scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.intcheck $RDIR/
+	scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.invcheck $RDIR/
 
         UPDATE_CHECK=$(perl -ne'16..16 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
         UPTIME=$(perl -ne'20..20 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
@@ -301,12 +303,13 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	echo "</td>" >> $RDIR/generalreport.html
 	
 	echo "</tr>" >> $RDIR/generalreport.html
-
-    elif [ $sshReturn -eq "255" ]; then
+	
+    elif [ "$sshReturn" -eq 255 ]; then
         echo "<ul><li>Connection request has been rejected. &nbsp; | &nbsp; $MACHINE $LINE</li></ul>" >> $RDIR/checkfailed.html && REDMACHINE=$((REDMACHINE+1))
 	MACHINEGROUP=RED
 	savedb
-    elif [ $sshReturn -eq "130" ]; then
+    
+    elif [ "$sshReturn" -eq 130 ]; then
         echo "<ul><li>Permission denied. &nbsp; | &nbsp; $MACHINE $LINE</li></ul>" >> $RDIR/checkfailed.html && REDMACHINE=$((REDMACHINE+1))
 	MACHINEGROUP=RED
 	savedb
