@@ -30,7 +30,10 @@ On RedHat based systems; <br>
 ```sh
 $ yum check-update or dnf check-update
 ```
-**Update Command** <br>
+**Update Command**
+
+---
+
 On Debian based systems; <br>
 ```sh
 $ apt update && apt upgrade
@@ -38,13 +41,19 @@ $ apt update && apt upgrade
 **apt dist-upgrade vs apt full-upgrade** <br>
 **apt dist-upgrade:** <br>
 It updates the operating system by upgrading existing packages to be updated without installing additional packages. <br>
-That is, all upgrades ehere the dependencies do not change are applied.
-
+That is, all upgrades where the dependencies do not change are applied. <br>
 <br>
+If you are not doing a major upgrade, you can do a minor upgrade with a dist-upgrade.<br>
+For example from version 10.1 to version 10.2<br>
+You don't need to use full-upgrade for this process.<br>
 
 **apt full-upgrade:** <br>
-If installing new packages conflicts with existing packages, it updates the system by removing existing packages ans installing new ones.
+If installing new packages conflicts with existing packages, it updates the system by removing existing packages ans installing new ones.<br>
+<br>
+If there is a major version transition; You can switch major versions with apt full-upgrade.<br>
+For example from version 10 to version 11<br>
 
+---
 
 On RedHat based systems; <br>
 ```sh
