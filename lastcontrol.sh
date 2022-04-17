@@ -439,21 +439,21 @@ else
         PASS_MIN=$(cat /etc/login.defs |grep PASS_MIN_DAYS |grep -v "Minimum number of days") && PASS_MIN=$(echo $PASS_MIN |cut -d " " -f2)
         PASS_LEN=$(cat /etc/login.defs |grep PASS_MIN_LEN |grep -v "Minimum acceptable password") && PASS_LEN=$(echo $PASS_LEN |cut -d " " -f2)
 
-        if [ "$PASS_MAX" -eq "$PASS_MAX" ] 2> /dev/null;
+        if [ -n "$PASS_MAX" ] && [ "$PASS_MAX" -eq "$PASS_MAX" ] 2> /dev/null;
 	then
 		if [ ! "$PASS_MAX" -lt 99999 ]; then echo "<a href='$HANDBOOK>Local user password policy not configured</a>" >> /tmp/$HOST_NAME.hardeningsys; fi
 	else
 		echo "<a href='$HANDBOOK>Local user password policy definition not found</a>" >> /tmp/$HOST_NAME.hardeningsys
 	fi
 	
-	if [ "$PASS_MIN" -eq "$PASS_MIN" ] 2> /dev/null;
+	if [ -n "$PASS_MIN" ] && [ "$PASS_MIN" -eq "$PASS_MIN" ] 2> /dev/null;
 	then
 		if [ ! "$PASS_MIN" -gt 0 ]; then echo "<a href='$HANDBOOK>Local user password change interval not configured</a>" >> /tmp/$HOST_NAME.hardeningsys; fi
 	else
 		echo "<a href='$HANDBOOK>Local user password change interval definition not found</a>" >> /tmp/$HOST_NAME.hardeningsys
 	fi
         
-	if [ "$PASS_LEN" -eq "$PASS_LEN" ] 2> /dev/null;
+	if [ -n "$PASS_LEN" ] && [ "$PASS_LEN" -eq "$PASS_LEN" ] 2> /dev/null;
 	then
 		if [ ! "$PASS_LEN" -gt 5 ]; then echo "<a href='$HANDBOOK>Local user password length is not configured (according CIS) (<=5)</a>" >> /tmp/$HOST_NAME.hardeningsys; fi
 	else
@@ -847,3 +847,27 @@ $HOST_NAME LastControl Report $DATE
 $SMART
 --------------------------------------------------------------------------------------------------------------------------
 EOF
+#echo >> /tmp/$HOST_NAME.txt
+#
+#if [ "$INV_CHECK" = "DETECTED" ]; then
+#        echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+#        echo "                          :::... CHANGE HARDWARE NOTIFICATION !!! ....:::" >> /tmp/$HOST_NAME.txt
+#        echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+#        diff $LOCALFILE /tmp/inventory.txt >> /tmp/$HOST_NAME.txt && rm -f /tmp/inventory.txt
+#        echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+#        echo "" >> /tmp/$HOST_NAME.txt
+#else
+#        rm -f /tmp/inventory.txt
+#fi
+
+#if [ $INT_CHECK = "DETECTED" ]; then
+#        echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+#        echo "                  :::... INTEGRITY CHECK ...:::" >> /tmp/$HOST_NAME.txt
+#        echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+#        echo "Warnings" >> /tmp/$HOST_NAME.txt
+#        echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
+#        cat /tmp/integritycheck.txt >> /tmp/$HOST_NAME.txt && rm -f /tmp/integritycheck.txt
+#        echo "" >> /tmp/$HOST_NAME.txt
+#        rm -f /tmp/integritycheck.txt
+#        echo "=======================================================================================================================================================================" >> /tmp/$HOST_NAME.txt
+#fi
