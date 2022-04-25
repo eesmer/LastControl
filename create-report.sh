@@ -215,6 +215,9 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.quotamount $RDIR/
 	scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.intcheck $RDIR/
 	scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.invcheck $RDIR/
+	scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.desktopenv $RDIR/
+	scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.blkcrypt $RDIR/
+	scp -P22 -i /root/.ssh/lastcontrol root@$MACHINE:/tmp/$MACHINE.blklvm $RDIR/
 
         UPDATE_CHECK=$(perl -ne'16..16 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)
         UPTIME=$(perl -ne'20..20 and print' $RDIR/$MACHINE.txt | cut -d '|' -f3)

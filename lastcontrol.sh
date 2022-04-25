@@ -21,10 +21,10 @@ rm /tmp/distrocheck
 ############################
 # install packages
 ############################
-if [ "$REP" = "APT" ]; then
+if [ "$REP" = APT ]; then
         apt-get -y install net-tools rsync smartmontools curl
 fi
-if [ "$REP" = "YUM" ]; then
+if [ "$REP" = YUM ]; then
         yum -y install net-tools rsync perl smartmontools curl pciutils
 fi
 
@@ -38,8 +38,8 @@ HANDBOOK=https://github.com/eesmer/LastControl/blob/main/LastControl-HandBook.md
 INT_IPADDR=$(hostname -I)
 EXT_IPADDR=$(curl -4 icanhazip.com)
 CPUINFO=$(cat /proc/cpuinfo |grep "model name" |cut -d ':' -f2 > /tmp/cpuinfooutput.txt && tail -n1 /tmp/cpuinfooutput.txt > /tmp/cpuinfo.txt && rm /tmp/cpuinfooutput.txt && cat /tmp/cpuinfo.txt) && rm /tmp/cpuinfo.txt
-RAM_TOTAL=$(free -m | head -2 | tail -1| awk '{print $2}')
-RAM_USAGE=$(free -m | head -2 | tail -1| awk '{print $3}')
+RAM_TOTAL=$(free -m |grep Mem |awk '{print $2}')
+RAM_USAGE=$(free -m |grep Mem |awk '{print $3}')
 GPU=$(lspci | grep VGA | cut -d ":" -f3);GPURAM=$(cardid=$(lspci | grep VGA |cut -d " " -f1);lspci -v -s $cardid | grep " prefetchable"| awk '{print $6}' | head -1)
 VGA_CONTROLLER="$GPU $GPURAM"
 DISK_LIST=$(df -H | grep -vE 'Filesystem|tmpfs|cdrom|udev' | awk '{ print $5" "$1"("$2"  "$3")" " --- "}' | sed -e :a -e N -e 's/\n/ /' -e ta)
@@ -64,34 +64,51 @@ fi
 rm /tmp/$HOST_NAME.healthcheck
 
 #----------------------
+# is desktop env. installed
+#----------------------
+DESKTOP_ENV=PASS
+if [ -f "/tmp/desktopenv.txt" ]; then rm /tmp/desktopenv.txt; fi
+dpkg -l | grep -Ew "gdm3|sddm|lxdm|xdm|lightdm|slim|wdm" > /tmp/desktopenv.txt && DESKTOP_ENV=FAIL
+if [ "$DESKTOP_ENV" = FAIL ]; then
+	echo "<a href='$HOST_NAME.desktopenv'>Desktop environment installed</a>" >> /tmp/$HOST_NAME.healthcheck
+else
+	rm /tmp/desktopenv.txt
+fi
+
+#----------------------
+# using systemd or init
+#----------------------
+SYSTEMD_CHECK="$(ps --no-headers -o comm 1)"
+echo "<a href='$HOST_NAME'>Service Management: $SYSTEMD_CHECK</a>" >> /tmp/$HOST_NAME.healthcheck
+
+#----------------------
 # check ram usage
 #----------------------
-RAM_FREE=$( expr $RAM_TOTAL - $RAM_USAGE)
-RAM_FREE_PERCENTAGE=$((100 * $RAM_FREE/$RAM_TOTAL))
-RAM_USE_PERCENTAGE=$(expr 100 - $RAM_FREE_PERCENTAGE)
-        if [ $RAM_USE_PERCENTAGE -gt "50" ]; then
-                echo "<a href='$HANDBOOK#-ram_usage_is_reported'>Ram %$RAM_USE_PERCENTAGE usage</a>" >> /tmp/$HOST_NAME.healthcheck
-                OOM=0
-                grep -i -r 'out of memory' /var/log/ > /dev/null && OOM=1
-                if [ $OOM = "1" ]; then echo "<a href='$HANDBOOK#-ram_usage_is_reported'>out of memory message log found</a>" >> /tmp/$HOST_NAME.healthcheck; fi
-        fi
+RAM_USAGE_PERCENTAGE=$(free |grep Mem |awk '{print $3/$2 * 100}' |cut -d "." -f1)
+if [ "$RAM_USAGE_PERCENTAGE" -gt 50 ]; then
+	echo "<a href='$HANDBOOK#-ram_usage_is_reported'>Ram %$RAM_USE_PERCENTAGE usage</a>" >> /tmp/$HOST_NAME.healthcheck
+        OOM=0
+        grep -i -r 'out of memory' /var/log/ > /dev/null && OOM=1
+        if [ "$OOM" = 1 ]; then echo "<a href='$HANDBOOK#-ram_usage_is_reported'>out of memory message log found</a>" >> /tmp/$HOST_NAME.healthcheck; fi
+fi
+
 #----------------------
 # check swap usage
 #----------------------
-SWAP_VALUE=$(free -m |grep Swap: |cut -d ":" -f2)
-SWAP_TOTAL=$(echo $SWAP_VALUE |cut -d " " -f1)
-SWAP_USE=$(echo $SWAP_VALUE |cut -d " " -f2)
-SWAP_USE_PERCENTAGE=$((100 * $SWAP_USE/$SWAP_TOTAL))
-        if [ $SWAP_USE_PERCENTAGE -gt "0" ]; then
-                echo "<a href='$HANDBOOK#-swap_usage_is_reported'>Swap %$SWAP_USE_PERCENTAGE usage</a>" >> /tmp/$HOST_NAME.healthcheck
-        fi
+SWAP_TOTAL=$(free -m |grep Swap |awk '{print $2}')
+SWAP_USAGE=$(free -m |grep Swap |awk '{print $3}')
+SWAP_USAGE_PERCENTAGE=$(free -m |grep Swap |awk '{print $3/$2 * 100}' |cut -d "." -f1)
+
+if [ "$SWAP_USAGE_PERCENTAGE" -gt 0 ]; then
+	echo "<a href='$HANDBOOK#-swap_usage_is_reported'>Swap %$SWAP_USE_PERCENTAGE usage</a>" >> /tmp/$HOST_NAME.healthcheck
+fi
 
 #----------------------
 # check disk usage
 #----------------------
 DISK_USAGE=$(df -H | grep -vE 'Filesystem|tmpfs|cdrom|udev' | awk '{ print $5" "$1"("$2"  "$3")" " --- "}' | sed -e :a -e N -e 's/\n/ /' -e ta |cut -d "%" -f1)
-        if [ $DISK_USAGE -gt "50" ]; then
-                echo "<a href='$HANDBOOK#-disk_usage_is_reported'>Disk %$DISK_USAGE usage.</a>" >> /tmp/$HOST_NAME.healthcheck
+        if [ "$DISK_USAGE" -gt 50 ]; then
+                echo "<a href='$HANDBOOK#-disk_usage_is_reported'>Disk %$DISK_USAGE</a>" >> /tmp/$HOST_NAME.healthcheck
         fi
 
 #----------------------
@@ -110,7 +127,7 @@ LAST01=$(echo $LAST01 |cut -d "." -f1)
 LAST05=$(echo $LAST05 |cut -d "." -f1)
 LAST15=$(echo $LAST15 |cut -d "." -f1)
 
-if [ $LAST01 -gt "$NOC" ] || [ $LAST05 -gt "$NOC" ] || [ $LAST15 -gt "$NOC" ]; then
+if [ "$LAST01" -gt $NOC ] || [ "$LAST05" -gt $NOC ] || [ "$LAST15" -gt $NOC ]; then
 	echo "<a href='$HANDBOOK'>Overload %$LOAD_AVG</a>" >> /tmp/$HOST_NAME.healthcheck
 fi
 
@@ -132,7 +149,7 @@ RU_PROCESS=$(top -n 1 -b |grep "Tasks:" |awk '{print $4}')
 SL_PROCESS=$(top -n 1 -b |grep "Tasks:" |awk '{print $6}')
 ST_PROCESS=$(top -n 1 -b |grep "Tasks:" |awk '{print $8}')
 ZO_PROCESS=$(top -n 1 -b |grep "Tasks:" |awk '{print $10}')
-if [ $ZO_PROCESS -gt "0" ] || [ $ST_PROCESS -gt "0" ]; then
+if [ "$ZO_PROCESS" -gt 0 ] || [ "$ST_PROCESS" -gt 0 ]; then
      echo "<a href='$HANDBOOK'>Process - Zombie:$ZO_PROCESS | Stopped:$ST_PROCESS</a>" >> /tmp/$HOST_NAME.healthcheck
 fi
 
@@ -151,7 +168,7 @@ smartctl -i -x $DISK >> /dev/null > /tmp/DISK$i.txt
 SMART_SUPPORT=0
 egrep "SMART support is: Available - device has SMART capability." /tmp/DISK$i.txt >> /dev/null && SMART_SUPPORT=1
 
-if [ "$SMART_SUPPORT" = "1" ]; then
+if [ "$SMART_SUPPORT" = 1 ]; then
         SMART_SUPPORT="Available - device has SMART capability."
         SMART_RESULT=$(cat /tmp/DISK$i.txt |grep "SMART overall-health self-assessment test result:" |cut -d: -f2 |cut -d " " -f2)
 else
@@ -159,7 +176,7 @@ else
         SMART_RESULT="Not Passed"
 fi
 
-if [ "$SMART_SUPPORT" = "1" ] && [ "$SMART_RESULT" = "pass" ]; then
+if [ "$SMART_SUPPORT" = 1 ] && [ "$SMART_RESULT" = "pass" ]; then
         SMART_SCORE=$(($SMART_SCORE + 1))
 fi
 
@@ -175,24 +192,24 @@ rm -f /tmp/smartcheck-result.txt
 rm -f /tmp/disklist.txt
 #SMART=$(echo $SMART)
 
-if [ $SMART_SCORE = "0" ]; then
+if [ "$SMART_SCORE" = 0 ]; then
         echo "<a href='$HANDBOOK'>S.M.A.R.T Failed or not tested.</a>" >> /tmp/$HOST_NAME.healthcheck
 fi
 
 #----------------------
 # Check Update
 #----------------------
-if [ "$REP" = "APT" ]; then
+if [ "$REP" = APT ]; then
         CHECK_UPDATE=NONE
         UPDATE_COUNT=0
         echo "n" |apt-get upgrade > /tmp/update_list.txt
         cat /tmp/update_list.txt |grep "The following packages will be upgraded:" >> /dev/null && CHECK_UPDATE=EXIST \
                 && UPDATE_COUNT=$(cat /tmp/update_list.txt |grep "upgraded," |cut -d " " -f1)
-        if [  $CHECK_UPDATE = "EXIST" ]; then
+        if [  "$CHECK_UPDATE" = EXIST ]; then
                 echo "<a href='$HANDBOOK#-update_check_is_reported'>Update $CHECK_UPDATE | Count: $UPDATE_COUNT</a>" >> /tmp/$HOST_NAME.healthcheck
         fi
 
-elif [ "$REP" = "YUM" ]; then
+elif [ "$REP" = YUM ]; then
         yum check-update > /tmp/update_list.txt
         sed -i '/Loaded/d' /tmp/update_list.txt
         sed -i '/Loading/d' /tmp/update_list.txt
@@ -202,7 +219,7 @@ elif [ "$REP" = "YUM" ]; then
         UPDATE_COUNT=$(cat /tmp/update_list.txt |wc -l)
 
         CHECK_UPDATE=EXIST
-        if [ $UPDATE_COUNT -gt "0" ]; then
+        if [ "$UPDATE_COUNT" -gt 0 ]; then
                 echo "<a href='$HANDBOOK#-update_check_is_reported'>Update $CHECK_UPDATE | Count: $UPDATE_COUNT</a>" >> /tmp/$HOST_NAME.healthcheck
         else
                 CHECK_UPDATE=NONE
@@ -213,11 +230,11 @@ fi
 #--------------------------
 # broken package list
 #--------------------------
-if [ $REP = "APT" ];then
+if [ "$REP" = APT ];then
         dpkg -l | grep -v "^ii" >> /dev/null > /tmp/broken_pack_list.txt
         sed -i -e '1d;2d;3d;4d;5d' /tmp/broken_pack_list.txt
         BROKEN_COUNT=$(wc -l /tmp/broken_pack_list.txt |cut -d " " -f1)
-        if [ $BROKEN_COUNT -gt "0" ]; then
+        if [ "$BROKEN_COUNT" -gt 0 ]; then
                 echo "<a href='$HANDBOOK'>$BROKEN_COUNT package(s) is a broken</a>" >> /tmp/$HOST_NAME.healthcheck
         fi
 
@@ -227,10 +244,10 @@ if [ $REP = "APT" ];then
         ### if [ $DEBSIG = 1 ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
 fi
 
-if [ $REP = "YUM" ];then
+if [ "$REP" = YUM ];then
         rpm -Va >> /dev/null > /tmp/broken_pack_list.txt
         BROKEN_COUNT=$(wc -l /tmp/broken_pack_list.txt |cut -d " " -f1)
-        if [ $BROKEN_COUNT -gt "0" ]; then
+        if [ "$BROKEN_COUNT" -gt 0 ]; then
                 echo "<a href='$HANDBOOK'>$BROKEN_COUNT package(s) is a broken</a>" >> /tmp/$HOST_NAME.healthcheck
         fi
 fi
@@ -257,21 +274,21 @@ fi
 # Check Time Sync
 #---------------------------
 TIME_SYNC=$(timedatectl |grep "synchronized:" |cut -d ":" -f2 |cut -d " " -f2)
-if [ ! $TIME_SYNC = "yes" ]; then echo "<a href='$HANDBOOK#-time_date_synchronization'>System clock is not synchronized</a>" >> /tmp/$HOST_NAME.hardeningsys; fi
+if [ ! "$TIME_SYNC" = yes ]; then echo "<a href='$HANDBOOK#-time_date_synchronization'>System clock is not synchronized</a>" >> /tmp/$HOST_NAME.hardeningsys; fi
 
 #---------------------------
 # Check syslog
 #---------------------------
-SYSLOGINSTALL=NOTINSTALLED
-if [ $REP = "APT" ]; then
-     dpkg -l |grep rsyslog >> /dev/null && SYSLOGINSTALL=INSTALLED
+SYSLOGINSTALL=Not_Installed
+if [ "$REP" = APT ]; then
+     dpkg -l |grep rsyslog >> /dev/null && SYSLOGINSTALL=Installed
 fi
-if [ $REP = "YUM" ]; then
-     rpm -qa rsyslog >> /dev/null && SYSLOGINSTALL=INSTALLED
+if [ "$REP" = YUM ]; then
+     rpm -qa rsyslog >> /dev/null && SYSLOGINSTALL=Installed
 
 fi
 
-if [ $SYSLOGINSTALL = "INSTALLED" ]; then
+if [ "$SYSLOGINSTALL" = Installed ]; then
      SYSLOGSERVICE=INACTIVE
      systemctl status rsyslog.service |grep "active (running)" >> /dev/null && SYSLOGSERVICE=ACTIVE
      SYSLOGSOCKET=INACTIVE
@@ -280,7 +297,7 @@ if [ $SYSLOGINSTALL = "INSTALLED" ]; then
      cat /etc/rsyslog.conf |grep "@" |grep -v "#" >> /dev/null && SYSLOGSEND=YES	#??? i will check it
 fi
 
-if [ $SYSLOGSERVICE = "INACTIVE" ] || [ $SYSLOGSOCKET = "INACTIVE" ] || [ $SYSLOGSEND = "NO" ]; then
+if [ "$SYSLOGSERVICE" = INACTIVE ] || [ "$SYSLOGSOCKET" = INACTIVE ] || [ "$SYSLOGSEND" = NO ]; then
      echo "<a href='$HANDBOOK#-forward_logs_to_remote_server'>SYSLOG: $SYSLOGINSTALL | $SYSLOGSERVICE | Socket:$SYSLOGSOCKET | Send:$SYSLOGSEND</a>" >> /tmp/$HOST_NAME.hardeningsys
 fi
 
@@ -303,13 +320,13 @@ env |grep "http_proxy" >> /dev/null && HTTPPROXY_USE=TRUE
 grep -e "export http" /etc/profile |grep -v "#" >> /dev/null && HTTPPROXY_USE=TRUE
 grep -e "export http" /etc/profile.d/* |grep -v "#" >> /dev/null && HTTPPROXY_USE=TRUE
 
-if [ $REP = "APT" ]; then
+if [ "$REP" = APT ]; then
      grep -e "Acquire::http" /etc/apt/apt.conf.d/* |grep -v "#" >> /dev/null && HTTPPROXY_USE=TRUE
-elif [ $REP = "YUM" ]; then
+elif [ "$REP" = YUM ]; then
      grep -e "proxy=" /etc/yum.conf |grep -v "#" >> /dev/null && HTTPPROXY_USE=TRUE
 fi
 
-if [ $HTTPPROXY_USE = "TRUE" ]; then
+if [ "$HTTPPROXY_USE" = TRUE ]; then
      echo "<a href='$HANDBOOK'>HTTP Proxy is use</a>" >> /tmp/$HOST_NAME.hardeningsys
 else
      echo "<a href='$HANDBOOK'>HTTP Proxy usage is not set</a>" >> /tmp/$HOST_NAME.hardeningsys
@@ -329,7 +346,7 @@ grep -i "grpquota" /etc/fstab >> /dev/null && GRP_QUOTA=Active
 MNT_QUOTA=Not_Found
 mount |grep "quota" >> /dev/null && MNT_QUOTA=Found
 
-if [ $USR_QUOTA = "Active" ] || [ $GRP_QUOTA = "Active" ] || [ $MNT_QUOTA = "Found" ]; then
+if [ "$USR_QUOTA" = Active ] || [ "$GRP_QUOTA" = Active ] || [ "$MNT_QUOTA" = Found ]; then
      cat /etc/fstab |grep "quota" > /tmp/$HOST_NAME.quotamount
      mount |grep "quota" >> /tmp/$HOST_NAME.quotamount
      echo "<a href='$HANDBOOK'>Quota Usage:$QUOTA_INSTALL | Usr_Quota:$USR_QUOTA | Grp_Quota:$GRP_QUOTA</a>" >> /tmp/$HOST_NAME.hardeningsys
@@ -337,6 +354,35 @@ if [ $USR_QUOTA = "Active" ] || [ $GRP_QUOTA = "Active" ] || [ $MNT_QUOTA = "Fou
 else
      echo "<a href='$HANDBOOK'>Quota Usage:$QUOTA_INSTALL | Usr_Quota:$USR_QUOTA | Grp_Quota:$GRP_QUOTA</a>" >> /tmp/$HOST_NAME.hardeningsys
      echo "<a href='$HANDBOOK'>Quota Mount:$MNT_QUOTA</a>" >> /tmp/$HOST_NAME.hardeningsys
+fi
+
+#---------------------------
+# Check usage Disk Encrypt
+#---------------------------
+CRYPT_INSTALL=Not_Installed
+if [ -x "$(command -v cryptsetup)" ]; then CRYPT_INSTALL=Installed; fi
+#dpkg -l |grep -w cryptsetup && CRYPT_INSTALL=TRUE
+CRYPT_Usage=Not_Usage
+lsblk --output type |grep -w "crypt" && CRYPT_Usage=Usage
+
+if [ "$CRYPT_Usage" = Usage ]; then
+	lsblk |grep -w "crypt" > /tmp/$HOST_NAME.blkcrypt
+	echo "<a href='$HOST_NAME.blkcrypt'>Disk Encrypt is use</a>" >> /tmp/$HOST_NAME.hardeningsys
+else
+	echo "<a href='$HANDBOOK'>Disk Encrypt is not use</a>" >> /tmp/$HOST_NAME.hardeningsys
+fi
+
+#---------------------------
+# Check usage LVM
+#---------------------------
+LVM_Usage=Not_Usage
+lsblk --output type |grep -w "lvm" && LVM_Usage=Usage
+
+if [ "$LVM_Usage" = Usage ]; then
+	lsblk |grep -w "lvm" > /tmp/$HOST_NAME.blklvm
+	echo "<a href='$HOST_NAME.blklvm'>LVM config is use</a>" >> /tmp/$HOST_NAME.hardeningsys
+else
+	echo "<a href='$HANDBOOK'>LVM config is not use</a>" >> /tmp/$HOST_NAME.hardeningsys
 fi
 
 #---------------------------
@@ -412,7 +458,7 @@ if [ "$AUTOFSSTAT" = active ]; then echo "<a href='$HANDBOOK#-directory_conf_har
 #--------------------------
 getent passwd {1000..60000} |cut -d ":" -f1 > /tmp/userlist
 LOCALUSER_COUNT=$(wc -l /tmp/userlist |cut -d " " -f1)
-if [ $LOCALUSER_COUNT = "0" ]; then
+if [ "$LOCALUSER_COUNT" = 0 ]; then
         rm /tmp/userlist
 else
         echo "<a href='$HOST_NAME.localusers'>$LOCALUSER_COUNT local user(s) exist</a>" >> /tmp/$HOST_NAME.hardeningsys
@@ -421,7 +467,7 @@ else
         while [ $i -le $LOCALUSER_COUNT ]; do
                 USER=$(ls -l |sed -n $i{p} /tmp/userlist)
                 cat /etc/security/limits.conf |grep $USER >> /dev/null
-                if [ $? = "0" ]; then
+                if [ "$?" = 0 ]; then
                         echo "$USER | Limit:Pass" > /tmp/$HOST_NAME.localusers
                 else
                         echo "$USER | Limit:Fail" > /tmp/$HOST_NAME.localusers
@@ -430,7 +476,7 @@ else
         done
 
         cat /tmp/$HOST_NAME.localusers |grep Fail >> /dev/null
-        if [ $? = "0" ]; then
+        if [ "$?" = 0 ]; then
                 echo "<a href='$HANDBOOK'>User Limit not used</a>" >> /tmp/$HOST_NAME.hardeningsys
         fi
 
@@ -463,7 +509,7 @@ else
         # sudo members check
         if [ -f "/etc/sudoers" ]; then
                 SUDOMEMBERCOUNT=$(cat /etc/sudoers |grep ALL= |grep -v % |grep -v root |wc -l)
-                if [ $SUDOMEMBERCOUNT -gt "0" ]; then
+                if [ "$SUDOMEMBERCOUNT" -gt 0 ]; then
                         cat /etc/sudoers |grep ALL= |grep -v % |grep -v root > /tmp/$HOST_NAME.sudomembers
                         echo "<a href='$HOST_NAME.sudomembers'>$SUDOMEMBERCOUNT user(s) have SUDO privileges</a>" >> /tmp/$HOST_NAME.hardeningsys
                 fi
@@ -489,59 +535,59 @@ SHADOW_CHECK=NONE
 GROUP_CHECK=NONE
 GSHADOW_CHECK=NONE
 
-if [ "$REP" = "APT" ];then
-        if [ $PASSWDFILEPERMS = "0644" ] && [ $PASSWDFILEOWNER = "root" ] && [ $PASSWDFILEGRP = "root" ]; then
+if [ "$REP" = APT ];then
+        if [ "$PASSWDFILEPERMS" = 0644 ] && [ "$PASSWDFILEOWNER" = root ] && [ "$PASSWDFILEGRP" = root ]; then
                 PASSWD_CHECK=Pass
         else
                 PASSWD_CHECK=Fail
         fi
 	
-	if [ $SHADOWFILEPERMS = "0640" ] && [ $SHADOWFILEOWNER = "root" ] && [ $SHADOWFILEGRP = "shadow" ]; then
+	if [ "$SHADOWFILEPERMS" = 0640 ] && [ "$SHADOWFILEOWNER" = root ] && [ "$SHADOWFILEGRP" = shadow ]; then
                 SHADOW_CHECK=Pass
         else
                 SHADOW_CHECK=Fail
         fi
 	
-	if [ $GROUPFILEPERMS = "0644" ] && [ $GROUPFILEOWNER = "root" ] && [ $GROUPFILEGRP = "root" ]; then
+	if [ "$GROUPFILEPERMS" = 0644 ] && [ "$GROUPFILEOWNER" = root ] && [ "$GROUPFILEGRP" = root ]; then
                 GROUP_CHECK=Pass
         else
                 GROUP_CHECK=Fail
         fi
 	
-	if [ $GSHADOWFILEPERMS = "0640" ] && [ $GSHADOWFILEOWNER = "root" ] && [ $GSHADOWFILEGRP = "shadow" ]; then
+	if [ "$GSHADOWFILEPERMS" = 0640 ] && [ "$GSHADOWFILEOWNER" = root ] && [ "$GSHADOWFILEGRP" = shadow ]; then
                 GSHADOW_CHECK=Pass
         else
                 GSHADOW_CHECK=Fail
         fi
 fi
 
-if [ "$REP" = "YUM" ];then
-        if [ $PASSWDFILEPERMS = "0644" ] && [ $PASSWDFILEOWNER = "root" ] && [ $PASSWDFILEGRP = "root" ]; then
+if [ "$REP" = YUM ];then
+        if [ "$PASSWDFILEPERMS" = 0644 ] && [ "$PASSWDFILEOWNER" = root ] && [ "$PASSWDFILEGRP" = root ]; then
                 PASSWD_CHECK=Pass
         else
                 PASSWD_CHECK=Fail
         fi
 
-	if [ $SHADOWFILEPERMS = "0000" ] && [ $SHADOWFILEOWNER = "root" ] && [ $SHADOWFILEGRP = "root" ]; then
+	if [ "$SHADOWFILEPERMS" = 0000 ] && [ "$SHADOWFILEOWNER" = root ] && [ "$SHADOWFILEGRP" = root ]; then
                 SHADOW_CHECK=Pass
         else
                 SHADOW_CHECK=Fail
         fi
 
-	if [ $GROUPFILEPERMS = "0644" ] && [ $GROUPFILEOWNER = "root" ] && [ $GROUPFILEGRP = "root" ]; then
+	if [ "$GROUPFILEPERMS" = 0644 ] && [ "$GROUPFILEOWNER" = root ] && [ "$GROUPFILEGRP" = root ]; then
                 GROUP_CHECK=Pass
         else
                 GROUP_CHECK=Fail
         fi
 
-	if [ $GSHADOWFILEPERMS = "0000" ] && [ $GSHADOWFILEOWNER = "root" ] && [ $GSHADOWFILEGRP = "root" ]; then
+	if [ "$GSHADOWFILEPERMS" = 0000 ] && [ "$GSHADOWFILEOWNER" = root ] && [ "$GSHADOWFILEGRP" = root ]; then
                 GSHADOW_CHECK=Pass
         else
                 GSHADOW_CHECK=Fail
         fi
 fi
 
-if [ $PASSWD_CHECK = "Fail" ] || [ $SHADOW_CHECK = "Fail" ] || [ $GROUP_CHECK = "Fail" ] || [ $GSHADOW_CHECK = "Fail" ]; then
+if [ "$PASSWD_CHECK" = Fail ] || [ "$SHADOW_CHECK" = Fail ] || [ "$GROUP_CHECK" = Fail ] || [ "$GSHADOW_CHECK" = Fail ]; then
         echo "<a href='$HANDBOOK'>Files access check: passwd:$PASSWD_CHECK | shadow:$SHADOW_CHECK | group:$GROUP_CHECK | gshadow:$GSHADOW_CHECK</a>" \
                 >> /tmp/$HOST_NAME.hardeningsys
 fi
@@ -550,31 +596,31 @@ fi
 # Network conf. check
 #---------------------------
 NW_CHECK1=$(sysctl net.ipv4.ip_forward |cut -d "=" -f2 |cut -d " " -f2)
-if [ ! $NW_CHECK1 = "0" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>ipv4 Forward Check: Fail</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
+if [ ! "$NW_CHECK1" = 0 ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>ipv4 Forward Check: Fail</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
 NW_CHECK2=$(sysctl net.ipv4.conf.all.send_redirects |cut -d "=" -f2 |cut -d " " -f2)
-if [ ! $NW_CHECK2 = "0" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>ipv4 Send Redirects: Fail</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
+if [ ! "$NW_CHECK2" = 0 ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>ipv4 Send Redirects: Fail</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
 NW_CHECK3=$(sysctl net.ipv4.conf.all.accept_source_route |cut -d "=" -f2 |cut -d " " -f2)
-if [ ! $NW_CHECK3 = "0" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>ipv4 All Accept Source Route: Fail</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
+if [ ! "$NW_CHECK3" = 0 ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>ipv4 All Accept Source Route: Fail</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
 NW_CHECK4=$(sysctl net.ipv4.conf.default.accept_source_route |cut -d "=" -f2 |cut -d " " -f2)
-if [ ! $NW_CHECK4 = "0" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>ipv4 Default Accept Source Route: Fail</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
+if [ ! "$NW_CHECK4" = 0 ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>ipv4 Default Accept Source Route: Fail</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
 NW_CHECK5=$(sysctl net.ipv4.conf.all.accept_redirects |cut -d "=" -f2 |cut -d " " -f2)
-if [ ! $NW_CHECK5= "0" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>ipv4 All Accept Redirects: Fail</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
+if [ ! "$NW_CHECK5" = 0 ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>ipv4 All Accept Redirects: Fail</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
 NW_CHECK6=$(sysctl net.ipv4.conf.default.accept_redirects |cut -d "=" -f2 |cut -d " " -f2)
-if [ ! $NW_CHECK6 = "0" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>ipv4 Default Accept Redirects: Fail</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
+if [ ! "$NW_CHECK6" = 0 ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>ipv4 Default Accept Redirects: Fail</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
 NW_CHECK7=$(sysctl net.ipv4.conf.all.secure_redirects |cut -d "=" -f2 |cut -d " " -f2)
-if [ ! $NW_CHECK7 = "0" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>ipv4 All Secure Redirects: Fail</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
+if [ ! "$NW_CHECK7" = 0 ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>ipv4 All Secure Redirects: Fail</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
 NW_CHECK8=$(sysctl net.ipv4.conf.default.secure_redirects |cut -d "=" -f2 |cut -d " " -f2)
-if [ ! $NW_CHECK8 = "0" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>ipv4 Default Secure Redirects: Fail</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
+if [ ! "$NW_CHECK8" = 0 ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>ipv4 Default Secure Redirects: Fail</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
 NW_CHECK9=$(sysctl net.ipv4.icmp_echo_ignore_broadcasts |cut -d "=" -f2 |cut -d " " -f2)
-if [ ! $NW_CHECK9 = "1" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>ipv4 Ignore Broadcast: Fail</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
+if [ ! "$NW_CHECK9" = 1 ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>ipv4 Ignore Broadcast: Fail</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
 NW_CHECK10=$(sysctl net.ipv4.icmp_ignore_bogus_error_responses |cut -d "=" -f2 |cut -d " " -f2)
-if [ ! $NW_CHECK10 = "1" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>ipv4 Ignore Bogus Error Resp.: Fail</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
+if [ ! "$NW_CHECK10" = 1 ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>ipv4 Ignore Bogus Error Resp.: Fail</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
 NW_CHECK11=$(sysctl net.ipv4.conf.all.rp_filter |cut -d "=" -f2 |cut -d " " -f2)
-if [ ! $NW_CHECK11 = "1" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>ipv4 All rp Filter: Fail</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
+if [ ! "$NW_CHECK11" = 1 ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>ipv4 All rp Filter: Fail</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
 NW_CHECK12=$(sysctl net.ipv4.tcp_syncookies |cut -d "=" -f2 |cut -d " " -f2)
-if [ ! $NW_CHECK12 = "1" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>ipv4 TCP Syncookies: Fail</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
+if [ ! "$NW_CHECK12" = 1 ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>ipv4 TCP Syncookies: Fail</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
 NW_CHECK13=$(sysctl net.ipv6.conf.all.disable_ipv6 |cut -d "=" -f2 |cut -d " " -f2)
-if [ ! $NW_CHECK13 = "1" ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>ipv6 Disable IPv6: Fail</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
+if [ ! "$NW_CHECK13" = 1 ]; then echo "<a href='$HANDBOOK#-hardening_network_settings'>ipv6 Disable IPv6: Fail</a>" >> /tmp/$HOST_NAME.hardeningnw; fi
 NW_CHECK14=$(sysctl net.ipv6.conf.all.accept_ra |cut -d "=" -f2 |cut -d " " -f2)
 
 #---------------------------
@@ -582,36 +628,36 @@ NW_CHECK14=$(sysctl net.ipv6.conf.all.accept_ra |cut -d "=" -f2 |cut -d " " -f2)
 #---------------------------
 # PRIVATE HOST KEY
 SSH1=$(stat /etc/ssh/sshd_config |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
-if [ ! $SSH1 = "0600" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>sshd_config uid: Fail</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
+if [ ! "$SSH1" = 0600 ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>sshd_config uid: Fail</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
 SSH2=$(stat /etc/ssh/ssh_host_rsa_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
-if [ ! $SSH2 = "0600" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>ssh_host_rsa_key uid: Fail</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
+if [ ! "$SSH2" = 0600 ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>ssh_host_rsa_key uid: Fail</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
 SSH3=$(stat /etc/ssh/ssh_host_ecdsa_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
-if [ ! $SSH3 = "0600" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>ssh_host_ecdsa_key uid: Fail</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
+if [ ! "$SSH3" = 0600 ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>ssh_host_ecdsa_key uid: Fail</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
 SSH4=$(stat /etc/ssh/ssh_host_ed25519_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
-if [ ! $SSH4 = "0600" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>ssh_host_ed25519_key uid: Fail</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
+if [ ! "$SSH4" = 0600 ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>ssh_host_ed25519_key uid: Fail</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
 # PUBLIC HOST KEY
 SSH5=$(stat /etc/ssh/ssh_host_rsa_key.pub |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
-if [ ! $SSH5 = "0644" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>ssh_host_rsa_key.pub uid: Fail</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
+if [ ! "$SSH5" = 0644 ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>ssh_host_rsa_key.pub uid: Fail</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
 SSH6=$(stat /etc/ssh/ssh_host_ed25519_key.pub |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
-if [ ! $SSH6 = "0644" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>ssh_host_ed25519_key.pub uid: Fail</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
+if [ ! "$SSH6" = 0644 ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>ssh_host_ed25519_key.pub uid: Fail</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
 grep ^Protocol /etc/ssh/sshd_config >> /dev/null
-if [ ! $? = "0" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>SSH Protocol2 setting: Fail</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
+if [ ! "$?" = 0 ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>SSH Protocol2 setting: Fail</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
 SSH7=$(sshd -T | grep loglevel |cut -d " " -f2)
-if [ ! $SSH7 = "INFO" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>SSH LogLevel setting: Fail</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
+if [ ! "$SSH7" = INFO ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>SSH LogLevel setting: Fail</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
 SSH8=$(sshd -T | grep x11forwarding |cut -d " " -f2)
-if [ ! $SSH8 = "no" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>SSH x11Forwarding setting: Fail</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
+if [ ! "$SSH8" = no ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>SSH x11Forwarding setting: Fail</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
 SSH9=$(sshd -T | grep maxauthtries |cut -d " " -f2)
-if [ ! $SSH9 -lt "4" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>SSH MaxAuthtries setting: Fail</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
+if [ ! "$SSH9" -lt 4 ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>SSH MaxAuthtries setting: Fail</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
 SSH10=$(sshd -T | grep ignorerhosts |cut -d " " -f2)
-if [ ! $SSH10 = "yes" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>SSH IgnorerHosts setting: Fail</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
+if [ ! "$SSH10" = yes ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>SSH IgnorerHosts setting: Fail</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
 SSH11=$(sshd -T | grep hostbasedauthentication |cut -d " " -f2)
-if [ ! $SSH11 = "no" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>SSH HostBasedAuth. setting: Fail</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
+if [ ! "$SSH11" = no ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>SSH HostBasedAuth. setting: Fail</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
 SSH12=$(sshd -T | grep permitrootlogin |cut -d " " -f2)
-if [ ! $SSH12 = "no" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>SSH PermitRootLogin setting: Fail</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
+if [ ! "$SSH12" = no ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>SSH PermitRootLogin setting: Fail</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
 SSH13=$(sshd -T | grep permitemptypasswords |cut -d " " -f2)
-if [ ! $SSH13 = "no" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>SSH PermitEmptyPass setting: Fail</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
+if [ ! "$SSH13" = no ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>SSH PermitEmptyPass setting: Fail</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
 SSH14=$(sshd -T | grep permituserenvironment |cut -d " " -f2)
-if [ ! $SSH14 = "no" ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>SSH PermitUserEnv. setting: Fail</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
+if [ ! "$SSH14" = no ]; then echo "<a href='$HANDBOOK#-hardening_ssh_settings'>SSH PermitUserEnv. setting: Fail</a>" >> /tmp/$HOST_NAME.hardeningssh; fi
 
 ############################
 # VULNERABILITY CHECK
@@ -651,7 +697,7 @@ if [ -s "/tmp/log4j_exist.txt" ]; then
         find /var/log/ -name '*.gz' -type f -exec sh -c "zcat {} | sed -e 's/\${lower://'g | tr -d '}' | egrep -i 'jndi:(ldap[s]?|rmi|dns|nis|iiop|corba|nds|http):'" \; \
                 >> /tmp/$HOST_NAME.log4j
 else
-        LOG4J_EXIST=NOT_USE
+        LOG4J_EXIST=Not_Use
 fi
 
 #---------------------------
@@ -692,11 +738,11 @@ if [ "$REP" = "APT" ]; then
         files=(/etc/apt/sources.list.d/*)
         DIRC=EMPTY
         if [ ${#files[@]} -gt 0 ]; then DIRC=FULL; fi
-        if [ $DIRC = "FULL" ]; then
+        if [ "$DIRC" = FULL ]; then
         echo "----------------------------------------------" >> /tmp/repo_list.txt
         cat /etc/apt/sources.list.d/* >> /tmp/repo_list.txt
         fi
-elif [ "$REP" = "YUM" ]; then
+elif [ "$REP" = YUM ]; then
         yum repolist > /tmp/repo_list.txt
 fi
 
@@ -727,10 +773,10 @@ rsync -a /etc/ $LOCALDIR && INT_CHECK=INITIAL
 else
         rsync -av /etc/ $LOCALDIR > /tmp/integritycheck.txt
         sed -i -e :a -e '$d;N;2,2ba' -e 'P;D' /tmp/integritycheck.txt && sed -i '/^$/d' /tmp/integritycheck.txt && sed -i '1d' /tmp/integritycheck.txt
-        if [ -s "/tmp/integritycheck.txt" ]; then INT_CHECK=DETECTED; else INT_CHECK=NOTDETECTED; fi
+        if [ -s "/tmp/integritycheck.txt" ]; then INT_CHECK=Detected; else INT_CHECK=Not_Detected; fi
 fi
 
-if [ $INT_CHECK = "DETECTED" ]; then
+if [ "$INT_CHECK" = Detected ]; then
 	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.intcheck
 	echo "                  :::... INTEGRITY CHECK ...:::" >> /tmp/$HOST_NAME.intcheck
 	echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.intcheck
@@ -759,11 +805,11 @@ if [ ! -f "$LOCALFILE" ]; then
 cp /tmp/inventory.txt $LOCALFILE
 INV_CHECK="CREATED"
 else
-INV_CHECK="DETECTED"
-diff $LOCALFILE /tmp/inventory.txt >> /dev/null && INV_CHECK="NOTDETECTED"
+INV_CHECK="Detected"
+diff $LOCALFILE /tmp/inventory.txt >> /dev/null && INV_CHECK="Not_Detected"
 fi
 
-if [ "$INV_CHECK" = "DETECTED" ]; then
+if [ "$INV_CHECK" = Detected ]; then
         echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.invcheck
         echo "                          :::... CHANGE HARDWARE NOTIFICATION !!! ....:::" >> /tmp/$HOST_NAME.invcheck
         echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.invcheck
@@ -810,8 +856,8 @@ $HOST_NAME LastControl Report $DATE
 --------------------------------------------------------------------------------------------------------------------------
 | RESOURCE
 --------------------------------------------------------------------------------------------------------------------------
-|Ram Use:           |$RAM_USE_PERCENTAGE%
-|Swap Use:          |$SWAP_USE_PERCENTAGE%
+|Ram Use:           |$RAM_USAGE_PERCENTAGE%
+|Swap Use:          |$SWAP_USAGE_PERCENTAGE%
 |Disk Use:          |$DISK_USAGE%
 --------------------------------------------------------------------------------------------------------------------------
 | SERVICES
@@ -842,6 +888,8 @@ $HOST_NAME LastControl Report $DATE
 |Integrity Check:   |$INT_CHECK
 --------------------------------------------------------------------------------------------------------------------------
 |Disk Quota Usage:  |$QUOTA_INSTALL | Usr_Quota: $USR_QUOTA | Grp_Quota: $GRP_QUOTA | Mount: $MNT_MOUNT
+|Disk Encrypt Usage:|$CRYPT_INSTALL | $CRYPT_Usage
+|LVM Usage:         |$LVM_Usage
 |S.M.A.R.T          |
 --------------------------------------------------------------------------------------------------------------------------
 $SMART
@@ -849,7 +897,7 @@ $SMART
 EOF
 #echo >> /tmp/$HOST_NAME.txt
 #
-#if [ "$INV_CHECK" = "DETECTED" ]; then
+#if [ "$INV_CHECK" = Detected ]; then
 #        echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 #        echo "                          :::... CHANGE HARDWARE NOTIFICATION !!! ....:::" >> /tmp/$HOST_NAME.txt
 #        echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
@@ -860,7 +908,7 @@ EOF
 #        rm -f /tmp/inventory.txt
 #fi
 
-#if [ $INT_CHECK = "DETECTED" ]; then
+#if [ "$INT_CHECK" = Detected ]; then
 #        echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
 #        echo "                  :::... INTEGRITY CHECK ...:::" >> /tmp/$HOST_NAME.txt
 #        echo "------------------------------------------------------------------------------------------------------" >> /tmp/$HOST_NAME.txt
