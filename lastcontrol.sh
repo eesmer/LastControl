@@ -22,7 +22,7 @@ rm /tmp/distrocheck
 # install packages
 ############################
 if [ "$REP" = APT ]; then
-        apt-get -y install net-tools rsync smartmontools curl
+        apt-get -y install --no-install-recommends net-tools rsync smartmontools curl
 fi
 if [ "$REP" = YUM ]; then
         yum -y install net-tools rsync perl smartmontools curl pciutils
