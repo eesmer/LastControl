@@ -1,4 +1,4 @@
-![alt text](screenshot/lastcontrol_logo.png "LastControl")
+![alt text](lastcontrol_logo.png "LastControl")
 <br>
 
 LastControl is a control tool that performs system checks and presents the outputs of these checks as a web page report.<br>
@@ -16,5 +16,5 @@ https://www.cisecurity.org/
 
 ---
 
-## for Installation and Usage
+## Installation and Usage
 [LastControl Handbook](https://github.com/eesmer/LastControl/blob/main/LastControl-HandBook.md)
