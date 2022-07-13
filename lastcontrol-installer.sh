@@ -13,10 +13,10 @@ apt-get -y install tmux vim
 apt-get -y install curl wget
 apt-get -y install ack
 apt-get -y install nmap
-apt-get -y install xsltproc
-apt-get -y install sqlite3
-apt-get -y install php
-apt-get -y install php-sqlite3
+#apt-get -y install xsltproc
+#apt-get -y install sqlite3
+#apt-get -y install php
+#apt-get -y install php-sqlite3
 # apt-get -y install php-db / php-db-dataobject (for test)
 
 git clone https://github.com/eesmer/LastControl.git
@@ -35,16 +35,16 @@ mkdir -p /var/www/html/reports
 mkdir -p /var/www/html/lastcontrol
 cp /root/.ssh/lastcontrol.pub /var/www/html/lastcontrol/
 rm /var/www/html/index.html && cp /usr/local/lastcontrol/index.html /var/www/html/
-cp /usr/local/lastcontrol/screenshot/lastcontrol_logo.png /var/www/html/
+cp /usr/local/lastcontrol/images/lastcontrol_logo.png /var/www/html/
 chmod 644 /var/www/html/index.html
 chmod 644 /var/www/html/lastcontrol_logo.png
 systemctl restart apache2.service
 
-touch /usr/local/lastcontrol/hostlist
+touch /usr/local/lastcontrol/linuxmachine
 
-mkdir /usr/local/lastcontrol/db
-cd /usr/local/lastcontrol/db
-sqlite3 lastcontrol.sqlite "CREATE TABLE report ( date text(15), hour text(10), machinename text (15), machinegroup text(10) );"
+#mkdir /usr/local/lastcontrol/db
+#cd /usr/local/lastcontrol/db
+#sqlite3 lastcontrol.sqlite "CREATE TABLE report ( date text(15), hour text(10), machinename text (15), machinegroup text(10) );"
 
 # -----------------------------------------------------------------------------
 # SERVICE CONFIG
