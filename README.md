@@ -8,7 +8,7 @@ With LastControl, you can control and report such as automatic and periodic syst
 Debian, Ubuntu, Centos, RedHat, Oracle Linux, Rocky Linux
 
 ## Features
-- Inventory, distribution, disk, update and kernel report
+- Inventory, Distro/OS, Disk, Update and Kernel report
 - Network configuration settings report
 
 All checks are made according to general and CIS checks.<br>
