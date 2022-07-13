@@ -1,0 +1,21 @@
+#!/bin/bash
+
+#SDIR=$WDIR/scripts
+#SCRIPTNAME=create-inventory
+WDIR=/usr/local/lastcontrol
+CLSCRIPTS=$WDIR/scripts/cl-scripts
+LCKEY=/root/.ssh/lastcontrol
+
+NUMMACHINE=$(cat $WDIR/linuxhost | wc -l)
+i=1
+while [ "$i" -le "$NUMMACHINE" ]; do
+	LINUXMACHINE=$(ls -l |sed -n $i{p} $WDIR/linuxhost)
+	
+	scp -r -P22 -i $LCKEY $CLSCRIPTS root@$LINUXMACHINE:/tmp/
+	ssh -p22 -i $LCKEY root@$LINUXMACHINE -- bash /tmp/cl-scripts/run-scripts.sh
+
+	mkdir -p /tmp/reports/$LINUXMACHINE
+	scp -r -P22 -i $LCKEY root@$LINUXMACHINE:/tmp/lastcontrol-reports/$LINUXMACHINE  /tmp/reports/
+
+i=$(( i + 1 ))
+done

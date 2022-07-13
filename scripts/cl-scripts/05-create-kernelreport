@@ -1,0 +1,48 @@
+#!/bin/bash
+
+HOST_NAME=$(hostnamectl --static)
+RDIR=/tmp/lastcontrol-reports/$HOST_NAME
+DATE=$(date)
+
+#KERNEL VERSION INFO
+KERNEL_VER=$(uname -r)
+
+#KERNEL MODULE CONTROL
+CRAMFS="NOT LOADED"
+lsmod |grep cramfs &>/dev/null && CRAMFS=LOADED
+FREEVXFS="NOT LOADED"
+lsmod |grep freevxfs &>/dev/null && FREEVXFS=LOADED
+JFFS2="NOT LOADED"
+lsmod |grep jffs2 &>/dev/null && JFFS2=LOADED
+HFS="NOT LOADED"
+lsmod |grep hfs &>/dev/null && HFS=LOADED
+HFSPLUS="NOT LOADED"
+lsmod |grep hfsplus &>/dev/null && HFS=LOADED
+SQUASHFS="NOT LOADED"
+lsmod |grep squashfs &>/dev/null && SQUASHFS=LOADED
+UDF="NOT LOADED"
+lsmod |grep udf &>/dev/null && UDF=LOADED
+
+cat > $RDIR/$HOST_NAME.kernelreport << EOF
+====================================================================================================
+:::. $HOST_NAME KERNEL INFORMATION REPORT :::.
+====================================================================================================
+$DATE
+
+----------------------------------------------------------------------------------------------------
+KERNEL VERSION
+----------------------------------------------------------------------------------------------------
+Kernel Version | $KERNEL_VER
+
+----------------------------------------------------------------------------------------------------
+LOADED KERNEL MODULE
+----------------------------------------------------------------------------------------------------
+CRAMFS         | $CRAMFS
+FREEVXFS       | $FREEVXFS
+JFFS2          | $JFFS2
+HFS            | $HFS
+HFSPLUS        | $HFSPLUS
+SQUASHFS       | $SQUASHFS
+UDF            | $UDF
+====================================================================================================
+EOF

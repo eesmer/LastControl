@@ -1,0 +1,117 @@
+#!/bin/bash
+
+WDIR=/usr/local/lastcontrol
+RDIR=/tmp/reports
+LINE='<hr class="dashed">'
+SYSDATE=$(date +%F)
+SYSDAY=$(date +%A)
+SYSHOUR=$(date +%H:%M)
+RDATE="$SYSDATE - $SYSDAY $SYSHOUR"
+
+# MAINPAGE html
+cat > $RDIR/mainpage.html << EOF
+<!DOCTYPE html>
+<html>
+<head>
+<title>LastControl Mainpage</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+<p style="color: #000000; font-size: 30px; font-weight: bold; text-align:center;">
+LastControl Main Page</p>
+<p style="text-align:center;">$RDATE</p>
+<p style="text-align:left;">
+<style>
+a:link, a:visited {
+background-color: #1C1C1C;
+color: white;
+padding: 5px 10px;
+text-align: center;
+text-decoration: none;
+display: inline-block;
+}
+a:hover, a:active {
+background-color: gray;
+}
+</style>
+<a href="generalreport.html">All Reports</a>
+<a href="checkfailed.html">List of Check Fail</a>
+</p>
+<hr class="solid">
+EOF
+
+cat > $RDIR/generalreport.html << EOF
+<!DOCTYPE html>
+<html>
+<head>
+<title>LastControl Report</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+<p style="color: #000000; font-size: 25px; font-weight: bold; background-color:#03A9F4; text-align:center;">
+LastControl General Report</p>
+<p style="text-align:center;">$RDATE</p>
+<hr />
+<style>
+table, th, td {
+border: 5px solid lightgray;
+}
+</style>
+<table id="tblinventory">
+<tr>
+<th style="text-align:left">Machine Name</th>
+<th style="text-align:left">All Machine Reports</th>
+</tr>
+EOF
+
+NUMMACHINE=$(cat $WDIR/linuxhost | wc -l)
+i=1
+while [ "$i" -le "$NUMMACHINE" ]; do
+	LINUXMACHINE=$(ls -l |sed -n $i{p} $WDIR/linuxhost)
+	#scp -P22 -i $LCKEY $CLDIR/$SCRIPTNAME root@$LINUXMACHINE:/tmp/
+	#ssh -p22 -i $LCKEY root@$LINUXMACHINE -- bash /tmp/$SCRIPTNAME
+	#mkdir -p /tmp/reports/$LINUXMACHINE
+	#scp -r -P22 -i $LCKEY root@$LINUXMACHINE:/tmp/lastcontrol-reports/* /tmp/reports/$LINUXMACHINE/
+
+	echo "<tr>" >> $RDIR/generalreport.html
+	echo "<td>$LINUXMACHINE</td>" >> $RDIR/generalreport.html
+
+	echo "<td>" >> $RDIR/generalreport.html
+	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.systemreport>System Report</a><br>" >> $RDIR/generalreport.html
+	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.machineinventory>Inventory Report</a><br>" >> $RDIR/generalreport.html
+	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.updatereport>Update Report</a><br>" >> $RDIR/generalreport.html
+	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.kernelreport>Kernel Report</a><br>" >> $RDIR/generalreport.html
+	echo "<hr />" >> $RDIR/generalreport.html
+	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.kernelreport>User Information Report</a><br>" >> $RDIR/generalreport.html
+	echo "<hr />" >> $RDIR/generalreport.html
+	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.diskreport>Disk Report</a><br>" >> $RDIR/generalreport.html
+	echo "<hr />" >> $RDIR/generalreport.html
+	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.nwconfigreport>Network Config Report</a><br>" >> $RDIR/generalreport.html
+	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.diskreport>SSH Config Report</a><br>" >> $RDIR/generalreport.html
+	echo "<hr />" >> $RDIR/generalreport.html
+	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.diskreport>Directory Config Report</a><br>" >> $RDIR/generalreport.html
+	echo "<hr />" >> $RDIR/generalreport.html
+	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.diskreport>Vulnerability Analysis Report</a><br>" >> $RDIR/generalreport.html
+	
+	echo "</td>" >> $RDIR/generalreport.html
+	
+	echo "</tr>" >> $RDIR/generalreport.html
+
+
+	
+i=$(( i + 1 ))
+done
+
+#echo "</table>" >> $RDIR/inventory.html
+#echo "</table>" >> $RDIR/generalreport.html
+#echo "</body>" |tee -a $RDIR/inventory.html $RDIR/generalreport.html $RDIR/mainpage.html $RDIR/checkfailed.html >/dev/null
+#echo "</html>" |tee -a $RDIR/inventory.html $RDIR/generalreport.html $RDIR/mainpage.html $RDIR/checkfailed.html >/dev/null
+
+echo "</body>" |tee -a $RDIR/mainpage.html $RDIR/generalreport.html &>/dev/null
+echo "</html>" |tee -a $RDIR/mainpage.html $RDIR/generalreport.html &>/dev/null
+
+rm -r /var/www/html/reports
+mkdir -p /var/www/html/reports
+RDIR=/var/www/html/reports
+cp -r /tmp/reports/* $RDIR/
+
