@@ -1,4 +1,4 @@
-![alt text](lastcontrol_logo.png "LastControl")
+![alt text](images/lastcontrol_logo.png "LastControl")
 <br>
 
 LastControl is a control tool that performs system checks and presents the outputs of these checks as a web page report.<br>
