@@ -18,4 +18,3 @@ https://www.cisecurity.org/
 
 ## for Installation and Usage
 [LastControl Handbook](https://github.com/eesmer/LastControl/blob/main/LastControl-HandBook.md)
-
