@@ -97,4 +97,3 @@ rm -r /var/www/html/reports
 mkdir -p /var/www/html/reports
 RDIR=/var/www/html/reports
 cp -r /tmp/reports/* $RDIR/
-
