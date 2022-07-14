@@ -2,83 +2,48 @@
 
 WDIR=/usr/local/lastcontrol
 RDIR=/tmp/reports
+LINE='<hr class="dashed">'
 SYSDATE=$(date +%F)
 SYSDAY=$(date +%A)
 SYSHOUR=$(date +%H:%M)
 RDATE="$SYSDATE - $SYSDAY $SYSHOUR"
 
-# MAINPAGE html
-cat > $RDIR/mainpage.html << EOF
-<!DOCTYPE html>
-<html>
-<head>
-<title>LastControl Mainpage</title>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-</head>
-<body>
-<p style="color: #000000; font-size: 30px; font-weight: bold; text-align:center;">
-LastControl Main Page</p>
-<p style="text-align:center;">$RDATE</p>
-<p style="text-align:left;">
-<style>
-a:link, a:visited {
-background-color: #1C1C1C;
-color: white;
-padding: 5px 10px;
-text-align: center;
-text-decoration: none;
-display: inline-block;
-}
-a:hover, a:active {
-background-color: gray;
-}
-</style>
-<a href="generalreport.html">All Reports</a>
-<a href="checkfailed.html">List of Check Fail</a>
-</p>
-<hr class="solid">
-EOF
-
+# GeneralReport html
 cat > $RDIR/generalreport.html << EOF
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <html>
 <head>
-<title>LastControl Report</title>
+<title>LastControl</title>
+</head>
+
 <style>
 .DivPageHead {
-	border: 1px outset #D7CCC8;
+	border: 1px outset #000000;
 	background-color: #D7CCC8;
 	text-align: center;
 }
 
-.DivTableHead {
-	border: 2px outset #D7CCC8;
-	background-color: #D7CCC8;
-	text-align: center;
-	font-size: 30px;
-	margin-top: 20px;
-}
-
-.DivTable {
-	border: none;
-	background-color: #cfd8dc;
-	text-align: center;
-	cursor: pointer;
-	display: inline-block;
-	
-	font-family: quicksand, arial, sans-serif;
-	font-size: 18px;
-	width: 50%;
-	padding: 8px;
-	letter-spacing: .05em;
-	margin-right: 2rem;
-	margin-left: 2rem;
-	margin-top: 10px;
-	line-height: 1em;
+table, th, td {
+border: 5px solid #D7CCC8;
+padding: 10px;
+text-align: left;
+font-family: quicksand, arial, sans-serif;
+font-size: 18px;
+letter-spacing: .05em;
+margin-top: 20px;
+line-height: 1.5em;
+width: 50%;
 }
 </style>
-</head>
+
+<table id="tablereports">
+<tr>
+<th>Machine Name</th>
+<th>All Machine Reports</th>
+</tr>
+
 <body>
 	<div class="DivPageHead">
 		<br>
@@ -97,40 +62,36 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	#mkdir -p /tmp/reports/$LINUXMACHINE
 	#scp -r -P22 -i $LCKEY root@$LINUXMACHINE:/tmp/lastcontrol-reports/* /tmp/reports/$LINUXMACHINE/
 
-	echo "<div class="DivTableHead">" >> $RDIR/generalreport.html
-		echo "<h3>$LINUXMACHINE</h3>" >> $RDIR/generalreport.html
-		echo "<hr />" >> $RDIR/generalreport.html
-	echo "</div>"
+	echo "<br>" >> $RDIR/generalreport.html
 	
-	echo "<div class="DivTable">" >> $RDIR/generalreport.html
+	echo "<tr>" >> $RDIR/generalreport.html
+	echo "<td>$LINUXMACHINE</td>" >> $RDIR/generalreport.html
+	
+	echo "<td>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.systemreport>System Report</a><br>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.machineinventory>Inventory Report</a><br>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.updatereport>Update Report</a><br>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.kernelreport>Kernel Report</a><br>" >> $RDIR/generalreport.html
-	echo "<hr />" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.kernelreport>User Information Report</a><br>" >> $RDIR/generalreport.html
-	echo "<hr />" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.diskreport>Disk Report</a><br>" >> $RDIR/generalreport.html
-	echo "<hr />" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.nwconfigreport>Network Config Report</a><br>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.diskreport>SSH Config Report</a><br>" >> $RDIR/generalreport.html
-	echo "<hr />" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.diskreport>Directory Config Report</a><br>" >> $RDIR/generalreport.html
-	echo "<hr />" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.diskreport>Vulnerability Analysis Report</a><br>" >> $RDIR/generalreport.html
 	
-	echo "</div>" >> $RDIR/generalreport.html
+	echo "</td>" >> $RDIR/generalreport.html
+	echo "</tr>" >> $RDIR/generalreport.html
 	
 i=$(( i + 1 ))
 done
 
-#echo "</table>" >> $RDIR/inventory.html
 #echo "</table>" >> $RDIR/generalreport.html
 #echo "</body>" |tee -a $RDIR/inventory.html $RDIR/generalreport.html $RDIR/mainpage.html $RDIR/checkfailed.html >/dev/null
 #echo "</html>" |tee -a $RDIR/inventory.html $RDIR/generalreport.html $RDIR/mainpage.html $RDIR/checkfailed.html >/dev/null
 
-echo "</body>" |tee -a $RDIR/mainpage.html $RDIR/generalreport.html &>/dev/null
-echo "</html>" |tee -a $RDIR/mainpage.html $RDIR/generalreport.html &>/dev/null
+echo "</table>" >> $RDIR/generalreport.html &>/dev/null
+echo "</body>" >> $RDIR/generalreport.html &>/dev/null
+echo "</html>" >> $RDIR/generalreport.html &>/dev/null
 
 rm -r /var/www/html/reports
 mkdir -p /var/www/html/reports
