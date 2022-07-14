@@ -18,7 +18,7 @@ It works in Debian environment. Desktop environment is not required.<br>
 **Installation**<br>
 Use LastControl with root user
 ```sh
-$ wget https://raw.githubusercontent.com/eesmer/LastControl/main/lastcontrol-installer.sh
+$ wget https://raw.githubusercontent.com/eesmer/LastControl/main/install/lastcontrol-installer.sh
 $ bash lastcontrol-installer.sh
 ```
 **Usage**<br>
