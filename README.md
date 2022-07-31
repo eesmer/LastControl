@@ -11,7 +11,7 @@ Debian, Ubuntu, Centos, RedHat, Oracle Linux, Rocky Linux
 - Inventory, Distro/OS, Disk, Update and Kernel report
 - Network configuration settings report
 
-All checks are made according to general and CIS checks.<br>
+All checks are made according to general and CIS security and hardening checks.<br>
 https://www.cisecurity.org/
 
 ---
