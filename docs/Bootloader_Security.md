@@ -2,7 +2,7 @@
 This document contains details on bootloader security.<br>
 
 ---
-### -Bootloader_SEcurity
+### -Bootloader_Security
 ---
 LastControl checks the system's bootloader against security requirements and generates report.<br>
 You can use this document for the settings to be applied according to the Lastcontrol report.<br>
