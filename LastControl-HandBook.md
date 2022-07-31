@@ -63,7 +63,7 @@ LastControl reports if the system's memory usage is greater than 50%. <br>
 ---
 LastControl checks the system's bootloader against security requirements and generates report. <br>
 <br>
-[Read More](https://github.com/eesmer/LastControl/blob/main/docs/bootloader_security.md)
+[Read More](https://github.com/eesmer/LastControl/blob/main/docs/Bootloader_Security.md)
 
 ---
 ### -Disk_Usage_Management
