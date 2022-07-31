@@ -78,6 +78,7 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.diskreport>SSH Config Report</a><br>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.diskreport>Directory Config Report</a><br>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.diskreport>Vulnerability Analysis Report</a><br>" >> $RDIR/generalreport.html
+	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.grubreport>GRUB Analysis Report</a><br>" >> $RDIR/generalreport.html
 	
 	echo "</td>" >> $RDIR/generalreport.html
 	echo "</tr>" >> $RDIR/generalreport.html

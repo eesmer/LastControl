@@ -1,0 +1,64 @@
+#!/bin/bash
+
+HOST_NAME=$(hostnamectl --static)
+RDIR=/tmp/lastcontrol-reports/$HOST_NAME
+DATE=$(date)
+
+# WHICH DISTRO
+cat /etc/redhat-release > $RDIR/distrocheck 2>/dev/null || cat /etc/*-release > $RDIR/distrocheck 2>/dev/null || cat /etc/issue > $RDIR/distrocheck 2>/dev/null
+grep -i "debian" $RDIR/distrocheck &>/dev/null && REP=APT
+grep -i "ubuntu" $RDIR/distrocheck &>/dev/null && REP=APT
+grep -i "centos" $RDIR/distrocheck &>/dev/null && REP=YUM
+grep -i "red hat" $RDIR/distrocheck &>/dev/null && REP=YUM
+grep -i "rocky" /tmp/distrocheck &>/dev/null && REP=YUM
+rm $RDIR/distrocheck &>/dev/null
+
+# GRUB CONTROLs
+if [ "$REP" = APT ]; then
+	GRUB_EXIST=NONE
+	dpkg -l |grep "grub" &>/dev/null && GRUB_EXIST=GRUB
+	dpkg -l |grep "grub2" &>/dev/null && GRUB_EXIST=GRUB2
+	
+	if [ $GRUB_EXIST = "GRUB" ]; then
+		GRUB_PACKAGE=$(dpkg -l |grep "grub" |grep "common")
+	elif [ $GRUB_EXIST = "GRUB2" ]; then
+		GRUB_PACKAGE=$(dpkg -l |grep "grub2" |grep "common")
+	elif [ $GRUB_EXIST = "NONE" ]; then
+		GRUB_PACKAGE="NONE"
+	fi
+	# GRUB Security
+	GRUB_SEC=FAIL
+	grep "set superusers=" /etc/grub.d/* &>/dev/null && GRUB_SEC=PASS
+
+elif [ "$REP" = YUM ]; then
+	GRUB_VER=NONE
+	rpm -qa |grep "grub" &>/dev/null && GRUB_VER=GRUB
+	rpm -qa |grep "grub2" &>/dev/null && GRUB_VER=GRUB2
+
+	if [ $GRUB_EXIST = "GRUB" ]; then
+		GRUB_PACKAGE=$(rpm -qa |grep "grub" |grep "common")
+	elif [ $GRUB_EXIST = "GRUB2" ]; then
+		GRUB_PACKAGE=$(rpm -qa |grep "grub2" |grep "common")
+	elif [ $GRUB_EXIST = "NONE" ]; then
+		GRUB_PACKAGE="NONE"
+	fi
+	# GRUB Security
+	GRUB_SEC=FAIL
+	grep "set superusers=" /etc/grub.d/* &>/dev/null && GRUB_SEC=PASS
+fi
+
+cat > $RDIR/$HOST_NAME.grubreport << EOF
+====================================================================================================
+:::. $HOST_NAME GRUB INFORMATION REPORT :::.
+====================================================================================================
+$DATE
+----------------------------------------------------------------------------------------------------
+|GRUB Info:     |$GRUB_EXIST
+|GRUB Version:  |$GRUB_PACKAGE
+----------------------------------------------------------------------------------------------------
+|GRUB Security: |SuperUsers Control: $GRUB_SEC
+-----------------------------------------------------------------------------------------------------
+
+=====================================================================================================
+
+EOF
