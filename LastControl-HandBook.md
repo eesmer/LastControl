@@ -4,7 +4,7 @@ The document contains detailed information about the use for the LastControl
 - [2. Reporting](#2-reporting)<br>
   For the results in the LastControl report, the following headings guide the solution.<br>
   - [Memory Usage Management](#-memory_usage_management)<br>
-  - [Bootloader Security](#-bootloader_security)<br>
+  - [Bootloader Security](#-boot_loader_security)<br>
   - [Disk Usage Management](#-disk_usage_management)<br>
   - [Update Management](#-update_management)<br>
   - [Package Management](#-package_management)<br>
