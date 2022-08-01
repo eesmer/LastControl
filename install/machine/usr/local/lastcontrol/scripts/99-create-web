@@ -71,6 +71,7 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.systemreport>System Report</a><br>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.machineinventory>Inventory Report</a><br>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.updatereport>Update Report</a><br>" >> $RDIR/generalreport.html
+	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.servicereport>Service Report</a><br>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.kernelreport>Kernel Report</a><br>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.kernelreport>User Information Report</a><br>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.diskreport>Disk Report</a><br>" >> $RDIR/generalreport.html
@@ -79,6 +80,7 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.diskreport>Directory Config Report</a><br>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.diskreport>Vulnerability Analysis Report</a><br>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.grubreport>GRUB Analysis Report</a><br>" >> $RDIR/generalreport.html
+	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.unsecurepackreport>UnSecure Packages Install Report</a><br>" >> $RDIR/generalreport.html
 	
 	echo "</td>" >> $RDIR/generalreport.html
 	echo "</tr>" >> $RDIR/generalreport.html
