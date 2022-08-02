@@ -1,0 +1,106 @@
+#!/bin/bash
+
+HOST_NAME=$(hostnamectl --static)
+RDIR=/tmp/lastcontrol-reports/$HOST_NAME
+DATE=$(date)
+
+SERVICE_MAN="$(ps --no-headers -o comm 1)"
+if [ "$SERVICE_MAN" = systemd ]; then
+	IPTABLES=FALSE
+	systemctl --type=service |grep "iptables" &>/dev/null && IPTABLES=TRUE
+	FIREWALLD=FALSE
+	systemctl --type=service |grep "firewalld" &>/dev/null && FIREWALLD=TRUE
+	UFW=FALSE
+	systemctl --type=service |grep "ufw" &>/dev/null && UFW=TRUE
+fi
+
+# WHICH DISTRO
+cat /etc/redhat-release > $RDIR/distrocheck 2>/dev/null || cat /etc/*-release > $RDIR/distrocheck 2>/dev/null || cat /etc/issue > $RDIR/distrocheck 2>/dev/null
+grep -i "debian" $RDIR/distrocheck &>/dev/null && REP=APT
+grep -i "ubuntu" $RDIR/distrocheck &>/dev/null && REP=APT
+grep -i "centos" $RDIR/distrocheck &>/dev/null && REP=YUM
+grep -i "red hat" $RDIR/distrocheck &>/dev/null && REP=YUM
+grep -i "rocky" /tmp/distrocheck &>/dev/null && REP=YUM
+rm $RDIR/distrocheck &>/dev/null
+
+cat > $RDIR/$HOST_NAME.firewallreport << EOF
+====================================================================================================
+:::. $HOST_NAME FIREALL PACKAGE INFORMATION REPORT :::.
+====================================================================================================
+$DATE
+
+----------------------------------------------------------------------------------------------------
+|Ufw:       |$UFW
+|Iptables:  |$IPTABLES
+|Firewalld: |$FIREWALLD
+----------------------------------------------------------------------------------------------------
+
+EOF
+
+if [ "$UFW" = TRUE ]; then
+	echo "Ufw FIREWALL INFORMATION" >> $RDIR/$HOST_NAME.firewallreport
+	echo "------------------------" >> $RDIR/$HOST_NAME.firewallreport
+	ufw status verbose >> $RDIR/$HOST_NAME.firewallreport
+	echo "" >> $RDIR/$HOST_NAME.firewallreport
+	if [ "$REP" = APT ]; then
+		echo "Installation Info" >> $RDIR/$HOST_NAME.firewallreport
+		echo "-----------------" >> $RDIR/$HOST_NAME.firewallreport
+		dpkg -l |grep "ufw" >> $RDIR/$HOST_NAME.firewallreport
+	elif [ "$REP" = YUM ]; then
+		echo "Installation Info" >> $RDIR/$HOST_NAME.firewallreport
+		echo "-----------------" >> $RDIR/$HOST_NAME.firewallreport
+		rpm -qa |grep "ufw" >> $RDIR/$HOST_NAME.firewallreport
+	fi
+echo "" >> $RDIR/$HOST_NAME.firewallreport
+echo "----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.firewallreport
+fi
+
+if [ "$IPTABLES" = TRUE ]; then
+	echo "Iptables FIREWALL INFORMATION" >> $RDIR/$HOST_NAME.firewallreport
+        echo "-----------------------------" >> $RDIR/$HOST_NAME.firewallreport
+	systemctl status iptables >> $RDIR/$HOST_NAME.firewallreport
+        echo "" >> $RDIR/$HOST_NAME.firewallreport
+        echo "Rule List" >> $RDIR/$HOST_NAME.firewallreport
+        echo "------------------------" >> $RDIR/$HOST_NAME.firewallreport
+	iptables -L -v -n >> $RDIR/$HOST_NAME.firewallreport
+	echo "" >> $RDIR/$HOST_NAME.firewallreport
+	if [ "$REP" = APT ]; then
+		echo "Installation Info" >> $RDIR/$HOST_NAME.firewallreport
+		echo "-----------------" >> $RDIR/$HOST_NAME.firewallreport
+		dpkg -l |grep "iptables" >> $RDIR/$HOST_NAME.firewallreport
+	elif [ "$REP" = YUM ]; then
+		echo "Installation Info" >> $RDIR/$HOST_NAME.firewallreport
+		echo "-----------------" >> $RDIR/$HOST_NAME.firewallreport
+		rpm -qa |grep "iptables" >> $RDIR/$HOST_NAME.firewallreport
+	fi
+echo "" >> $RDIR/$HOST_NAME.firewallreport
+echo "----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.firewallreport
+fi
+
+if [ "$FIREWALLD" = TRUE ]; then
+	echo "Firewalld FIREWALL INFORMATION" >> $RDIR/$HOST_NAME.firewallreport
+	echo "------------------------------" >> $RDIR/$HOST_NAME.firewallreport
+	systemctl status firewalld >> $RDIR/$HOST_NAME.firewallreport
+        echo "" >> $RDIR/$HOST_NAME.firewallreport
+        echo "Rule List" >> $RDIR/$HOST_NAME.firewallreport
+        echo "------------------------" >> $RDIR/$HOST_NAME.firewallreport
+	firewall-cmd --list-all >> $RDIR/$HOST_NAME.firewallreport
+        echo "------------------------" >> $RDIR/$HOST_NAME.firewallreport
+	firewall-cmd --list-services >> $RDIR/$HOST_NAME.firewallreport
+	echo "" >> $RDIR/$HOST_NAME.firewallreport
+	if [ "$REP" = APT ]; then
+		echo "Installation Info" >> $RDIR/$HOST_NAME.firewallreport
+		echo "-----------------" >> $RDIR/$HOST_NAME.firewallreport
+		dpkg -l |grep "firewalld" >> $RDIR/$HOST_NAME.firewallreport
+	elif [ "$REP" = YUM ]; then
+		echo "Installation Info" >> $RDIR/$HOST_NAME.firewallreport
+		echo "-----------------" >> $RDIR/$HOST_NAME.firewallreport
+		rpm -qa |grep "firewalld" >> $RDIR/$HOST_NAME.firewallreport
+	fi
+echo "" >> $RDIR/$HOST_NAME.firewallreport
+echo "----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.firewallreport
+fi
+
+echo "" >> $RDIR/$HOST_NAME.firewallreport
+echo "----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.firewallreport
+echo "====================================================================================================" >> $RDIR/$HOST_NAME.firewallreport
