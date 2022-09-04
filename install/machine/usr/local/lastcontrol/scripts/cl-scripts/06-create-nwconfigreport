@@ -85,3 +85,27 @@ IPv6 Disable IPv6 Check                  | $DISABLE_IPV6
 IPv6 All Accept Ra Check                 | $IPV6_ALL_ACCEPT_RA
 ====================================================================================================
 EOF
+
+cat >> $RDIR/$HOST_NAME.txt << EOF
+
+|----------------------------------------------------------------------------------------------------
+| ::. Network Settings Info .:: |
+|----------------------------------------------------------------------------------------------------
+|Network Settings outputs
+|----------------------------------------------------------------------------------------------------
+|IPv4 IP Forward Check                    | $IPV4_FORWARD_CHECK
+|IPv4 All Send Redirects Check            | $IPV4_ALL_SEND_REDIRECTS
+|IPv4 All Accept Source Route Check       | $IPV4_ALL_ACCEPT_SOURCE_ROUTE
+|IPv4 Default Accept Source Route Check   | $IPV4_DEFAULT_ACCEPT_SOURCE_ROUTE
+|IPv4 All Accept Redirects Check          | $IPV4_ALL_ACCEPT_REDIRECTS
+|IPv4 Default Accept Redirects Check      | $IPV4_DEFAULT_ACCEPT_REDIRECTS
+|IPv4 All Secure Redirects Check          | $IPV4_ALL_SECURE_REDIRECTS
+|IPv4 Default Secure Redirects Check      | $IPV4_DEFAULT_SECURE_REDIRECTS
+|IPv4 ICMP Echo Ignore Broadcasts Check   | $ICMP_IGNORE_BROADCASTS
+|IPv4 ICMP Ignore Bogus Error Resp. Check | $ICMP_IGNORE_BOGUS_ERROR
+|IPv4 ALL RP Filter Check                 | $ALL_RP_FILTER
+|IPV4 TCP SynCookies Check                | $TCP_SYNCOOKIES
+|IPv6 Disable IPv6 Check                  | $DISABLE_IPV6
+|IPv6 All Accept Ra Check                 | $IPV6_ALL_ACCEPT_RA
+|----------------------------------------------------------------------------------------------------
+EOF

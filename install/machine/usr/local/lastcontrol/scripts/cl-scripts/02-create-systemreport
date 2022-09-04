@@ -95,4 +95,27 @@ HTTP PROXY USAGE   | $HTTP_PROXY_USAGE
 ====================================================================================================
 EOF
 
+cat >> $RDIR/$HOST_NAME.txt<< EOF
+
+|---------------------------------------------------------------------------------------------------
+| ::. System Info .:: |
+|---------------------------------------------------------------------------------------------------
+|DISTRO / OS        | $DISTRO | $OS_VER
+|KERNEL VERSION     | $KERNEL_VER
+|LAST BOOT          | $LAST_BOOT
+|UPTIME             | $UPTIME | $UPTIME_MIN
+|----------------------------------------------------------------------------------------------------
+|DISK USAGE         | $DISK_USAGE
+|----------------------------------------------------------------------------------------------------
+|RAM USAGE          | %$RAM_USAGE_PERCENTAGE --- TotalRam:  $RAM_TOTAL
+|SWAP USAGE         | %$SWP_USAGE_PERCENTAGE --- TotalSwap: $SWAP_TOTAL
+|Out of Memory Logs | $OOM_LOGS 
+|----------------------------------------------------------------------------------------------------
+|SERVICE MANAGER    | $SERVICE_MANAGER
+|TIME SYNC          | $TIME_SYNC
+|SYSLOG USAGE       | Install: $SYSLOGINSTALL --- Service: $SYSLOGSERVICE --- Socket: $SYSLOGSOCKET --- LogSend: $SYSLOGSEND
+|HTTP PROXY USAGE   | $HTTP_PROXY_USAGE
+|----------------------------------------------------------------------------------------------------
+EOF
+
 rm $RDIR/distrocheck &>/dev/null

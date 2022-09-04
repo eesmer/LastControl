@@ -65,16 +65,31 @@ $DATE
 UPDATE CHECK RESULT   | $CHECK_UPDATE
 UPDATE COUNT          | $UPDATE_COUNT
 ====================================================================================================
+
+EOF
+
+cat >> $RDIR/$HOST_NAME.txt<< EOF
+
+|---------------------------------------------------------------------------------------------------
+| ::. Update Info .:: |
+|----------------------------------------------------------------------------------------------------
+|UPDATE CHECK RESULT   | $CHECK_UPDATE
+|UPDATE COUNT          | $UPDATE_COUNT
+|----------------------------------------------------------------------------------------------------
 EOF
 
 if [ ! "$BROKEN_COUNT" = 0 ];then
 	sed -i '$d' $RDIR/$HOST_NAME.updatereport
-	echo "----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.updatereport
-	echo "BROKEN PACKAGE COUNT  | $BROKEN_COUNT" >> $RDIR/$HOST_NAME.updatereport
-	echo "----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.updatereport
+	echo "|----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.updatereport
+	echo "|----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.txt
+	echo "|BROKEN PACKAGE COUNT  | $BROKEN_COUNT" >> $RDIR/$HOST_NAME.updatereport
+	echo "|BROKEN PACKAGE COUNT  | $BROKEN_COUNT" >> $RDIR/$HOST_NAME.txt
+	echo "|----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.updatereport
+	echo "|----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.txt
 	cat $RDIR/broken_package.txt >> $RDIR/$HOST_NAME.updatereport
+	cat $RDIR/broken_package.txt >> $RDIR/$HOST_NAME.txt
 	echo "----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.updatereport
-	echo "====================================================================================================" >> $RDIR/$HOST_NAME.updatereport
+	echo "----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.txt
 fi
 
 rm $RDIR/update_list.txt &>/dev/null

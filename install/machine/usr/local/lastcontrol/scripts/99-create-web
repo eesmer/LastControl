@@ -57,16 +57,12 @@ NUMMACHINE=$(cat $WDIR/linuxhost | wc -l)
 i=1
 while [ "$i" -le "$NUMMACHINE" ]; do
 	LINUXMACHINE=$(ls -l |sed -n $i{p} $WDIR/linuxhost)
-	#scp -P22 -i $LCKEY $CLDIR/$SCRIPTNAME root@$LINUXMACHINE:/tmp/
-	#ssh -p22 -i $LCKEY root@$LINUXMACHINE -- bash /tmp/$SCRIPTNAME
-	#mkdir -p /tmp/reports/$LINUXMACHINE
-	#scp -r -P22 -i $LCKEY root@$LINUXMACHINE:/tmp/lastcontrol-reports/* /tmp/reports/$LINUXMACHINE/
 
 	echo "<br>" >> $RDIR/generalreport.html
-	
 	echo "<tr>" >> $RDIR/generalreport.html
-	echo "<td>$LINUXMACHINE</td>" >> $RDIR/generalreport.html
-	
+	echo "<td>" >> $RDIR/generalreport.html
+	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.txt>$LINUXMACHINE</a><br>" >> $RDIR/generalreport.html
+	echo "</td>" >> $RDIR/generalreport.html
 	echo "<td>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.systemreport>System Report</a><br>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.machineinventory>Inventory Report</a><br>" >> $RDIR/generalreport.html
@@ -80,7 +76,8 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.diskreport>Directory Config Report</a><br>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.diskreport>Vulnerability Analysis Report</a><br>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.grubreport>GRUB Analysis Report</a><br>" >> $RDIR/generalreport.html
-	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.unsecurepackreport>UnSecure Packages Install Report</a><br>" >> $RDIR/generalreport.html
+	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.unsecurepackreport>UnSecure Pack. Install Report</a><br>" >> $RDIR/generalreport.html
+	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.firewallreport>Firewall Information Report</a><br>" >> $RDIR/generalreport.html
 	
 	echo "</td>" >> $RDIR/generalreport.html
 	echo "</tr>" >> $RDIR/generalreport.html
