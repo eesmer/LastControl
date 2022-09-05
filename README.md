@@ -19,6 +19,8 @@ https://www.cisecurity.org/
 ![alt text](images/lastcontrol_allreports1.png "LastControl Reports Screen")
 <br>
 
+---
+
 ![alt text](images/lastcontrol_report2.png "LastControl Network Report Screen")
 <br>
 
