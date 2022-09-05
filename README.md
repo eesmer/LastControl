@@ -16,5 +16,10 @@ https://www.cisecurity.org/
 
 ---
 
+![alt text](images/lastcontrol_allreports1.png "LastControl Reports Screen")
+<br>
+
+---
+
 ## Installation and Usage
 [LastControl Handbook](https://github.com/eesmer/LastControl/blob/main/LastControl-HandBook.md)
