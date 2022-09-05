@@ -37,7 +37,7 @@ LastControl should be able to reach the target machine by hostname.
 If you cannot use DNS;<br>
 Add the target machine to the **/etc/hosts file** on the LastControl machine.
 
-**install ssh-key (lastcontrol.pub)**
+**install ssh-key (lastcontrol.pub)**<br>
 LastControl uses ssh-key to access machines. The ssh-key file is created during the installation of the LastControl machine.<br>
 You can install the LastControl ssh-key file as follows to access the added machines.
 ```sh
