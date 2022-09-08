@@ -69,7 +69,7 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.updatereport>Update Report</a><br>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.servicereport>Service Report</a><br>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.kernelreport>Kernel Report</a><br>" >> $RDIR/generalreport.html
-	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.kernelreport>User Information Report</a><br>" >> $RDIR/generalreport.html
+	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.localuserreport>User Information Report</a><br>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.diskreport>Disk Report</a><br>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.nwconfigreport>Network Config Report</a><br>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.diskreport>SSH Config Report</a><br>" >> $RDIR/generalreport.html

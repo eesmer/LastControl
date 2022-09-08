@@ -1,0 +1,81 @@
+#!/bin/bash
+
+HOST_NAME=$(hostnamectl --static)
+RDIR=/tmp/lastcontrol-reports/$HOST_NAME
+DATE=$(date)
+
+NOLOGINUSERNUM=$(getent passwd |grep "nologin" |wc -l)
+LOGINAUTHUSERNUM=$(getent passwd |grep -v "nologin" |wc -l)
+USERCOUNT=$(getent passwd |wc -l)
+NEVERLOGIN=$(lastlog |grep "Never logged in" |wc -l)
+LOGINUSER=$(lastlog |grep -v "Never logged in" |grep -v "Username" |grep -v "Latest" |wc -l)
+
+
+cat > $RDIR/$HOST_NAME.localuserreport << EOF
+====================================================================================================
+:::. $HOST_NAME LOCAL USER INFORMATION REPORT :::.
+====================================================================================================
+$DATE
+----------------------------------------------------------------------------------------------------
+|Login without User  |$NOLOGINUSERNUM (service accounts)(nologin)
+|Login Auth. User    |$LOGINAUTHUSERNUM
+|User Count          |$USERCOUNT
+|Never Login User    |$NEVERLOGIN
+----------------------------------------------------------------------------------------------------
+
+EOF
+
+cat >> $RDIR/$HOST_NAME.txt << EOF
+
+|---------------------------------------------------------------------------------------------------
+| ::. User Info .::  |
+|---------------------------------------------------------------------------------------------------
+|Login without User  |$NOLOGINUSERNUM (service accounts)(nologin)
+|Login Auth. User    |$LOGINAUTHUSERNUM
+|User Count          |$USERCOUNT
+|Never Login User    |$NEVERLOGIN
+|----------------------------------------------------------------------------------------------------
+
+EOF
+
+echo "----------------------------------------------------------------------------------------------------" |tee -a $RDIR/$HOST_NAME.localuserreport |tee -a $RDIR/$HOST_NAME.txt &>/dev/null
+echo "non-password User List" |tee -a $RDIR/$HOST_NAME.localuserreport |tee -a $RDIR/$HOST_NAME.txt
+echo "----------------------------------------------------------------------------------------------------" |tee -a $RDIR/$HOST_NAME.localuserreport |tee -a $RDIR/$HOST_NAME.txt &>/dev/null
+awk -F: '$2 == "" { print $1 }' /etc/passwd |tee -a $RDIR/$HOST_NAME.localuserreport |tee -a $RDIR/$HOST_NAME.txt &>/dev/null
+echo "" |tee -a $RDIR/$HOST_NAME.localuserreport |tee -a $RDIR/$HOST_NAME.txt &>/dev/null
+echo "----------------------------------------------------------------------------------------------------" |tee -a $RDIR/$HOST_NAME.localuserreport |tee -a $RDIR/$HOST_NAME.txt &>/dev/null
+echo "SuperUser privileged User List" |tee -a $RDIR/$HOST_NAME.localuserreport |tee -a $RDIR/$HOST_NAME.txt &>/dev/null
+echo "----------------------------------------------------------------------------------------------------" |tee -a $RDIR/$HOST_NAME.localuserreport |tee -a $RDIR/$HOST_NAME.txt &>/dev/null
+awk -F: '$3 == 0 { print $1 }' /etc/passwd |tee -a $RDIR/$HOST_NAME.localuserreport |tee -a $RDIR/$HOST_NAME.txt &>/dev/null
+echo "" |tee -a $RDIR/$HOST_NAME.localuserreport |tee -a $RDIR/$HOST_NAME.txt &>/dev/null
+echo "----------------------------------------------------------------------------------------------------" |tee -a $RDIR/$HOST_NAME.localuserreport |tee -a $RDIR/$HOST_NAME.txt &>/dev/null
+echo "Login Authorized User List" |tee -a $RDIR/$HOST_NAME.localuserreport |tee -a $RDIR/$HOST_NAME.txt &>/dev/null
+echo "----------------------------------------------------------------------------------------------------" |tee -a $RDIR/$HOST_NAME.localuserreport |tee -a $RDIR/$HOST_NAME.txt &>/dev/null
+getent passwd |grep -v "nologin" |cut -d ":" -f1 |tee -a $RDIR/$HOST_NAME.localuserreport |tee -a $RDIR/$HOST_NAME.txt &>/dev/null
+echo "" |tee -a $RDIR/$HOST_NAME.localuserreport |tee -a $RDIR/$HOST_NAME.txt &>/dev/null
+echo "----------------------------------------------------------------------------------------------------" |tee -a $RDIR/$HOST_NAME.localuserreport |tee -a $RDIR/$HOST_NAME.txt &>/dev/null
+echo "" |tee -a $RDIR/$HOST_NAME.localuserreport |tee -a $RDIR/$HOST_NAME.txt &>/dev/null
+
+# user last login info
+echo "----------------------------------------------------------------------------------------------------" |tee -a $RDIR/$HOST_NAME.localuserreport |tee -a $RDIR/$HOST_NAME.txt &>/dev/null
+echo "Local Users Last Login Information" |tee -a $RDIR/$HOST_NAME.localuserreport |tee -a $RDIR/$HOST_NAME.txt &>/dev/null
+echo "----------------------------------------------------------------------------------------------------" |tee -a $RDIR/$HOST_NAME.localuserreport |tee -a $RDIR/$HOST_NAME.txt &>/dev/null
+getent passwd |grep -v "nologin" |cut -d ":" -f1 > /tmp/localusers.txt
+NUMUSER=$(cat /tmp/localusers.txt | wc -l)
+i=1
+while [ "$i" -le "$NUMUSER" ]; do
+	USER=$(ls -l |sed -n $i{p} /tmp/localusers.txt)
+	lastlog |grep $USER |tee -a $RDIR/$HOST_NAME.localuserreport |tee -a $RDIR/$HOST_NAME.txt
+i=$(( i + 1 ))
+done
+rm /tmp/localusers.txt
+
+echo "" |tee -a $RDIR/$HOST_NAME.localuserreport |tee -a $RDIR/$HOST_NAME.txt &>/dev/null
+echo "----------------------------------------------------------------------------------------------------" |tee -a $RDIR/$HOST_NAME.localuserreport |tee -a $RDIR/$HOST_NAME.txt &>/dev/null
+echo "non-login User List" |tee -a $RDIR/$HOST_NAME.localuserreport |tee -a $RDIR/$HOST_NAME.txt &>/dev/null
+echo "----------------------------------------------------------------------------------------------------" |tee -a $RDIR/$HOST_NAME.localuserreport |tee -a $RDIR/$HOST_NAME.txt &>/dev/null
+lastlog |grep "Never logged in" |tee -a $RDIR/$HOST_NAME.localuserreport |tee -a $RDIR/$HOST_NAME.txt &>/dev/null
+echo "" |tee -a $RDIR/$HOST_NAME.localuserreport |tee -a $RDIR/$HOST_NAME.txt &>/dev/null
+
+echo "" >> $RDIR/$HOST_NAME.localuserreport
+echo "=====================================================================================================" >> $RDIR/$HOST_NAME.localuserreport
