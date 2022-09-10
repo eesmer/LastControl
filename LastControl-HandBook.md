@@ -1,14 +1,15 @@
 ## LastControl-Handbook / User Guide
 The document contains detailed information about the use for the LastControl
 - [1. Installation and Usage](#1-installation)
-- [2. Reporting](#2-reporting)<br>
+- [2. Documentation](#)<br>
   For the results in the LastControl report, the following headings guide the solution.<br>
-  - [Memory Usage Management](#-memory_usage_management)<br>
-  - [Bootloader Security](#-boot_loader_security)<br>
-  - [Disk Usage Management](#-disk_usage_management)<br>
-  - [Update Management](#-update_management)<br>
-  - [Package Management](#-package_management)<br>
-  - [Log4j Usage Management](#-log4j_usage_management)<br>
+  - [Bootloader Security](https://github.com/eesmer/LastControl/blob/main/docs/Bootloader_Security.md)<br>
+  - [Memory Usage Management](https://github.com/eesmer/LastControl/blob/main/docs/Memory_usage_Management.md)<br>
+  - [Disk Usage Security](https://github.com/eesmer/LastControl/blob/main/docs/Disk_usage_Management.md)<br>
+  - [Update Management](https://github.com/eesmer/LastControl/blob/main/docs/Update_Management.md)<br>
+  - [Package Management](https://github.com/eesmer/LastControl/blob/main/docs/Package_Management.md)<br>
+  - [Management of Local Accounts](https://github.com/eesmer/LastControl/blob/main/docs/Management_of_LocalAccounts.md)<br>
+  - [Log4j Usage Management](https://github.com/eesmer/LastControl/blob/main/docs/Log4j_usage_Management.md)
 ---
 
 ## 1. Installation
@@ -50,52 +51,3 @@ If you want to trigger the operation manually;<br>
 ```sh
 $ systemctl restart lastcontrol.service
 ```
-
-## 2. Reporting
----
-### -Memory_Usage_Management
----
-LastControl reports if the system's memory usage is greater than 50%. <br>
-<br>
-[Read More](https://github.com/eesmer/LastControl/blob/main/docs/Memory_usage_Management.md)
-
----
-### -Boot_Loader_Security
----
-LastControl checks the system's bootloader against security requirements and generates report. <br>
-<br>
-[Read More](https://github.com/eesmer/LastControl/blob/main/docs/Bootloader_Security.md)
-
----
-### -Disk_Usage_Management
----
-LastControl reports if the disk usage on which the system is installed is more than 50%. <br>
-You should check the system or increase the space in case the remaining disk size is running out quickly. <br>
-<br>
-[Read More](https://github.com/eesmer/LastControl/blob/main/docs/Disk_usage_Management.md)
-
----
-### -Update_Management
----
-If LastControl has reported that the system has an update system update is required. <br>
-Systems that have not been updated for a long time cause problems in version transitions. <br>
-<br>
-[Read More](https://github.com/eesmer/LastControl/blob/main/docs/Update_Management.md)
-
----
-### -Package_Management
----
-If LastControl reported corrupt packages on the system; <br>
-these broken packages should be installed or removed without any problems. <br>
-Otherwise, there will be a problem with the package installation or update process. <br>
-<br>
-[Read More](https://github.com/eesmer/LastControl/blob/main/docs/Package_Management.md)
-
----
-### -Log4j_Usage_Management
----
-Log4j is a java logging library. It has a very widespread use. <br>
-This use carries risks that can be exploited as described in CVE-2021-44228 <br>
-<br>
-[Read More](https://github.com/eesmer/LastControl/blob/main/docs/Log4j_usage_Management.md)
-
