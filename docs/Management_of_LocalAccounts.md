@@ -105,3 +105,36 @@ A value of "0" supports consecutive updates without checking any number of days.
 ```sh
 awk -F: '{ print $1 ":" $4 }' /etc/shadow
 ```
+
+fifth field: **maximum allowed days between password changes**<br>
+This field specifies the maximum time period between two password update operations.<br>
+It comes with the default value "99999".<br>
+The value "99999" supports consecutive update without checking any number of days.<br>
+```sh
+awk -F: '{ print $1 ":" $5 }' /etc/shadow
+```
+
+sixth field: **number of days in advance to display password expiration message**<br>
+This field specifies the warning time for the password change operation.<br>
+As long as the number of days remaining to update the password is equal to less than the value in this field a password change warning is given.<br>
+<br>
+The default value is 7. But if the maximum value is 99999, the warning will not work.<br>
+```sh
+awk -F: '{ print $1 ":" $6 }' /etc/shadow
+```
+
+seventh field: **number of days after password expiration to disable the account**<br>
+If this field is not updated after the password update period Specifies the period for which the account will be disabled.<br>
+<br>
+eighth field: **account expiration date**<br>
+This field stores the time the user account was disabled.<br>
+It is expressed as the number of days from 01.01.1970 to the date to be disabled.<br>
+<br>
+**For example;**
+If the value 20000 is entered, the relevant account; It will be disabled on "Fri 04 Oct 2024 12:00:00".<br>
+<br>
+ninth field: **reserve field**<br>
+This area is reserved for holding and using a new value in the shadow file.<br>
+
+
+
