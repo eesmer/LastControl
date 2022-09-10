@@ -5,11 +5,9 @@ LastControl is a control tool that performs system checks and presents the outpu
 With LastControl, you can control and report such as automatic and periodic system and network configuration.
 <br>
 **distributions that are compatible and tested as a server and clients:** <br>
-Debian, Ubuntu, Centos, RedHat, Oracle Linux, Rocky Linux
+Debian, Ubuntu, Centos, RedHat, Oracle Linux, Rocky Linux<br>
 
-## Features
-- Inventory, Distro/OS, Disk, Update and Kernel report
-- Network configuration settings report
+<br>
 
 All checks are made according to general and CIS security and hardening checks.<br>
 https://www.cisecurity.org/
@@ -24,5 +22,5 @@ https://www.cisecurity.org/
 
 ---
 
-## Installation and Usage
+## Installation and Documentation
 [LastControl Handbook](https://github.com/eesmer/LastControl/blob/main/LastControl-HandBook.md)
