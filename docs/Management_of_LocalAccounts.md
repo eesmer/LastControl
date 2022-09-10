@@ -49,8 +49,6 @@ When a local user is created in the system or the current user's password is upd
 Updates are made in both /etc/passwd and /etc/shadow.
 ```
 
-<br>
-
 ---
 #### about of /etc/shadow
 ---
@@ -62,4 +60,26 @@ The "User Name" information of all local accounts is displayed with the followin
 ```sh
 awk -F: '{ print $1 }' /etc/shadow
 ```
+
+**second field: encrypted password**
+In this area, the user account password is stored encrypted.
+```sh
+awk -F: '{ print $2 }' /etc/shadow
+```
+for add username info to output;
+```sh
+awk -F: '{ print $1 " : " $2 }' /etc/shadow
+```
+
+***Note:***
+```sh
+In the $2 (encrypted password) field,
+"!" or if there is a "*" character; This is a locked account.
+```
+
+In the $2 field, if there "!" characters, this is a user account.<br>
+In the $2 field, if there "*" characters, this is a service account.<br>
+In the $2 field, If there are "!*" characters, this indicates a blank password.<br>
+
+Linux environments do not support blank passwords. User accounts with blank passwords cannot login.
 
