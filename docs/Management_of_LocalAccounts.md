@@ -3,7 +3,7 @@ This document contains details on managing of Local Account issues.<br>
 
 ---
 ### Management of Local Accounts
-#### Analyzing and Reporting
+#### analysis and reporting
 ---
 On Linux systems, local user accounts are stored in the /etc/passwd and /etc/shadow files.<br>
 /etc/passwd and /etc/shadow files and work together.<br>
