@@ -9,7 +9,7 @@ The document contains detailed information about the use for the LastControl
   - [Update Management](https://github.com/eesmer/LastControl/blob/main/docs/Update_Management.md)<br>
   - [Package Management](https://github.com/eesmer/LastControl/blob/main/docs/Package_Management.md)<br>
   - [Management of Local Accounts](https://github.com/eesmer/LastControl/blob/main/docs/Management_of_LocalAccounts.md)<br>
-  - [suid and sgid](https://github.com/eesmer/LastControl/blob/main/docs/about_of_suid_sgid.md)<br>
+  - [suid and sgid Checks](https://github.com/eesmer/LastControl/blob/main/docs/about_of_suid_sgid.md)<br>
   - [Log4j Usage Management](https://github.com/eesmer/LastControl/blob/main/docs/Log4j_usage_Management.md)
 ---
 
