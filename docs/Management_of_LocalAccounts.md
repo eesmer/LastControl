@@ -31,9 +31,9 @@ By default; User accounts created after installation start from 1000 UID numbers
 fourth field: **GroupID**<br>
 It holds the identification number for the primary group information of the user account.
 
-fifth field: **UserID Info**<br>
+fifth field: **UserID Info / GECOS**<br>
 This field is used for additional information.
-It can be used for definitions such as user account, phone number, address information.
+It can be used for definitions such as user account, phone number, address information or real name
 
 sixth field: **HomeDirectory**<br>
 This field holds the home directory of the user account. By default, it is used with the username under the "/home" directory.
@@ -73,13 +73,13 @@ awk -F: '{ print $1 " : " $2 }' /etc/shadow
 
 - ***Note:***<br>
 In the $2 (encrypted password) field,<br>
-"!" or if there is a "*" character; This is a locked account.<br>
+"!" or if there is a * character; This is a locked account.<br>
 
 <br>
 
-In the $2 field, if there "!" characters, this is a user account.<br>
-In the $2 field, if there "*" characters, this is a service account.<br>
-In the $2 field, If there are "!*" characters, this indicates a blank password.<br>
+In the $2 field, if there ! characters, this is a user account.<br>
+In the $2 field, if there * characters, this is a service account.<br>
+In the $2 field, If there are ! * characters, this indicates a blank password.<br>
 
 Linux environments do not support blank passwords. User accounts with blank passwords cannot login.<br>
 
@@ -137,4 +137,16 @@ ninth field: **reserve field**<br>
 This area is reserved for holding and using a new value in the shadow file.<br>
 
 
-
+---
+#### about of /etc/group
+---
+Bu dosyada, her hsabın en 1 tanesine üye olması gerektiği sistemdeki gruplar saklanır.<br>
+first filed: **Group Name**<br>
+The name of the group<br>
+second field: **Group Password**<br>
+Use is optional.<br>
+User who are not members of the group can join with the specified password.<br>
+third field: **GID**
+ID number of group
+fourth field: **Group Members**
+member of group<br>

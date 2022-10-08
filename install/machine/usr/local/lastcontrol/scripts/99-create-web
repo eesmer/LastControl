@@ -17,33 +17,31 @@ cat > $RDIR/generalreport.html << EOF
 <head>
 <title>LastControl</title>
 </head>
-
 <style>
 .DivPageHead {
 	border: 1px outset #000000;
 	background-color: #D7CCC8;
 	text-align: center;
 }
-
 table, th, td {
 border: 5px solid #D7CCC8;
 padding: 10px;
 text-align: left;
 font-family: quicksand, arial, sans-serif;
-font-size: 18px;
-letter-spacing: .05em;
+font-size: 15px;
 margin-top: 20px;
 line-height: 1.5em;
-width: 50%;
 }
 </style>
-
 <table id="tablereports">
 <tr>
 <th>Machine Name</th>
-<th>All Machine Reports</th>
-</tr>
+<th>System/Distro</th>
+<th>Services</th>
+<th>Inventory</th>
+<th>Vulnerability / Hardening</th>
 
+</tr>
 <body>
 	<div class="DivPageHead">
 		<br>
@@ -63,23 +61,37 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	echo "<td>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.txt>$LINUXMACHINE</a><br>" >> $RDIR/generalreport.html
 	echo "</td>" >> $RDIR/generalreport.html
+	
 	echo "<td>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.systemreport>System Report</a><br>" >> $RDIR/generalreport.html
-	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.machineinventory>Inventory Report</a><br>" >> $RDIR/generalreport.html
-	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.updatereport>Update Report</a><br>" >> $RDIR/generalreport.html
-	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.servicereport>Service Report</a><br>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.kernelreport>Kernel Report</a><br>" >> $RDIR/generalreport.html
-	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.localuserreport>User Information Report</a><br>" >> $RDIR/generalreport.html
+	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.grubreport>GRUB Report</a><br>" >> $RDIR/generalreport.html
+	echo "<br>" >> $RDIR/generalreport.html
+	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.localuserreport>Local Users Report</a><br>" >> $RDIR/generalreport.html
+	echo "<br>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.diskreport>Disk Report</a><br>" >> $RDIR/generalreport.html
-	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.nwconfigreport>Network Config Report</a><br>" >> $RDIR/generalreport.html
-	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.diskreport>SSH Config Report</a><br>" >> $RDIR/generalreport.html
-	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.diskreport>Directory Config Report</a><br>" >> $RDIR/generalreport.html
-	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.diskreport>Vulnerability Analysis Report</a><br>" >> $RDIR/generalreport.html
-	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.grubreport>GRUB Analysis Report</a><br>" >> $RDIR/generalreport.html
-	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.unsecurepackreport>UnSecure Pack. Install Report</a><br>" >> $RDIR/generalreport.html
-	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.firewallreport>Firewall Information Report</a><br>" >> $RDIR/generalreport.html
-	
+	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.firewallreport>Firewall Report</a><br>" >> $RDIR/generalreport.html
+	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.updatereport>Update Report</a><br>" >> $RDIR/generalreport.html
 	echo "</td>" >> $RDIR/generalreport.html
+	
+	echo "<td>" >> $RDIR/generalreport.html
+	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.servicereport>Service Report</a><br>" >> $RDIR/generalreport.html
+	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.nwconfigreport>Network Report</a><br>" >> $RDIR/generalreport.html
+	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.diskreport>SSH Report</a><br>" >> $RDIR/generalreport.html
+	echo "</td>" >> $RDIR/generalreport.html
+
+	echo "<td>" >> $RDIR/generalreport.html
+	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.machineinventory>Inventory Report</a><br>" >> $RDIR/generalreport.html
+	echo "</td>" >> $RDIR/generalreport.html
+
+	echo "<td>" >> $RDIR/generalreport.html
+	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.diskreport>Vulnerability Analysis Report</a><br>" >> $RDIR/generalreport.html
+	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.unsecurepackreport>UnSecure Pack. Install Report</a><br>" >> $RDIR/generalreport.html
+	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.diskreport>Directory Config Report</a><br>" >> $RDIR/generalreport.html
+	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.suidsgidreport>SUID-SGID Files Report</a><br>" >> $RDIR/generalreport.html
+	echo "</td>" >> $RDIR/generalreport.html
+	
+	#echo "</td>" >> $RDIR/generalreport.html
 	echo "</tr>" >> $RDIR/generalreport.html
 	
 i=$(( i + 1 ))
