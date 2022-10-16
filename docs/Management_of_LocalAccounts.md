@@ -140,7 +140,7 @@ This area is reserved for holding and using a new value in the shadow file.<br>
 ---
 #### about of /etc/group
 ---
-Bu dosyada, her hsabın en 1 tanesine üye olması gerektiği sistemdeki gruplar saklanır.<br>
+In this file, the groups in the system are stored, of which at least 1 of each account should be a member.<br>
 first filed: **Group Name**<br>
 The name of the group<br>
 second field: **Group Password**<br>
