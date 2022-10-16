@@ -28,7 +28,7 @@ border: 5px solid #D7CCC8;
 padding: 10px;
 text-align: left;
 font-family: quicksand, arial, sans-serif;
-font-size: 15px;
+font-size: 20px;
 margin-top: 20px;
 line-height: 1.5em;
 }
@@ -85,7 +85,7 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	echo "</td>" >> $RDIR/generalreport.html
 
 	echo "<td>" >> $RDIR/generalreport.html
-	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.diskreport>Vulnerability Analysis Report</a><br>" >> $RDIR/generalreport.html
+	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.vulnerabilityreport>Vulnerability Analysis Report</a><br>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.unsecurepackreport>UnSecure Pack. Install Report</a><br>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.diskreport>Directory Config Report</a><br>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.suidsgidreport>SUID-SGID Files Report</a><br>" >> $RDIR/generalreport.html
