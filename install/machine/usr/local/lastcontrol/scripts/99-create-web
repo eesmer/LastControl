@@ -1,7 +1,7 @@
 #!/bin/bash
 
 WDIR=/usr/local/lastcontrol
-RDIR=/tmp/reports
+RDIR=/tmp/lastcontrolreports
 LINE='<hr class="dashed">'
 SYSDATE=$(date +%F)
 SYSDAY=$(date +%A)
@@ -108,4 +108,4 @@ echo "</html>" >> $RDIR/generalreport.html &>/dev/null
 rm -r /var/www/html/reports
 mkdir -p /var/www/html/reports
 RDIR=/var/www/html/reports
-cp -r /tmp/reports/* $RDIR/
+cp -r /tmp/lastcontrolreports/* $RDIR/

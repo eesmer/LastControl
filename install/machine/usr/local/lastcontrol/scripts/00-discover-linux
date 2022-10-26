@@ -2,7 +2,7 @@
 
 WDIR=/usr/local/lastcontrol
 SDIR=$WDIR/scripts
-RDIR=/tmp/reports
+RDIR=/tmp/lastcontrolreports
 LCKEY=/root/.ssh/lastcontrol
 DATE=$(date)
 

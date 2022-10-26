@@ -14,8 +14,8 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	scp -r -P22 -i $LCKEY $CLSCRIPTS root@$LINUXMACHINE:/tmp/
 	ssh -p22 -i $LCKEY root@$LINUXMACHINE -- bash /tmp/cl-scripts/run-scripts.sh
 
-	mkdir -p /tmp/reports/$LINUXMACHINE
-	scp -r -P22 -i $LCKEY root@$LINUXMACHINE:/tmp/lastcontrol-reports/$LINUXMACHINE  /tmp/reports/
+	mkdir -p /tmp/lastcontrolreports/$LINUXMACHINE
+	scp -r -P22 -i $LCKEY root@$LINUXMACHINE:/tmp/lastcontrol-reports/$LINUXMACHINE  /tmp/lastcontrolreports/
 
 i=$(( i + 1 ))
 done
