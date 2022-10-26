@@ -43,7 +43,7 @@ while [ "$i" -le "$NUMDISK" ]; do
 	egrep "SMART support is: Available - device has SMART capability." /tmp/DISK$i.txt >> /dev/null && SMART_SUPPORT=1 
 if [ "$SMART_SUPPORT" = 1 ]; then
 	SMART_SUPPORT="Available - device has SMART capability."
-	SMART_RESULT=$(cat /tmp/DISK$i.txt |grep "SMART overall-health self-assessment test result:" |cut -d: -f2 |cut -d " " -f2)
+	SMART_RESULT=$(cat /tmp/DISK$i.txt |grep "SMART overall-health self-assessment test result:" |cut -d ":" -f2 |cut -d " " -f2)
 else
 	SMART_SUPPORT="Unavailable - device lacks SMART capability."
 	SMART_RESULT="Not Passed"
