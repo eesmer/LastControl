@@ -92,13 +92,13 @@ SERVICE MANAGER    | $SERVICE_MANAGER
 TIME SYNC          | $TIME_SYNC
 SYSLOG USAGE       | Install: $SYSLOGINSTALL --- Service: $SYSLOGSERVICE --- Socket: $SYSLOGSOCKET --- LogSend: $SYSLOGSEND
 HTTP PROXY USAGE   | $HTTP_PROXY_USAGE
-====================================================================================================
+
 EOF
 
 cat >> $RDIR/$HOST_NAME.txt<< EOF
 
 |---------------------------------------------------------------------------------------------------
-| ::. System Info .:: |
+| ::. System Info .:: 
 |---------------------------------------------------------------------------------------------------
 |DISTRO / OS        | $DISTRO | $OS_VER
 |KERNEL VERSION     | $KERNEL_VER
@@ -116,6 +116,25 @@ cat >> $RDIR/$HOST_NAME.txt<< EOF
 |SYSLOG USAGE       | Install: $SYSLOGINSTALL --- Service: $SYSLOGSERVICE --- Socket: $SYSLOGSOCKET --- LogSend: $SYSLOGSEND
 |HTTP PROXY USAGE   | $HTTP_PROXY_USAGE
 |----------------------------------------------------------------------------------------------------
+
 EOF
+
+cat >> $RDIR/$HOST_NAME.systemreport << EOF
+---------------------------------------------------------------------------------------------------
+::. Print Environment .::
+---------------------------------------------------------------------------------------------------
+EOF
+printenv >> $RDIR/$HOST_NAME.systemreport
+echo "---------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.systemreport
+echo "" >> $RDIR/$HOST_NAME.systemreport
+echo "====================================================================================================" >> $RDIR/$HOST_NAME.systemreport
+
+cat >> $RDIR/$HOST_NAME.txt << EOF
+|---------------------------------------------------------------------------------------------------
+| ::. Print Environment .::
+|---------------------------------------------------------------------------------------------------
+EOF
+printenv >> $RDIR/$HOST_NAME.txt
+echo "|---------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.txt
 
 rm $RDIR/distrocheck &>/dev/null
