@@ -2,12 +2,13 @@
 
 WDIR=/usr/local/lastcontrol
 SDIR=$WDIR/scripts
-RDIR=/tmp/lastcontrolreports
+RDIR=/usr/local/lastcontrolreports
 LCKEY=/root/.ssh/lastcontrol
 DATE=$(date)
 
 rm -r $RDIR &>/dev/null
 mkdir -p $RDIR
+chmod 700 $RDIR
 
 rm $RDIR/linuxhost-unreachable &>/dev/null
 rm $WDIR/linuxhost &>/dev/null
@@ -33,8 +34,6 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	fi
 	
 	if [ "$pingReturn" -eq 0 ] && [ "$sshReturn" -eq 0 ]; then
-		#scp -r -P22 -i /root/.ssh/lastcontrol $SDIR root@$LINUXMACHINE:/tmp/
-		#ssh -p22 -i $LCKEY root@$LINUXMACHINE -- bash 'rm -r /tmp/lastcontrol-reports'
 		echo $LINUXMACHINE >> $WDIR/linuxhost
 	fi
 

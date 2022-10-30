@@ -1,7 +1,7 @@
 #!/bin/bash
 
 WDIR=/usr/local/lastcontrol
-RDIR=/tmp/lastcontrolreports
+RDIR=/usr/local/lastcontrolreports
 LINE='<hr class="dashed">'
 SYSDATE=$(date +%F)
 SYSDAY=$(date +%A)
@@ -77,7 +77,7 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	echo "<td>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.servicereport>Service Report</a><br>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.nwconfigreport>Network Report</a><br>" >> $RDIR/generalreport.html
-	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.diskreport>SSH Report</a><br>" >> $RDIR/generalreport.html
+	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.sshreport>SSH Report</a><br>" >> $RDIR/generalreport.html
 	echo "</td>" >> $RDIR/generalreport.html
 
 	echo "<td>" >> $RDIR/generalreport.html
@@ -108,4 +108,4 @@ echo "</html>" >> $RDIR/generalreport.html &>/dev/null
 rm -r /var/www/html/reports
 mkdir -p /var/www/html/reports
 RDIR=/var/www/html/reports
-cp -r /tmp/lastcontrolreports/* $RDIR/
+cp -r /usr/local/lastcontrolreports/* $RDIR/

@@ -6,7 +6,10 @@
 # However, it is your responsibility to run it on any system.
 #----------------------------------------------------------------------
 
-WDIR=/tmp/cl-scripts
+#WDIR=/tmp/cl-scripts
+WDIR=/usr/local/cl-scripts
 
 chmod +x $WDIR/*
 run-parts $WDIR
+
+rm -r $WDIR
