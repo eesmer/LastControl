@@ -12,4 +12,4 @@ WDIR=/usr/local/cl-scripts
 chmod +x $WDIR/*
 run-parts $WDIR
 
-rm -r $WDIR
+#rm -r $WDIR

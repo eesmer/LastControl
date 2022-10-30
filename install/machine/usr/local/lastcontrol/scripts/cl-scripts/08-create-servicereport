@@ -8,7 +8,7 @@ SERVICE_MAN="$(ps --no-headers -o comm 1)"
 
 if [ "$SERVICE_MAN" = systemd ]; then
 	systemctl list-units --type service |grep running > $RDIR/runningservices.txt
-	RUNNING_SERVICE=$(wc -l /tmp/runningservices.txt |cut -d ' ' -f1)
+	RUNNING_SERVICE=$(wc -l $RDIR/runningservices.txt |cut -d ' ' -f1)
 	LOADED_SERVICE=$(systemctl list-units --type service |grep "units." |cut -d "." -f1)
 fi
 
@@ -57,8 +57,8 @@ echo "|-------------------------------------------------------------------------
 echo "|----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.txt
 echo "|LISTENING SERVICE LIST" >> $RDIR/$HOST_NAME.servicereport
 echo "|LISTENING SERVICE LIST" >> $RDIR/$HOST_NAME.txt
-echo "|----------------------" >> $RDIR/$HOST_NAME.servicereport
-echo "|----------------------" >> $RDIR/$HOST_NAME.txt
+echo "|----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.servicereport
+echo "|----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.txt
 netstat -tl |grep -v "Active Internet connections (servers and established)" |grep -v "Active Internet connections (only servers)" \
 	>> $RDIR/$HOST_NAME.servicereport
 netstat -tl |grep -v "Active Internet connections (servers and established)" |grep -v "Active Internet connections (only servers)" \
@@ -71,8 +71,8 @@ echo "|-------------------------------------------------------------------------
 echo "|----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.txt
 echo "|ESTABLISHED SERVICE LIST" >> $RDIR/$HOST_NAME.servicereport
 echo "|ESTABLISHED SERVICE LIST" >> $RDIR/$HOST_NAME.txt
-echo "|----------------------" >> $RDIR/$HOST_NAME.servicereport
-echo "|----------------------" >> $RDIR/$HOST_NAME.txt
+echo "|----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.servicereport
+echo "|----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.txt
 netstat -tn |grep -v "Active Internet connections (servers and established)" |grep -v "Active Internet connections (only servers)" \
 	|grep "ESTABLISHED" >> $RDIR/$HOST_NAME.servicereport
 netstat -tn |grep -v "Active Internet connections (servers and established)" |grep -v "Active Internet connections (only servers)" \
