@@ -14,7 +14,7 @@ apt-get -y install curl wget
 apt-get -y install ack
 apt-get -y install nmap
 apt-get -y install xsltproc
-a#pt-get -y install sqlite3
+apt-get -y install sqlite3
 #apt-get -y install php
 #apt-get -y install php-sqlite3
 # apt-get -y install php-db / php-db-dataobject (for test)
