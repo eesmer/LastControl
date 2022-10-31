@@ -105,13 +105,25 @@ EOF
 echo "----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.sshreport
 echo "::: SSH Access Logs (Accepted) :::" >> $RDIR/$HOST_NAME.sshreport
 echo "----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.sshreport
-cat /var/log/auth.log |grep ssh2 |grep "Accept" >> $RDIR/$HOST_NAME.sshreport
+
+if [ "$REP" = APT ]; then
+	find /var/log -name 'secure*' -type f -exec sh -c "cat {} | egrep -i 'Accepted'" \; |grep "sshd" >> $RDIR/$HOST_NAME.sshreport
+elif [ "$REP" = YUM ]; then
+	find /var/log -name 'secure*' -type f -exec sh -c "cat {} | egrep -i 'Accepted'" \; |grep "sshd" >> $RDIR/$HOST_NAME.sshreport
+fi
+
 echo "----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.sshreport
 echo "" >> $RDIR/$HOST_NAME.sshreport
 echo "----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.sshreport
 echo "::: SSH Access Logs (Failed) :::" >> $RDIR/$HOST_NAME.sshreport
 echo "----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.sshreport
-cat /var/log/auth.log |grep ssh2 |grep "Fail" >> $RDIR/$HOST_NAME.sshreport
+
+if [ "$REP" = APT ]; then
+	find /var/log -name 'secure*' -type f -exec sh -c "cat {} | egrep -i 'Fail'" \; |grep "sshd" >> $RDIR/$HOST_NAME.sshreport
+elif [ "$REP" = YUM ]; then
+	find /var/log -name 'secure*' -type f -exec sh -c "cat {} | egrep -i 'Fail'" \; |grep "sshd" >> $RDIR/$HOST_NAME.sshreport
+fi
+
 echo "----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.sshreport
 echo "====================================================================================================" >> $RDIR/$HOST_NAME.sshreport
 
