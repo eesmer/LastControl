@@ -16,13 +16,13 @@ rm $RDIR/distrocheck &>/dev/null
 # GRUB CONTROLs
 if [ "$REP" = APT ]; then
 	GRUB_EXIST=NONE
-	dpkg -l |grep "grub" &>/dev/null && GRUB_EXIST=GRUB
-	dpkg -l |grep "grub2" &>/dev/null && GRUB_EXIST=GRUB2
+	dpkg -l |grep -w "grub" &>/dev/null && GRUB_EXIST=GRUB
+	dpkg -l |grep -w "grub2" &>/dev/null && GRUB_EXIST=GRUB2
 	
 	if [ $GRUB_EXIST = "GRUB" ]; then
-		GRUB_PACKAGE=$(dpkg -l |grep "grub" |grep "common")
+		GRUB_PACKAGE=$(dpkg -l |grep -w "grub" |grep "common")
 	elif [ $GRUB_EXIST = "GRUB2" ]; then
-		GRUB_PACKAGE=$(dpkg -l |grep "grub2" |grep "common")
+		GRUB_PACKAGE=$(dpkg -l |grep -w "grub2" |grep "common")
 	elif [ $GRUB_EXIST = "NONE" ]; then
 		GRUB_PACKAGE="NONE"
 	fi
@@ -31,14 +31,14 @@ if [ "$REP" = APT ]; then
 	grep "set superusers=" /etc/grub.d/* &>/dev/null && GRUB_SEC=PASS
 
 elif [ "$REP" = YUM ]; then
-	GRUB_VER=NONE
-	rpm -qa |grep "grub" &>/dev/null && GRUB_VER=GRUB
-	rpm -qa |grep "grub2" &>/dev/null && GRUB_VER=GRUB2
+	GRUB_EXIST=NONE
+	rpm -qa |grep -w "grub" &>/dev/null && GRUB_EXIST=GRUB
+	rpm -qa |grep -w "grub2" &>/dev/null && GRUB_EXIST=GRUB2
 
 	if [ $GRUB_EXIST = "GRUB" ]; then
-		GRUB_PACKAGE=$(rpm -qa |grep "grub" |grep "common")
+		GRUB_PACKAGE=$(rpm -qa |grep -w "grub" |grep "common")
 	elif [ $GRUB_EXIST = "GRUB2" ]; then
-		GRUB_PACKAGE=$(rpm -qa |grep "grub2" |grep "common")
+		GRUB_PACKAGE=$(rpm -qa |grep -w "grub2" |grep "common")
 	elif [ $GRUB_EXIST = "NONE" ]; then
 		GRUB_PACKAGE="NONE"
 	fi
