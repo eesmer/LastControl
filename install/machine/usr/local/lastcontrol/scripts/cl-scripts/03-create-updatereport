@@ -16,9 +16,10 @@ grep -i "rocky" /tmp/distrocheck &>/dev/null && REP=YUM
 rm $RDIR/distrocheck &>/dev/null
 
 # UPDATE CONTROL
+CHECK_UPDATE=NONE
+UPDATE_COUNT=0
+
 if [ "$REP" = APT ]; then
-	CHECK_UPDATE=NONE
-	UPDATE_COUNT=0
 	echo "n" |apt-get upgrade > $RDIR/update_list.txt
 	cat $RDIR/update_list.txt |grep "The following packages will be upgraded:" &>/dev/null && CHECK_UPDATE=EXIST \
 		&& UPDATE_COUNT=$(cat $RDIR/update_list.txt |grep "upgraded," |cut -d " " -f1)
@@ -40,6 +41,7 @@ elif [ "$REP" = YUM ]; then
 fi
 
 # BROKEN PACKAGE CONTROL
+BROKEN_COUNT=0
 if [ "$REP" = APT ];then
         dpkg -l | grep -v "^ii" &>/dev/null > $RDIR/broken_package.txt
         sed -i -e '1d;2d;3d;4d;5d' $RDIR/broken_package.txt
