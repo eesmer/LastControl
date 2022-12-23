@@ -11,7 +11,7 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	LINUXMACHINE=$(ls -l |sed -n $i{p} $WDIR/linuxhost)
 	
 	scp -r -P22 -i $LCKEY $CLSCRIPTS root@$LINUXMACHINE:/usr/local/
-	ssh -p22 -i $LCKEY root@$LINUXMACHINE -- bash /usr/local/cl-scripts/run-scripts.sh
+	ssh -p22 -i $LCKEY root@$LINUXMACHINE -- bash $CLSCRIPTS/run-scripts.sh
 
 	mkdir -p $RDIR/$LINUXMACHINE
 	scp -r -P22 -i $LCKEY root@$LINUXMACHINE:/usr/local/lastcontrol-reports/$LINUXMACHINE  /usr/local/lastcontrolreports/
