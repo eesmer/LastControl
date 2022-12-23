@@ -6,7 +6,7 @@
 # However, it is your responsibility to run it on any system.
 #----------------------------------------------------------------------
 
-WDIR=/usr/local/cl-scripts
+WDIR=/usr/local/lastcontrol/scripts/cl-scripts
 
 bash $WDIR/01-create-inventory
 bash $WDIR/02-create-systemreport
