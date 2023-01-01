@@ -81,3 +81,18 @@ It works as a humanly table of process. It is a user-friendly appearance of the 
 <br>
 The state of the processes is very important for the health of the system.<br>
 For this reason, the status of the processes and thus the load on the system should be monitored and controlled.<br>
+<br>
+The load of the system is determined by the processes on the system. We can learn the system load status with the following command.<br>
+```sh
+$ top -n 1 -b | grep "load average:"
+```
+<br>
+3 columns in the load average header; Shows the system's load status for the last 5, 10 and 15 minutes.<br>
+Basically;<br>
+The load state of the system should not exceed the number of CPUs.<br>
+We find out the CPU count with the following command.<br>
+```sh
+$ nproc --all
+```
+
+
