@@ -23,3 +23,4 @@ bash $WDIR/12-create-suidsgidreport
 bash $WDIR/13-create-vulnerabilityreport
 bash $WDIR/14-create-sshreport
 bash $WDIR/15-create-directoryreport
+bash $WDIR/16-create-processreport
