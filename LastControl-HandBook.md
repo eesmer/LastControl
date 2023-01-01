@@ -2,16 +2,15 @@
 The document contains detailed information about the use for the LastControl
 - [1. Installation and Usage](#1-installation)
 - [2. Documentation](#)<br>
-  For the results in the LastControl report, the following headings guide the solution.<br>
-  - [Bootloader Security](https://github.com/eesmer/LastControl/blob/main/docs/Bootloader_Security.md)<br>
-  - [Memory Usage Management](https://github.com/eesmer/LastControl/blob/main/docs/Memory_usage_Management.md)<br>
-  - [Disk Usage Security](https://github.com/eesmer/LastControl/blob/main/docs/Disk_usage_Management.md)<br>
-  - [Update Management](https://github.com/eesmer/LastControl/blob/main/docs/Update_Management.md)<br>
-  - [Package Management](https://github.com/eesmer/LastControl/blob/main/docs/Package_Management.md)<br>
-  - [Management of Local Accounts](https://github.com/eesmer/LastControl/blob/main/docs/Management_of_LocalAccounts.md)<br>
-  - [suid and sgid Checks](https://github.com/eesmer/LastControl/blob/main/docs/about_of_suid_sgid.md)<br>
-  - [Log4j Usage Management](https://github.com/eesmer/LastControl/blob/main/docs/Log4j_usage_Management.md)
-  - [Process_Management](https://github.com/eesmer/LastControl/blob/main/docs/Process_Management.md)
+    - [Memory Usage Management](https://github.com/eesmer/LastControl/blob/main/docs/Memory_usage_Management.md)<br>
+    - [Process_Management](https://github.com/eesmer/LastControl/blob/main/docs/Process_Management.md)
+    - [Update Management](https://github.com/eesmer/LastControl/blob/main/docs/Update_Management.md)<br>
+    - [Package Management](https://github.com/eesmer/LastControl/blob/main/docs/Package_Management.md)<br>
+    - [Management of Local Accounts](https://github.com/eesmer/LastControl/blob/main/docs/Management_of_LocalAccounts.md)<br>
+    - [Bootloader Security](https://github.com/eesmer/LastControl/blob/main/docs/Bootloader_Security.md)<br>
+    - [Disk Usage Security](https://github.com/eesmer/LastControl/blob/main/docs/Disk_usage_Management.md)<br>
+   - [suid and sgid Checks](https://github.com/eesmer/LastControl/blob/main/docs/about_of_suid_sgid.md)<br>
+   - [Log4j Usage Management](https://github.com/eesmer/LastControl/blob/main/docs/Log4j_usage_Management.md)
 ---
 
 ## 1. Installation
