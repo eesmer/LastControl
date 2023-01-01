@@ -11,6 +11,7 @@ The document contains detailed information about the use for the LastControl
   - [Management of Local Accounts](https://github.com/eesmer/LastControl/blob/main/docs/Management_of_LocalAccounts.md)<br>
   - [suid and sgid Checks](https://github.com/eesmer/LastControl/blob/main/docs/about_of_suid_sgid.md)<br>
   - [Log4j Usage Management](https://github.com/eesmer/LastControl/blob/main/docs/Log4j_usage_Management.md)
+  - [Process_Management](https://github.com/eesmer/LastControl/blob/main/docs/Process_Management.md)
 ---
 
 ## 1. Installation
