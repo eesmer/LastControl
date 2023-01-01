@@ -95,4 +95,3 @@ We find out the CPU count with the following command.<br>
 $ nproc --all
 ```
 
-
