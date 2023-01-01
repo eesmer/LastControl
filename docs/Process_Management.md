@@ -91,7 +91,7 @@ $ top -n 1 -b | grep "load average:"
 Basically;<br>
 The load state of the system should not exceed the number of CPUs.<br>
 We find out the CPU count with the following command.<br>
+
 ```sh
 $ nproc --all
 ```
-
