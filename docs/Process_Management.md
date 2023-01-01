@@ -95,3 +95,18 @@ We find out the CPU count with the following command.<br>
 ```sh
 $ nproc --all
 ```
+The columns in the "load average" header of the top command output above should not exceed the number of CPUs.<br>
+We can also do the above basic control interactively with the "htop" command.<br>
+
+#### About of Zombie Process
+Processes that continue to remain in the process table even though they receive the system call for exit that completes their work are called zombie processes.<br>
+If the parent process does not send a signal to its child process to terminate and does not perform its ongoing operations, the child process will not be able to perform the termination step, so it will remain as a child process but will not perform any operation.<br>
+<br>
+In this way, processes that are zombies indicate a problematic process status and should be checked and terminated in a healthy way.<br>
+<br>
+Aşağıdaki komutla sistemde zombie süreç araması yapabiliriz.<br>
+```sh
+$ ps -A -ostat,ppid,pid,cmd | grep -e '^[Zz]'
+```
+As a result;<br>
+For the healthy functioning of the system, the number of processes should be processed in accordance with the capacity of the system (cpu, ram, disk), and the start and completion of the process should be done smoothly.
