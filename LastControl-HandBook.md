@@ -3,7 +3,7 @@ The document contains detailed information about the use for the LastControl
 - [1. Installation and Usage](#1-installation)
 - [2. Documentation](#)<br>
     - [Memory Usage Management](https://github.com/eesmer/LastControl/blob/main/docs/Memory_usage_Management.md)<br>
-    - [Process_Management](https://github.com/eesmer/LastControl/blob/main/docs/Process_Management.md)
+    - [Process Management](https://github.com/eesmer/LastControl/blob/main/docs/Process_Management.md)
     - [Update Management](https://github.com/eesmer/LastControl/blob/main/docs/Update_Management.md)<br>
     - [Package Management](https://github.com/eesmer/LastControl/blob/main/docs/Package_Management.md)<br>
     - [Management of Local Accounts](https://github.com/eesmer/LastControl/blob/main/docs/Management_of_LocalAccounts.md)<br>
