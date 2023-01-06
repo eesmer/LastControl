@@ -1,0 +1,30 @@
+#!/bin/bash
+
+HOST_NAME=$(hostnamectl --static)
+RDIR=/usr/local/lastcontrol-reports/$HOST_NAME
+DATE=$(date)
+
+cat >> $RDIR/$HOST_NAME.txt << EOF
+
+|---------------------------------------------------------------------------------------------------
+|:::. Roles Report .::: |
+|---------------------------------------------------------------------------------------------------
+EOF
+
+# APACHE WEB SERVER ROLE CHECK
+rm -f $RDIR/$HOST_NAME.roles
+if [[ ! -z $(apache2 -v 2>/dev/null) ]] || [[ ! -z $(httpd -v 2>/dev/null) ]]; then
+	echo "Apache-Web-Server" >> $RDIR/$HOST_NAME.roles
+	APACHEVER=$(apache2 -V |grep "Server version:")
+	APACHESER=$(systemctl is-active apache2)
+	echo "|Apache Web Server: Installed" >> $RDIR/$HOST_NAME.Apache-Web-Server
+	echo "|Apache Version   : $APACHEVER" >> $RDIR/$HOST_NAME.Apache-Web-Server
+	echo "|Apache Service   : $APACHESER" >> $RDIR/$HOST_NAME.Apache-Web-Server
+	echo "|Apache Web Server: Installed" >> $RDIR/$HOST_NAME.txt
+	echo "|Apache Version   : $APACHEVER" >> $RDIR/$HOST_NAME.txt
+	echo "|Apache Service   : $APACHESER" >> $RDIR/$HOST_NAME.txt
+fi
+
+echo "----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.Apache-Web-Server
+echo "====================================================================================================" >> $RDIR/$HOST_NAME.Apache-Web-Server
+echo "----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.txt
