@@ -104,7 +104,8 @@ If the parent process does not send a signal to its child process to terminate a
 <br>
 In this way, processes that are zombies indicate a problematic process status and should be checked and terminated in a healthy way.<br>
 <br>
-Aşağıdaki komutla sistemde zombie süreç araması yapabiliriz.<br>
+We can search for zombie processes in the system with the following command.<br>
+
 ```sh
 $ ps -A -ostat,ppid,pid,cmd | grep -e '^[Zz]'
 ```
