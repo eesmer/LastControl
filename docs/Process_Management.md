@@ -64,7 +64,6 @@ TTY: Users terminal<br>
 STAT: Process State Code<br>
 TIME: The time the process is running<br>
 CMD: Then command that starts the process<br>
-<br>
 
 ### Management of Process
 For process list and running process information, **ps**, **top** and **htop** commands are sufficient for all viewing/listing needs.<br>
@@ -99,6 +98,41 @@ $ nproc --all
 ```
 The columns in the "load average" header of the top command output above should not exceed the number of CPUs.<br>
 We can also do the above basic control interactively with the "htop" command.<br>
+
+### Life cycle of Process
+Each process passes through many stages and acquires a number of states.<br>
+- Creating of the process
+- Getting the process ready by loading it into memory
+- execution and running
+- The transaction is waiting for I/O or an authorization requirement and is blocked
+- The process is terminated or killed and removed from the process table
+
+Processes basically take the following states according to their life cycle.<br>
+<br>
+**Running or Runnable**<br>
+In ps or top outputs, this is indicated by R<br>
+It indicates that the process is working well and is at its best.<br>
+Runnable detail; This means that once the work on the CPU is complete, it can run the process smoothly.<br>
+<br>
+**Sleeping or waiting**<br>
+It is a standby state. When the necessary resource to run the process is available, it is ready to be executed by the CPU.<br>
+There are 2 types of sleep states;<br>
+- **Interruptible sleep mode**<br>
+In ps or top outputs, this is indicated by S<br>
+It waits for the necessary conditions. It becomes operational when conditions are created.<br>
+- **Uninterruptible sleep mode**<br>
+In ps or top outputs, this is indicated by D<br>
+It works according to a timeout value. After the timeout it becomes operational.<br>
+The timeout value is determined by the availability of resources or conditions.<br>
+
+**Stopped**<br>
+When the process reaches the completion state, it sends a termination signal (SIGCHLD) to its parent process and releases the resources it is using.<br>
+This is the process state until the process is completed and deleted from the process table. It no longer uses resources and waits to be deleted from the table.<br>
+
+**Zombie**<br>
+In ps or top outputs, this is indicated by Z<br>
+When the process is in the stopped state; It goes into a zombie state until it is deleted from the process table.<br>
+If the main process of the process is dead, it will remain in the zombie state permanently.<br>
 
 #### About of Zombie Process
 Processes that continue to remain in the process table even though they receive the system call for exit that completes their work are called zombie processes.<br>
