@@ -60,6 +60,7 @@ u: user firiendly process list table
 fields of process list table<br>
 PID: Process ID<br>
 TTY: Users terminal<br>
+STAT: Process State Code<br>
 TIME: The time the process is running<br>
 CMD: Then command that starts the process<br>
 <br>
