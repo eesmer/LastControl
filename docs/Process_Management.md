@@ -18,6 +18,7 @@ For a process, the following states can be followed instantly in the system.<br>
 Linux systems when the programs run and process status, allocate resources for these running processes and follow them and this resource is taken back when the process is terminated.<br>
 For these main reasons;<br>
 Process management in Linux systems is a very important issue and is directly related to the stable and healthy operation of the system.<br>
+Performance of the system depends of process states.<br>
 <br>
 
 #### Process ID
