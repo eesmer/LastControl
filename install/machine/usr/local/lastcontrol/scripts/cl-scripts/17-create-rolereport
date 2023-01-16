@@ -11,20 +11,83 @@ cat >> $RDIR/$HOST_NAME.txt << EOF
 |---------------------------------------------------------------------------------------------------
 EOF
 
-# APACHE WEB SERVER ROLE CHECK
+#### DISTRO CHECK
+###DISTRO=$(cat /etc/os-release |grep "NAME" |grep -v "PRETTY_NAME" |grep -v "VERSION_CODENAME" |grep -v "CPE_NAME" |cut -d "=" -f2 |cut -d " " -f1 |cut -d '"' -f2)
+###echo "Distro: $DISTRO" >> $RDIR/$HOST_NAME.roles
+
 rm -f $RDIR/$HOST_NAME.roles
-if [[ ! -z $(apache2 -v 2>/dev/null) ]] || [[ ! -z $(httpd -v 2>/dev/null) ]]; then
+# APACHE WEB SERVER ROLE CHECK
+if [[ ! -z $(apache2 -v 2>/dev/null) ]] || [[ ! -z $(httpd -v 2>/dev/null) ]] || [[ ! -z $(apachectl 2>/dev/null) ]] || [[ ! -z $(apache2ctl 2>/dev/null) ]]; then
 	echo "Apache-Web-Server" >> $RDIR/$HOST_NAME.roles
 	APACHEVER=$(apache2 -V |grep "Server version:")
-	APACHESER=$(systemctl is-active apache2)
+	APACHESER=$(systemctl is-active apache2.service)
+	echo "----------------------------------------------------------------------------------------------------" > $RDIR/$HOST_NAME.Apache-Web-Server
+	echo "|:::. $HOST_NAME Apache Web Server Role Report .::: |                                               " >> $RDIR/$HOST_NAME.Apache-Web-Server
+	echo "----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.Apache-Web-Server
+	echo "" >> $RDIR/$HOST_NAME.Apache-Web-Server
 	echo "|Apache Web Server: Installed" >> $RDIR/$HOST_NAME.Apache-Web-Server
 	echo "|Apache Version   : $APACHEVER" >> $RDIR/$HOST_NAME.Apache-Web-Server
 	echo "|Apache Service   : $APACHESER" >> $RDIR/$HOST_NAME.Apache-Web-Server
 	echo "|Apache Web Server: Installed" >> $RDIR/$HOST_NAME.txt
 	echo "|Apache Version   : $APACHEVER" >> $RDIR/$HOST_NAME.txt
 	echo "|Apache Service   : $APACHESER" >> $RDIR/$HOST_NAME.txt
+	echo "----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.Apache-Web-Server
+	echo "====================================================================================================" >> $RDIR/$HOST_NAME.Apache-Web-Server
 fi
 
-echo "----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.Apache-Web-Server
-echo "====================================================================================================" >> $RDIR/$HOST_NAME.Apache-Web-Server
+# MYSQL DB SERVER ROLE CHECK
+if [[ ! -z $(mysql --print-defaults 2>/dev/null) ]]; then
+	echo "MySql-DB-Server" >> $RDIR/$HOST_NAME.roles
+	MYSQLVER=$(mysql -V)
+	MYSQLRUN=$(netstat -tulanp |grep "mysqld")
+	MYSQLSER=$(systemctl is-active mysql.service)
+	echo "----------------------------------------------------------------------------------------------------" > $RDIR/$HOST_NAME.MySql-DB-Server
+	echo "|:::. $HOST_NAME MySql DB Server Role Report .::: |                                                 " >> $RDIR/$HOST_NAME.MySql-DB-Server
+	echo "----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.MySql-DB-Server
+	echo "" >> $RDIR/$HOST_NAME.MySql-DB-Server
+	echo "|MySql DB Server: Installed" >> $RDIR/$HOST_NAME.MySql-DB-Server
+	echo "|MySql Version  : $MYSQLVER" >> $RDIR/$HOST_NAME.MySql-DB-Server
+	echo "|MySql Service  : $MYSQLSER" >> $RDIR/$HOST_NAME.MySql-DB-Server
+	echo "|MySql DB Server: Installed" >> $RDIR/$HOST_NAME.txt
+	echo "|MySql Version  : $MYSQLVER" >> $RDIR/$HOST_NAME.txt
+	echo "|MySql Service  : $MYSQLSER" >> $RDIR/$HOST_NAME.txt
+	echo "|$MYSQLRUN" >> $RDIR/$HOST_NAME.txt
+	echo "----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.MySql-DB-Server
+	echo "====================================================================================================" >> $RDIR/$HOST_NAME.MySql-DB-Server
+fi
+
+# POSTGRES DB SERVER ROLE CHECK
+if [[ ! -z $(psql --help 2>/dev/null) ]]; then
+	echo "PostgreSQL-DB-Server" >> $RDIR/$HOST_NAME.roles
+	POSTGREVER=$(psql -V)
+	POSTGRESER=$(systemctl is-active postgresql.service)
+	echo "----------------------------------------------------------------------------------------------------" > $RDIR/$HOST_NAME.PostgreSQL-DB-Server
+	echo "|:::. $HOST_NAME PostgreSQL DB Server Role Report .::: |                                            " >> $RDIR/$HOST_NAME.PostgreSQL-DB-Server
+	echo "----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.PostgreSQL-DB-Server
+	echo "" >> $RDIR/$HOST_NAME.PostgreSQL-DB-Server
+	echo "|PostgreSQL DB Server: Installed" >> $RDIR/$HOST_NAME.PostgreSQL-DB-Server
+	echo "|PostgreSQL Version  : $POSTGREVER" >> $RDIR/$HOST_NAME.PostgreSQL-DB-Server
+	echo "|PostgreSQL Service  : $POSTGRESER" >> $RDIR/$HOST_NAME.PostgreSQL-DB-Server
+	echo "|PostgreSQL DB Server: Installed" >> $RDIR/$HOST_NAME.txt
+        echo "|PostgreSQL Version  : $POSTGREVER" >> $RDIR/$HOST_NAME.txt
+        echo "|PostgreSQL Service  : $POSTGRESER" >> $RDIR/$HOST_NAME.txt
+	echo "----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.PostgreSQL-DB-Server
+	echo "====================================================================================================" >> $RDIR/$HOST_NAME.PostgreSQL-DB-Server
+fi
+
+if [[ ! -z $(wp cli info 2>/dev/null) ]]; then
+	echo "WordPress-Web-Server" >> $RDIR/$HOST_NAME.roles
+	echo "----------------------------------------------------------------------------------------------------" > $RDIR/$HOST_NAME.WordPress-Web-Server
+	echo "|:::. $HOST_NAME WordPress Web Server Role Report .::: |                                            " >> $RDIR/$HOST_NAME.WordPress-Web-Server
+	echo "----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.WordPress-Web-Server
+	echo "" >> $RDIR/$HOST_NAME.WordPress-Web-Server
+	echo "|WordPress Web Server: Installed" >> $RDIR/$HOST_NAME.WordPress-Web-Server
+	echo "|WordPress Web Server: Installed" >> $RDIR/$HOST_NAME.txt
+	echo "" >> $RDIR/$HOST_NAME.WordPress-Web-Server
+	echo "----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.WordPress-Web-Server
+	wp cli info >> $RDIR/$HOST_NAME.WordPress-Web-Server
+	echo "----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.WordPress-Web-Server
+	echo "====================================================================================================" >> $RDIR/$HOST_NAME.WordPress-Web-Server
+fi
+
 echo "----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.txt

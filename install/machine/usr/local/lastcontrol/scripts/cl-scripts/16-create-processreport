@@ -8,7 +8,8 @@ DATE=$(date)
 # Create System Load Report
 #############################
 NOC=$(nproc --all)
-LOAD_AVG=$(top -n 1 -b | grep "load average:" |awk -F: '{ print $4 $5 }')
+#LOAD_AVG=$(top -n 1 -b | grep "load average:" |awk -F: '{ print $4 $5 }')
+LOAD_AVG=$(uptime |grep "load average:" |awk -F: '{print $5}')
 
 ############################
 # Create Process Report
