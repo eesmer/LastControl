@@ -13,7 +13,7 @@ grep -i "debian" $RDIR/distrocheck &>/dev/null && REP=APT && DISTRO=Debian
 grep -i "ubuntu" $RDIR/distrocheck &>/dev/null && REP=APT && DISTRO=Ubuntu
 grep -i "centos" $RDIR/distrocheck &>/dev/null && REP=YUM && DISTRO=Centos
 grep -i "red hat" $RDIR/distrocheck &>/dev/null && REP=YUM && DISTRO=RedHat
-grep -i "rocky" /tmp/distrocheck &>/dev/null && REP=YUM && DISTRO=Rocky
+grep -i "rocky" $RDIR/distrocheck &>/dev/null && REP=YUM && DISTRO=Rocky
 
 # OS INFORMATION
 KERNEL_VER=$(uname -mrs)
