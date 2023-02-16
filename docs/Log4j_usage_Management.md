@@ -7,6 +7,7 @@ If Lastcontrol reported an log4j usage, you can use this document.
 ---
 Log4j is a java logging library. It has a very widespread use. <br>
 This use carries risks that can be exploited as described in CVE-2021-44228 <br>
+https://www.cve.org/CVERecord?id=CVE-2021-44228
 
 <br>
 
