@@ -18,6 +18,7 @@ apt-get -y install sqlite3
 #apt-get -y install php
 #apt-get -y install php-sqlite3
 # apt-get -y install php-db / php-db-dataobject (for test)
+apt-get -y install wapiti #for webserver roles
 
 # Create Work Directory
 git clone https://github.com/eesmer/LastControl.git
