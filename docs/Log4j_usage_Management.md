@@ -7,6 +7,7 @@ If Lastcontrol reported an log4j usage, you can use this document.
 ---
 Log4j is a java logging library. It has a very widespread use. <br>
 This use carries risks that can be exploited as described in CVE-2021-44228 <br>
+https://www.cve.org/CVERecord?id=CVE-2021-44228
 
 <br>
 
@@ -30,9 +31,10 @@ find /var/log/ -name '*.gz' -type f -exec sh -c "zcat {} | sed -e 's/\${lower://
 
 You must provide configuration and update and fix for the application using the log4j library. <br>
 Consider the resources below. <br>
-https://logging.apache.org/log4j/2.x/security.html <br>
-https://www.slf4j.org/log4shell.html <br>
-https://reload4j.qos.ch/ <br>
+https://en.wikipedia.org/wiki/Log4Shell<br>
+https://logging.apache.org/log4j/2.x/security.html<br>
+https://www.slf4j.org/log4shell.html<br>
+https://reload4j.qos.ch/<br>
 
 <br>
 
