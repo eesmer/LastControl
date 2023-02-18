@@ -8,6 +8,7 @@
 
 WDIR=/usr/local/cl-scripts
 
+bash $WDIR/00-install_reqpackages
 bash $WDIR/01-create-inventory
 bash $WDIR/02-create-systemreport
 bash $WDIR/03-create-updatereport
@@ -24,4 +25,3 @@ bash $WDIR/13-create-vulnerabilityreport
 bash $WDIR/14-create-sshreport
 bash $WDIR/15-create-directoryreport
 bash $WDIR/16-create-processreport
-bash $WDIR/17-create-rolereport

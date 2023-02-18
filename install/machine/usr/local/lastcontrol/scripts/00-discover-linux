@@ -6,8 +6,9 @@ RDIR=/usr/local/lastcontrolreports
 LCKEY=/root/.ssh/lastcontrol
 DATE=$(date)
 
-rm -r $RDIR &>/dev/null
-mkdir -p $RDIR
+rm -r $RDIR/*
+#rm -r $RDIR/* &>/dev/null
+#mkdir -p $RDIR
 chmod 700 $RDIR
 
 rm $RDIR/linuxhost-unreachable &>/dev/null
@@ -23,6 +24,18 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	if [ "$pingReturn" -eq 0 ]; then
 		ssh -p22 -i $LCKEY -o "StrictHostKeyChecking no" root@$LINUXMACHINE -- exit
 		sshReturn=$?
+		
+		rm -f $RDIR/$LINUXMACHINE.roles
+		nmap $LINUXMACHINE |cut -d "/" -f1 |grep -v "Starting Nmap" |grep -v "Nmap scan report" |grep -v "Host is up" |grep -v "Not shown:" |grep -v "PORT"\
+			|grep -v "MAC Address:" |grep -v "Nmap done:" > $RDIR/$LINUXMACHINE.listeningports
+		sed -i '/^$/d' $RDIR/$LINUXMACHINE.listeningports
+		
+		if [[ ! -z $(grep -e "80" $RDIR/$LINUXMACHINE.listeningports 2>/dev/null) ]] || [[ ! -z $(grep -e "443" $RDIR/$LINUXMACHINE.listeningports 2>/dev/null) ]]; then
+			MACHINEROLE="Web Server"
+			echo "WebServer" >> $RDIR/$LINUXMACHINE.roles
+			wapiti -u http://$LINUXMACHINE --no-bugreport --output $RDIR/$LINUXMACHINE.WebServer --format txt
+		fi
+
 	elif [ "$pingReturn" -eq 1 ]; then
 		echo "$LINUXMACHINE Destination Host Unreachable" >> $RDIR/linuxhost-unreachable
 	elif [ "$pingReturn" -eq 2 ]; then

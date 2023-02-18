@@ -29,34 +29,34 @@ if [ -x "$(command -v cryptsetup)" ]; then CRYPT_INSTALL=Installed; fi
 CRYPT_USAGE=FALSE
 lsblk --output type |grep -w "crypt" && CRYPT_USAGE=TRUE
 
-# S.M.A.R.T CHECK
-df -H | grep -vE 'Filesystem|tmpfs|cdrom|udev|mapper' |cut -d " " -f1 > /tmp/disklist.txt
-NUMDISK=$(cat /tmp/disklist.txt | wc -l)
-SMART_SCORE=0
-i=1
-
-while [ "$i" -le "$NUMDISK" ]; do
-	DISK=$(ls -l |sed -n $i{p} /tmp/disklist.txt)
-	smartctl -i -x $DISK >> /dev/null > /tmp/DISK$i.txt
-	smartctl -i -x $DISK >> /dev/null > /tmp/DISK$i.txt
-	SMART_SUPPORT=0
-	egrep "SMART support is: Available - device has SMART capability." /tmp/DISK$i.txt >> /dev/null && SMART_SUPPORT=1 
-if [ "$SMART_SUPPORT" = 1 ]; then
-	SMART_SUPPORT="Available - device has SMART capability."
-	SMART_RESULT=$(cat /tmp/DISK$i.txt |grep "SMART overall-health self-assessment test result:" |cut -d ":" -f2 |cut -d " " -f2)
-else
-	SMART_SUPPORT="Unavailable - device lacks SMART capability."
-	SMART_RESULT="Not Passed"
-fi
-
-echo "-> $DISK" >> /tmp/smartcheck-result.txt
-echo "Support: $SMART_SUPPORT" >> /tmp/smartcheck-result.txt
-echo "Result: $SMART_RESULT" >> /tmp/smartcheck-result.txt
-echo  "" >> /tmp/smartcheck-result.txt
-
-i=$(( i + 1 ))
-SMART=$(cat /tmp/smartcheck-result.txt)
-done
+## S.M.A.R.T CHECK
+#df -H | grep -vE 'Filesystem|tmpfs|cdrom|udev|mapper' |cut -d " " -f1 > /tmp/disklist.txt
+#NUMDISK=$(cat /tmp/disklist.txt | wc -l)
+#SMART_SCORE=0
+#i=1
+#
+#while [ "$i" -le "$NUMDISK" ]; do
+#	DISK=$(ls -l |sed -n $i{p} /tmp/disklist.txt)
+#	smartctl -i -x $DISK >> /dev/null > /tmp/DISK$i.txt
+#	smartctl -i -x $DISK >> /dev/null > /tmp/DISK$i.txt
+#	SMART_SUPPORT=0
+#	egrep "SMART support is: Available - device has SMART capability." /tmp/DISK$i.txt >> /dev/null && SMART_SUPPORT=1 
+#if [ "$SMART_SUPPORT" = 1 ]; then
+#	SMART_SUPPORT="Available - device has SMART capability."
+#	SMART_RESULT=$(cat /tmp/DISK$i.txt |grep "SMART overall-health self-assessment test result:" |cut -d ":" -f2 |cut -d " " -f2)
+#else
+#	SMART_SUPPORT="Unavailable - device lacks SMART capability."
+#	SMART_RESULT="Not Passed"
+#fi
+#
+#echo "-> $DISK" >> /tmp/smartcheck-result.txt
+#echo "Support: $SMART_SUPPORT" >> /tmp/smartcheck-result.txt
+#echo "Result: $SMART_RESULT" >> /tmp/smartcheck-result.txt
+#echo  "" >> /tmp/smartcheck-result.txt
+#
+#i=$(( i + 1 ))
+#SMART=$(cat /tmp/smartcheck-result.txt)
+#done
 
 cat > $RDIR/$HOST_NAME.diskreport << EOF
 ====================================================================================================

@@ -1,0 +1,67 @@
+#!/bin/bash
+
+function pause(){
+local message="$@"
+[ -z $message ] && message="Press Enter to continue"
+read -p "$message" readEnterKey
+}
+
+function show_menu(){
+MACHDATE=$(date)
+echo -e "\e[1;37;1m$MACHDATE\e[0m"
+echo ""
+echo -e "     \e[1;44;1m     .:: LastControl ::.         \e[0m"
+echo -e "     \e[1;44;1m  Linux Host Hardening Reporter  \e[0m"
+echo "   |--------------------------------------------------------------------|"
+echo -e  "    \e[1;36;1m # MANAGEMENT MENU # \e[0m"
+echo "   | -------------------------------------------------------------------|"
+echo "   | 1. Add Machine       | 11. Create Report         | 20. Manage Machine   |"
+echo "   | 2. Remove Machine    | 12. Create Machine Report |                      |"
+echo "   | 3. Machine List      |                           |                      |"
+echo "   |--------------------------------------------------------------------|"
+echo -e  "    \e[1;36;1m # HOST MENU # \e[0m"
+echo "   |--------------------------------------------------------------------|"
+echo "   | 30. Set static ip    | 40. Disk List                               |"
+echo "   | 31. Show ip          | 41. Add Storage                             |"
+echo "   |                      | 42. Mount List                              |"
+echo "   |--------------------------------------------------------------------|"
+echo -e  "    \e[1;31;1m 99.Exit\e[0m"
+echo "   |--------------------------------------------------------------------|"
+}
+
+function create_report(){
+tput setaf 10
+echo "LastControl Create Report Starting.."
+tput sgr 0
+systemctl restart lastcontrol
+watch -n 1 systemctl status lastcontrol.service
+pause
+}
+
+
+function read_input(){
+tput setaf 7
+local c
+read -p "You can choose from the menu numbers " c
+tput sgr0
+case $c in
+1)      create_container ;;
+11)     create_report ;;
+99)     exit 0 ;;
+*)
+tput setaf 1
+echo "Please select from the menu numbers"
+tput sgr0
+pause
+esac
+}
+
+# CTRL+C, CTRL+Z
+trap '' SIGINT SIGQUIT SIGTSTP
+
+while true
+do
+clear
+show_menu
+read_input
+done
