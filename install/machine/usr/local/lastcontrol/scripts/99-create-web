@@ -40,8 +40,8 @@ line-height: 1.5em;
 <th>Services</th>
 <th>Inventory</th>
 <th>Vulnerability / Hardening</th>
-<th>Server Roles</th>
 <th>Listening Ports</th>
+<th>Server Roles</th>
 
 </tr>
 <body>
@@ -93,19 +93,7 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.diskreport>Directory Config Report</a><br>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.suidsgidreport>SUID-SGID Files Report</a><br>" >> $RDIR/generalreport.html
 	echo "</td>" >> $RDIR/generalreport.html
-
-	echo "<td>" >> $RDIR/generalreport.html
-	ROLECOUNT=$(cat $RDIR/$LINUXMACHINE.roles | wc -l)
-	r=1
-	while [ "$r" -le "$ROLECOUNT" ]; do
-		ROLE=$(ls -l |sed -n $r{p} $RDIR/$LINUXMACHINE.roles)
-		echo "<a href=$LINUXMACHINE.$ROLE>$ROLE</a><br>" >> $RDIR/generalreport.html
-	r=$(( r + 1 ))
-	done
-
-	######echo "</td>" >> $RDIR/generalreport.html
-	######echo "</tr>" >> $RDIR/generalreport.html
-
+	
 	echo "<td>" >> $RDIR/generalreport.html
 	PORTCOUNT=$(cat $RDIR/$LINUXMACHINE.listeningports | wc -l)
 	p=1
@@ -115,6 +103,16 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	p=$(( p + 1 ))
 	done
 
+	echo "<td>" >> $RDIR/generalreport.html
+	ROLECOUNT=$(cat $RDIR/$LINUXMACHINE.roles | wc -l)
+	r=1
+	while [ "$r" -le "$ROLECOUNT" ]; do
+		ROLE=$(ls -l |sed -n $r{p} $RDIR/$LINUXMACHINE.roles)
+		echo "<a href=$LINUXMACHINE.$ROLE>$ROLE</a><br>" >> $RDIR/generalreport.html
+		#echo "<a href=$RDIR/$LINUXMACHINE-WebServer/$LINUXMACHINE.html</a><br>" >> $RDIR/generalreport.html
+	r=$(( r + 1 ))
+	done
+	
 	echo "</td>" >> $RDIR/generalreport.html
 	echo "</tr>" >> $RDIR/generalreport.html
 	

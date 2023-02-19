@@ -21,6 +21,7 @@ NOLOGINUSER=$(getent passwd |grep "nologin" |wc -l)
 LOGINAUTHUSER=$(getent passwd |grep -v "nologin" |grep -v "bin/false" |grep -v "sbin/shutdown" |grep -v "bin/sync" |grep -v "sbin/halt" |wc -l)
 SERVICEACCOUNT=$(awk -F: '$2 == "*"' /etc/shadow |wc -l)
 BLANKPASSACCOUNT=$(awk -F: '$2 == "!*" { print $1 }' /etc/shadow |wc -l)
+rm -f /tmp/notloggeduserlist
 
 cat > $RDIR/$HOST_NAME.localuserreport << EOF
 ====================================================================================================

@@ -33,7 +33,7 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 		if [[ ! -z $(grep -e "80" $RDIR/$LINUXMACHINE.listeningports 2>/dev/null) ]] || [[ ! -z $(grep -e "443" $RDIR/$LINUXMACHINE.listeningports 2>/dev/null) ]]; then
 			MACHINEROLE="Web Server"
 			echo "WebServer" >> $RDIR/$LINUXMACHINE.roles
-			wapiti -u http://$LINUXMACHINE --no-bugreport --output $RDIR/$LINUXMACHINE.WebServer --format txt
+			wapiti -u http://$LINUXMACHINE --flush-session -t 100 --max-scan-time 300 --no-bugreport --output $RDIR/$LINUXMACHINE.WebServer --format txt
 		fi
 
 	elif [ "$pingReturn" -eq 1 ]; then

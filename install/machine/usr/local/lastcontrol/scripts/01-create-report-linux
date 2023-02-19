@@ -16,5 +16,7 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	mkdir -p $RDIR/$LINUXMACHINE
 	scp -r -P22 -i $LCKEY root@$LINUXMACHINE:/usr/local/lastcontrol-reports/$LINUXMACHINE  /usr/local/lastcontrolreports/
 
+	ssh -p22 -i $LCKEY root@$LINUXMACHINE -- bash /usr/local/cl-scripts/clear-reports.sh
+
 i=$(( i + 1 ))
 done
