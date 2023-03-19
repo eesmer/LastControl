@@ -5,7 +5,7 @@ RDIR=/usr/local/lastcontrol-reports/$HOST_NAME
 DATE=$(date)
 
 # DISK USAGE INFORMATION
-DISK_USAGE=$(df -H | grep -vE 'Filesystem|tmpfs|cdrom|udev' | awk '{ print $5" "$1"("$2"  "$3")" " --- "}')
+DISK_USAGE=$(df -H | grep -vE 'Filesystem|tmpfs|cdrom|udev' | awk '{ print $5" "$1"("$2"  "$3")" " --- "}' | grep -v "none" |grep -v "loop")
 
 # CHECK USAGE DISK QUOTA
 QUOTA_INSTALL=Installed
