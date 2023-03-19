@@ -11,7 +11,7 @@ MACHDATE=$(date)
 echo -e "\e[1;37;1m$MACHDATE\e[0m"
 echo ""
 echo -e "     \e[1;44;1m     .:: LastControl ::.         \e[0m"
-echo -e "     \e[1;44;1m  Linux Host Hardening Reporter  \e[0m"
+echo -e "     \e[1;44;1m  Linux Host System Reporter  \e[0m"
 echo "   |--------------------------------------------------------------------|"
 echo -e  "    \e[1;36;1m # MANAGEMENT MENU # \e[0m"
 echo "   | -------------------------------------------------------------------|"
