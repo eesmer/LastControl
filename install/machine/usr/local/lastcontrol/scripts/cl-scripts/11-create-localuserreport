@@ -23,6 +23,9 @@ SERVICEACCOUNT=$(awk -F: '$2 == "*"' /etc/shadow |wc -l)
 BLANKPASSACCOUNT=$(awk -F: '$2 == "!*" { print $1 }' /etc/shadow |wc -l)
 rm -f /tmp/notloggeduserlist
 
+SUDOUSERCOUNT=$(grep '^sudo:.*$' /etc/group | cut -d: -f4 |wc -l)
+SUDOUSERLIST=$(grep '^sudo:.*$' /etc/group | cut -d: -f4 | paste -sd ',')
+
 cat > $RDIR/$HOST_NAME.localuserreport << EOF
 ====================================================================================================
 :::. $HOST_NAME LOCAL USER INFORMATION REPORT :::.
@@ -34,6 +37,7 @@ $DATE
 |Login Auth. Information     |Login Auth.:$LOGINAUTHUSER - nologin:$NOLOGINUSER
 |Service Accounts            |$SERVICEACCOUNT
 |Blank Password Accounts     |$BLANKPASSACCOUNT
+|SUDO Users                  |$SUDOUSERCOUNT - Users:$SUDOUSERLIST
 ----------------------------------------------------------------------------------------------------
 
 EOF
