@@ -26,6 +26,9 @@ rm -f /tmp/notloggeduserlist
 SUDOUSERCOUNT=$(grep '^sudo:.*$' /etc/group | cut -d: -f4 |wc -l)
 SUDOUSERLIST=$(grep '^sudo:.*$' /etc/group | cut -d: -f4 | paste -sd ',')
 
+LASTLOGIN07D=$(lastlog --time 30 |grep -v "Username" |cut -d " " -f1 |paste -sd ',')
+LASTLOGIN0TD=$(lastlog --time 1 |grep -v "Username" |cut -d "+" -f1 |paste -sd ",")
+
 cat > $RDIR/$HOST_NAME.localuserreport << EOF
 ====================================================================================================
 :::. $HOST_NAME LOCAL USER INFORMATION REPORT :::.
@@ -33,11 +36,15 @@ cat > $RDIR/$HOST_NAME.localuserreport << EOF
 $DATE
 ----------------------------------------------------------------------------------------------------
 |Local User Account          |$USERACCOUNT
+|SUDO Users                  |$SUDOUSERCOUNT - UserList: $SUDOUSERLIST 
 |Not Logged User Accounts    |$NOTLOGGEDUSER
 |Login Auth. Information     |Login Auth.:$LOGINAUTHUSER - nologin:$NOLOGINUSER
-|Service Accounts            |$SERVICEACCOUNT
 |Blank Password Accounts     |$BLANKPASSACCOUNT
-|SUDO Users                  |$SUDOUSERCOUNT - Users:$SUDOUSERLIST
+----------------------------------------------------------------------------------------------------
+|Lastlogins of 30 Days       |$LASTLOGIN30D
+|Lastlogins in Today         |$LASTLOGIN0TD
+----------------------------------------------------------------------------------------------------
+|Service Accounts            |$SERVICEACCOUNT
 ----------------------------------------------------------------------------------------------------
 
 EOF
@@ -48,10 +55,13 @@ cat >> $RDIR/$HOST_NAME.txt << EOF
 | ::. User Info .::  |
 |---------------------------------------------------------------------------------------------------
 |Local User Account          |$USERACCOUNT
+|SUDO Users                  |$SUDOUSERCOUNT - UserList: $SUDOUSERLIST 
 |Not Logged User Accounts    |$NOTLOGGEDUSER
 |Login Auth. Information     |Login Auth.:$LOGINAUTHUSER - nologin:$NOLOGINUSERNUM
-|Service Accounts            |$SERVICEACCOUNT
 |Blank Password Accounts     |$BLANKPASSACCOUNT
+|Lastlogins of 30 Days       |$LASTLOGIN30D
+|Lastlogins in Today         |$LASTLOGIN0TD
+|Service Accounts            |$SERVICEACCOUNT
 |----------------------------------------------------------------------------------------------------
 
 EOF
