@@ -71,6 +71,7 @@ while [ $i -le $USERNUM ]; do
         RUNPROCESS=$(lslogins $USERLINE |grep "Running processes:" |cut -d ":" -f2 |xargs)
         LASTLOGIN=$(lslogins $USERLINE |grep "Last login:" |cut -d ":" -f2 |xargs)
         LASTIP=$(lslogins $USERLINE |grep "Last hostname:" |cut -d ":" -f2 |xargs)
+	SHCOUNT=$(pgrep --count bash)
 
 	echo "|User Account              |$USERLINE                                                               " >> $RDIR/$HOST_NAME.localuserreport
 	echo "|Password Changed          |$PASSCHANGED                                                            " >> $RDIR/$HOST_NAME.localuserreport
@@ -80,6 +81,12 @@ while [ $i -le $USERNUM ]; do
 	echo "----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.localuserreport
 i=$(( i + 1 ))
 done
+
+echo "" >> $RDIR/$HOST_NAME.localuserreport
+echo "----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.localuserreport
+lslogins --user-accs --acc-expiration >> $RDIR/$HOST_NAME.localuserreport
+echo "----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.localuserreport
+echo "" >> $RDIR/$HOST_NAME.localuserreport
 
 rm -f /tmp/activeuseraccount.txt
 rm -f /tmp/useraccountpassinfo.txt
