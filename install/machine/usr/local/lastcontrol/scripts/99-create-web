@@ -70,7 +70,7 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.grubreport>GRUB Report</a><br>" >> $RDIR/generalreport.html
 	echo "<br>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.localuserreport>Local Users Report</a><br>" >> $RDIR/generalreport.html
-	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.processreport>Process Report</a><br>" >> $RDIR/generalreport.html
+	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.localreporeport>Repository  Report</a><br>" >> $RDIR/generalreport.html
 	echo "<br>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.diskreport>Disk Report</a><br>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.firewallreport>Firewall Report</a><br>" >> $RDIR/generalreport.html
@@ -78,6 +78,7 @@ while [ "$i" -le "$NUMMACHINE" ]; do
 	echo "</td>" >> $RDIR/generalreport.html
 	
 	echo "<td>" >> $RDIR/generalreport.html
+	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.processreport>Process Report</a><br>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.servicereport>Service Report</a><br>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.nwconfigreport>Network Report</a><br>" >> $RDIR/generalreport.html
 	echo "<a href=$LINUXMACHINE/$LINUXMACHINE.sshreport>SSH Report</a><br>" >> $RDIR/generalreport.html

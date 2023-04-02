@@ -25,3 +25,5 @@ bash $WDIR/13-create-vulnerabilityreport
 bash $WDIR/14-create-sshreport
 bash $WDIR/15-create-directoryreport
 bash $WDIR/16-create-processreport
+bash $WDIR/17-create-rolereport
+bash $WDIR/18-create-reporeport
