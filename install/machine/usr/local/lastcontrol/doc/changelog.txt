@@ -1,0 +1,10 @@
+
+Note:this file will be detailed
+
+# Update:13 some minor additions and fixes
+# V3
+TUI menu added (continues)
+
+# V2
+report page edited
+Added search for current vulnerabilities in logs
