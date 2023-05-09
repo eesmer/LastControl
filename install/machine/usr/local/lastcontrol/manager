@@ -9,23 +9,31 @@ read -p "$message" readEnterKey
 function show_menu(){
 MACHDATE=$(date)
 echo -e "\e[1;37;1m$MACHDATE\e[0m"
+pwd
+echo "-------------------------------------------------------------------------"
 echo ""
+BANNERCOLOR=$((1 + "$RANDOM" % 9))
+tput setaf "$BANNERCOLOR"
 cat /usr/local/lastcontrol/doc/banner.txt
-echo -e  "    \e[1;30;1mV2 Update:13\e[0m"
+tput setaf 9
+echo "    V2 Update:13"
 echo "   |------------------------------------------------------------------------|"
-echo -e  "    \e[1;36;1mMANAGEMENT MENU \e[0m"
+echo "   | # MANAGEMENT MENU #                                                    |"
 echo "   |------------------------------------------------------------------------|"
 echo "   | 1. Add Machine       | 11. Create Report         | 20. Manage Machine  |"
 echo "   | 2. Remove Machine    | 12. Create Machine Report |                     |"
 echo "   | 3. Machine List      |                           |                     |"
 echo "   |------------------------------------------------------------------------|"
-echo -e  "    \e[1;36;1mHOST MENU \e[0m"
+echo "   | # HOST MENU #                                                          |"
 echo "   |------------------------------------------------------------------------|"
 echo "   | 30. Set static ip    | 40. Disk List                                   |"
 echo "   | 31. Show ip          | 41. Add Storage                                 |"
 echo "   |                      | 42. Mount List                                  |"
 echo "   |------------------------------------------------------------------------|"
-echo -e  "    \e[1;31;1m99.Exit\e[0m"
+tput setaf 9
+echo "     99.Exit"
+tput sgr0
+echo ""
 }
 
 function create_report(){
