@@ -17,6 +17,7 @@ tput setaf "$BANNERCOLOR"
 cat /usr/local/lastcontrol/doc/banner.txt
 tput setaf 9
 echo "    V2 Update:13"
+tput sgr0
 echo "   |------------------------------------------------------------------------|"
 echo "   | # MANAGEMENT MENU #                                                    |"
 echo "   |------------------------------------------------------------------------|"
