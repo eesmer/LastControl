@@ -1,5 +1,10 @@
 #!/bin/bash
 
+WDIR=/usr/local/lastcontrol
+RDIR=/usr/local/lastcontrolreports
+CREATE=$WDIR/scripts/create-report-linux
+LCSCRIPTS=$WDIR/scripts/lcscripts
+
 function pause(){
 local message="$@"
 [ -z $message ] && message="Press Enter to continue"
@@ -10,32 +15,51 @@ function show_menu(){
 MACHDATE=$(date)
 echo -e "\e[1;37;1m$MACHDATE\e[0m"
 pwd
-echo "-------------------------------------------------------------------------"
-echo ""
+echo "------------------------------"
 BANNERCOLOR=$((1 + "$RANDOM" % 9))
 tput setaf "$BANNERCOLOR"
-cat /usr/local/lastcontrol/doc/banner.txt
+cat $WDIR/doc/banner.txt
+echo ""
 tput setaf 9
 echo "    V2 Update:13"
 tput sgr0
-echo "   |------------------------------------------------------------------------|"
-echo "   | # MANAGEMENT MENU #                                                    |"
-echo "   |------------------------------------------------------------------------|"
-echo "   | 1. Add Machine       | 11. Create Report         | 20. Manage Machine  |"
-echo "   | 2. Remove Machine    | 12. Create Machine Report |                     |"
-echo "   | 3. Machine List      |                           |                     |"
-echo "   |------------------------------------------------------------------------|"
-echo "   | # HOST MENU #                                                          |"
-echo "   |------------------------------------------------------------------------|"
-echo "   | 30. Set static ip    | 40. Disk List                                   |"
-echo "   | 31. Show ip          | 41. Add Storage                                 |"
-echo "   |                      | 42. Mount List                                  |"
-echo "   |------------------------------------------------------------------------|"
+echo "   |----------------------------------------------------------------------|"
+echo "   | # REPORT MENU #                                                      |"
+echo "   |----------------------------------------------------------------------|"
+echo "   | 1. System  Report   | 6. Local User    Report  | 20. Take All Report |"
+echo "   | 2. Service Report   | 7. Vulnerability Report  |                     |"
+echo "   | 3. Network Report   | 8. Inventory     Report  |                     |"
+echo "   | 4. SSH     Report   |                          |                     |"
+echo "   | 5. Update  Report   |                          |                     |"
+echo "   |----------------------------------------------------------------------|"
+echo "   | # MACHINE MENU #                                                     |"
+echo "   |----------------------------------------------------------------------|"
+echo "   | 30. Add Machine    | 40. Create Machine List                                   |"
+echo "   | 31. Show ip          | 41. Add Storage                               |"
+echo "   |                      | 42. Mount List                                |"
+echo "   |----------------------------------------------------------------------|"
 tput setaf 9
 echo "     99.Exit"
 tput sgr0
 echo ""
 }
+
+function create_system_report(){
+	read -p "Hostname or IP Adress : " TARGETMACHINE
+	echo ""
+	tput setaf 9
+	echo "::.. Create Report Starting... ..::"
+	echo ""
+	bash $CREATE systemreport $TARGETMACHINE
+	tput setaf 4
+	echo ""
+	cat $RDIR/$TARGETMACHINE-systemreport.txt
+	tput sgr 0
+	echo ""
+	pause
+}
+
+
 
 function create_report(){
 tput setaf 10
@@ -53,7 +77,7 @@ local c
 read -p "You can choose from the menu numbers " c
 tput sgr0
 case $c in
-1)      create_container ;;
+1) create_system_report ;;
 11)     create_report ;;
 99)     exit 0 ;;
 *)
