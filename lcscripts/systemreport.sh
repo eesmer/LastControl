@@ -14,6 +14,7 @@ grep -i "ubuntu" $RDIR/distrocheck &>/dev/null && REP=APT && DISTRO=Ubuntu
 grep -i "centos" $RDIR/distrocheck &>/dev/null && REP=YUM && DISTRO=Centos
 grep -i "red hat" $RDIR/distrocheck &>/dev/null && REP=YUM && DISTRO=RedHat
 grep -i "rocky" /tmp/distrocheck &>/dev/null && REP=YUM && DISTRO=Rocky
+rm $RDIR/distrocheck
 
 # OS INFORMATION
 KERNEL_VER=$(uname -mrs)
@@ -25,7 +26,7 @@ UPTIME=$(uptime) && UPTIME_MIN=$(awk '{ print "up " $1 /60 " minutes"}' /proc/up
 DISK_USAGE=$(df -H | grep -vE 'Filesystem|tmpfs|cdrom|udev' | awk '{ print $5" "$1"("$2"  "$3")" " --- "}')
 
 RAM_TOTAL=$(free -m |grep Mem |awk '{print $2}')
-RAM_USAGE_PERCENTAGE=$(free |grep Mem |awk '{print $3/$2 * 100}' |cut -d "." -f1)
+RAM_USAGE_PERCENTAGE=$(free -m |grep Mem |awk '{print $3/$2 * 100}' |cut -d "." -f1)
 # OUT of MEMORY LOGs
 OOM=0
 grep -i -r 'out of memory' /var/log/ &>/dev/null && OOM=1
@@ -72,60 +73,73 @@ elif [ "$REP" = YUM ]; then
 	grep -e "proxy=" /etc/yum.conf |grep -v "#" >> /dev/null && HTTP_PROXY_USAGE=TRUE
 fi
 
-# example:
-# for image ![](/tmp/DebianDC_Logo.png)
-# ![](file.jpg){ width=50% }
+rm $RDIR/$TARGETMACHINE-systemreport.*
 
 cat > $RDIR/$HOST_NAME-systemreport.md<< EOF
+
 ---
-title: SYSTEM INFORMATION REPORT
-author: $HOST_NAME
+title: System Information Report
 geometry: "left=3cm,right=3cm,top=0.5cm,bottom=1cm"
-abstract: |
-  TaliaDomain Sunucu Sitem Raporu
-affiliation: Beyaz.net
+---
+
+![](/tmp/lastcontrol_logo.png){ width=25% }
+
+Date     : $DATE
+
+Hostname : $HOST_NAME
 
 ---
-$DATE
 
--------------------------------------------------------------
-
-### DISTRO / OS ###
+### Distro / OS ###
 * $DISTRO
 - $OS_VER
 
-### KERNEL VERSION ###
+### Kernel Version ###
 * $KERNEL_VER
 
--------------------------------------------------------------
+---
 
-LAST BOOT
+Last Boot :
  ~ $LAST_BOOT
 
-UPTIME 
+Uptime :
  ~ $UPTIME $UPTIME_MIN
 
----
-
-| The limerick packs laughs anatomical
-| In space that is quite economical.
-|    But the good ones I've seen
-|    So seldom are clean
-| And the clean ones so seldom are comical
+Disk Usage :
+ ~ $DISK_USAGE
 
 ---
 
+Total Ram & Usage :
+ ~ $RAM_TOTAL MB - %$RAM_USAGE_PERCENTAGE
+
+Total Swap & Usage : 
+ ~ $SWAP_TOTAL MB - %$SWP_USAGE_PERCENTAGE
+
+Out of Memory Logs :
+ ~ $OOM_LOGS
+
 ---
 
-- [ ] an unchecked task list item
-- [x] checked item
+Service Manager :
+ ~ $SERVICE_MANAGER
+
+Time Sync :
+ ~ $TIME_SYNC
+
+Syslog Usage :
+ ~ $SYSLOGINSTALL - Service: $SYSLOGSERVICE - Socket: $SYSLOGSOCKET - LogSend: $SYSLOGSEND
+
+HTTP Proxy Usage :
+ ~ $HTTP_PROXY_USAGE
+
+---
 EOF
 
-exit 1
-cat >> $RDIR/$HOST_NAME.txt<< EOF
+cat > $RDIR/$HOST_NAME-systemreport.txt << EOF
 
 |---------------------------------------------------------------------------------------------------
-| ::. System Info .:: 
+| ::. System Information Report .:: 
 |---------------------------------------------------------------------------------------------------
 |DISTRO / OS        | $DISTRO | $OS_VER
 |KERNEL VERSION     | $KERNEL_VER
@@ -145,6 +159,8 @@ cat >> $RDIR/$HOST_NAME.txt<< EOF
 |----------------------------------------------------------------------------------------------------
 
 EOF
+
+exit 1
 
 cat >> $RDIR/$HOST_NAME.systemreport << EOF
 ---------------------------------------------------------------------------------------------------

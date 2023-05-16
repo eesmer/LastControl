@@ -51,15 +51,14 @@ function create_system_report(){
 	echo "::.. Create Report Starting... ..::"
 	echo ""
 	bash $CREATE systemreport $TARGETMACHINE
-	tput setaf 4
+	tput setaf 7
 	echo ""
+	#pandoc -s -o $RDIR/$TARGETMACHINE-systemreport.txt $RDIR/$TARGETMACHINE-systemreport.md
 	cat $RDIR/$TARGETMACHINE-systemreport.txt
 	tput sgr 0
 	echo ""
 	pause
 }
-
-
 
 function create_report(){
 tput setaf 10
