@@ -1,5 +1,10 @@
 #!/bin/bash
 
+#--------------------------------------------------------
+# This script,
+# It produces the report of System and Update checks.
+#--------------------------------------------------------
+
 HOST_NAME=$(cat /etc/hostname)
 RDIR=/usr/local/lcreports/$HOST_NAME
 DATE=$(date)
