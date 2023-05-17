@@ -33,9 +33,9 @@ echo "   | 4. SSH     Report   |                          |                     
 echo "   |----------------------------------------------------------------------|"
 echo "   | # MACHINE MENU #                                                     |"
 echo "   |----------------------------------------------------------------------|"
-echo "   | 30. Add Machine    | 40. Create Machine List                                   |"
-echo "   | 31. Show ip          | 41. Add Storage                               |"
-echo "   |                      | 42. Mount List                                |"
+echo "   | 30. Add Machine     | 40. Create Machine List                        |"
+echo "   | 31. Show ip         | 41. Add Storage                                |"
+echo "   |                     | 42. Mount List                                 |"
 echo "   |----------------------------------------------------------------------|"
 tput setaf 9
 echo "     99.Exit"
@@ -47,7 +47,7 @@ function create_system_report(){
 	read -p "Hostname or IP Adress : " TARGETMACHINE
 	echo ""
 	tput setaf 9
-	echo "::.. Create Report Starting... ..::"
+	echo "::.. Generating System Report... ..::"
 	echo ""
 	bash $CREATE systemreport $TARGETMACHINE
 	tput setaf 7
@@ -63,12 +63,11 @@ function create_service_report(){
 	read -p "Hostname or IP Adress : " TARGETMACHINE
 	echo ""
 	tput setaf 9
-	echo "::.. Create Report Starting... ..::"
+	echo "::.. Generating Service Report... ..::"
 	echo ""
 	bash $CREATE servicereport $TARGETMACHINE
 	tput setaf 7
 	echo ""
-	#pandoc -s -o $RDIR/$TARGETMACHINE-systemreport.txt $RDIR/$TARGETMACHINE-systemreport.md
 	cat $RDIR/$TARGETMACHINE-servicereport.txt
 	tput sgr 0
 	echo ""
@@ -99,6 +98,41 @@ function create_service_report(){
 	pause
 }
 
+function create_nwconfig_report(){
+	read -p "Hostname or IP Adress : " TARGETMACHINE
+	echo ""
+	tput setaf 9
+	echo "::.. Generating Network Config Report... ..::"
+	echo ""
+	bash $CREATE nwconfigreport $TARGETMACHINE
+	tput setaf 7
+	echo ""
+	cat $RDIR/$TARGETMACHINE-nwconfigreport.txt
+	tput sgr 0
+	echo ""
+	
+	pandoc -s -o /tmp/$TARGETMACHINE-nwconfigreport.pdf $RDIR/$TARGETMACHINE-nwconfigreport.md
+	pause
+}
+
+function create_ssh_report(){
+	read -p "Hostname or IP Adress : " TARGETMACHINE
+	echo ""
+	tput setaf 9
+	echo "::.. Generating SSH Config Report... ..::"
+	echo ""
+	bash $CREATE sshreport $TARGETMACHINE
+	tput setaf 7
+	echo ""
+	cat $RDIR/$TARGETMACHINE-sshreport.txt
+	tput sgr 0
+	echo ""
+	
+	pandoc -s -o /tmp/$TARGETMACHINE-sshreport.pdf $RDIR/$TARGETMACHINE-sshreport.md
+	pause
+}
+
+
 function create_report(){
 tput setaf 10
 echo "LastControl Create Report Starting.."
@@ -116,6 +150,8 @@ tput sgr0
 case $c in
 1) create_system_report ;;
 2) create_service_report ;;
+3) create_nwconfig_report ;;
+4) create_ssh_report ;;
 99)     exit 0 ;;
 *)
 tput setaf 1
