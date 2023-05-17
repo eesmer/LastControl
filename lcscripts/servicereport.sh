@@ -68,9 +68,7 @@ EOF
 netstat -tl |grep -v "Active Internet connections (servers and established)" |grep -v "Active Internet connections (only servers)" >> $RDIR/$HOST_NAME-listeningservice.txt
 netstat -tn |grep -v "Active Internet connections (servers and established)" |grep -v "Active Internet connections (only servers)" |grep "ESTABLISHED" >> $RDIR/$HOST_NAME-establishedservice.txt
 
-exit 1
-
-cat > $RDIR/$HOST_NAME.servicereport << EOF
+cat > $RDIR/$HOST_NAME-servicereport.txt << EOF
 ====================================================================================================
 :::. $HOST_NAME SERVICE INFORMATION REPORT :::.
 ====================================================================================================
@@ -89,48 +87,19 @@ $DATE
 
 EOF
 
-cat >> $RDIR/$HOST_NAME.txt << EOF
-
-|----------------------------------------------------------------------------------------------------
-|:::. Service Info :::. |
-|----------------------------------------------------------------------------------------------------
-|Service Management: |$SERVICE_MAN
-|Running Service:    |$RUNNING_SERVICE
-|Loaded Service:     |$LOADED_SERVICE
-|----------------------------------------------------------------------------------------------------
-|Active Connection:  |$ACTIVE_CONN
-|Passive Connection: |$PASSIVE_CONN
-|Failed Connection:  |$FAILED_CONN
-|Established Conn.:  |$ESTAB_CONN
-|----------------------------------------------------------------------------------------------------
-
-EOF
-
-echo "|----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.servicereport
-echo "|----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.txt
-echo "|LISTENING SERVICE LIST" >> $RDIR/$HOST_NAME.servicereport
-echo "|LISTENING SERVICE LIST" >> $RDIR/$HOST_NAME.txt
-echo "|----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.servicereport
-echo "|----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.txt
+echo "|----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-servicereport.txt
+echo "|LISTENING SERVICE LIST" >> $RDIR/$HOST_NAME-servicereport.txt
+echo "|----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-servicereport.txt
 netstat -tl |grep -v "Active Internet connections (servers and established)" |grep -v "Active Internet connections (only servers)" \
-	>> $RDIR/$HOST_NAME.servicereport
-netstat -tl |grep -v "Active Internet connections (servers and established)" |grep -v "Active Internet connections (only servers)" \
-	>> $RDIR/$HOST_NAME.txt
+	>> $RDIR/$HOST_NAME-servicereport.txt
 
-echo "" >> $RDIR/$HOST_NAME.servicereport
-echo "" >> $RDIR/$HOST_NAME.txt
+echo "" >> $RDIR/$HOST_NAME-servicereport.txt
 
-echo "|----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.servicereport
-echo "|----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.txt
-echo "|ESTABLISHED SERVICE LIST" >> $RDIR/$HOST_NAME.servicereport
-echo "|ESTABLISHED SERVICE LIST" >> $RDIR/$HOST_NAME.txt
-echo "|----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.servicereport
-echo "|----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.txt
+echo "|----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-servicereport.txt
+echo "|ESTABLISHED SERVICE LIST" >> $RDIR/$HOST_NAME-servicereport.txt
+echo "|----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-servicereport.txt
 netstat -tn |grep -v "Active Internet connections (servers and established)" |grep -v "Active Internet connections (only servers)" \
-	|grep "ESTABLISHED" >> $RDIR/$HOST_NAME.servicereport
-netstat -tn |grep -v "Active Internet connections (servers and established)" |grep -v "Active Internet connections (only servers)" \
-	|grep "ESTABLISHED" >> $RDIR/$HOST_NAME.txt
+	|grep "ESTABLISHED" >> $RDIR/$HOST_NAME-servicereport.txt
 
-echo "|----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.txt
-echo "" >> $RDIR/$HOST_NAME.servicereport
-echo "=====================================================================================================" >> $RDIR/$HOST_NAME.servicereport
+echo "" >> $RDIR/$HOST_NAME-servicereport.txt
+echo "=====================================================================================================" >> $RDIR/$HOST_NAME-servicereport.txt
