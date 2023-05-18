@@ -2,8 +2,8 @@
 
 WDIR=/usr/local/lastcontrol
 RDIR=/usr/local/lastcontrolreports
-CREATE=$WDIR/scripts/create-report-linux
-LCSCRIPTS=$WDIR/scripts/lcscripts
+CREATE=$WDIR/scripts/create-tui-report-linux
+TUISCRIPTS=$WDIR/scripts/tuiscripts
 
 function pause(){
 local message="$@"
@@ -23,20 +23,26 @@ echo ""
 tput setaf 9
 echo "    V2 Update:13"
 tput sgr0
-echo "   |----------------------------------------------------------------------|"
-echo "   | # REPORT MENU #                                                      |"
-echo "   |----------------------------------------------------------------------|"
-echo "   | 1. System  Report   | 6. Local User    Report  | 20. Take All Report |"
-echo "   | 2. Service Report   | 7. Vulnerability Report  |                     |"
-echo "   | 3. Network Report   | 8. Inventory     Report  |                     |"
-echo "   | 4. SSH     Report   |                          |                     |"
-echo "   |----------------------------------------------------------------------|"
-echo "   | # MACHINE MENU #                                                     |"
-echo "   |----------------------------------------------------------------------|"
-echo "   | 30. Add Machine     | 40. Create Machine List                        |"
-echo "   | 31. Show ip         | 41. Add Storage                                |"
-echo "   |                     | 42. Mount List                                 |"
-echo "   |----------------------------------------------------------------------|"
+echo "   |------------------------------------------------------------------|"
+echo "   | # REPORT MENU #                                                  |"
+echo "   |------------------------------------------------------------------|"
+echo "   | 1. System  Report  | 5. Local User    Report  | 9.               |"
+echo "   | 2. Service Report  | 6. Vulnerability Report  | 10.              |"
+echo "   | 3. Network Report  | 7. Inventory     Report  | 11.              |"
+echo "   | 4. SSH     Report  | 8.                       | 12.              |"
+echo "   |------------------------------------------------------------------|"
+echo "   | 20. Take All Report                                              |"
+echo "   |------------------------------------------------------------------|"
+echo "   | # MACHINE MENU #                                                 |"
+echo "   |------------------------------------------------------------------|"
+echo "   | 30. Add Machine   | 31. Remove Machine      | 32. Machine List   |"
+echo "   |------------------------------------------------------------------|"
+echo "   | # HOST MENU #                                                    |"
+echo "   |------------------------------------------------------------------|"
+echo "   | 41. Set IP        | 42. Show IP                                  |"
+echo "   |------------------------------------------------------------------|"
+echo "   | 50. Handbook                                                     |"
+echo "   |------------------------------------------------------------------|"
 tput setaf 9
 echo "     99.Exit"
 tput sgr0
@@ -132,13 +138,14 @@ function create_ssh_report(){
 	pause
 }
 
-
-function create_report(){
+function take_all_report(){
 tput setaf 10
-echo "LastControl Create Report Starting.."
+echo "Generating all report for all machine.."
 tput sgr 0
-systemctl restart lastcontrol
+
+systemctl restart lastcontrol.service
 watch -n 1 systemctl status lastcontrol.service
+systemctl disable lastcontrol.service
 pause
 }
 
@@ -152,7 +159,8 @@ case $c in
 2) create_service_report ;;
 3) create_nwconfig_report ;;
 4) create_ssh_report ;;
-99)     exit 0 ;;
+20) take_all_report ;;
+99) exit 0 ;;
 *)
 tput setaf 1
 echo "Please select from the menu numbers"

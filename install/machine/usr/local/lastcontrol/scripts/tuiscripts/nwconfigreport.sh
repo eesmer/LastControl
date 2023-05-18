@@ -7,6 +7,7 @@
 
 HOST_NAME=$(hostnamectl --static)
 RDIR=/usr/local/lcreports/$HOST_NAME
+LOGO=/usr/local/lastcontrol/images/lastcontrol_logo.png
 DATE=$(date)
 
 NWCHECK1=$(sysctl net.ipv4.ip_forward |cut -d "=" -f2 |cut -d " " -f2)
@@ -73,7 +74,7 @@ title: Network Configuration Report
 geometry: "left=3cm,right=3cm,top=0.5cm,bottom=1cm"
 ---
 
-![](/tmp/lastcontrol_logo.png){ width=25% }
+![]($LOGO){ width=25% }
 
 Date     : $DATE
 

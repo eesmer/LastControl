@@ -7,6 +7,7 @@
 
 HOST_NAME=$(cat /etc/hostname)
 RDIR=/usr/local/lcreports/$HOST_NAME
+LOGO=/usr/local/lastcontrol/images/lastcontrol_logo.png
 DATE=$(date)
 
 mkdir -p $RDIR
@@ -130,7 +131,7 @@ title: System Information Report
 geometry: "left=3cm,right=3cm,top=0.5cm,bottom=1cm"
 ---
 
-![](/tmp/lastcontrol_logo.png){ width=25% }
+![]($LOGO){ width=25% }
 
 Date     : $DATE
 
