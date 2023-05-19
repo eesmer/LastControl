@@ -144,7 +144,7 @@ echo "Generating all report for all machine.."
 tput sgr 0
 
 systemctl restart lastcontrol.service
-watch -n 1 systemctl status lastcontrol.service
+watch -en 1 systemctl status lastcontrol.service
 systemctl disable lastcontrol.service
 pause
 }
