@@ -173,6 +173,23 @@ function create_localuser_report(){
 	pause
 }
 
+function create_inventory_report(){
+        read -p "Hostname or IP Adress : " TARGETMACHINE
+        echo ""
+        tput setaf 9
+        echo "::.. Generating Hardware Inventory Report... ..::"
+        echo ""
+        bash $CREATE inventoryreport $TARGETMACHINE
+        tput setaf 7
+        echo ""
+        cat $RDIR/$TARGETMACHINE-inventoryreport.txt
+        tput sgr 0
+        echo ""
+
+        pandoc -s -o /tmp/$TARGETMACHINE-inventoryreport.pdf $RDIR/$TARGETMACHINE-inventoryreport.md
+        pause
+}
+
 function create_process_report(){
 	read -p "Hostname or IP Adress : " TARGETMACHINE
 	echo ""
@@ -214,6 +231,7 @@ case $c in
 4) create_nwconfig_report ;;
 5) create_ssh_report ;;
 6) create_localuser_report ;;
+7) create_inventory_report ;;
 12) create_process_report ;;
 20) take_all_report ;;
 99) exit 0 ;;
