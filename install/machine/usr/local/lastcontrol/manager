@@ -22,27 +22,27 @@ echo ""
 tput setaf 9
 echo "    V2 Update:13"
 tput sgr0
-echo "   |------------------------------------------------------------------|"
-echo "   | # REPORT MENU #                                                  |"
-echo "   |------------------------------------------------------------------|"
-echo "   | 1. System  Report  | 6. Local User    Report  |                  |"
-echo "   | 2. Service Report  | 7. Vulnerability Report  |                  |"
-echo "   | 3. Disk    Report  | 8. Inventory     Report  |                  |"
-echo "   | 4. Network Report  |                          |                  |"
-echo "   | 5. SSH     Report  |                          |                  |"
-echo "   |------------------------------------------------------------------|"
-echo "   | 20. Take All Report                                              |"
-echo "   |------------------------------------------------------------------|"
-echo "   | # MACHINE MENU #                                                 |"
-echo "   |------------------------------------------------------------------|"
-echo "   | 30. Add Machine   | 31. Remove Machine      | 32. Machine List   |"
-echo "   |------------------------------------------------------------------|"
-echo "   | # HOST MENU #                                                    |"
-echo "   |------------------------------------------------------------------|"
-echo "   | 41. Set IP        | 42. Show IP                                  |"
-echo "   |------------------------------------------------------------------|"
-echo "   | 50. Handbook                                                     |"
-echo "   |------------------------------------------------------------------|"
+echo "   |----------------------------------------------------------------------|"
+echo "   | # REPORT MENU #                                                      |"
+echo "   |----------------------------------------------------------------------|"
+echo "   | 1. System  Report  | 6. Local User Report | 11. Vulnerability Report |"
+echo "   | 2. Service Report  | 7. Inventory Report  | 12. Process Report       |"
+echo "   | 3. Disk    Report  |                      |                          |"
+echo "   | 4. Network Report  |                      |                          |"
+echo "   | 5. SSH     Report  |                      |                          |"
+echo "   |----------------------------------------------------------------------|"
+echo "   | 20. Take All Report                                                  |"
+echo "   |----------------------------------------------------------------------|"
+echo "   | # MACHINE MENU #                                                     |"
+echo "   |----------------------------------------------------------------------|"
+echo "   | 30. Add Machine    | 31. Remove Machine   | 32. Machine List         |"
+echo "   |------------------------------------------- --------------------------|"
+echo "   | # HOST MENU #                                                        |"
+echo "   |----------------------------------------------------------------------|"
+echo "   | 41. Set IP         | 42. Show IP                                     |"
+echo "   |----------------------------------------------------------------------|"
+echo "   | 50. Handbook                                                         |"
+echo "   |----------------------------------------------------------------------|"
 tput setaf 9
 echo "     99.Exit"
 tput sgr0
@@ -173,6 +173,24 @@ function create_localuser_report(){
 	pause
 }
 
+function create_process_report(){
+	read -p "Hostname or IP Adress : " TARGETMACHINE
+	echo ""
+	tput setaf 9
+	echo "::.. Generating Process & Load Report... ..::"
+	echo ""
+	bash $CREATE processreport $TARGETMACHINE
+	tput setaf 7
+	echo ""
+	cat $RDIR/$TARGETMACHINE-processreport.txt
+	tput sgr 0
+	echo ""
+	
+	pandoc -s -o /tmp/$TARGETMACHINE-processreport.pdf $RDIR/$TARGETMACHINE-processreport.md
+	pause
+}
+
+
 function take_all_report(){
 tput setaf 10
 echo "Generating all report for all machine.."
@@ -196,6 +214,7 @@ case $c in
 4) create_nwconfig_report ;;
 5) create_ssh_report ;;
 6) create_localuser_report ;;
+12) create_process_report ;;
 20) take_all_report ;;
 99) exit 0 ;;
 *)
