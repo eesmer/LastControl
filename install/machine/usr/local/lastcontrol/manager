@@ -2,7 +2,7 @@
 
 WDIR=/usr/local/lastcontrol
 RDIR=/usr/local/lastcontrolreports
-CREATE=$WDIR/scripts/create-tui-report-linux
+CREATE=$WDIR/scripts/tuiscripts/create-tui-report-linux.sh
 TUISCRIPTS=$WDIR/scripts/tuiscripts
 
 function pause(){
@@ -138,6 +138,23 @@ function create_ssh_report(){
 	pause
 }
 
+function create_localuser_report(){
+	read -p "Hostname or IP Adress : " TARGETMACHINE
+	echo ""
+	tput setaf 9
+	echo "::.. Generating Local User Report... ..::"
+	echo ""
+	bash $CREATE localuserreport $TARGETMACHINE
+	tput setaf 7
+	echo ""
+	cat $RDIR/$TARGETMACHINE-localuserreport.txt
+	tput sgr 0
+	echo ""
+	
+	pandoc -s -o /tmp/$TARGETMACHINE-localuserreport.pdf $RDIR/$TARGETMACHINE-localuserreport.md
+	pause
+}
+
 function take_all_report(){
 tput setaf 10
 echo "Generating all report for all machine.."
@@ -159,6 +176,7 @@ case $c in
 2) create_service_report ;;
 3) create_nwconfig_report ;;
 4) create_ssh_report ;;
+5) create_localuser_report ;;
 20) take_all_report ;;
 99) exit 0 ;;
 *)

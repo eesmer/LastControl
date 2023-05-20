@@ -6,8 +6,8 @@
 # However, it is your responsibility to run it on any system.
 #----------------------------------------------------------------------
 
-WDIR=/usr/local/cl-scripts
-RDIR=/usr/local/lastcontrol-reports
+WDIR=/usr/local/lcscripts
+RDIR=/usr/local/lcreports
 
 rm -r $WDIR
 rm -r $RDIR

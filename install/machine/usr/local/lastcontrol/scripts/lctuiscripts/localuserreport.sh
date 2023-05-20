@@ -1,8 +1,16 @@
 #!/bin/bash
 
+#--------------------------------------------------------
+# This script,
+# It produces the report of Local User Controls.
+#--------------------------------------------------------
+
 HOST_NAME=$(hostnamectl --static)
-RDIR=/usr/local/lastcontrol-reports/$HOST_NAME
+RDIR=/usr/local/lcreports/$HOST_NAME
+LOGO=/usr/local/lastcontrol/images/lastcontrol_logo.png
 DATE=$(date)
+
+mkdir -p $RDIR
 
 ####TOTALACCOUNT=$(getent passwd |wc -l)
 USERACCOUNT=$(cat /etc/shadow |grep -v "*" |grep -v "!" |wc -l)
@@ -29,7 +37,65 @@ SUDOUSERLIST=$(grep -e '^sudo:.*$' -e '^wheel:.*$' /etc/group | cut -d ":" -f4 |
 LASTLOGIN07D=$(lastlog --time 30 |grep -v "Username" |cut -d " " -f1 |paste -sd ',')
 LASTLOGIN0TD=$(lastlog --time 1 |grep -v "Username" |cut -d "+" -f1 |paste -sd ",")
 
-cat > $RDIR/$HOST_NAME.localuserreport << EOF
+cat > $RDIR/$HOST_NAME-localuserreport.md<< EOF
+
+---
+title: Local Users Information Report
+geometry: "left=3cm,right=3cm,top=0.5cm,bottom=1cm"
+---
+
+![]($LOGO){ width=25% }
+
+Date     : $DATE
+
+Hostname : $HOST_NAME
+
+---
+
+Local User Accounts :
+ ~ $USERACCOUNT
+
+SUDO User Count :
+ ~ $SUDOUSERCOUNT
+
+* SUDO User List
+$SUDOUSERLIST
+
+---
+
+### Not Logged User Accounts ###
+$NOTLOGGEDUSER
+
+### Login Auth. Information ###
+* Login Auth. Users :
+ ~ $LOGINAUTHUSER
+
+* No Login Users :
+ ~ $NOLOGINUSER
+
+* Service Accounts :
+ ~ $SERVICEACCOUNT
+
+### Blank Password Accounts ###
+$BLANKPASSACCOUNT
+
+---
+
+### Lastlogins of 30 Days ###
+$LASTLOGIN30D
+
+### Lastlogins in Today ###
+$LASTLOGIN0TD
+
+---
+
+### Service Accounts ###
+$SERVICEACCOUNT
+
+---
+EOF
+
+cat > $RDIR/$HOST_NAME-localuserreport.txt << EOF
 ====================================================================================================
 :::. $HOST_NAME LOCAL USER INFORMATION ON SYSTEM :::.
 ====================================================================================================
@@ -54,6 +120,8 @@ EOF
 rm -f /tmp/activeuseraccount.txt
 rm -f /tmp/useraccountpassinfo.txt
 rm -f /tmp/infopasschange.txt
+
+exit 1
 
 echo "----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.localuserreport
 echo "| DETAILED USER INFORMATION                                                                         " >> $RDIR/$HOST_NAME.localuserreport

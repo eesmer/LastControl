@@ -6,7 +6,7 @@
 # However, it is your responsibility to run it on any system.
 #----------------------------------------------------------------------
 
-WDIR=/usr/local/cl-scripts
+WDIR=/usr/local/lcscripts
 
 bash $WDIR/00-install_reqpackages
 bash $WDIR/01-create-inventory

@@ -2,7 +2,7 @@
 
 #HOST_NAME=$(hostnamectl --static)
 HOST_NAME=$(cat /etc/hostname)
-RDIR=/usr/local/lastcontrol-reports/$HOST_NAME
+RDIR=/usr/local/lcreports/$HOST_NAME
 DATE=$(date)
 
 mkdir -p $RDIR
