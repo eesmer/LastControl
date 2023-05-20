@@ -51,7 +51,7 @@ System Load Average :
  ~ $LOAD_AVG
 
 Zombie Process :
- ~$ZO_PROCESS
+ ~ $ZO_PROCESS
 
 ---
 EOF
