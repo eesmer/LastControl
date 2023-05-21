@@ -3,6 +3,9 @@
 WDIR=/usr/local/lastcontrol
 RDIR=/usr/local/lastcontrolreports
 CREATE=$WDIR/scripts/lctuiscripts/create-tui-report-linux.sh
+PDFSTORE=$RDIR/pdfreports
+
+mkdir -p $PDFSTORE
 
 function pause(){
 local message="$@"
@@ -62,7 +65,8 @@ function create_system_report(){
 	tput sgr 0
 	echo ""
 	
-	pandoc -s -o /tmp/$TARGETMACHINE-systemreport.pdf $RDIR/$TARGETMACHINE-systemreport.md
+	#pandoc -s -o $PDFSTORE/$TARGETMACHINE-systemreport.pdf $RDIR/$TARGETMACHINE-systemreport.md
+	pandoc -s -o $PDFSTORE/$TARGETMACHINE-systemreport.pdf $RDIR/$TARGETMACHINE-systemreport.md
 	pause
 }
 
@@ -101,7 +105,7 @@ function create_service_report(){
 	echo "" >> $RDIR/$TARGETMACHINE-servicereport.md
 	echo "---" >> $RDIR/$TARGETMACHINE-servicereport.md
 	
-	pandoc -s -o /tmp/$TARGETMACHINE-servicereport.pdf $RDIR/$TARGETMACHINE-servicereport.md
+	pandoc -s -o $PDFSTORE/$TARGETMACHINE-servicereport.pdf $RDIR/$TARGETMACHINE-servicereport.md
 	pause
 }
 
@@ -118,7 +122,7 @@ function create_disk_report(){
 	tput sgr 0
 	echo ""
 	
-	pandoc -s -o /tmp/$TARGETMACHINE-diskreport.pdf $RDIR/$TARGETMACHINE-diskreport.md
+	pandoc -s -o $PDFSTORE/$TARGETMACHINE-diskreport.pdf $RDIR/$TARGETMACHINE-diskreport.md
 	pause
 }
 
@@ -135,7 +139,7 @@ function create_nwconfig_report(){
 	tput sgr 0
 	echo ""
 	
-	pandoc -s -o /tmp/$TARGETMACHINE-nwconfigreport.pdf $RDIR/$TARGETMACHINE-nwconfigreport.md
+	pandoc -s -o $PDFSTORE/$TARGETMACHINE-nwconfigreport.pdf $RDIR/$TARGETMACHINE-nwconfigreport.md
 	pause
 }
 
@@ -152,7 +156,7 @@ function create_ssh_report(){
 	tput sgr 0
 	echo ""
 	
-	pandoc -s -o /tmp/$TARGETMACHINE-sshreport.pdf $RDIR/$TARGETMACHINE-sshreport.md
+	pandoc -s -o $PDFSTORE/$TARGETMACHINE-sshreport.pdf $RDIR/$TARGETMACHINE-sshreport.md
 	pause
 }
 
@@ -169,7 +173,7 @@ function create_localuser_report(){
 	tput sgr 0
 	echo ""
 	
-	pandoc -s -o /tmp/$TARGETMACHINE-localuserreport.pdf $RDIR/$TARGETMACHINE-localuserreport.md
+	pandoc -s -o $PDFSTORE/$TARGETMACHINE-localuserreport.pdf $RDIR/$TARGETMACHINE-localuserreport.md
 	pause
 }
 
@@ -186,7 +190,7 @@ function create_inventory_report(){
         tput sgr 0
         echo ""
 
-        pandoc -s -o /tmp/$TARGETMACHINE-inventoryreport.pdf $RDIR/$TARGETMACHINE-inventoryreport.md
+        pandoc -s -o $PDFSTORE/$TARGETMACHINE-inventoryreport.pdf $RDIR/$TARGETMACHINE-inventoryreport.md
         pause
 }
 
@@ -203,7 +207,7 @@ function create_process_report(){
 	tput sgr 0
 	echo ""
 	
-	pandoc -s -o /tmp/$TARGETMACHINE-processreport.pdf $RDIR/$TARGETMACHINE-processreport.md
+	pandoc -s -o $PDFSTORE/$TARGETMACHINE-processreport.pdf $RDIR/$TARGETMACHINE-processreport.md
 	pause
 }
 
