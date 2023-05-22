@@ -15,14 +15,16 @@ apt-get -y install ack
 apt-get -y install nmap
 apt-get -y install xsltproc
 apt-get -y install sqlite3
+apt-get -y install imagemagick
+apt-get -y install pandoc texlive-latex-base texlive-fonts-recommended
 #apt-get -y install php
 #apt-get -y install php-sqlite3
-# apt-get -y install php-db / php-db-dataobject (for test)
-apt-get -y install wapiti #for webserver roles
+#apt-get -y install php-db / php-db-dataobject (for test)
+#apt-get -y install wapiti #for webserver roles
 
 # Create Work Directory
 git clone https://github.com/eesmer/LastControl.git
-cp -R LastControl/install/machine/usr/local/lastcontrol /usr/local/
+cp -r LastControl/install/machine/usr/local/lastcontrol /usr/local/
 chmod -R 755 /usr/local/lastcontrol
 touch /usr/local/lastcontrol/linuxmachine
 
@@ -49,19 +51,23 @@ systemctl reload apache2.service
 #sqlite3 lastcontrol.sqlite "CREATE TABLE report ( date text(15), hour text(10), machinename text (15), machinegroup text(10) );"
 
 # -----------------------------------------------------------------------------
-# Service Configuration
+# Configuration
 # -----------------------------------------------------------------------------
-systemctl stop lastcontrol.service && systemctl disable lastcontrol.service
+# ImageMagick
+cp LastControl/install/machine/etc/ImageMagick-6/policy.xml /etc/ImageMagick-6/
+# logo for pdf file
+cp -r LastControl/images /usr/local/lastcontrol/
 
+# lastcontrol.service
+systemctl stop lastcontrol.service && systemctl disable lastcontrol.service
 if [ -f "/etc/systemd/system/multi-user.target.wants/lastcontrol.service" ]; then
 rm /etc/systemd/system/multi-user.target.wants/lastcontrol.service
 fi
 if [ -f "/etc/systemd/system/lastcontrol.service" ]; then
 rm /etc/systemd/system/lastcontrol.service
 fi
-
 cp LastControl/install/machine/etc/systemd/lastcontrol.service /etc/systemd/system/
-#ln -s /etc/systemd/system/lastcontrol.service /etc/systemd/system/multi-user.target.wants/ (with systemctl enable)
-systemctl enable lastcontrol.service
-systemctl start lastcontrol.service
-systemctl restart lastcontrol.service
+ln -s /etc/systemd/system/lastcontrol.service /etc/systemd/system/multi-user.target.wants/ (with systemctl enable)
+systemctl disable lastcontrol.service
+#systemctl start lastcontrol.service
+#systemctl restart lastcontrol.service
