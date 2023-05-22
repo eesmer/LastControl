@@ -122,6 +122,36 @@ if [ "$REP" = YUM ];then
         BROKEN_COUNT=$(wc -l $RDIR/broken_package.txt |cut -d " " -f1)
 fi
 
+# UNSECURE PACKAGE CONTROL
+if [ "$REP" = APT ]; then
+        FTP_INSTALL=FALSE
+        dpkg -l |grep ftp |grep -v "sftp" &>/dev/null && FTP_INSTALL=TRUE
+        TELNET_INSTALL=FALSE
+        dpkg -l |grep telnet &>/dev/null && TELNET_INSTALL=TRUE
+        RSH_INSTALL=FALSE
+        dpkg -l |grep rsh &>/dev/null && RSH_INSTALL=TRUE
+        NIS_INSTALL=FALSE
+        dpkg -l |grep nis &>/dev/null && NIS_INSTALL=TRUE
+        YPTOOLS_INSTALL=FALSE
+        dpkg -l |grep yp-tools &>/dev/null && YPTOOLS_INSTALL=TRUE
+        XINET_INSTALL=FALSE
+        dpkg -l |grep xinet &>/dev/null && XINET_INSTALL=TRUE
+
+elif [ "$REP" = YUM ]; then
+        FTP_INSTALL=FALSE
+        rpm -qa |grep ftp |grep -v "sftp" &>/dev/null && FTP_INSTALL=TRUE
+        TELNET_INSTALL=FALSE
+        rpm -qa |grep telnet &>/dev/null && TELNET_INSTALL=TRUE
+        RSH_INSTALL=FALSE
+        rpm -qa |grep rsh &>/dev/null && RSH_INSTALL=TRUE
+        NIS_INSTALL=FALSE
+        rpm -qa |grep nis &>/dev/null && NIS_INSTALL=TRUE
+        YPTOOLS_INSTALL=FALSE
+        rpm -qa |grep yp-tools &>/dev/null && YPTOOLS_INSTALL=TRUE
+        XINET_INSTALL=FALSE
+        rpm -qa |grep xinet &>/dev/null && XINET_INSTALL=TRUE
+fi
+
 rm $RDIR/$HOST_NAME-systemreport.*
 
 cat > $RDIR/$HOST_NAME-systemreport.md<< EOF
@@ -191,6 +221,28 @@ Update Count :
  ~ $UPDATE_COUNT
 
 ---
+
+### Unsecure Package Check ###
+
+FTP INSTALL:
+ ~ $FTP_INSTALL
+
+TELNET INSTALL:
+ ~ $TELNET_INSTALL
+
+RSH INSTALL:
+ ~ $RSH_INSTALL
+
+NIS INSTALL:
+ ~ $NIS_INSTALL
+
+YPTOOLS INSTALL:
+ ~ $YPTOOLS_INSTALL
+
+XINET INSTALL:
+ ~ $XINET_INSTALL
+
+---
 EOF
 
 cat > $RDIR/$HOST_NAME-systemreport.txt << EOF
@@ -213,6 +265,13 @@ cat > $RDIR/$HOST_NAME-systemreport.txt << EOF
 |TIME SYNC          | $TIME_SYNC
 |SYSLOG USAGE       | Install: $SYSLOGINSTALL --- Service: $SYSLOGSERVICE --- Socket: $SYSLOGSOCKET --- LogSend: $SYSLOGSEND
 |HTTP PROXY USAGE   | $HTTP_PROXY_USAGE
+|----------------------------------------------------------------------------------------------------
+|FTP INSTALL:       |$FTP_INSTALL
+|TELNET INSTALL:    |$TELNET_INSTALL
+|RSH INSTALL:       |$RSH_INSTALL
+|NIS INSTALL:       |$NIS_INSTALL
+|YPTOOLS INSTALL:   |$YPTOOLS_INSTALL
+|XINET INSTALL:     |$XINET_INSTALL
 |----------------------------------------------------------------------------------------------------
 
 EOF
