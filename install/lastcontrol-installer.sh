@@ -36,7 +36,7 @@ ssh-keygen -t rsa -f /root/.ssh/lastcontrol -q -P ""
 
 # Create Web
 rm -r /var/www/html/reports && rm -r /var/www/html/lastcontrol
-mkdir -p /var/www/html/reports
+mkdir -p /var/www/html/pdfreports
 mkdir -p /var/www/html/lastcontrol
 cp /root/.ssh/lastcontrol.pub /var/www/html/lastcontrol/
 rm /var/www/html/index.html

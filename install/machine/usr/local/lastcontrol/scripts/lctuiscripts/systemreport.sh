@@ -152,8 +152,6 @@ elif [ "$REP" = YUM ]; then
         rpm -qa |grep xinet &>/dev/null && XINET_INSTALL=TRUE
 fi
 
-rm $RDIR/$HOST_NAME-systemreport.*
-
 cat > $RDIR/$HOST_NAME-systemreport.md<< EOF
 
 ---

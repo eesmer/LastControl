@@ -4,6 +4,7 @@ WDIR=/usr/local/lastcontrol
 RDIR=/usr/local/lastcontrolreports
 CREATE=$WDIR/scripts/lctuiscripts/create-tui-report-linux.sh
 PDFSTORE=$RDIR/pdfreports
+PDFREPORTS=/var/www/html/pdfreports
 
 HOSTIP=$(hostname -I)
 HOSTOS=$(hostnamectl | grep "Operating System" | cut -d ":" -f2 | xargs)
@@ -69,8 +70,8 @@ function create_system_report(){
 	tput sgr 0
 	echo ""
 	
-	#pandoc -s -o $PDFSTORE/$TARGETMACHINE-systemreport.pdf $RDIR/$TARGETMACHINE-systemreport.md
 	pandoc -s -o $PDFSTORE/$TARGETMACHINE-systemreport.pdf $RDIR/$TARGETMACHINE-systemreport.md
+	cp $PDFSTORE/$TARGETMACHINE-systemreport.pdf $PDFREPORTS/
 	pause
 }
 
@@ -110,6 +111,7 @@ function create_service_report(){
 	echo "---" >> $RDIR/$TARGETMACHINE-servicereport.md
 	
 	pandoc -s -o $PDFSTORE/$TARGETMACHINE-servicereport.pdf $RDIR/$TARGETMACHINE-servicereport.md
+	cp $PDFSTORE/$TARGETMACHINE-servicereport.pdf $PDFREPORTS/
 	pause
 }
 
@@ -127,6 +129,7 @@ function create_disk_report(){
 	echo ""
 	
 	pandoc -s -o $PDFSTORE/$TARGETMACHINE-diskreport.pdf $RDIR/$TARGETMACHINE-diskreport.md
+	cp $PDFSTORE/$TARGETMACHINE-diskreport.pdf $PDFREPORTS/
 	pause
 }
 
@@ -144,6 +147,7 @@ function create_nwconfig_report(){
 	echo ""
 	
 	pandoc -s -o $PDFSTORE/$TARGETMACHINE-nwconfigreport.pdf $RDIR/$TARGETMACHINE-nwconfigreport.md
+	cp $PDFSTORE/$TARGETMACHINE-nwconfigreport.pdf $PDFREPORTS/
 	pause
 }
 
@@ -161,6 +165,7 @@ function create_ssh_report(){
 	echo ""
 	
 	pandoc -s -o $PDFSTORE/$TARGETMACHINE-sshreport.pdf $RDIR/$TARGETMACHINE-sshreport.md
+	cp $PDFSTORE/$TARGETMACHINE-sshreport.pdf $PDFREPORTS/
 	pause
 }
 
@@ -178,6 +183,7 @@ function create_localuser_report(){
 	echo ""
 	
 	pandoc -s -o $PDFSTORE/$TARGETMACHINE-localuserreport.pdf $RDIR/$TARGETMACHINE-localuserreport.md
+	cp $PDFSTORE/$TARGETMACHINE-localuserreport.pdf $PDFREPORTS/
 	pause
 }
 
@@ -195,6 +201,7 @@ function create_inventory_report(){
         echo ""
 
         pandoc -s -o $PDFSTORE/$TARGETMACHINE-inventoryreport.pdf $RDIR/$TARGETMACHINE-inventoryreport.md
+	cp $PDFSTORE/$TARGETMACHINE-inventoryreport.pdf $PDFREPORTS/
         pause
 }
 
@@ -212,6 +219,7 @@ function create_process_report(){
 	echo ""
 	
 	pandoc -s -o $PDFSTORE/$TARGETMACHINE-processreport.pdf $RDIR/$TARGETMACHINE-processreport.md
+	cp $PDFSTORE/$TARGETMACHINE-processreport.pdf $PDFREPORTS/
 	pause
 }
 

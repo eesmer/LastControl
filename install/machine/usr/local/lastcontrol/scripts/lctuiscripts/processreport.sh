@@ -32,7 +32,7 @@ ZO_PROCESS=$(ps -A -ostat,ppid,pid,cmd | grep -e '^[Zz]' | wc -l)
 cat > $RDIR/$HOST_NAME-processreport.md << EOF
 
 ---
-title: Local Disk Information Report
+title: Process Report
 geometry: "left=3cm,right=3cm,top=0.5cm,bottom=1cm"
 ---
 
