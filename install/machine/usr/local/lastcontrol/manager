@@ -227,6 +227,8 @@ function create_process_report(){
 function take_all_report(){
 tput setaf 10
 echo "Generating all report for all machine.."
+echo ""
+echo ""
 tput sgr 0
 
 systemctl restart lastcontrol.service
