@@ -5,6 +5,7 @@ RDIR=/usr/local/lastcontrolreports
 CREATE=$WDIR/scripts/lctuiscripts/create-tui-report-linux.sh
 PDFSTORE=$RDIR/pdfreports
 PDFREPORTS=/var/www/html/pdfreports
+BOARDFILE=/usr/local/lastcontrol/doc/board.txt
 
 HOSTIP=$(hostname -I)
 HOSTOS=$(hostnamectl | grep "Operating System" | cut -d ":" -f2 | xargs)
@@ -18,6 +19,7 @@ read -p "$message" readEnterKey
 }
 
 function show_menu(){
+BOARDMSG=$(cat $BOARDFILE)
 MACHDATE=$(date)
 echo -e "\e[1;37;1m$MACHDATE\e[0m"
 pwd
@@ -29,6 +31,7 @@ echo ""
 tput setaf 9
 echo "    V2 Update:13"
 echo "    $HOSTOS - IP: $HOSTIP"
+tput setaf 8
 tput sgr0
 echo "   |------------------------------------------------------------------|"
 echo "   | # REPORT MENU #                                                  |"
@@ -44,7 +47,7 @@ echo "   |------------------------------------------------------------------|"
 echo "   | # MACHINE MENU #                                                 |"
 echo "   |------------------------------------------------------------------|"
 echo "   | 30. Add Machine    | 31. Remove Machine   | 32. Machine List     |"
-echo "   |------------------------------------------- ----------------------|"
+echo "   |------------------------------------------------------------------|"
 echo "   | # HOST MENU #                                                    |"
 echo "   |------------------------------------------------------------------|"
 echo "   | 41. Set IP                                                       |"
@@ -53,6 +56,13 @@ echo "   | 50. Handbook                                                     |"
 echo "   |------------------------------------------------------------------|"
 tput setaf 9
 echo "     99.Exit"
+echo ""
+echo "                             ** BOARD **                               "
+tput setaf 1
+tput sgr0
+echo "     $BOARDMSG                                                         "
+echo "   --------------------------------------------------------------------"
+echo "    Download Reports: http://$HOSTIP/pdfreports                        "
 tput sgr0
 echo ""
 }
@@ -234,6 +244,8 @@ tput sgr 0
 systemctl restart lastcontrol.service
 watch -en 1 systemctl status lastcontrol.service
 systemctl disable lastcontrol.service
+
+echo "Info: All Report generated." > $BOARDFILE
 pause
 }
 
