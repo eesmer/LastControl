@@ -62,7 +62,7 @@ tput setaf 1
 tput sgr0
 echo "     $BOARDMSG                                                         "
 echo "   --------------------------------------------------------------------"
-echo "    Download Reports: http://$HOSTIP/pdfreports                        "
+echo "    Download Reports: http://$HOSTIP/pdfreports                     "
 tput sgr0
 echo ""
 }
@@ -249,6 +249,37 @@ echo "Info: All Report generated." > $BOARDFILE
 pause
 }
 
+function add_machine(){
+tput setaf 10
+echo "Adding a New Machine"
+echo ""
+tput sgr 0
+
+read -p "Hostname or IP Adress : " TARGETMACHINE
+LISTED=FALSE
+ack "$TARGETMACHINE" $WDIR/linuxmachine >>/dev/null && LISTED=TRUE
+
+if [ "$LISTED" = FALSE ]; then
+	echo "$TARGETMACHINE" >> $WDIR/linuxmachine
+else
+	tput setaf 9
+	echo "$TARGETMACHINE already exist"
+	tput sgr 0
+fi
+
+echo ""
+tput setaf 10
+echo "::. Machine List ::."
+echo "--------------------"
+tput sgr 0
+cat $WDIR/linuxmachine
+tput setaf 10
+echo "--------------------"
+tput sgr 0
+echo ""
+pause
+}
+
 function read_input(){
 tput setaf 7
 local c
@@ -264,6 +295,7 @@ case $c in
 7) create_inventory_report ;;
 11) create_process_report ;;
 20) take_all_report ;;
+30) add_machine ;;
 99) exit 0 ;;
 *)
 tput setaf 1
