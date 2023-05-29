@@ -56,8 +56,9 @@ echo "   | 50. Handbook                                                     |"
 echo "   |------------------------------------------------------------------|"
 tput setaf 9
 echo "     99.Exit"
-echo ""
+echo "                             -----------                               "
 echo "                             ** BOARD **                               "
+echo "                             -----------                               "
 tput setaf 1
 tput sgr0
 echo "     $BOARDMSG                                                         "
@@ -280,6 +281,43 @@ echo ""
 pause
 }
 
+function remove_machine(){
+echo ""
+tput setaf 10
+echo "Removing Machine"
+echo ""
+tput sgr 0
+
+read -p "Hostname or IP Adress : " TARGETMACHINE
+sed -i "/$TARGETMACHINE/d" $WDIR/linuxmachine
+
+echo ""
+tput setaf 10
+echo "::. Machine List ::."
+echo "--------------------"
+tput sgr 0
+cat $WDIR/linuxmachine
+tput setaf 10
+echo "--------------------"
+tput sgr 0
+echo ""
+pause
+}
+
+function machine_list(){
+echo ""
+tput setaf 10
+echo "::. Machine List ::."
+echo "--------------------"
+tput sgr 0
+cat $WDIR/linuxmachine
+tput setaf 10
+echo "--------------------"
+tput sgr 0
+echo ""
+pause
+}
+
 function read_input(){
 tput setaf 7
 local c
@@ -296,6 +334,8 @@ case $c in
 11) create_process_report ;;
 20) take_all_report ;;
 30) add_machine ;;
+31) remove_machine ;;
+32) machine_list ;;
 99) exit 0 ;;
 *)
 tput setaf 1
