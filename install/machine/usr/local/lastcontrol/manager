@@ -3,12 +3,14 @@
 WDIR=/usr/local/lastcontrol
 RDIR=/usr/local/lastcontrolreports
 CREATE=$WDIR/scripts/lctuiscripts/create-tui-report-linux.sh
+MACHINESCRIPT=/usr/local/lastcontrol/scripts/machinescripts
 PDFSTORE=$RDIR/pdfreports
 PDFREPORTS=/var/www/html/pdfreports
 BOARDFILE=/usr/local/lastcontrol/doc/board.txt
 
 HOSTIP=$(hostname -I)
 HOSTOS=$(hostnamectl | grep "Operating System" | cut -d ":" -f2 | xargs)
+HOSTHNAME=$(cat /etc/hostname)
 
 mkdir -p $PDFSTORE
 
@@ -46,7 +48,10 @@ echo "   | 20. Take All Report                                              |"
 echo "   |------------------------------------------------------------------|"
 echo "   | # MACHINE MENU #                                                 |"
 echo "   |------------------------------------------------------------------|"
-echo "   | 30. Add Machine    | 31. Remove Machine   | 32. Machine List     |"
+echo "   | 30. Add    Machine | 32. Machine List                            |"
+echo "   | 31. Remove Machine |                                             |"
+echo "   |------------------------------------------------------------------|"
+echo "   | 40. Add SSH-Key    | 41. Remove SSH-Key                          |"
 echo "   |------------------------------------------------------------------|"
 tput setaf 9
 echo "                             -----------                               "
@@ -316,6 +321,21 @@ echo ""
 pause
 }
 
+function add_sshkey(){
+echo ""
+read -p "Hostname or IP Adress : " TARGETMACHINE
+bash $MACHINESCRIPT/add-sshkey.sh $TARGETMACHINE
+pause
+}
+
+function remove_sshkey(){
+echo ""
+read -p "Hostname or IP Adress : " TARGETMACHINE
+KEYCONTENT=$(cat /root/.ssh/lastcontrol.pub | cut -d " " -f2 | cut -c 1-25)
+bash $MACHINESCRIPT/remove-sshkey.sh $TARGETMACHINE $KEYCONTENT
+pause
+}
+
 function read_input(){
 tput setaf 7
 local c
@@ -334,6 +354,8 @@ case $c in
 30) add_machine ;;
 31) remove_machine ;;
 32) machine_list ;;
+40) add_sshkey ;;
+41) remove_sshkey ;;
 99) exit 0 ;;
 *)
 tput setaf 1
