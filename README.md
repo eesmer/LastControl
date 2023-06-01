@@ -14,11 +14,19 @@ https://www.cisecurity.org/
 
 ---
 
-![alt text](images/lastcontrol_allreports.png "LastControl Reports Screen")
+![alt text](images/LC_Manager_MainMenu.png "LastControl Reports TUI Screen")
 
 ---
 
-![alt text](images/lastcontrol_report2.png "LastControl Network Report Screen")
+![alt text](images/Lc-TUI_Report-2.png "LastControl Reports TUI Screen")
+
+---
+
+![alt text](images/lastcontrol_allreports.png "LastControl Reports Web Screen")
+
+---
+
+![alt text](images/lastcontrol_report2.png "LastControl Network Report Web Screen")
 
 ---
 
