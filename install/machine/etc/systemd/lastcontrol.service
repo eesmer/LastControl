@@ -4,7 +4,7 @@ Description=LastControl Service
 [Service]
 User=root
 Group=root
-ExecStart=/usr/local/lastcontrol/create-report.sh
+ExecStart=/usr/local/lastcontrol/create-all-report.sh
 Restart=always
 RestartSec=3hour
 
