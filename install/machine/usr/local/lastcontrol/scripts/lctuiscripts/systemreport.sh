@@ -94,6 +94,7 @@ elif [ "$REP" = YUM ]; then
         sed -i '/*/d' $RDIR/update_list.txt
         sed -i '/Last metadata/d' $RDIR/update_list.txt
         sed -i '/^$/d' $RDIR/update_list.txt
+
         UPDATE_COUNT=$(cat $RDIR/update_list.txt |wc -l)
         #rm $RDIR/update_list.txt &>/dev/null
 
@@ -152,7 +153,7 @@ elif [ "$REP" = YUM ]; then
         rpm -qa |grep xinet &>/dev/null && XINET_INSTALL=TRUE
 fi
 
-cat > $RDIR/$HOST_NAME-systemreport.md<< EOF
+cat > $RDIR/$HOST_NAME-systemreport.md << EOF
 
 ---
 title: System Information Report

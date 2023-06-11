@@ -29,9 +29,10 @@ if [ "$REP" = APT ]; then
 fi
 if [ "$REP" = YUM ]; then
 	# check update for system
-	echo N | yum update > /tmp/updatecheck.txt
+	echo N | yum update > /tmp/updatecheck.txt 2>/dev/null
 	NEWINSTALL=$(cat /tmp/updatecheck.txt | grep "Install" | grep "Packages")
 	UPGRADEPACK=$(cat /tmp/updatecheck.txt | grep "Upgrade" | grep "Packages")
+	TOTALDOWNLOAD=$(cat /tmp/updatecheck.txt | grep "Total download size:" | cut -d ":" -f2 | xargs)
 	
 	# check update for security packages
 	yum updateinfo --installed > /tmp/updateinfo.txt
@@ -52,11 +53,13 @@ cat > $RDIR/$HOST_NAME-updatereport.txt << EOF
 | ::. Security Update Report .:: 
 |---------------------------------------------------------------------------------------------------
 |Important Security Update | $IMPUPDATECOUNT
-|Moderate  Security Update | $IMPUPDATECOUNT
-|Low       Security Update | $IMPUPDATECOUNT
+|Moderate  Security Update | $MODUPDATECOUNT
+|Low       Security Update | $LOWUPDATECOUNT
 |---------------------------------------------------------------------------------------------------
 |Bugfixes                  | $BUGFIXCOUNT
 |----------------------------------------------------------------------------------------------------
+|Total Download Size       | $TOTALDOWNLOAD
+|---------------------------------------------------------------------------------------------------
 
 EOF
 
