@@ -219,6 +219,22 @@ function create_inventory_report(){
         pause
 }
 
+function create_update_report(){
+	read -p "Hostname or IP Adress : " TARGETMACHINE
+	echo ""
+	tput setaf 9
+	echo "::.. Generating System Update Report... ..::"
+	echo ""
+	bash $CREATE updatereport $TARGETMACHINE
+	tput setaf 7
+	echo ""
+	cat $RDIR/$TARGETMACHINE-updatereport.txt
+	tput sgr 0
+	echo ""
+	
+	pause
+}
+
 function create_process_report(){
 	read -p "Hostname or IP Adress : " TARGETMACHINE
 	echo ""
@@ -349,6 +365,7 @@ case $c in
 5) create_ssh_report ;;
 6) create_localuser_report ;;
 7) create_inventory_report ;;
+8) create_update_report ;;
 11) create_process_report ;;
 20) take_all_report ;;
 30) add_machine ;;

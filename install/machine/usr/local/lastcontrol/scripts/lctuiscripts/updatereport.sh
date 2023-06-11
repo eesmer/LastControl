@@ -28,18 +28,28 @@ if [ "$REP" = APT ]; then
 	apt list --upgradable > /tmp/updateinfo.txt
 fi
 if [ "$REP" = YUM ]; then
+	# check update for system
+	echo N | yum update > /tmp/updatecheck.txt
+	NEWINSTALL=$(cat /tmp/updatecheck.txt | grep "Install" | grep "Packages")
+	UPGRADEPACK=$(cat /tmp/updatecheck.txt | grep "Upgrade" | grep "Packages")
+	
+	# check update for security packages
 	yum updateinfo --installed > /tmp/updateinfo.txt
+	IMPUPDATECOUNT=$(cat /tmp/updateinfo.txt |grep "Important Security" | xargs)
+	MODUPDATECOUNT=$(cat /tmp/updateinfo.txt |grep "Moderate Security" | xargs)
+	LOWUPDATECOUNT=$(cat /tmp/updateinfo.txt |grep "Low Security" | xargs)
+	BUGFIXCOUNT=$(cat /tmp/updateinfo.txt |grep "Bugfix" | xargs)
 fi
-
-IMPUPDATECOUNT=$(cat /tmp/updateinfo.txt |grep "Important Security" | xargs)
-MODUPDATECOUNT=$(cat /tmp/updateinfo.txt |grep "Moderate Security" | xargs)
-LOWUPDATECOUNT=$(cat /tmp/updateinfo.txt |grep "Low Security" | xargs)
-BUGFIXCOUNT=$(cat /tmp/updateinfo.txt |grep "Bugfix" | xargs)
 
 cat > $RDIR/$HOST_NAME-updatereport.txt << EOF
 
 |---------------------------------------------------------------------------------------------------
-| ::. System Updated Report .:: 
+| ::. System Update Report .:: 
+|---------------------------------------------------------------------------------------------------
+|Packages to New Install   | $NEWINSTALL
+|Packages to Upgrade       | $UPGRADEPACK
+|---------------------------------------------------------------------------------------------------
+| ::. Security Update Report .:: 
 |---------------------------------------------------------------------------------------------------
 |Important Security Update | $IMPUPDATECOUNT
 |Moderate  Security Update | $IMPUPDATECOUNT
@@ -49,7 +59,6 @@ cat > $RDIR/$HOST_NAME-updatereport.txt << EOF
 |----------------------------------------------------------------------------------------------------
 
 EOF
-
 
 exit 1
 
