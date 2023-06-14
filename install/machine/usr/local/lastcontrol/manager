@@ -29,7 +29,7 @@ echo "------------------------------"
 BANNERCOLOR=$((1 + "$RANDOM" % 9))
 tput setaf "$BANNERCOLOR"
 cat $WDIR/doc/banner.txt
-echo -e
+echo ""
 tput setaf 9
 echo "    V2 Update:20"
 echo "    $HOSTOS - IP: $HOSTIP"
@@ -63,26 +63,26 @@ echo "     $BOARDMSG                                                         "
 echo "   --------------------------------------------------------------------"
 echo "    Download Reports: http://$HOSTIP/pdfreports                     "
 tput setaf 9
-echo -e
+echo ""
 echo "    -----------"
 echo "    | 99.Exit |"
 echo "    -----------"
 tput sgr0
-echo -e
+echo ""
 }
 
 function create_system_report(){
 	read -p "Hostname or IP Adress : " TARGETMACHINE
-	echo -e
+	echo ""
 	tput setaf 9
 	echo "::.. Generating System Report... ..::"
-	echo -e
+	echo ""
 	bash $CREATE systemreport $TARGETMACHINE
 	tput setaf 7
-	echo -e
+	echo ""
 	cat $RDIR/$TARGETMACHINE-systemreport.txt
 	tput sgr 0
-	echo -e
+	echo ""
 	
 	pandoc -s -o $PDFSTORE/$TARGETMACHINE-systemreport.pdf $RDIR/$TARGETMACHINE-systemreport.md
 	cp $PDFSTORE/$TARGETMACHINE-systemreport.pdf $PDFREPORTS/
@@ -91,16 +91,16 @@ function create_system_report(){
 
 function create_service_report(){
 	read -p "Hostname or IP Adress : " TARGETMACHINE
-	echo -e
+	echo ""
 	tput setaf 9
 	echo "::.. Generating Service Report... ..::"
-	echo -e
+	echo ""
 	bash $CREATE servicereport $TARGETMACHINE
 	tput setaf 7
-	echo -e
+	echo ""
 	cat $RDIR/$TARGETMACHINE-servicereport.txt
 	tput sgr 0
-	echo -e
+	echo ""
 
 	# adding listening services output image
 	cat $RDIR/$TARGETMACHINE-listeningservice.txt | grep -v "tcp6" | convert label:@- /tmp/$TARGETMACHINE-listeningservices.png
@@ -131,16 +131,16 @@ function create_service_report(){
 
 function create_disk_report(){
 	read -p "Hostname or IP Adress : " TARGETMACHINE
-	echo -e
+	echo ""
 	tput setaf 9
 	echo "::.. Generating Local Disk Report... ..::"
-	echo -e
+	echo ""
 	bash $CREATE diskreport $TARGETMACHINE
 	tput setaf 7
-	echo -e
+	echo ""
 	cat $RDIR/$TARGETMACHINE-diskreport.txt
 	tput sgr 0
-	echo -e
+	echo ""
 	
 	pandoc -s -o $PDFSTORE/$TARGETMACHINE-diskreport.pdf $RDIR/$TARGETMACHINE-diskreport.md
 	cp $PDFSTORE/$TARGETMACHINE-diskreport.pdf $PDFREPORTS/
@@ -149,16 +149,16 @@ function create_disk_report(){
 
 function create_nwconfig_report(){
 	read -p "Hostname or IP Adress : " TARGETMACHINE
-	echo -e
+	echo ""
 	tput setaf 9
 	echo "::.. Generating Network Config Report... ..::"
-	echo -e
+	echo ""
 	bash $CREATE nwconfigreport $TARGETMACHINE
 	tput setaf 7
-	echo -e
+	echo ""
 	cat $RDIR/$TARGETMACHINE-nwconfigreport.txt
 	tput sgr 0
-	echo -e
+	echo ""
 	
 	pandoc -s -o $PDFSTORE/$TARGETMACHINE-nwconfigreport.pdf $RDIR/$TARGETMACHINE-nwconfigreport.md
 	cp $PDFSTORE/$TARGETMACHINE-nwconfigreport.pdf $PDFREPORTS/
@@ -167,16 +167,16 @@ function create_nwconfig_report(){
 
 function create_ssh_report(){
 	read -p "Hostname or IP Adress : " TARGETMACHINE
-	echo -e
+	echo ""
 	tput setaf 9
 	echo "::.. Generating SSH Config Report... ..::"
-	echo -e
+	echo ""
 	bash $CREATE sshreport $TARGETMACHINE
 	tput setaf 7
-	echo -e
+	echo ""
 	cat $RDIR/$TARGETMACHINE-sshreport.txt
 	tput sgr 0
-	echo -e
+	echo ""
 	
 	pandoc -s -o $PDFSTORE/$TARGETMACHINE-sshreport.pdf $RDIR/$TARGETMACHINE-sshreport.md
 	cp $PDFSTORE/$TARGETMACHINE-sshreport.pdf $PDFREPORTS/
@@ -185,16 +185,16 @@ function create_ssh_report(){
 
 function create_localuser_report(){
 	read -p "Hostname or IP Adress : " TARGETMACHINE
-	echo -e
+	echo ""
 	tput setaf 9
 	echo "::.. Generating Local User Report... ..::"
-	echo -e
+	echo ""
 	bash $CREATE localuserreport $TARGETMACHINE
 	tput setaf 7
-	echo -e
+	echo ""
 	cat $RDIR/$TARGETMACHINE-localuserreport.txt
 	tput sgr 0
-	echo -e
+	echo ""
 	
 	pandoc -s -o $PDFSTORE/$TARGETMACHINE-localuserreport.pdf $RDIR/$TARGETMACHINE-localuserreport.md
 	cp $PDFSTORE/$TARGETMACHINE-localuserreport.pdf $PDFREPORTS/
@@ -203,13 +203,13 @@ function create_localuser_report(){
 
 function create_inventory_report(){
         read -p "Hostname or IP Adress : " TARGETMACHINE
-        echo -e
+        echo ""
         tput setaf 9
         echo "::.. Generating Hardware Inventory Report... ..::"
-        echo -e
+        echo ""
         bash $CREATE inventoryreport $TARGETMACHINE
         tput setaf 7
-        echo -e
+        echo ""
         cat $RDIR/$TARGETMACHINE-inventoryreport.txt
         tput sgr 0
         echo ""
@@ -221,32 +221,32 @@ function create_inventory_report(){
 
 function create_update_report(){
 	read -p "Hostname or IP Adress : " TARGETMACHINE
-	echo -e
+	echo ""
 	tput setaf 9
 	echo "::.. Generating System Update Report... ..::"
 	echo ""
 	bash $CREATE updatereport $TARGETMACHINE
 	tput setaf 7
-	echo -e
+	echo ""
 	cat $RDIR/$TARGETMACHINE-updatereport.txt
 	tput sgr 0
-	echo -e
+	echo ""
 	
 	pause
 }
 
 function create_process_report(){
 	read -p "Hostname or IP Adress : " TARGETMACHINE
-	echo -e
+	echo ""
 	tput setaf 9
 	echo "::.. Generating Process & Load Report... ..::"
-	echo -e
+	echo ""
 	bash $CREATE processreport $TARGETMACHINE
 	tput setaf 7
-	echo -e
+	echo ""
 	cat $RDIR/$TARGETMACHINE-processreport.txt
 	tput sgr 0
-	echo -e
+	echo ""
 	
 	pandoc -s -o $PDFSTORE/$TARGETMACHINE-processreport.pdf $RDIR/$TARGETMACHINE-processreport.md
 	cp $PDFSTORE/$TARGETMACHINE-processreport.pdf $PDFREPORTS/
@@ -257,7 +257,8 @@ function create_process_report(){
 function take_all_report(){
 tput setaf 10
 echo "Generating all report for all machine.."
-echo -e "\n"
+echo ""
+echo ""
 tput sgr 0
 
 systemctl restart lastcontrol.service
@@ -271,12 +272,12 @@ pause
 function add_machine(){
 tput setaf 10
 echo "Adding a New Machine"
-echo -e
+echo ""
 tput sgr 0
 
 read -p "Hostname or IP Adress : " TARGETMACHINE
 LISTED=FALSE
-ack "$TARGETMACHINE" $WDIR/linuxmachine >>/dev/null && LISTED=TRUE
+ack "$TARGETMACHINE" $WDIR/linuxmachine >> /dev/null && LISTED=TRUE
 
 if [ "$LISTED" = FALSE ]; then
 	echo "$TARGETMACHINE" >> $WDIR/linuxmachine
@@ -286,7 +287,7 @@ else
 	tput sgr 0
 fi
 
-echo -e
+echo ""
 tput setaf 10
 echo "::. Machine List ::."
 echo "--------------------"
@@ -295,21 +296,21 @@ cat $WDIR/linuxmachine
 tput setaf 10
 echo "--------------------"
 tput sgr 0
-echo -e
+echo ""
 pause
 }
 
 function remove_machine(){
-echo -e
+echo ""
 tput setaf 10
 echo "Removing Machine"
-echo -e
+echo ""
 tput sgr 0
 
 read -p "Hostname or IP Adress : " TARGETMACHINE
 sed -i "/$TARGETMACHINE/d" $WDIR/linuxmachine
 
-echo -e
+echo ""
 tput setaf 10
 echo "::. Machine List ::."
 echo "--------------------"
@@ -318,12 +319,12 @@ cat $WDIR/linuxmachine
 tput setaf 10
 echo "--------------------"
 tput sgr 0
-echo -e
+echo ""
 pause
 }
 
 function machine_list(){
-echo -e
+echo ""
 tput setaf 10
 echo "::. Machine List ::."
 echo "--------------------"
@@ -332,19 +333,19 @@ cat $WDIR/linuxmachine
 tput setaf 10
 echo "--------------------"
 tput sgr 0
-echo -e
+echo ""
 pause
 }
 
 function add_sshkey(){
-echo -e
+echo ""
 read -p "Hostname or IP Adress : " TARGETMACHINE
 bash $MACHINESCRIPT/add-sshkey.sh $TARGETMACHINE
 pause
 }
 
 function remove_sshkey(){
-echo -e
+echo ""
 read -p "Hostname or IP Adress : " TARGETMACHINE
 KEYCONTENT=$(cat /root/.ssh/lastcontrol.pub | cut -d " " -f2 | cut -c 1-25)
 bash $MACHINESCRIPT/remove-sshkey.sh $TARGETMACHINE $KEYCONTENT
