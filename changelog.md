@@ -8,6 +8,10 @@ The version number is updated for major changes, and the update number for addit
 - V3 Update:1
 ---
 
+### V2 Update:21
+**Added**
+- Update Report has been added
+
 ### V2 Update:20
 **Added**
 - Take All Report operation has been added to TUI menu.
