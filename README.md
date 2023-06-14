@@ -19,7 +19,7 @@ https://www.cisecurity.org/
 
 ---
 
-![alt text](images/Lc-TUI_Report-2.png "LastControl Reports TUI Screen")
+![alt text](images/LC-TUI_Report-2.png "LastControl Reports TUI Screen")
 
 ---
 
