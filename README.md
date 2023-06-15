@@ -28,8 +28,3 @@ https://www.cisecurity.org/
 ---
 
 ![alt text](images/lastcontrol_report2.png "LastControl Network Report Web Screen")
-
----
-
-## Installation and Documentation
-[LastControl Handbook](https://github.com/eesmer/LastControl/blob/main/LastControl-HandBook.md)
