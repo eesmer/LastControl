@@ -69,5 +69,3 @@ fi
 cp LastControl/install/machine/etc/systemd/lastcontrol.service /etc/systemd/system/
 ln -s /etc/systemd/system/lastcontrol.service /etc/systemd/system/multi-user.target.wants/ (with systemctl enable)
 systemctl disable lastcontrol.service
-#systemctl start lastcontrol.service
-#systemctl restart lastcontrol.service
