@@ -7,7 +7,7 @@ TUISCRIPTS=lctuiscripts
 LCKEY=/root/.ssh/lastcontrol
 BOARDFILE=/usr/local/lastcontrol/doc/board.txt
 
-rm -r $RDIR/$2*
+rm -r $RDIR/$2* 2>/dev/null
 
 scp -r -P22 -i $LCKEY $SCRIPTS/$TUISCRIPTS root@$2:/usr/local/ &> /dev/null
 ssh -p22 -i $LCKEY root@$2 -- bash /usr/local/$TUISCRIPTS/$1.sh &> /dev/null
