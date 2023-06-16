@@ -8,6 +8,11 @@ The version number is updated for major changes, and the update number for addit
 - V3 Update:1
 ---
 
+### V2 Update:22
+**Added**
+- Message of the day file has been added to host machine. (/etc/motd)
+- Installer file has been updated for /etc/motd file
+
 ### V2 Update:21
 **Added**
 - Update Report has been added
