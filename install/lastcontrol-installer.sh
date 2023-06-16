@@ -53,6 +53,8 @@ systemctl reload apache2.service
 # -----------------------------------------------------------------------------
 # Configuration
 # -----------------------------------------------------------------------------
+# motd modified
+cp LastControl/install/machine/etc/motd /etc/
 # ImageMagick
 cp LastControl/install/machine/etc/ImageMagick-6/policy.xml /etc/ImageMagick-6/
 # logo for pdf file
