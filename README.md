@@ -15,6 +15,13 @@ https://www.cisecurity.org/
 
 ---
 
+### LastControl Install
+```bash
+# wget https://raw.githubusercontent.com/eesmer/LastControl/master/installer/lastcontrol-installer.sh
+# bash lastcontrol-installer.sh
+```
+---
+
 ![alt text](images/LC_Manager_MainMenu.png "LastControl Reports TUI Screen")
 
 ---
