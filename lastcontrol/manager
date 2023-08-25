@@ -33,7 +33,7 @@ tput setaf "$BANNERCOLOR"
 cat $WDIR/doc/banner.txt
 echo ""
 tput setaf 9
-echo "    V2 Update:21"
+echo "    V2 Update:23"
 echo "    $HOSTOS - IP: $HOSTIP"
 tput setaf 8
 tput sgr0
