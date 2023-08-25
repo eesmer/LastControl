@@ -1,14 +1,16 @@
 #!/bin/bash
 
 WDIR=/usr/local/lastcontrol
-RDIR=/usr/local/lastcontrolreports
+RDIR=$WDIR/reports
 CREATE=$WDIR/scripts/lctuiscripts/create-tui-report-linux.sh
 MACHINESCRIPT=/usr/local/lastcontrol/scripts/machinescripts
 PDFSTORE=$RDIR/pdfreports
 PDFREPORTS=/var/www/html/pdfreports
 BOARDFILE=/usr/local/lastcontrol/doc/board.txt
 
-HOSTIP=$(hostname -I)
+NWADAPTER=$(ip r | grep onlink | cut -d " " -f5)
+HOSTIP=$(ifconfig enp0s3 |grep "inet" |grep "netmask" | xargs | cut -d " " -f2)
+#HOSTIP=$(hostname -I)
 HOSTOS=$(hostnamectl | grep "Operating System" | cut -d ":" -f2 | xargs)
 HOSTHNAME=$(cat /etc/hostname)
 
@@ -253,11 +255,11 @@ function create_process_report(){
 	bash $CREATE processreport $TARGETMACHINE
 	tput setaf 7
 	echo ""
-	cat $RDIR/$TARGETMACHINE-processreport.txt
+	cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-processreport.txt
 	tput sgr 0
 	echo ""
 	
-	pandoc -s -o $PDFSTORE/$TARGETMACHINE-processreport.pdf $RDIR/$TARGETMACHINE-processreport.md
+	pandoc -s -o $PDFSTORE/$TARGETMACHINE-processreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-processreport.md
 	cp $PDFSTORE/$TARGETMACHINE-processreport.pdf $PDFREPORTS/
 	pause
 }
