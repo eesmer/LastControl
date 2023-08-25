@@ -30,8 +30,4 @@ https://www.cisecurity.org/
 
 ---
 
-![alt text](images/lastcontrol_allreports.png "LastControl Reports Web Screen")
-
----
-
 ![alt text](images/lastcontrol_report2.png "LastControl Network Report Web Screen")
