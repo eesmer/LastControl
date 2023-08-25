@@ -69,5 +69,5 @@ if [ -f "/etc/systemd/system/lastcontrol.service" ]; then
 rm /etc/systemd/system/lastcontrol.service
 fi
 cp LastControl/install/machine/etc/systemd/lastcontrol.service /etc/systemd/system/
-ln -s /etc/systemd/system/lastcontrol.service /etc/systemd/system/multi-user.target.wants/ (with systemctl enable)
+ln -s /etc/systemd/system/lastcontrol.service /etc/systemd/system/multi-user.target.wants/ #(with systemctl enable)
 systemctl disable lastcontrol.service
