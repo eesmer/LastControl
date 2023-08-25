@@ -16,7 +16,7 @@ apt-get -y install nmap
 apt-get -y install xsltproc
 apt-get -y install sqlite3
 apt-get -y install imagemagick
-apt-get -y install pandoc texlive-latex-base texlive-fonts-recommended
+apt-get -y install pandoc texlive-latex-base texlive-latex-extra texlive-fonts-recommended
 #apt-get -y install php
 #apt-get -y install php-sqlite3
 #apt-get -y install php-db / php-db-dataobject (for test)
