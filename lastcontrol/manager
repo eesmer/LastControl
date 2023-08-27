@@ -192,6 +192,7 @@ function create_ssh_report(){
 	
 	pandoc -s -o $PDFSTORE/$TARGETMACHINE-sshreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-sshreport.md
 	cp $PDFSTORE/$TARGETMACHINE-sshreport.pdf $PDFREPORTS/
+	cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-sshreport.txt $PDFREPORTS/
 	pause
 }
 
