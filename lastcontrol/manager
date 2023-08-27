@@ -6,7 +6,7 @@ CREATE=$WDIR/scripts/lctuiscripts/create-tui-report-linux.sh
 RPTLIN=$WDIR/scripts/linux/create-report-linux.sh
 MACHINESCRIPT=/usr/local/lastcontrol/scripts/machinescripts
 PDFSTORE=$RDIR/pdfreports
-PDFREPORTS=/var/www/html/pdfreports
+PDFREPORTS=/var/www/html/reports
 BOARDFILE=/usr/local/lastcontrol/doc/board.txt
 
 NWADAPTER=$(ip r | grep onlink | cut -d " " -f5)
