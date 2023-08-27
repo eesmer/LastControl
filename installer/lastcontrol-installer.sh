@@ -62,9 +62,9 @@ systemctl reload apache2.service
 # Configure reports design
 # -----------------------------------------------------------------------------
 # motd modified
-cp LastControl/install/machine/etc/motd /etc/
+cp LastControl/installer/etc/motd /etc/
 # ImageMagick
-cp LastControl/install/machine/etc/ImageMagick-6/policy.xml /etc/ImageMagick-6/
+cp LastControl/installer/etc/ImageMagick-6/policy.xml /etc/ImageMagick-6/
 # logo for pdf file
 cp -r LastControl/images /usr/local/lastcontrol/
 
