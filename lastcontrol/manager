@@ -162,19 +162,28 @@ function create_disk_report(){
 	tput setaf 9
 	echo "::.. Generating Local Disk Report... ..::"
 	echo ""
-	bash $RPTLIN diskreport $TARGETMACHINE
-	tput setaf 7
-	echo ""
-	cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-diskreport.txt
-	tput sgr 0
-	echo ""
-	
-	pandoc -s -o $PDFSTORE/$TARGETMACHINE-diskreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-diskreport.md
-	cp $PDFSTORE/$TARGETMACHINE-diskreport.pdf $PDFREPORTS/$TARGETMACHINE/
-	cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-diskreport.txt $PDFREPORTS/$TARGETMACHINE/
-	
-	echo "Info: Generated $TARGETMACHINE Disk Report" > $BOARDFILE
-	pause
+	nc -z -w 2 $TARGETMACHINE 22 2>/dev/null
+	if [ "$?" = "0" ]; then
+		bash $RPTLIN diskreport $TARGETMACHINE
+		tput setaf 7
+		echo ""
+		cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-diskreport.txt
+		tput sgr 0
+		echo ""
+		
+		pandoc -s -o $PDFSTORE/$TARGETMACHINE-diskreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-diskreport.md
+		cp $PDFSTORE/$TARGETMACHINE-diskreport.pdf $PDFREPORTS/$TARGETMACHINE/
+		cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-diskreport.txt $PDFREPORTS/$TARGETMACHINE/
+		
+		echo "Info: Generated $TARGETMACHINE Disk Report" > $BOARDFILE
+		pause
+	else
+		tput setaf 2
+		echo "Could not reach $TARGETMACHINE from Port 22"
+		tput sgr 0
+		echo -e
+		pause
+	fi
 }
 
 function create_nwconfig_report(){
