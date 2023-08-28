@@ -90,11 +90,14 @@ function create_system_report(){
 		echo ""
 		
 		pandoc -s -o $PDFSTORE/$TARGETMACHINE-systemreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-systemreport.md
-		cp $PDFSTORE/$TARGETMACHINE-systemreport.pdf $PDFREPORTS/
+		cp $PDFSTORE/$TARGETMACHINE-systemreport.pdf $PDFREPORTS/$TARGETMACHINE/
+		cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-systemreport.txt $PDFREPORTS/$TARGETMACHINE/
+		
+		echo "Info: Generated $TARGETMACHINE System Report" > $BOARDFILE
 		pause
 	else
 		tput setaf 2
-		echo "Could not reach $TARGETMACHINE"
+		echo "Could not reach $TARGETMACHINE from Port 22"
 		tput sgr 0
 		echo -e
 		pause
@@ -107,38 +110,50 @@ function create_service_report(){
 	tput setaf 9
 	echo "::.. Generating Service Report... ..::"
 	echo ""
-	bash $RPTLIN servicereport $TARGETMACHINE
-	tput setaf 7
-	echo ""
-	cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.txt
-	tput sgr 0
-	echo ""
-
-	# adding listening services output image
-	cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-listeningservice.txt | grep -v "tcp6" | convert label:@- /tmp/$TARGETMACHINE-listeningservices.png
-	echo "" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
-	echo "\newpage" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
-	echo "" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
-	echo "## Listening Service List ##" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
-	echo "" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
-	echo "![](/tmp/$TARGETMACHINE-listeningservices.png){ width=80% }" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
-	echo "" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
-	echo "---" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
-
-	# adding established services output image
-	cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-establishedservice.txt | convert label:@- /tmp/$TARGETMACHINE-establishedservices.png
-	echo "" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
-	###echo "\newpage" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
-	echo "" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
-	echo "## Established Service List ##" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
-	echo "" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
-	echo "![](/tmp/$TARGETMACHINE-establishedservices.png){ width=80% }" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
-	echo "" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
-	echo "---" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
-	
-	pandoc -s -o $PDFSTORE/$TARGETMACHINE-servicereport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
-	cp $PDFSTORE/$TARGETMACHINE-servicereport.pdf $PDFREPORTS/
-	pause
+	nc -z -w 2 $TARGETMACHINE 22 2>/dev/null
+	if [ "$?" = "0" ]; then
+		bash $RPTLIN servicereport $TARGETMACHINE
+		tput setaf 7
+		echo ""
+		cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.txt
+		tput sgr 0
+		echo ""
+		
+		# adding listening services output image
+		cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-listeningservice.txt | grep -v "tcp6" | convert label:@- /tmp/$TARGETMACHINE-listeningservices.png
+		echo "" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
+		echo "\newpage" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
+		echo "" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
+		echo "## Listening Service List ##" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
+		echo "" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
+		echo "![](/tmp/$TARGETMACHINE-listeningservices.png){ width=80% }" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
+		echo "" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
+		echo "---" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
+		
+		# adding established services output image
+		cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-establishedservice.txt | convert label:@- /tmp/$TARGETMACHINE-establishedservices.png
+		echo "" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
+		###echo "\newpage" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
+		echo "" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
+		echo "## Established Service List ##" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
+		echo "" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
+		echo "![](/tmp/$TARGETMACHINE-establishedservices.png){ width=80% }" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
+		echo "" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
+		echo "---" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
+		
+		pandoc -s -o $PDFSTORE/$TARGETMACHINE-servicereport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
+		cp $PDFSTORE/$TARGETMACHINE-servicereport.pdf $PDFREPORTS/$TARGETMACHINE/
+		cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.txt $PDFREPORTS/$TARGETMACHINE/
+		
+		echo "Info: Generated $TARGETMACHINE Service Report" > $BOARDFILE
+		pause
+	else
+		tput setaf 2
+                echo "Could not reach $TARGETMACHINE from Port 22"
+                tput sgr 0
+                echo -e
+                pause
+        fi
 }
 
 function create_disk_report(){
@@ -155,7 +170,10 @@ function create_disk_report(){
 	echo ""
 	
 	pandoc -s -o $PDFSTORE/$TARGETMACHINE-diskreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-diskreport.md
-	cp $PDFSTORE/$TARGETMACHINE-diskreport.pdf $PDFREPORTS/
+	cp $PDFSTORE/$TARGETMACHINE-diskreport.pdf $PDFREPORTS/$TARGETMACHINE/
+	cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-diskreport.txt $PDFREPORTS/$TARGETMACHINE/
+	
+	echo "Info: Generated $TARGETMACHINE Disk Report" > $BOARDFILE
 	pause
 }
 
@@ -173,7 +191,10 @@ function create_nwconfig_report(){
 	echo ""
 	
 	pandoc -s -o $PDFSTORE/$TARGETMACHINE-nwconfigreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-nwconfigreport.md
-	cp $PDFSTORE/$TARGETMACHINE-nwconfigreport.pdf $PDFREPORTS/
+	cp $PDFSTORE/$TARGETMACHINE-nwconfigreport.pdf $PDFREPORTS/$TARGETMACHINE/
+	cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-nwconfigreport.txt $PDFREPORTS/$TARGETMACHINE/
+	
+	echo "Info: Generated $TARGETMACHINE Network Config Report" > $BOARDFILE
 	pause
 }
 
@@ -194,6 +215,8 @@ function create_ssh_report(){
 	mkdir -p $PDFREPORTS/$TARGETMACHINE
 	cp $PDFSTORE/$TARGETMACHINE-sshreport.pdf $PDFREPORTS/$TARGETMACHINE/
 	cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-sshreport.txt $PDFREPORTS/$TARGETMACHINE/
+	
+	echo "Info: Generated $TARGETMACHINE SSH Report" > $BOARDFILE
 	pause
 }
 
@@ -211,7 +234,10 @@ function create_localuser_report(){
 	echo ""
 	
 	pandoc -s -o $PDFSTORE/$TARGETMACHINE-localuserreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-localuserreport.md
-	cp $PDFSTORE/$TARGETMACHINE-localuserreport.pdf $PDFREPORTS/
+	cp $PDFSTORE/$TARGETMACHINE-localuserreport.pdf $PDFREPORTS/$TARGETMACHINE/
+	cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-localuserreport.txt $PDFREPORTS/$TARGETMACHINE/
+
+	echo "Info: Generated $TARGETMACHINE Local User Report" > $BOARDFILE
 	pause
 }
 
@@ -229,7 +255,10 @@ function create_inventory_report(){
         echo ""
 
         pandoc -s -o $PDFSTORE/$TARGETMACHINE-inventoryreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-inventoryreport.md
-	cp $PDFSTORE/$TARGETMACHINE-inventoryreport.pdf $PDFREPORTS/
+	cp $PDFSTORE/$TARGETMACHINE-inventoryreport.pdf $PDFREPORTS/$TARGETMACHINE/
+	cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-inventoryreport.txt $PDFREPORTS/$TARGETMACHINE/
+	
+	echo "Info: Generated $TARGETMACHINE Inventory Report" > $BOARDFILE
         pause
 }
 
@@ -246,6 +275,7 @@ function create_update_report(){
 	tput sgr 0
 	echo ""
 	
+	echo "Info: Generated $TARGETMACHINE Update Report" > $BOARDFILE
 	pause
 }
 
@@ -263,25 +293,27 @@ function create_process_report(){
 	echo ""
 	
 	pandoc -s -o $PDFSTORE/$TARGETMACHINE-processreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-processreport.md
-	cp $PDFSTORE/$TARGETMACHINE-processreport.pdf $PDFREPORTS/
+	cp $PDFSTORE/$TARGETMACHINE-processreport.pdf $PDFREPORTS/$TARGETMACHINE/
+	cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-processreport.txt $PDFREPORTS/$TARGETMACHINE/
+	
+	echo "Info: Generated $TARGETMACHINE Process Report" > $BOARDFILE
 	pause
 }
 
-
-function take_all_report(){
-tput setaf 10
-echo "Generating all report for all machine.."
-echo ""
-echo ""
-tput sgr 0
-
-systemctl restart lastcontrol.service
-watch -en 1 systemctl status lastcontrol.service
-systemctl disable lastcontrol.service
-
-echo "Info: All Report generated." > $BOARDFILE
-pause
-}
+#function take_all_report(){
+#tput setaf 10
+#echo "Generating all report for all machine.."
+#echo ""
+#echo ""
+#tput sgr 0
+#
+#systemctl restart lastcontrol.service
+#watch -en 1 systemctl status lastcontrol.service
+#systemctl disable lastcontrol.service
+#
+#echo "Info: All Report generated." > $BOARDFILE
+#pause
+#}
 
 function add_machine(){
 tput setaf 10
@@ -295,6 +327,7 @@ ack "$TARGETMACHINE" $WDIR/linuxmachine >> /dev/null && LISTED=TRUE
 
 if [ "$LISTED" = FALSE ]; then
 	echo "$TARGETMACHINE" >> $WDIR/linuxmachine
+	echo "Info: $TARGETMACHINE added to Machine List" > $BOARDFILE
 else
 	tput setaf 9
 	echo "$TARGETMACHINE already exist"
@@ -334,6 +367,7 @@ tput setaf 10
 echo "--------------------"
 tput sgr 0
 echo ""
+echo "Info: Removed $TARGETMACHINE from Machine List" > $BOARDFILE
 pause
 }
 
@@ -355,6 +389,7 @@ function add_sshkey(){
 echo ""
 read -p "Enter the Machine Hostname : " TARGETMACHINE
 bash $MACHINESCRIPT/add-sshkey.sh $TARGETMACHINE
+echo "Info: SSH-Key added to $TARGETMACHINE" > $BOARDFILE
 pause
 }
 
@@ -363,6 +398,7 @@ echo ""
 read -p "Enter the Machine Hostname : " TARGETMACHINE
 KEYCONTENT=$(cat /root/.ssh/lastcontrol.pub | cut -d " " -f2 | cut -c 1-25)
 bash $MACHINESCRIPT/remove-sshkey.sh $TARGETMACHINE $KEYCONTENT
+echo "Info: SSH-Key removed to $TARGETMACHINE" > $BOARDFILE
 pause
 }
 
