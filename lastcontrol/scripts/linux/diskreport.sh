@@ -150,4 +150,18 @@ LVM Usage:           | $LVM_USAGE
 ====================================================================================================
 EOF
 
+cat > $RDIR/$HOST_NAME-diskreport.json << EOF
+{
+"DiskReport": {
+"Quota Install": "$QUOTA_INSTALL",
+"User Quota": "$USR_QUOTA",
+"Group Quota": "$GRP_QUOTA",
+"Mount Info": "$MNT_QUOTA",
+"Disk Encrypt": "$CRYPT_INSTALL",
+"Encrypt Usage": "$CRYPT_USAGE",
+"LVM Usage": "$LVM_USAGE"
+}
+}
+EOF
+
 rm -f /tmp/disklist.txt
