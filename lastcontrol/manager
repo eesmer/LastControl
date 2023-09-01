@@ -267,6 +267,7 @@ function create_inventory_report(){
         pandoc -s -o $PDFSTORE/$TARGETMACHINE-inventoryreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-inventoryreport.md
 	cp $PDFSTORE/$TARGETMACHINE-inventoryreport.pdf $PDFREPORTS/$TARGETMACHINE/
 	cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-inventoryreport.txt $PDFREPORTS/$TARGETMACHINE/
+	cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-inventoryreport.json $PDFREPORTS/$TARGETMACHINE/
 	
 	echo "Info: Generated $TARGETMACHINE Inventory Report" > $BOARDFILE
         pause

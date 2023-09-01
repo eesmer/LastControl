@@ -130,3 +130,23 @@ $DATE
 
 ===================================================================================================
 EOF
+
+cat > $RDIR/$HOST_NAME-inventoryreport.json << EOF
+{
+    "InventoryReport": {
+        "Hostname": "$HOST_NAME",
+        "IP Address": "$INTERNAL_IP - $EXTERNAL_IP",
+        "Internet Conn.": "$INTERNET",
+        "CPU": "$CPU_INFO",
+        "Total Ram": "$RAM_TOTAL",
+        "VGA Controller": "$VGA_CONTROLLER",
+        "Wireless Adaptor": "$WIRELESS_ADAPTER",
+        "HDD": "$DISK_LIST",
+        "Virtualization": "$VIRT_SET",
+        "Operation System": "$OS_KERNEL",
+        "OS Version": "$OS_VER",
+        "Last Boot": "$LAST_BOOT",
+        "Uptime": "$UPTIME - $UPTIME_MIN"
+    }
+}
+EOF
