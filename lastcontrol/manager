@@ -203,6 +203,7 @@ function create_nwconfig_report(){
 	pandoc -s -o $PDFSTORE/$TARGETMACHINE-nwconfigreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-nwconfigreport.md
 	cp $PDFSTORE/$TARGETMACHINE-nwconfigreport.pdf $PDFREPORTS/$TARGETMACHINE/
 	cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-nwconfigreport.txt $PDFREPORTS/$TARGETMACHINE/
+	cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-nwconfigreport.json $PDFREPORTS/$TARGETMACHINE/
 	
 	echo "Info: Generated $TARGETMACHINE Network Config Report" > $BOARDFILE
 	pause
