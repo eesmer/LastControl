@@ -307,6 +307,7 @@ function create_process_report(){
 	pandoc -s -o $PDFSTORE/$TARGETMACHINE-processreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-processreport.md
 	cp $PDFSTORE/$TARGETMACHINE-processreport.pdf $PDFREPORTS/$TARGETMACHINE/
 	cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-processreport.txt $PDFREPORTS/$TARGETMACHINE/
+	cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-processreport.json $PDFREPORTS/$TARGETMACHINE/
 	
 	echo "Info: Generated $TARGETMACHINE Process Report" > $BOARDFILE
 	pause

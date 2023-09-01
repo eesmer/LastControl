@@ -56,8 +56,7 @@ Zombie Process :
 ---
 EOF
 
-cat >> $RDIR/$HOST_NAME-processreport.txt << EOF
-
+cat > $RDIR/$HOST_NAME-processreport.txt << EOF
 |---------------------------------------------------------------------------------------------------
 |:::. Process Report .::: |
 |---------------------------------------------------------------------------------------------------
@@ -65,4 +64,14 @@ cat >> $RDIR/$HOST_NAME-processreport.txt << EOF
 |System Load Average: |$LOAD_AVG
 |Zombie Process:      |$ZO_PROCESS
 ----------------------------------------------------------------------------------------------------
+EOF
+
+cat > $RDIR/$HOST_NAME-processreport.json << EOF
+{
+    "ProcessReport": {
+        "CPU Count": "$NOC",
+        "System Load Average": "$LOAD_AVG",
+        "Zombie Process": "$ZO_PROCESS"
+    }
+}
 EOF
