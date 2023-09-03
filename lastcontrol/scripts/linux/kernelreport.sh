@@ -71,7 +71,7 @@ FREEVXFS Module :
  ~ $FREEVXFS
 
 JFFS2 Module :
- ~ $JFFS2 Module
+ ~ $JFFS2
 
 HFS Module :
  ~ $HFS
