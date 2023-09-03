@@ -90,6 +90,7 @@ function create_system_report(){
 		echo ""
 		
 		pandoc -s -o $PDFSTORE/$TARGETMACHINE-systemreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-systemreport.md
+		mkdir -p $PDFREPORTS/$TARGETMACHINE
 		cp $PDFSTORE/$TARGETMACHINE-systemreport.pdf $PDFREPORTS/$TARGETMACHINE/
 		cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-systemreport.txt $PDFREPORTS/$TARGETMACHINE/
 		
@@ -142,6 +143,7 @@ function create_service_report(){
 		echo "---" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
 		
 		pandoc -s -o $PDFSTORE/$TARGETMACHINE-servicereport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
+		mkdir -p $PDFREPORTS/$TARGETMACHINE
 		cp $PDFSTORE/$TARGETMACHINE-servicereport.pdf $PDFREPORTS/$TARGETMACHINE/
 		cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.txt $PDFREPORTS/$TARGETMACHINE/
 		
@@ -172,6 +174,7 @@ function create_disk_report(){
 		echo ""
 		
 		pandoc -s -o $PDFSTORE/$TARGETMACHINE-diskreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-diskreport.md
+		mkdir -p $PDFREPORTS/$TARGETMACHINE
 		cp $PDFSTORE/$TARGETMACHINE-diskreport.pdf $PDFREPORTS/$TARGETMACHINE/
 		cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-diskreport.txt $PDFREPORTS/$TARGETMACHINE/
 		cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-diskreport.json $PDFREPORTS/$TARGETMACHINE/
@@ -201,6 +204,7 @@ function create_nwconfig_report(){
 	echo ""
 	
 	pandoc -s -o $PDFSTORE/$TARGETMACHINE-nwconfigreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-nwconfigreport.md
+	mkdir -p $PDFREPORTS/$TARGETMACHINE
 	cp $PDFSTORE/$TARGETMACHINE-nwconfigreport.pdf $PDFREPORTS/$TARGETMACHINE/
 	cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-nwconfigreport.txt $PDFREPORTS/$TARGETMACHINE/
 	cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-nwconfigreport.json $PDFREPORTS/$TARGETMACHINE/
@@ -245,6 +249,7 @@ function create_localuser_report(){
 	echo ""
 	
 	pandoc -s -o $PDFSTORE/$TARGETMACHINE-localuserreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-localuserreport.md
+	mkdir -p $PDFREPORTS/$TARGETMACHINE
 	cp $PDFSTORE/$TARGETMACHINE-localuserreport.pdf $PDFREPORTS/$TARGETMACHINE/
 	cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-localuserreport.txt $PDFREPORTS/$TARGETMACHINE/
 
@@ -266,6 +271,7 @@ function create_inventory_report(){
         echo ""
 
         pandoc -s -o $PDFSTORE/$TARGETMACHINE-inventoryreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-inventoryreport.md
+	mkdir -p $PDFREPORTS/$TARGETMACHINE
 	cp $PDFSTORE/$TARGETMACHINE-inventoryreport.pdf $PDFREPORTS/$TARGETMACHINE/
 	cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-inventoryreport.txt $PDFREPORTS/$TARGETMACHINE/
 	cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-inventoryreport.json $PDFREPORTS/$TARGETMACHINE/
@@ -305,6 +311,7 @@ function create_process_report(){
 	echo ""
 	
 	pandoc -s -o $PDFSTORE/$TARGETMACHINE-processreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-processreport.md
+	mkdir -p $PDFREPORTS/$TARGETMACHINE
 	cp $PDFSTORE/$TARGETMACHINE-processreport.pdf $PDFREPORTS/$TARGETMACHINE/
 	cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-processreport.txt $PDFREPORTS/$TARGETMACHINE/
 	cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-processreport.json $PDFREPORTS/$TARGETMACHINE/
