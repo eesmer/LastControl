@@ -93,7 +93,8 @@ function create_system_report(){
 		mkdir -p $PDFREPORTS/$TARGETMACHINE
 		cp $PDFSTORE/$TARGETMACHINE-systemreport.pdf $PDFREPORTS/$TARGETMACHINE/
 		cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-systemreport.txt $PDFREPORTS/$TARGETMACHINE/
-		
+                cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-systemreport.json $PDFREPORTS/$TARGETMACHINE/
+
 		echo "Info: Generated $TARGETMACHINE System Report" > $BOARDFILE
 		pause
 	else
@@ -146,6 +147,7 @@ function create_service_report(){
 		mkdir -p $PDFREPORTS/$TARGETMACHINE
 		cp $PDFSTORE/$TARGETMACHINE-servicereport.pdf $PDFREPORTS/$TARGETMACHINE/
 		cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.txt $PDFREPORTS/$TARGETMACHINE/
+                cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.json $PDFREPORTS/$TARGETMACHINE/
 		
 		echo "Info: Generated $TARGETMACHINE Service Report" > $BOARDFILE
 		pause
