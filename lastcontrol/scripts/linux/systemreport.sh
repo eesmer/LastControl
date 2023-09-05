@@ -105,54 +105,6 @@ elif [ "$REP" = YUM ]; then
         fi
 fi
 
-# BROKEN PACKAGE CONTROL
-BROKEN_COUNT=0
-if [ "$REP" = APT ];then
-        dpkg -l | grep -v "^ii" &>/dev/null > $RDIR/broken_package.txt
-        sed -i -e '1d;2d;3d;4d;5d' $RDIR/broken_package.txt
-        BROKEN_COUNT=$(wc -l $RDIR/broken_package.txt |cut -d " " -f1)
-
-        ### ALLOWUNAUTH=$(grep -v "^#" /etc/apt/ -r | grep -c "AllowUnauthenticated")
-        ### if [ $ALLOWUNAUTH = 0 ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
-        ### DEBSIG=$(grep -v "^#" /etc/dpkg/dpkg.cfg |grep -c no-debsig)
-        ### if [ $DEBSIG = 1 ]; then SYS_SCORE=$(($SYS_SCORE + 10)); fi
-fi
-
-if [ "$REP" = YUM ];then
-        rpm -Va >> /dev/null > $RDIR/broken_package.txt
-        BROKEN_COUNT=$(wc -l $RDIR/broken_package.txt |cut -d " " -f1)
-fi
-
-# UNSECURE PACKAGE CONTROL
-if [ "$REP" = APT ]; then
-        FTP_INSTALL=FALSE
-        dpkg -l |grep ftp |grep -v "sftp" &>/dev/null && FTP_INSTALL=TRUE
-        TELNET_INSTALL=FALSE
-        dpkg -l |grep telnet &>/dev/null && TELNET_INSTALL=TRUE
-        RSH_INSTALL=FALSE
-        dpkg -l |grep rsh &>/dev/null && RSH_INSTALL=TRUE
-        NIS_INSTALL=FALSE
-        dpkg -l |grep nis &>/dev/null && NIS_INSTALL=TRUE
-        YPTOOLS_INSTALL=FALSE
-        dpkg -l |grep yp-tools &>/dev/null && YPTOOLS_INSTALL=TRUE
-        XINET_INSTALL=FALSE
-        dpkg -l |grep xinet &>/dev/null && XINET_INSTALL=TRUE
-
-elif [ "$REP" = YUM ]; then
-        FTP_INSTALL=FALSE
-        rpm -qa |grep ftp |grep -v "sftp" &>/dev/null && FTP_INSTALL=TRUE
-        TELNET_INSTALL=FALSE
-        rpm -qa |grep telnet &>/dev/null && TELNET_INSTALL=TRUE
-        RSH_INSTALL=FALSE
-        rpm -qa |grep rsh &>/dev/null && RSH_INSTALL=TRUE
-        NIS_INSTALL=FALSE
-        rpm -qa |grep nis &>/dev/null && NIS_INSTALL=TRUE
-        YPTOOLS_INSTALL=FALSE
-        rpm -qa |grep yp-tools &>/dev/null && YPTOOLS_INSTALL=TRUE
-        XINET_INSTALL=FALSE
-        rpm -qa |grep xinet &>/dev/null && XINET_INSTALL=TRUE
-fi
-
 cat > $RDIR/$HOST_NAME-systemreport.md << EOF
 
 ---
@@ -220,28 +172,6 @@ Update Count :
  ~ $UPDATE_COUNT
 
 ---
-
-### Unsecure Package Check ###
-
-FTP INSTALL:
- ~ $FTP_INSTALL
-
-TELNET INSTALL:
- ~ $TELNET_INSTALL
-
-RSH INSTALL:
- ~ $RSH_INSTALL
-
-NIS INSTALL:
- ~ $NIS_INSTALL
-
-YPTOOLS INSTALL:
- ~ $YPTOOLS_INSTALL
-
-XINET INSTALL:
- ~ $XINET_INSTALL
-
----
 EOF
 
 cat > $RDIR/$HOST_NAME-systemreport.txt << EOF
@@ -265,26 +195,27 @@ cat > $RDIR/$HOST_NAME-systemreport.txt << EOF
 |SYSLOG USAGE       | Install: $SYSLOGINSTALL --- Service: $SYSLOGSERVICE --- Socket: $SYSLOGSOCKET --- LogSend: $SYSLOGSEND
 |HTTP PROXY USAGE   | $HTTP_PROXY_USAGE
 |----------------------------------------------------------------------------------------------------
-|FTP INSTALL:       |$FTP_INSTALL
-|TELNET INSTALL:    |$TELNET_INSTALL
-|RSH INSTALL:       |$RSH_INSTALL
-|NIS INSTALL:       |$NIS_INSTALL
-|YPTOOLS INSTALL:   |$YPTOOLS_INSTALL
-|XINET INSTALL:     |$XINET_INSTALL
+|UPDATE CHECK       | $CHECK_UPDATE
+|UPDATE COUNT       | $UPDATE_COUNT
 |----------------------------------------------------------------------------------------------------
-
 EOF
 
-if [ ! "$BROKEN_COUNT" = 0 ];then
-        sed -i '$d' $RDIR/$HOST_NAME-systemreport.txt
-	echo "" >> $RDIR/$HOST_NAME-systemreport.md
-        echo "Broken Package Count :" >> $RDIR/$HOST_NAME-systemreport.md
-	echo " ~ $BROKEN_COUNT" >> $RDIR/$HOST_NAME-systemreport.md
-	echo "" >> $RDIR/$HOST_NAME-systemreport.md
-	echo "---" >> $RDIR/$HOST_NAME-systemreport.md
-
-	echo "| BROKEN PACKAGES" >> $RDIR/$HOST_NAME-systemreport.txt
-	echo "|----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-systemreport.txt
-        cat $RDIR/broken_package.txt >> $RDIR/$HOST_NAME-systemreport.txt
-        echo "----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-systemreport.txt
-fi
+cat > $RDIR/$HOST_NAME-systemreport.json << EOF
+{
+    "SystemReport": {
+        "DISTRO/OS": "$DISTRO - $OS_VER",
+        "Kernel Version": "$KERNEL_VER",
+        "Last Boot": "$LAST_BOOT",
+        "Uptime": "$UPTIME - $UPTIME_MIN",
+        "Ram Usage": "Total Ram:$RAM_TOTAL - $RAM_USAGE_PERCENTAGE",
+        "Swap Usage": "Total Swap:$SWAPTOTAL - SWP_USAGE_PERCENTAGE",
+        "Out Of Memory": "OOM_LOGS",
+        "Service Manager": "$SERVICE_MANAGER",
+        "Time Sync": "$TIME_SYNC",
+        "Syslog Usage": "Install:$SYSLOGINSTALL - Service:$SYSLOGSERVICE - Socket:$SYSLOGSOCKET - LogSend:$SYSLOGSEND",
+        "HTTP Proxy Usage": "$HTTP_PROXY_USAGE",
+        "Update Check": "$CHECK_UPDATE",
+        "Update Count": "$UPDATE_COUNT"
+    }
+}
+EOF
