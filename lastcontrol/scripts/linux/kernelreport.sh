@@ -110,7 +110,7 @@ EOF
 cat > $RDIR/$HOST_NAME-kernelreport.json << EOF
 {
     "KernelReport": {
-    	"Kernel and OS Version:" "$KERNELVER - $OSVER"
+    	"Kernel and OS Version": "$KERNELVER - $OSVER",
         "CRAMFS Module": "$CRAMFS",
         "FREEVXFS Module": "$FREEVXFS",
         "JFFS2 Module": "$JFFS2",
