@@ -38,24 +38,24 @@ echo "    V2 Update:23"
 echo "    $HOSTOS - IP: $HOSTIP"
 tput setaf 8
 tput sgr0
-echo "   |------------------------------------------------------------------|"
-echo "   | # REPORT MENU #                                                  |"
-echo "   |------------------------------------------------------------------|"
-echo "   | 1. System  Report  | 6. Local User Report | 11. Process Report   |"
-echo "   | 2. Service Report  | 7. Inventory Report  |                      |"
-echo "   | 3. Disk    Report  | 8. Update Report     |                      |"
-echo "   | 4. Network Report  | 9. Kernel Report     |                      |"
-echo "   | 5. SSH     Report  |                      |                      |"
-echo "   |------------------------------------------------------------------|"
-echo "   | 20. Take All Report                                              |"
-echo "   |------------------------------------------------------------------|"
-echo "   | # MACHINE MENU #                                                 |"
-echo "   |------------------------------------------------------------------|"
-echo "   | 30. Add    Machine | 32. Machine List                            |"
-echo "   | 31. Remove Machine |                                             |"
-echo "   |------------------------------------------------------------------|"
-echo "   | 40. Add SSH-Key    | 41. Remove SSH-Key                          |"
-echo "   |------------------------------------------------------------------|"
+echo "   |-------------------------------------------------------------------|"
+echo "   | # REPORT MENU #                                                   |"
+echo "   |-------------------------------------------------------------------|"
+echo "   | 1. System  Report  | 6.  Local User Report | 11. Process Report   |"
+echo "   | 2. Service Report  | 7.  Inventory Report  |                      |"
+echo "   | 3. Disk    Report  | 8.  Update Report     |                      |"
+echo "   | 4. Network Report  | 9.  Kernel Report     |                      |"
+echo "   | 5. SSH     Report  | 10. Unsecure Packages |                      |"
+echo "   |-------------------------------------------------------------------|"
+echo "   | 20. Take All Report                                               |"
+echo "   |-------------------------------------------------------------------|"
+echo "   | # MACHINE MENU #                                                  |"
+echo "   |-------------------------------------------------------------------|"
+echo "   | 30. Add    Machine | 32. Machine List                             |"
+echo "   | 31. Remove Machine |                                              |"
+echo "   |-------------------------------------------------------------------|"
+echo "   | 40. Add SSH-Key    | 41. Remove SSH-Key                           |"
+echo "   |-------------------------------------------------------------------|"
 tput setaf 9
 echo "                             -----------                               "
 echo "                             ** BOARD **                               "
@@ -320,6 +320,29 @@ function create_kernel_report(){
 	pause
 }
 
+function create_unsecurepack_report(){
+	read -p "Enter the Machine Hostname : " TARGETMACHINE
+	echo ""
+	tput setaf 9
+	echo "::.. Generating Unsecure Package Report... ..::"
+	echo ""
+	bash $RPTLIN unsecurepackreport $TARGETMACHINE
+	tput setaf 7
+	echo ""
+	cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-unsecurepackreport.txt
+	tput sgr 0
+	echo ""
+
+	pandoc -s -o $PDFSTORE/$TARGETMACHINE-unsecurepackreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-unsecurepackreport.md
+	mkdir -p $PDFREPORTS/$TARGETMACHINE
+	cp $PDFSTORE/$TARGETMACHINE-unsecurepackreport.pdf $PDFREPORTS/$TARGETMACHINE/
+	cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-unsecurepackreport.txt $PDFREPORTS/$TARGETMACHINE/
+	cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-unsecurepackreport.json $PDFREPORTS/$TARGETMACHINE/
+
+	echo "Info: Generated $TARGETMACHINE Unsecure Package Report" > $BOARDFILE
+	pause
+}
+
 function create_process_report(){
 	read -p "Enter the Machine Hostname : " TARGETMACHINE
 	echo ""
@@ -460,6 +483,7 @@ case $c in
 7) create_inventory_report ;;
 8) create_update_report ;;
 9) create_kernel_report ;;
+10) create_unsecurepack_report ;;
 11) create_process_report ;;
 20) take_all_report ;;
 30) add_machine ;;

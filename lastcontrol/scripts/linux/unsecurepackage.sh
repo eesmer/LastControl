@@ -46,8 +46,7 @@ elif [ "$REP" = YUM ]; then
         rpm -qa |grep xinet &>/dev/null && XINET_INSTALL=TRUE
 fi
 
-
-cat > $RDIR/$HOST_NAME-unsecurepackage.md << EOF
+cat > $RDIR/$HOST_NAME-unsecurepackreport.md << EOF
 
 ---
 title: Unsecure Package Report
@@ -85,7 +84,7 @@ XINET INSTALL:
 ---
 EOF
 
-cat > $RDIR/$HOST_NAME-unsecurepackage.txt << EOF
+cat > $RDIR/$HOST_NAME-unsecurepackreport.txt << EOF
 
 |---------------------------------------------------------------------------------------------------
 | ::. Unsecure Package Report .::
@@ -99,3 +98,15 @@ cat > $RDIR/$HOST_NAME-unsecurepackage.txt << EOF
 |----------------------------------------------------------------------------------------------------
 EOF
 
+cat > $RDIR/$HOST_NAME-unsecurepackreport.json << EOF
+{
+    "UnsecurePackageReport": {
+        "FTP Install": "$FTP_INSTALL",
+        "Telnet Install": "$TELNET_INSTALL",
+        "RSH Install": "$RSH_INSTALL",
+        "NIS Install": "$NIS_INSTALL",
+        "YPTOOLS Install": "$YPTOOLS_INSTALL",
+        "XINET Install": "$XINET_INSTALL"
+    }
+}
+EOF
