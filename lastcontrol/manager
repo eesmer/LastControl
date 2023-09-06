@@ -42,7 +42,7 @@ echo "   |-------------------------------------------------------------------|"
 echo "   | # REPORT MENU #                                                   |"
 echo "   |-------------------------------------------------------------------|"
 echo "   | 1. System  Report  | 6.  Local User Report | 11. Process Report   |"
-echo "   | 2. Service Report  | 7.  Inventory Report  |                      |"
+echo "   | 2. Service Report  | 7.  Inventory Report  | 12. Directory Report |"
 echo "   | 3. Disk    Report  | 8.  Update Report     |                      |"
 echo "   | 4. Network Report  | 9.  Kernel Report     |                      |"
 echo "   | 5. SSH     Report  | 10. Unsecure Packages |                      |"
@@ -368,6 +368,29 @@ function create_process_report(){
 	pause
 }
 
+function create_directory_report(){
+	read -p "Enter the Machine Hostname : " TARGETMACHINE
+	echo ""
+	tput setaf 9
+	echo "::.. Generating Directory Report... ..::"
+	echo ""
+	bash $RPTLIN directoryreport $TARGETMACHINE
+	tput setaf 7
+	echo ""
+	cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-directoryreport.txt
+	tput sgr 0
+	echo ""
+
+	pandoc -s -o $PDFSTORE/$TARGETMACHINE-directoryreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-directoryreport.md
+	mkdir -p $PDFREPORTS/$TARGETMACHINE
+	cp $PDFSTORE/$TARGETMACHINE-directoryreport.pdf $PDFREPORTS/$TARGETMACHINE/
+	cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-directoryreport.txt $PDFREPORTS/$TARGETMACHINE/
+	cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-directoryreport.json $PDFREPORTS/$TARGETMACHINE/
+
+	echo "Info: Generated $TARGETMACHINE Directory Report" > $BOARDFILE
+	pause
+}
+
 #function take_all_report(){
 #tput setaf 10
 #echo "Generating all report for all machine.."
@@ -487,6 +510,7 @@ case $c in
 9) create_kernel_report ;;
 10) create_unsecurepack_report ;;
 11) create_process_report ;;
+12) create_directory_report ;;
 20) take_all_report ;;
 30) add_machine ;;
 31) remove_machine ;;
