@@ -98,7 +98,7 @@ EOF
 
 cat > $RDIR/$HOST_NAME-directoryreport.json << EOF
 {
-    "UnsecurePackageReport": {
+    "DirectoryReport": {
         "/tmp Mount": "$TMPMOUNT",
         "/tmp Size": "$TMPSIZE",
         "/tmp NoExec": "$TMPNOEXEC",
