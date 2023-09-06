@@ -259,6 +259,8 @@ cat > $RDIR/$HOST_NAME-systemreport.json << EOF
         "Uptime": "$UPTIME - $UPTIME_MIN",
         "UTC Time": "$UTC_TIME",
         "Time Sync": "$TIME_SYNC",
+        "Grub Exist": "$GRUB_EXIST",
+        "Grub Security": "$GRUB_SEC",
         "Ram Usage": "Total Ram:$RAM_TOTAL - %$RAM_USAGE_PERCENTAGE",
         "Swap Usage": "Total Swap:$SWAP_TOTAL - %$SWP_USAGE_PERCENTAGE",
         "Out Of Memory": "$OOM_LOGS",
