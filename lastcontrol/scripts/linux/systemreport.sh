@@ -32,6 +32,40 @@ UPTIME=$(uptime) && UPTIME_MIN=$(awk '{ print "up " $1 /60 " minutes"}' /proc/up
 UTC_TIME=$(date --utc "+%Y-%m-%d %T")
 TIME_SYNC=$(timedatectl |grep "synchronized:" |cut -d ":" -f2 |cut -d " " -f2)
 
+# Grub Control
+if [ "$REP" = APT ]; then
+        GRUB_EXIST=Fail
+        dpkg -l |grep -w "grub" &>/dev/null && GRUB_EXIST=GRUB
+        dpkg -l |grep -w "grub2" &>/dev/null && GRUB_EXIST=GRUB2
+
+        if [ "$GRUB_EXIST" = "GRUB" ]; then
+                GRUB_PACKAGE=$(dpkg -l |grep -w "grub" |grep "common")
+        elif [ "$GRUB_EXIST" = "GRUB2" ]; then
+                GRUB_PACKAGE=$(dpkg -l |grep -w "grub2" |grep "common")
+        elif [ "$GRUB_EXIST" = "Fail" ]; then
+                GRUB_PACKAGE="Fail"
+        fi
+        # GRUB Security
+        GRUB_SEC=Fail
+        grep "set superusers=" /etc/grub.d/* &>/dev/null && GRUB_SEC=Pass
+
+elif [ "$REP" = YUM ]; then
+        GRUB_EXIST=Fail
+        rpm -qa |grep -w "grub" &>/dev/null && GRUB_EXIST=GRUB
+        rpm -qa |grep -w "grub2" &>/dev/null && GRUB_EXIST=GRUB2
+
+        if [ "$GRUB_EXIST" = "GRUB" ]; then
+                GRUB_PACKAGE=$(rpm -qa |grep -w "grub" |grep "common")
+        elif [ "$GRUB_EXIST" = "GRUB2" ]; then
+                GRUB_PACKAGE=$(rpm -qa |grep -w "grub2" |grep "common")
+        elif [ "$GRUB_EXIST" = "Fail" ]; then
+                GRUB_PACKAGE="Fail"
+        fi
+        # GRUB Security
+        GRUB_SEC=Fail
+        grep "set superusers=" /etc/grub.d/* &>/dev/null && GRUB_SEC=Pass
+fi
+
 # Disk Usage Info
 DISK_USAGE=$(df -H | grep -vE 'Filesystem|tmpfs|cdrom|udev' | awk '{ print $5" "$1"("$2"  "$3")" " --- "}')
 
@@ -142,6 +176,13 @@ Time Sync :
 
 ---
 
+Grub Exist :
+ ~ $GRUB_EXIST
+Grub Security :
+ ~ $GRUB_SEC
+
+---
+
 Disk Usage :
  ~ $DISK_USAGE
 
@@ -189,6 +230,9 @@ cat > $RDIR/$HOST_NAME-systemreport.txt << EOF
 |UPTIME             | $UPTIME | $UPTIME_MIN
 |UTC TIME           | $UTC_TIME
 |TIME SYNC          | $TIME_SYNC
+|----------------------------------------------------------------------------------------------------
+|GRUB EXIST         | $GRUB_EXIST
+|GRUB SECURITY      | $GRUB_SEC
 |----------------------------------------------------------------------------------------------------
 |DISK USAGE         | $DISK_USAGE
 |----------------------------------------------------------------------------------------------------
