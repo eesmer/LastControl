@@ -29,6 +29,8 @@ KERNEL_VER=$(uname -mrs)
 OS_VER=$(cat /etc/os-release |grep PRETTY_NAME | cut -d '=' -f2 |cut -d '"' -f2)
 LAST_BOOT=$(who -b | awk '{print $3,$4}')
 UPTIME=$(uptime) && UPTIME_MIN=$(awk '{ print "up " $1 /60 " minutes"}' /proc/uptime)
+UTC_TIME=$(date --utc "+%Y-%m-%d %T")
+TIME_SYNC=$(timedatectl |grep "synchronized:" |cut -d ":" -f2 |cut -d " " -f2)
 
 # Disk Usage Info
 DISK_USAGE=$(df -H | grep -vE 'Filesystem|tmpfs|cdrom|udev' | awk '{ print $5" "$1"("$2"  "$3")" " --- "}')
@@ -45,9 +47,6 @@ SWP_USAGE_PERCENTAGE=$(free -m |grep Swap |awk '{print $3/$2 * 100}' |cut -d "."
 
 # Check Service Manager
 SERVICE_MANAGER="$(ps --no-headers -o comm 1)"
-
-# Check Time sync
-TIME_SYNC=$(timedatectl |grep "synchronized:" |cut -d ":" -f2 |cut -d " " -f2)
 
 # Check Syslog Settings
 SYSLOGINSTALL=Not_Installed
@@ -135,6 +134,14 @@ Last Boot :
 Uptime :
  ~ $UPTIME $UPTIME_MIN
 
+UTC Time :
+ ~ $UTC_TIME
+
+Time Sync :
+ ~ $TIME_SYNC
+
+---
+
 Disk Usage :
  ~ $DISK_USAGE
 
@@ -153,9 +160,6 @@ Out of Memory Logs :
 
 Service Manager :
  ~ $SERVICE_MANAGER
-
-Time Sync :
- ~ $TIME_SYNC
 
 Syslog Usage :
  ~ $SYSLOGINSTALL - Service: $SYSLOGSERVICE - Socket: $SYSLOGSOCKET - LogSend: $SYSLOGSEND
@@ -183,6 +187,8 @@ cat > $RDIR/$HOST_NAME-systemreport.txt << EOF
 |KERNEL VERSION     | $KERNEL_VER
 |LAST BOOT          | $LAST_BOOT
 |UPTIME             | $UPTIME | $UPTIME_MIN
+|UTC TIME           | $UTC_TIME
+|TIME SYNC          | $TIME_SYNC
 |----------------------------------------------------------------------------------------------------
 |DISK USAGE         | $DISK_USAGE
 |----------------------------------------------------------------------------------------------------
@@ -191,7 +197,6 @@ cat > $RDIR/$HOST_NAME-systemreport.txt << EOF
 |Out of Memory Logs | $OOM_LOGS 
 |----------------------------------------------------------------------------------------------------
 |SERVICE MANAGER    | $SERVICE_MANAGER
-|TIME SYNC          | $TIME_SYNC
 |SYSLOG USAGE       | Install: $SYSLOGINSTALL --- Service: $SYSLOGSERVICE --- Socket: $SYSLOGSOCKET --- LogSend: $SYSLOGSEND
 |HTTP PROXY USAGE   | $HTTP_PROXY_USAGE
 |----------------------------------------------------------------------------------------------------
@@ -207,11 +212,12 @@ cat > $RDIR/$HOST_NAME-systemreport.json << EOF
         "Kernel Version": "$KERNEL_VER",
         "Last Boot": "$LAST_BOOT",
         "Uptime": "$UPTIME - $UPTIME_MIN",
+        "UTC Time": "$UTC_TIME",
+        "Time Sync": "$TIME_SYNC",
         "Ram Usage": "Total Ram:$RAM_TOTAL - %$RAM_USAGE_PERCENTAGE",
         "Swap Usage": "Total Swap:$SWAP_TOTAL - %$SWP_USAGE_PERCENTAGE",
         "Out Of Memory": "$OOM_LOGS",
         "Service Manager": "$SERVICE_MANAGER",
-        "Time Sync": "$TIME_SYNC",
         "Syslog Usage": "Install:$SYSLOGINSTALL - Service:$SYSLOGSERVICE - Socket:$SYSLOGSOCKET - LogSend:$SYSLOGSEND",
         "HTTP Proxy Usage": "$HTTP_PROXY_USAGE",
         "Update Check": "$CHECK_UPDATE",
