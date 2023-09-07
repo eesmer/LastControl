@@ -18,6 +18,7 @@ DATE=$(date)
 
 # DISK USAGE INFORMATION
 DISK_USAGE=$(df -H | grep -vE 'Filesystem|tmpfs|cdrom|udev' | awk '{ print $5" "$1"("$2"  "$3")" " --- "}' | grep -v "none" |grep -v "loop")
+DISK_USAGE=$(fdisk -lu | grep "Disk" | grep -v "Disklabel" | grep -v "dev/loop" | grep -v "Disk identifier")
 
 # CHECK USAGE DISK QUOTA
 QUOTA_INSTALL=Installed
