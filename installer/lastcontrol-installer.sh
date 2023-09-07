@@ -14,9 +14,9 @@ apt-get -y install curl wget
 apt-get -y install ack
 apt-get -y install nmap
 apt-get -y install xsltproc
-apt-get -y install sqlite3
 apt-get -y install imagemagick
 apt-get -y install pandoc texlive-latex-base texlive-fonts-recommended
+#apt-get -y install sqlite3
 #apt-get -y install php
 #apt-get -y install php-sqlite3
 #apt-get -y install php-db / php-db-dataobject (for test)
@@ -26,6 +26,9 @@ apt-get -y install pandoc texlive-latex-base texlive-fonts-recommended
 # Create Work Directory
 # -----------------------------------------------------------------------------
 git clone https://github.com/eesmer/LastControl.git
+if [ -d /usr/local/lastcontrol ]; then
+	rm -rf /usr/local/lastcontrol
+fi
 cp -r LastControl/lastcontrol /usr/local/
 chmod -R 755 /usr/local/lastcontrol
 touch /usr/local/lastcontrol/linuxmachine
