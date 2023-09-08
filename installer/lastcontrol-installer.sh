@@ -149,10 +149,20 @@ function new_install(){
 	#ln -s /etc/systemd/system/lastcontrol.service /etc/systemd/system/multi-user.target.wants/ #(with systemctl enable)
 	#systemctl disable lastcontrol.service
 
+	clear
+	
+	echo "********************************************************"
+	echo "Installation completed.."
+	echo "********************************************************"
+	echo -e
+	$DGREEN
+	echo "Usage:"
+	$CYAN
+	echo "bash /usr/local/lastcontrol/manager"
+	$NOCOL
+	echo "--------------------------------------------------------"
+	pause
 }
-
-
-
 
 function read_input(){
 $WHITE
