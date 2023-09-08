@@ -39,94 +39,143 @@ if [ !"$OS" = "Debian" ]; then
         exit 1
 fi
 
-# -----------------------------------------------------------------------------
-# Packages to Install
-# -----------------------------------------------------------------------------
-export DEBIAN_FRONTEND=noninteractive
-apt-get -y update && apt-get -y upgrade && apt-get -y dist-upgrade && apt-get -y autoremove
+function pause(){
+local message="$@"
+[ -z $message ] && message="Press Enter to continue"
+read -p "$message" readEnterKey
+}
 
-apt-get -y install git
-apt-get -y install apache2
-apt-get -y install openssh-server ntp
-apt-get -y install tmux vim
-apt-get -y install curl wget
-apt-get -y install ack
-apt-get -y install nmap
-apt-get -y install xsltproc
-apt-get -y install imagemagick
-apt-get -y install pandoc texlive-latex-base texlive-fonts-recommended
-#apt-get -y install sqlite3
-#apt-get -y install php
-#apt-get -y install php-sqlite3
-#apt-get -y install php-db / php-db-dataobject (for test)
-#apt-get -y install wapiti #for webserver roles
+function installer_menu(){
+$GRAY
+echo "    # LastControl Installer Menu # "
+echo "   --------------------------------"
+echo "   1. New Install                  "
+echo "   2. LastControl Update           "
+echo "   3. Check Distro                 "
+echo "   --------------------------------"
+echo "   99.Exit                         |"
+$NOCOL
+echo -e
+}
 
-# -----------------------------------------------------------------------------
-# Create Work Directory
-# -----------------------------------------------------------------------------
-git clone https://github.com/eesmer/LastControl.git
-if [ -d /usr/local/lastcontrol ]; then
-	rm -rf /usr/local/lastcontrol
-fi
-cp -r LastControl/lastcontrol /usr/local/
-chmod -R 755 /usr/local/lastcontrol
-touch /usr/local/lastcontrol/linuxmachine
+function new_install(){
+	# -----------------------------------------------------------------------------
+	# Packages to Install
+	# -----------------------------------------------------------------------------
+	  export DEBIAN_FRONTEND=noninteractive
+	  apt-get -y update && apt-get -y upgrade && apt-get -y dist-upgrade && apt-get -y autoremove
+	  
+	  apt-get -y install git
+	  apt-get -y install apache2
+	  apt-get -y install openssh-server ntp
+	  apt-get -y install tmux vim
+	  apt-get -y install curl wget
+	  apt-get -y install ack
+	  apt-get -y install nmap
+	  apt-get -y install xsltproc
+	  apt-get -y install imagemagick
+	  apt-get -y install pandoc texlive-latex-base texlive-fonts-recommended
+	  #apt-get -y install sqlite3
+	  ##apt-get -y install php
+	  ##apt-get -y install php-sqlite3
+	  ##apt-get -y install php-db / php-db-dataobject (for test)
+	  ##apt-get -y install wapiti #for webserver roles
+	  # -----------------------------------------------------------------------------
+	  # Create Work Directory
+	  # -----------------------------------------------------------------------------
+	  git clone https://github.com/eesmer/LastControl.git
+	  if [ -d /usr/local/lastcontrol ]; then
+		  rm -rf /usr/local/lastcontrol
+	  fi
+	  cp -r LastControl/lastcontrol /usr/local/
+	  chmod -R 755 /usr/local/lastcontrol
+	  touch /usr/local/lastcontrol/linuxmachine
+	  
+	# -----------------------------------------------------------------------------
+	# Create SSH-KEY
+	# -----------------------------------------------------------------------------
+	  mkdir -p /root/.ssh
+	  chmod 700 /root/.ssh
+	  rm /root/.ssh/lastcontrol
+	  ssh-keygen -t rsa -f /root/.ssh/lastcontrol -q -P ""
+	  
+        # -----------------------------------------------------------------------------
+	# Create Web
+	# -----------------------------------------------------------------------------
+	  rm -r /var/www/html/reports
+	  rm -r /var/www/html/lastcontrol
+	  mkdir -p /var/www/html/lastcontrol
+	  mkdir -p /var/www/html/reports
+	  rm /var/www/html/index.html
+	  cp LastControl/installer/var/www/html/index.html /var/www/html/
+	  cp LastControl/images/lastcontrol_logo.png /var/www/html/
+	  chmod 644 /var/www/html/index.html
+	  chmod 644 /var/www/html/lastcontrol_logo.png
 
-# -----------------------------------------------------------------------------
-# Create SSH-KEY
-# -----------------------------------------------------------------------------
-mkdir -p /root/.ssh
-chmod 700 /root/.ssh
-rm /root/.ssh/lastcontrol
-ssh-keygen -t rsa -f /root/.ssh/lastcontrol -q -P ""
+	# -----------------------------------------------------------------------------
+	# Configure Access
+	# -----------------------------------------------------------------------------
+	  cp /root/.ssh/lastcontrol.pub /var/www/html/lastcontrol/
+	  systemctl reload apache2.service
 
-# -----------------------------------------------------------------------------
-# Create Web
-# -----------------------------------------------------------------------------
-rm -r /var/www/html/reports
-rm -r /var/www/html/lastcontrol
-mkdir -p /var/www/html/lastcontrol
-mkdir -p /var/www/html/reports
-rm /var/www/html/index.html
-cp LastControl/installer/var/www/html/index.html /var/www/html/
-cp LastControl/images/lastcontrol_logo.png /var/www/html/
-chmod 644 /var/www/html/index.html
-chmod 644 /var/www/html/lastcontrol_logo.png
+	# -----------------------------------------------------------------------------
+	# Configure reports design
+	# -----------------------------------------------------------------------------
+	# motd modified
+	cp LastControl/installer/etc/motd /etc/
+	# ImageMagick
+	cp LastControl/installer/etc/ImageMagick-6/policy.xml /etc/ImageMagick-6/
+	# logo for pdf file
+	cp -r LastControl/images /usr/local/lastcontrol/
 
-# -----------------------------------------------------------------------------
-# Configure Access
-# -----------------------------------------------------------------------------
-cp /root/.ssh/lastcontrol.pub /var/www/html/lastcontrol/
+	#mkdir /usr/local/lastcontrol/db
+	#cd /usr/local/lastcontrol/db
+	#sqlite3 lastcontrol.sqlite "CREATE TABLE report ( date text(15), hour text(10), machinename text (15), machinegroup text(10) );"
 
-systemctl reload apache2.service
+	# -----------------------------------------------------------------------------
+	# service has been removed. Because it will only be used from the menu.
+	# It can be looked at again for some automations.
+	# -----------------------------------------------------------------------------
+	# lastcontrol.service
+	# -----------------------------------------------------------------------------
+	#systemctl stop lastcontrol.service && systemctl disable lastcontrol.service
+	#if [ -f "/etc/systemd/system/multi-user.target.wants/lastcontrol.service" ]; then
+	#rm /etc/systemd/system/multi-user.target.wants/lastcontrol.service
+	#fi
+	#if [ -f "/etc/systemd/system/lastcontrol.service" ]; then
+	#rm /etc/systemd/system/lastcontrol.service
+	#fi
+	#cp LastControl/install/machine/etc/systemd/lastcontrol.service /etc/systemd/system/
+	#ln -s /etc/systemd/system/lastcontrol.service /etc/systemd/system/multi-user.target.wants/ #(with systemctl enable)
+	#systemctl disable lastcontrol.service
 
-# -----------------------------------------------------------------------------
-# Configure reports design
-# -----------------------------------------------------------------------------
-# motd modified
-cp LastControl/installer/etc/motd /etc/
-# ImageMagick
-cp LastControl/installer/etc/ImageMagick-6/policy.xml /etc/ImageMagick-6/
-# logo for pdf file
-cp -r LastControl/images /usr/local/lastcontrol/
+}
 
-#mkdir /usr/local/lastcontrol/db
-#cd /usr/local/lastcontrol/db
-#sqlite3 lastcontrol.sqlite "CREATE TABLE report ( date text(15), hour text(10), machinename text (15), machinegroup text(10) );"
 
-# -----------------------------------------------------------------------------
-# service has been removed. Because it will only be used from the menu.
-# It can be looked at again for some automations.
-# -----------------------------------------------------------------------------
-# lastcontrol.service
-# -----------------------------------------------------------------------------
-#systemctl stop lastcontrol.service && systemctl disable lastcontrol.service
-#if [ -f "/etc/systemd/system/multi-user.target.wants/lastcontrol.service" ]; then
-#rm /etc/systemd/system/multi-user.target.wants/lastcontrol.service
-#fi
-#if [ -f "/etc/systemd/system/lastcontrol.service" ]; then
-#rm /etc/systemd/system/lastcontrol.service
-#fi
-#cp LastControl/install/machine/etc/systemd/lastcontrol.service /etc/systemd/system/
-#ln -s /etc/systemd/system/lastcontrol.service /etc/systemd/system/multi-user.target.wants/ #(with systemctl enable)
-#systemctl disable lastcontrol.service
+
+
+function read_input(){
+$WHITE
+local c
+read -p "You can choose from the menu numbers " c
+$NOCOL
+case $c in
+1) new_install ;;
+99) exit 0 ;;
+*)
+$MAGENTA
+echo "Please select from the menu numbers"
+$NOCOL
+pause
+esac
+}
+
+# CTRL+C, CTRL+Z
+trap '' SIGINT SIGQUIT SIGTSTP
+
+while true
+do
+installer_menu
+read_input
+clear
+done
