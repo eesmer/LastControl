@@ -1,5 +1,46 @@
 #!/bin/bash
 
+#------------------
+# Color Codes
+#------------------
+MAGENTA="tput setaf 1"
+GREEN="tput setaf 2"
+YELLOW="tput setaf 3"
+DGREEN="tput setaf 4"
+CYAN="tput setaf 6"
+WHITE="tput setaf 7"
+GRAY="tput setaf 8"
+RED="tput setaf 9"
+NOCOL="tput sgr0"
+
+clear
+
+cat << "EOF"
+ _              _    ____            _             _
+| |    __ _ ___| |_ / ___|___  _ __ | |_ _ __ ___ | |
+| |   / _` / __| __| |   / _ \| '_ \| __| '__/ _ \| |
+| |__| (_| \__ \ |_| |__| (_) | | | | |_| | | (_) | |
+|_____\__,_|___/\__|\____\___/|_| |_|\__|_|  \___/|_|
+EOF
+echo -e
+${GREEN}
+echo "Welcome to LastControl installation script"
+${NOCOL}
+echo -e ""
+
+OS=$(hostnamectl | grep "Operating System" | cut -d ":" -f2 | cut -d " " -f2 | xargs)
+
+if [ !"$OS" = "Debian" ]; then
+	${RED}
+	echo "[*] ERROR: This installation script does not support this distro; Only Debian distro supported.\n
+        Please run it with Debian."
+	${NOCOL}
+        echo -e
+        exit 1
+fi
+
+exit 1
+
 # -----------------------------------------------------------------------------
 # Packages to Install
 # -----------------------------------------------------------------------------
