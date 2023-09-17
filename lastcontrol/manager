@@ -349,21 +349,30 @@ function create_kernel_report(){
 	tput setaf 9
 	echo "::.. Generating Kernel Report... ..::"
 	echo ""
-	bash $RPTLIN kernelreport $TARGETMACHINE
-	tput setaf 7
-	echo ""
-	cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-kernelreport.txt
-	tput sgr 0
-	echo ""
-	
-	pandoc -s -o $PDFSTORE/$TARGETMACHINE-kernelreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-kernelreport.md
-	mkdir -p $PDFREPORTS/$TARGETMACHINE
-	cp $PDFSTORE/$TARGETMACHINE-kernelreport.pdf $PDFREPORTS/$TARGETMACHINE/
-	cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-kernelreport.txt $PDFREPORTS/$TARGETMACHINE/
-	cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-kernelreport.json $PDFREPORTS/$TARGETMACHINE/
-	
-	echo "Info: Generated $TARGETMACHINE Kernel Report" > $BOARDFILE
-	pause
+	nc -z -w 2 $TARGETMACHINE 22 2>/dev/null
+	if [ "$?" = "0" ]; then
+		bash $RPTLIN kernelreport $TARGETMACHINE
+		tput setaf 7
+		echo ""
+		cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-kernelreport.txt
+		tput sgr 0
+		echo ""
+		
+		pandoc -s -o $PDFSTORE/$TARGETMACHINE-kernelreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-kernelreport.md
+		mkdir -p $PDFREPORTS/$TARGETMACHINE
+		cp $PDFSTORE/$TARGETMACHINE-kernelreport.pdf $PDFREPORTS/$TARGETMACHINE/
+		cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-kernelreport.txt $PDFREPORTS/$TARGETMACHINE/
+		cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-kernelreport.json $PDFREPORTS/$TARGETMACHINE/
+		
+		echo "Info: Generated $TARGETMACHINE Kernel Report" > $BOARDFILE
+		pause
+	else
+		tput setaf 2
+		echo "Could not reach $TARGETMACHINE from Port 22"
+		tput sgr 0
+		echo -e
+		pause
+	fi
 }
 
 function create_unsecurepack_report(){
