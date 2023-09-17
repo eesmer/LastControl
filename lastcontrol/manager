@@ -239,7 +239,7 @@ function create_ssh_report(){
 		tput sgr 0
 		echo ""
 		
-		pandoc -s -o $PDFSTORE/$TARGETMACHINE-sshreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-sshreport.m
+		pandoc -s -o $PDFSTORE/$TARGETMACHINE-sshreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-sshreport.md
 		mkdir -p $PDFREPORTS/$TARGETMACHINE
 		cp $PDFSTORE/$TARGETMACHINE-sshreport.pdf $PDFREPORTS/$TARGETMACHINE/
 		cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-sshreport.txt $PDFREPORTS/$TARGETMACHINE/
@@ -261,20 +261,28 @@ function create_localuser_report(){
 	tput setaf 9
 	echo "::.. Generating Local User Report... ..::"
 	echo ""
-	bash $RPTLIN localuserreport $TARGETMACHINE
-	tput setaf 7
-	echo ""
-	cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-localuserreport.txt
-	tput sgr 0
-	echo ""
-	
-	pandoc -s -o $PDFSTORE/$TARGETMACHINE-localuserreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-localuserreport.md
-	mkdir -p $PDFREPORTS/$TARGETMACHINE
-	cp $PDFSTORE/$TARGETMACHINE-localuserreport.pdf $PDFREPORTS/$TARGETMACHINE/
-	cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-localuserreport.txt $PDFREPORTS/$TARGETMACHINE/
-
-	echo "Info: Generated $TARGETMACHINE Local User Report" > $BOARDFILE
-	pause
+	nc -z -w 2 $TARGETMACHINE 22 2>/dev/null
+	if [ "$?" = "0" ]; then
+		bash $RPTLIN localuserreport $TARGETMACHINE
+		tput setaf 7
+		echo ""
+		cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-localuserreport.txt
+		tput sgr 0
+		echo ""
+		
+		pandoc -s -o $PDFSTORE/$TARGETMACHINE-localuserreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-localuserreport.md
+		mkdir -p $PDFREPORTS/$TARGETMACHINE
+		cp $PDFSTORE/$TARGETMACHINE-localuserreport.pdf $PDFREPORTS/$TARGETMACHINE/
+		cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-localuserreport.txt $PDFREPORTS/$TARGETMACHINE/
+		echo "Info: Generated $TARGETMACHINE Local User Report" > $BOARDFILE
+		pause
+	else
+		tput setaf 2
+		echo "Could not reach $TARGETMACHINE from Port 22"
+		tput sgr 0
+		echo -e
+		pause
+	fi
 }
 
 function create_inventory_report(){
