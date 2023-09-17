@@ -381,21 +381,30 @@ function create_unsecurepack_report(){
 	tput setaf 9
 	echo "::.. Generating Unsecure Package Report... ..::"
 	echo ""
-	bash $RPTLIN unsecurepackreport $TARGETMACHINE
-	tput setaf 7
-	echo ""
-	cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-unsecurepackreport.txt
-	tput sgr 0
-	echo ""
-
-	pandoc -s -o $PDFSTORE/$TARGETMACHINE-unsecurepackreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-unsecurepackreport.md
-	mkdir -p $PDFREPORTS/$TARGETMACHINE
-	cp $PDFSTORE/$TARGETMACHINE-unsecurepackreport.pdf $PDFREPORTS/$TARGETMACHINE/
-	cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-unsecurepackreport.txt $PDFREPORTS/$TARGETMACHINE/
-	cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-unsecurepackreport.json $PDFREPORTS/$TARGETMACHINE/
-
-	echo "Info: Generated $TARGETMACHINE Unsecure Package Report" > $BOARDFILE
-	pause
+	nc -z -w 2 $TARGETMACHINE 22 2>/dev/null
+	if [ "$?" = "0" ]; then
+		bash $RPTLIN unsecurepackreport $TARGETMACHINE
+		tput setaf 7
+		echo ""
+		cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-unsecurepackreport.txt
+		tput sgr 0
+		echo ""
+		
+		pandoc -s -o $PDFSTORE/$TARGETMACHINE-unsecurepackreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-unsecurepackreport.md
+		mkdir -p $PDFREPORTS/$TARGETMACHINE
+		cp $PDFSTORE/$TARGETMACHINE-unsecurepackreport.pdf $PDFREPORTS/$TARGETMACHINE/
+		cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-unsecurepackreport.txt $PDFREPORTS/$TARGETMACHINE/
+		cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-unsecurepackreport.json $PDFREPORTS/$TARGETMACHINE/
+		
+		echo "Info: Generated $TARGETMACHINE Unsecure Package Report" > $BOARDFILE
+		pause
+	else
+		tput setaf 2
+		echo "Could not reach $TARGETMACHINE from Port 22"
+		tput sgr 0
+		echo -e
+		pause
+	fi
 }
 
 function create_process_report(){
@@ -404,21 +413,30 @@ function create_process_report(){
 	tput setaf 9
 	echo "::.. Generating Process & Load Report... ..::"
 	echo ""
-	bash $RPTLIN processreport $TARGETMACHINE
-	tput setaf 7
-	echo ""
-	cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-processreport.txt
-	tput sgr 0
-	echo ""
-	
-	pandoc -s -o $PDFSTORE/$TARGETMACHINE-processreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-processreport.md
-	mkdir -p $PDFREPORTS/$TARGETMACHINE
-	cp $PDFSTORE/$TARGETMACHINE-processreport.pdf $PDFREPORTS/$TARGETMACHINE/
-	cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-processreport.txt $PDFREPORTS/$TARGETMACHINE/
-	cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-processreport.json $PDFREPORTS/$TARGETMACHINE/
-	
-	echo "Info: Generated $TARGETMACHINE Process Report" > $BOARDFILE
-	pause
+	nc -z -w 2 $TARGETMACHINE 22 2>/dev/null
+	if [ "$?" = "0" ]; then
+		bash $RPTLIN processreport $TARGETMACHINE
+		tput setaf 7
+		echo ""
+		cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-processreport.txt
+		tput sgr 0
+		echo ""
+		
+		pandoc -s -o $PDFSTORE/$TARGETMACHINE-processreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-processreport.md
+		mkdir -p $PDFREPORTS/$TARGETMACHINE
+		cp $PDFSTORE/$TARGETMACHINE-processreport.pdf $PDFREPORTS/$TARGETMACHINE/
+		cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-processreport.txt $PDFREPORTS/$TARGETMACHINE/
+		cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-processreport.json $PDFREPORTS/$TARGETMACHINE/
+		
+		echo "Info: Generated $TARGETMACHINE Process Report" > $BOARDFILE
+		pause
+	else
+		tput setaf 2
+		echo "Could not reach $TARGETMACHINE from Port 22"
+		tput sgr 0
+		echo -e
+		pause
+	fi
 }
 
 function create_directory_report(){
@@ -427,21 +445,30 @@ function create_directory_report(){
 	tput setaf 9
 	echo "::.. Generating Directory Report... ..::"
 	echo ""
-	bash $RPTLIN directoryreport $TARGETMACHINE
-	tput setaf 7
-	echo ""
-	cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-directoryreport.txt
-	tput sgr 0
-	echo ""
-
-	pandoc -s -o $PDFSTORE/$TARGETMACHINE-directoryreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-directoryreport.md
-	mkdir -p $PDFREPORTS/$TARGETMACHINE
-	cp $PDFSTORE/$TARGETMACHINE-directoryreport.pdf $PDFREPORTS/$TARGETMACHINE/
-	cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-directoryreport.txt $PDFREPORTS/$TARGETMACHINE/
-	cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-directoryreport.json $PDFREPORTS/$TARGETMACHINE/
-
-	echo "Info: Generated $TARGETMACHINE Directory Report" > $BOARDFILE
-	pause
+	nc -z -w 2 $TARGETMACHINE 22 2>/dev/null
+	if [ "$?" = "0" ]; then
+		bash $RPTLIN directoryreport $TARGETMACHINE
+		tput setaf 7
+		echo ""
+		cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-directoryreport.txt
+		tput sgr 0
+		echo ""
+		
+		pandoc -s -o $PDFSTORE/$TARGETMACHINE-directoryreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-directoryreport.md
+		mkdir -p $PDFREPORTS/$TARGETMACHINE
+		cp $PDFSTORE/$TARGETMACHINE-directoryreport.pdf $PDFREPORTS/$TARGETMACHINE/
+		cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-directoryreport.txt $PDFREPORTS/$TARGETMACHINE/
+		cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-directoryreport.json $PDFREPORTS/$TARGETMACHINE/
+		
+		echo "Info: Generated $TARGETMACHINE Directory Report" > $BOARDFILE
+		pause
+	else
+		tput setaf 2
+		echo "Could not reach $TARGETMACHINE from Port 22"
+		tput sgr 0
+		echo -e
+		pause
+	fi
 }
 
 #function take_all_report(){
