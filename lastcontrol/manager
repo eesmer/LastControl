@@ -1,18 +1,5 @@
 #!/bin/bash
 
-#------------------
-# Color Defination
-#------------------
-MAGENTA="tput setaf 1"
-GREEN="tput setaf 2"
-YELLOW="tput setaf 3"
-DGREEN="tput setaf 4"
-CYAN="tput setaf 6"
-WHITE="tput setaf 7"
-GRAY="tput setaf 8"
-RED="tput setaf 9"
-NOCOL="tput sgr0"
-
 WDIR=/usr/local/lastcontrol
 RDIR=$WDIR/reports
 CREATE=$WDIR/scripts/lctuiscripts/create-tui-report-linux.sh
@@ -46,11 +33,11 @@ BANNERCOLOR=$((1 + "$RANDOM" % 9))
 tput setaf "$BANNERCOLOR"
 cat $WDIR/doc/banner.txt
 echo ""
-$RED
+tput setaf 9
 echo "    V2 Update:23"
 echo "    $HOSTOS - IP: $HOSTIP"
-$GRAY
-$NOCOL
+tput setaf 8
+tput sgr0
 echo "   |-------------------------------------------------------------------|"
 echo "   | # REPORT MENU #                                                   |"
 echo "   |-------------------------------------------------------------------|"
@@ -69,36 +56,37 @@ echo "   | 31. Remove Machine |                                              |"
 echo "   |-------------------------------------------------------------------|"
 echo "   | 40. Add SSH-Key    | 41. Remove SSH-Key                           |"
 echo "   |-------------------------------------------------------------------|"
-$RED
+tput setaf 9
 echo "                             -----------                               "
 echo "                             ** BOARD **                               "
 echo "                             -----------                               "
-$MAGENTA
-$NOCOL
+tput setaf 1
+tput sgr0
 echo "     $BOARDMSG                                                         "
 echo "   --------------------------------------------------------------------"
 echo "    Download Reports: http://$HOSTIP/pdfreports                        "
+tput setaf 9
 echo ""
 echo "    -----------"
 echo "    | 99.Exit |"
 echo "    -----------"
-$NOCOL
-echo -e
+tput sgr0
+echo ""
 }
 
 function create_system_report(){
 	read -p "Enter the Machine Hostname : " TARGETMACHINE
 	echo ""
-	$RED
+	tput setaf 9
 	echo "::.. Generating System Report... ..::"
 	echo ""
 	nc -z -w 2 $TARGETMACHINE 22 2>/dev/null
 	if [ "$?" = "0" ]; then
 		bash $RPTLIN systemreport $TARGETMACHINE
-		$WHITE
+		tput setaf 7
 		echo ""
 		cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-systemreport.txt
-		$NOCOL
+		tput sgr 0
 		echo ""
 		
 		pandoc -s -o $PDFSTORE/$TARGETMACHINE-systemreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-systemreport.md
@@ -110,9 +98,9 @@ function create_system_report(){
 		echo "Info: Generated $TARGETMACHINE System Report" > $BOARDFILE
 		pause
 	else
-		$GREEN
+		tput setaf 2
 		echo "Could not reach $TARGETMACHINE from Port 22"
-		$NOCOL
+		tput sgr 0
 		echo -e
 		pause
 	fi
@@ -121,16 +109,16 @@ function create_system_report(){
 function create_service_report(){
 	read -p "Enter the Machine Hostname : " TARGETMACHINE
 	echo ""
-	$RED
+	tput setaf 9
 	echo "::.. Generating Service Report... ..::"
 	echo ""
 	nc -z -w 2 $TARGETMACHINE 22 2>/dev/null
 	if [ "$?" = "0" ]; then
 		bash $RPTLIN servicereport $TARGETMACHINE
-		$WHITE
+		tput setaf 7
 		echo ""
 		cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.txt
-		$NOCOL
+		tput sgr 0
 		echo ""
 		
 		# adding listening services output image
@@ -164,9 +152,9 @@ function create_service_report(){
 		echo "Info: Generated $TARGETMACHINE Service Report" > $BOARDFILE
 		pause
 	else
-		$GREEN
+		tput setaf 2
                 echo "Could not reach $TARGETMACHINE from Port 22"
-                $NOCOL
+                tput sgr 0
                 echo -e
                 pause
         fi
@@ -175,16 +163,16 @@ function create_service_report(){
 function create_disk_report(){
 	read -p "Enter the Machine Hostname : " TARGETMACHINE
 	echo ""
-	$RED
+	tput setaf 9
 	echo "::.. Generating Local Disk Report... ..::"
 	echo ""
 	nc -z -w 2 $TARGETMACHINE 22 2>/dev/null
 	if [ "$?" = "0" ]; then
 		bash $RPTLIN diskreport $TARGETMACHINE
-	i	$WHITE
+		tput setaf 7
 		echo ""
 		cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-diskreport.txt
-		$NOCOL
+		tput sgr 0
 		echo ""
 		
 		pandoc -s -o $PDFSTORE/$TARGETMACHINE-diskreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-diskreport.md
@@ -196,9 +184,9 @@ function create_disk_report(){
 		echo "Info: Generated $TARGETMACHINE Disk Report" > $BOARDFILE
 		pause
 	else
-		$GREEN
+		tput setaf 2
 		echo "Could not reach $TARGETMACHINE from Port 22"
-		$NOCOL
+		tput sgr 0
 		echo -e
 		pause
 	fi
@@ -207,37 +195,46 @@ function create_disk_report(){
 function create_nwconfig_report(){
 	read -p "Enter the Machine Hostname : " TARGETMACHINE
 	echo ""
-	$RED
+	tput setaf 9
 	echo "::.. Generating Network Config Report... ..::"
 	echo ""
-	bash $RPTLIN nwconfigreport $TARGETMACHINE
-	$WHITE
-	echo ""
-	cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-nwconfigreport.txt
-	$NOCOL
-	echo ""
-	
-	pandoc -s -o $PDFSTORE/$TARGETMACHINE-nwconfigreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-nwconfigreport.md
-	mkdir -p $PDFREPORTS/$TARGETMACHINE
-	cp $PDFSTORE/$TARGETMACHINE-nwconfigreport.pdf $PDFREPORTS/$TARGETMACHINE/
-	cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-nwconfigreport.txt $PDFREPORTS/$TARGETMACHINE/
-	cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-nwconfigreport.json $PDFREPORTS/$TARGETMACHINE/
-	
-	echo "Info: Generated $TARGETMACHINE Network Config Report" > $BOARDFILE
-	pause
+	nc -z -w 2 $TARGETMACHINE 22 2>/dev/null
+	if [ "$?" = "0" ]; then
+		bash $RPTLIN nwconfigreport $TARGETMACHINE
+		tput setaf 7
+		echo ""
+		cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-nwconfigreport.txt
+		tput sgr 0
+		echo ""
+		
+		pandoc -s -o $PDFSTORE/$TARGETMACHINE-nwconfigreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-nwconfigreport.md
+		mkdir -p $PDFREPORTS/$TARGETMACHINE
+		cp $PDFSTORE/$TARGETMACHINE-nwconfigreport.pdf $PDFREPORTS/$TARGETMACHINE/
+		cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-nwconfigreport.txt $PDFREPORTS/$TARGETMACHINE/
+		cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-nwconfigreport.json $PDFREPORTS/$TARGETMACHINE/
+		
+		echo "Info: Generated $TARGETMACHINE Network Config Report" > $BOARDFILE
+		pause
+	else
+		tput setaf 2
+		echo "Could not reach $TARGETMACHINE from Port 22"
+		tput sgr 0
+		echo -e
+		pause
+	fi
 }
 
 function create_ssh_report(){
 	read -p "Enter the Machine Hostname : " TARGETMACHINE
 	echo ""
-	$RED
+	tput setaf 9
 	echo "::.. Generating SSH Config Report... ..::"
 	echo ""
 	bash $RPTLIN sshreport $TARGETMACHINE
-	$WHITE
+	tput setaf 7
 	echo ""
 	cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-sshreport.txt
-	$NOCOL
+	tput sgr 0
 	echo ""
 	
 	pandoc -s -o $PDFSTORE/$TARGETMACHINE-sshreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-sshreport.md
@@ -252,14 +249,14 @@ function create_ssh_report(){
 function create_localuser_report(){
 	read -p "Enter the Machine Hostname : " TARGETMACHINE
 	echo ""
-	$RED
+	tput setaf 9
 	echo "::.. Generating Local User Report... ..::"
 	echo ""
 	bash $RPTLIN localuserreport $TARGETMACHINE
-	$WHITE
+	tput setaf 7
 	echo ""
 	cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-localuserreport.txt
-	$NOCOL
+	tput sgr 0
 	echo ""
 	
 	pandoc -s -o $PDFSTORE/$TARGETMACHINE-localuserreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-localuserreport.md
@@ -274,14 +271,14 @@ function create_localuser_report(){
 function create_inventory_report(){
         read -p "Enter the Machine Hostname : " TARGETMACHINE
         echo ""
-        $RED
+        tput setaf 9
         echo "::.. Generating Hardware Inventory Report... ..::"
         echo ""
         bash $RPTLIN inventoryreport $TARGETMACHINE
-        $WHITE
+        tput setaf 7
         echo ""
         cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-inventoryreport.txt
-        $NOCOL
+        tput sgr 0
         echo ""
 
         pandoc -s -o $PDFSTORE/$TARGETMACHINE-inventoryreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-inventoryreport.md
@@ -297,14 +294,14 @@ function create_inventory_report(){
 function create_update_report(){
 	read -p "Enter the Machine Hostname : " TARGETMACHINE
 	echo ""
-	$RED
+	tput setaf 9
 	echo "::.. Generating System Update Report... ..::"
 	echo ""
 	bash $RPTLIN updatereport $TARGETMACHINE
-	$WHITE
+	tput setaf 7
 	echo ""
 	cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-updatereport.txt
-	$NOCOL
+	tput sgr 0
 	echo ""
 	
 	echo "Info: Generated $TARGETMACHINE Update Report" > $BOARDFILE
@@ -314,14 +311,14 @@ function create_update_report(){
 function create_kernel_report(){
 	read -p "Enter the Machine Hostname : " TARGETMACHINE
 	echo ""
-	$RED
+	tput setaf 9
 	echo "::.. Generating Kernel Report... ..::"
 	echo ""
 	bash $RPTLIN kernelreport $TARGETMACHINE
-	$WHITE
+	tput setaf 7
 	echo ""
 	cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-kernelreport.txt
-	$NOCOL
+	tput sgr 0
 	echo ""
 	
 	pandoc -s -o $PDFSTORE/$TARGETMACHINE-kernelreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-kernelreport.md
@@ -337,14 +334,14 @@ function create_kernel_report(){
 function create_unsecurepack_report(){
 	read -p "Enter the Machine Hostname : " TARGETMACHINE
 	echo ""
-	$RED
+	tput setaf 9
 	echo "::.. Generating Unsecure Package Report... ..::"
 	echo ""
 	bash $RPTLIN unsecurepackreport $TARGETMACHINE
-	$WHITE
+	tput setaf 7
 	echo ""
 	cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-unsecurepackreport.txt
-	$NOCOL
+	tput sgr 0
 	echo ""
 
 	pandoc -s -o $PDFSTORE/$TARGETMACHINE-unsecurepackreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-unsecurepackreport.md
@@ -360,14 +357,14 @@ function create_unsecurepack_report(){
 function create_process_report(){
 	read -p "Enter the Machine Hostname : " TARGETMACHINE
 	echo ""
-	$RED
+	tput setaf 9
 	echo "::.. Generating Process & Load Report... ..::"
 	echo ""
 	bash $RPTLIN processreport $TARGETMACHINE
-	$WHITE
+	tput setaf 7
 	echo ""
 	cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-processreport.txt
-	$NOCOL
+	tput sgr 0
 	echo ""
 	
 	pandoc -s -o $PDFSTORE/$TARGETMACHINE-processreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-processreport.md
@@ -383,14 +380,14 @@ function create_process_report(){
 function create_directory_report(){
 	read -p "Enter the Machine Hostname : " TARGETMACHINE
 	echo ""
-	$RED
+	tput setaf 9
 	echo "::.. Generating Directory Report... ..::"
 	echo ""
 	bash $RPTLIN directoryreport $TARGETMACHINE
-	$WHITE
+	tput setaf 7
 	echo ""
 	cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-directoryreport.txt
-	$NOCOL
+	tput sgr 0
 	echo ""
 
 	pandoc -s -o $PDFSTORE/$TARGETMACHINE-directoryreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-directoryreport.md
@@ -404,11 +401,11 @@ function create_directory_report(){
 }
 
 #function take_all_report(){
-#$RED
+#tput setaf 10
 #echo "Generating all report for all machine.."
 #echo ""
 #echo ""
-#$NOCOL
+#tput sgr 0
 #
 #systemctl restart lastcontrol.service
 #watch -en 1 systemctl status lastcontrol.service
@@ -419,10 +416,10 @@ function create_directory_report(){
 #}
 
 function add_machine(){
-$RED
+tput setaf 10
 echo "Adding a New Machine"
 echo ""
-$NOCOL
+tput sgr 0
 
 read -p "Enter the Machine Hostname : " TARGETMACHINE
 LISTED=FALSE
@@ -432,43 +429,43 @@ if [ "$LISTED" = FALSE ]; then
 	echo "$TARGETMACHINE" >> $WDIR/linuxmachine
 	echo "Info: $TARGETMACHINE added to Machine List" > $BOARDFILE
 else
-	$RED
+	tput setaf 9
 	echo "$TARGETMACHINE already exist"
-	$NOCOL
+	tput sgr 0
 fi
 
 echo ""
-$GREEN
+tput setaf 10
 echo "::. Machine List ::."
 echo "--------------------"
-$NOCOL
+tput sgr 0
 cat $WDIR/linuxmachine
-$GREEN
+tput setaf 10
 echo "--------------------"
-$NOCOL
+tput sgr 0
 echo ""
 pause
 }
 
 function remove_machine(){
 echo ""
-$GREEN
+tput setaf 10
 echo "Removing Machine"
 echo ""
-$NOCOL
+tput sgr 0
 
 read -p "Enter the Machine Hostname : " TARGETMACHINE
 sed -i "/$TARGETMACHINE/d" $WDIR/linuxmachine
 
 echo ""
-$GREEN
+tput setaf 10
 echo "::. Machine List ::."
 echo "--------------------"
-$NOCOL
+tput sgr 0
 cat $WDIR/linuxmachine
-$GREEN
+tput setaf 10
 echo "--------------------"
-$NOCOL
+tput sgr 0
 echo ""
 echo "Info: Removed $TARGETMACHINE from Machine List" > $BOARDFILE
 pause
@@ -476,14 +473,14 @@ pause
 
 function machine_list(){
 echo ""
-$GREEN
+tput setaf 10
 echo "::. Machine List ::."
 echo "--------------------"
-$NOCOL
+tput sgr 0
 cat $WDIR/linuxmachine
-$GREEN
+tput setaf 10
 echo "--------------------"
-$NOCOL
+tput sgr 0
 echo ""
 pause
 }
@@ -506,10 +503,10 @@ pause
 }
 
 function read_input(){
-$WHITE
+tput setaf 7
 local c
 read -p "You can choose from the menu numbers " c
-$NOCOL
+tput sgr0
 case $c in
 1) create_system_report ;;
 2) create_service_report ;;
@@ -531,9 +528,9 @@ case $c in
 41) remove_sshkey ;;
 99) exit 0 ;;
 *)
-$MAGENTA
+tput setaf 1
 echo "Please select from the menu numbers"
-$NOCOL
+tput sgr0
 pause
 esac
 }
