@@ -323,15 +323,24 @@ function create_update_report(){
 	tput setaf 9
 	echo "::.. Generating System Update Report... ..::"
 	echo ""
-	bash $RPTLIN updatereport $TARGETMACHINE
-	tput setaf 7
-	echo ""
-	cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-updatereport.txt
-	tput sgr 0
-	echo ""
-	
-	echo "Info: Generated $TARGETMACHINE Update Report" > $BOARDFILE
-	pause
+	nc -z -w 2 $TARGETMACHINE 22 2>/dev/null
+	if [ "$?" = "0" ]; then
+		bash $RPTLIN updatereport $TARGETMACHINE
+		tput setaf 7
+		echo ""
+		cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-updatereport.txt
+		tput sgr 0
+		echo ""
+		
+		echo "Info: Generated $TARGETMACHINE Update Report" > $BOARDFILE
+		pause
+	else
+		tput setaf 2
+		echo "Could not reach $TARGETMACHINE from Port 22"
+		tput sgr 0
+		echo -e
+		pause
+	fi
 }
 
 function create_kernel_report(){
