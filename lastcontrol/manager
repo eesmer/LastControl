@@ -559,18 +559,36 @@ pause
 function add_sshkey(){
 echo ""
 read -p "Enter the Machine Hostname : " TARGETMACHINE
-bash $MACHINESCRIPT/add-sshkey.sh $TARGETMACHINE
-echo "Info: SSH-Key added to $TARGETMACHINE" > $BOARDFILE
-pause
+nc -z -w 2 $TARGETMACHINE 22 2>/dev/null
+if [ "$?" = "0" ]; then
+	bash $MACHINESCRIPT/add-sshkey.sh $TARGETMACHINE
+	echo "Info: SSH-Key added to $TARGETMACHINE" > $BOARDFILE
+	pause
+else
+	tput setaf 2
+	echo "Could not reach $TARGETMACHINE from Port 22"
+	tput sgr 0
+	echo -e
+	pause
+fi
 }
 
 function remove_sshkey(){
 echo ""
 read -p "Enter the Machine Hostname : " TARGETMACHINE
-KEYCONTENT=$(cat /root/.ssh/lastcontrol.pub | cut -d " " -f2 | cut -c 1-25)
-bash $MACHINESCRIPT/remove-sshkey.sh $TARGETMACHINE $KEYCONTENT
-echo "Info: SSH-Key removed to $TARGETMACHINE" > $BOARDFILE
-pause
+nc -z -w 2 $TARGETMACHINE 22 2>/dev/null
+if [ "$?" = "0" ]; then
+	KEYCONTENT=$(cat /root/.ssh/lastcontrol.pub | cut -d " " -f2 | cut -c 1-25)
+	bash $MACHINESCRIPT/remove-sshkey.sh $TARGETMACHINE $KEYCONTENT
+	echo "Info: SSH-Key removed to $TARGETMACHINE" > $BOARDFILE
+	pause
+else
+	tput setaf 2
+	echo "Could not reach $TARGETMACHINE from Port 22"
+	tput sgr 0
+	echo -e
+	pause
+fi
 }
 
 function read_input(){
