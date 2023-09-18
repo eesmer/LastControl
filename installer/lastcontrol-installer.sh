@@ -15,6 +15,7 @@ NOCOL="tput sgr0"
 
 clear
 
+function banner(){
 cat << "EOF"
  _              _    ____            _             _
 | |    __ _ ___| |_ / ___|___  _ __ | |_ _ __ ___ | |
@@ -22,11 +23,15 @@ cat << "EOF"
 | |__| (_| \__ \ |_| |__| (_) | | | | |_| | | (_) | |
 |_____\__,_|___/\__|\____\___/|_| |_|\__|_|  \___/|_|
 EOF
+
 echo -e
 ${GREEN}
 echo "Welcome to LastControl installation script"
 ${NOCOL}
 echo -e ""
+}
+
+banner
 
 OS=$(hostnamectl | grep "Operating System" | cut -d ":" -f2 | cut -d " " -f2 | xargs)
 
