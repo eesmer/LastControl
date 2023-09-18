@@ -56,7 +56,8 @@ echo "   1. New Install                  "
 echo "   2. LastControl Update           "
 echo "   3. Check Distro                 "
 echo "   --------------------------------"
-echo "   99.Exit                         |"
+$RED
+echo "   99.Exit                         "
 $NOCOL
 echo -e
 }
@@ -167,6 +168,29 @@ function new_install(){
 	pause
 }
 
+function check_distro(){
+	SUPPORT="Supported"
+	OS=$(hostnamectl | grep "Operating System" | cut -d ":" -f2 | cut -d " " -f2 | xargs)
+	if [ "$OS" = "Debian" ]; then
+		VER=$(cat /etc/debian_version)
+	elif [ "$OS" = "Ubuntu" ]; then
+		. /etc/lsb-release
+		VER=$DISTRIB_RELEASE
+	else
+		OS=$(uname -s)
+		VER=$(uname -r)
+		SUPPORT="Not Supported"
+	fi
+
+	echo -e
+	echo "OS : $OS"
+	echo "VER: $VER"
+	echo -e
+	echo "LastControl installation is $SUPPORT this machine"
+	echo -e
+	pause
+}
+
 function read_input(){
 $WHITE
 local c
@@ -174,6 +198,7 @@ read -p "You can choose from the menu numbers " c
 $NOCOL
 case $c in
 1) new_install ;;
+3) check_distro ;;
 99) exit 0 ;;
 *)
 $MAGENTA
