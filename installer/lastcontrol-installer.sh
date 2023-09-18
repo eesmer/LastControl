@@ -30,10 +30,13 @@ echo -e ""
 
 OS=$(hostnamectl | grep "Operating System" | cut -d ":" -f2 | cut -d " " -f2 | xargs)
 
-if [ !"$OS" = "Debian" ]; then
+if [ !"$OS" = "Debian" ] || [ !"$OS" = "Ubuntu" ]; then
 	${RED}
-	echo "[*] ERROR: This installation script does not support this distro; Only Debian distro supported.\n
-        Please run it with Debian."
+	echo "ERROR: This installation script does not support this distro"
+        echo "Please run it with;"
+	${WHITE}
+	echo "[+] Ubuntu"
+	echo "[+] Debian"
 	${NOCOL}
         echo -e
         exit 1
