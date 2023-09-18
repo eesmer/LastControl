@@ -8,6 +8,11 @@ The version number is updated for major changes, and the update number for addit
 - V3 Update:1
 ---
 
+### V2 Update:24
+**Added**
+- a new installer script
+- Ubuntu and Debian supported
+
 ### V2 Update:23
 - Server working directories design changed
 - systemd service removed. The reports will be taken from the menu.
