@@ -24,7 +24,7 @@ bash lastcontrol-installer.sh
 ```
 ---
 
-![alt text](images/LC_Manager_MainMenu.png "LastControl Reports TUI Screen")
+![alt text](images/Manager_MainMenu.png "LastControl Reports TUI Screen")
 
 ---
 
