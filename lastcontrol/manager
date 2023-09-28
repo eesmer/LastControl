@@ -89,11 +89,8 @@ function create_system_report(){
 	echo ""
 	
 	ssh -p22 -i /root/.ssh/lastcontrol -o "StrictHostKeyChecking no" root@$TARGETMACHINE &
-	# Get its PID
 	PID=$!
-	# Wait for 2 seconds
 	sleep 1
-	# Kill it
 	kill $PID
 	if [ "$?" = 1 ]; then
 		$RED
