@@ -47,7 +47,7 @@ tput setaf "$BANNERCOLOR"
 cat $WDIR/doc/banner.txt
 echo ""
 $RED
-echo "    V2 Update:24"
+echo "    V2 Update:25"
 echo "    $HOSTOS - IP: $HOSTIP"
 $GRAY
 $NOCOL
@@ -87,29 +87,51 @@ echo -e
 function create_system_report(){
 	read -p "Enter the Machine Hostname : " TARGETMACHINE
 	echo ""
-	$RED
-	echo "::.. Generating System Report... ..::"
-	echo ""
-	nc -z -w 2 $TARGETMACHINE 22 2>/dev/null
-	if [ "$?" = "0" ]; then
-		bash $RPTLIN systemreport $TARGETMACHINE
-		$WHITE
+	
+	ssh -p22 -i /root/.ssh/lastcontrol -o "StrictHostKeyChecking no" root@$TARGETMACHINE &
+	# Get its PID
+	PID=$!
+	# Wait for 2 seconds
+	sleep 1
+	# Kill it
+	kill $PID
+	if [ "$?" = 1 ]; then
+		$RED
+		echo "::.. Generating System Report... ..::"
 		echo ""
-		cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-systemreport.txt
-		$NOCOL
-		echo ""
-		
-		pandoc -s -o $PDFSTORE/$TARGETMACHINE-systemreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-systemreport.md
-		mkdir -p $PDFREPORTS/$TARGETMACHINE
-		cp $PDFSTORE/$TARGETMACHINE-systemreport.pdf $PDFREPORTS/$TARGETMACHINE/
-		cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-systemreport.txt $PDFREPORTS/$TARGETMACHINE/
-                cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-systemreport.json $PDFREPORTS/$TARGETMACHINE/
-
-		echo "Info: Generated $TARGETMACHINE System Report" > $BOARDFILE
-		pause
+		nc -z -w 2 $TARGETMACHINE 22 2>/dev/null # The above check makes this check unnecessary. It will not be removed for now.
+		if [ "$?" = "0" ]; then
+			bash $RPTLIN systemreport $TARGETMACHINE
+			$WHITE
+			echo ""
+			cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-systemreport.txt
+			$NOCOL
+			echo ""
+			
+			pandoc -s -o $PDFSTORE/$TARGETMACHINE-systemreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-systemreport.md
+			mkdir -p $PDFREPORTS/$TARGETMACHINE
+			cp $PDFSTORE/$TARGETMACHINE-systemreport.pdf $PDFREPORTS/$TARGETMACHINE/
+			cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-systemreport.txt $PDFREPORTS/$TARGETMACHINE/
+			cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-systemreport.json $PDFREPORTS/$TARGETMACHINE/
+			
+			echo "Info: Generated $TARGETMACHINE System Report" > $BOARDFILE
+			pause
+		else
+			$GREEN
+			echo "Could not reach $TARGETMACHINE from Port 22"
+			$NOCOL
+			echo -e
+			pause
+		fi
+	#elif [ "$?" = 0 ]; then # It checks the value 0 because the password question returns 0. A different value does not mean there is no key. For this reason, elif instead of else.
 	else
+		$RED
+		echo -e
+		echo "[ Error ]"
+		echo "LastControl SSH-Key Not Found on $TARGETMACHINE"
+		echo -e
 		$GREEN
-		echo "Could not reach $TARGETMACHINE from Port 22"
+		echo "You can add the LastControl SSH-Key from menu 40.Add SSH-Key"
 		$NOCOL
 		echo -e
 		pause
