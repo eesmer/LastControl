@@ -123,8 +123,7 @@ function create_system_report(){
 			echo -e
 			pause
 		fi
-	#elif [ "$?" = 0 ]; then # It checks the value 0 because the password question returns 0. A different value does not mean there is no key. For this reason, elif instead of else.
-	else
+	else # The password prompt returns 0. In this check, else also works outside of 0.
 		$RED
 		echo -e
 		echo "[ Error ]"
