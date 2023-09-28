@@ -137,55 +137,72 @@ function create_system_report(){
 function create_service_report(){
 	read -p "Enter the Machine Hostname : " TARGETMACHINE
 	echo ""
-	$RED
-	echo "::.. Generating Service Report... ..::"
-	echo ""
-	nc -z -w 2 $TARGETMACHINE 22 2>/dev/null
-	if [ "$?" = "0" ]; then
-		bash $RPTLIN servicereport $TARGETMACHINE
-		$WHITE
+	ssh -p22 -i /root/.ssh/lastcontrol -o "StrictHostKeyChecking no" root@$TARGETMACHINE &
+        PID=$!
+        sleep 1
+        kill $PID
+        if [ "$?" = 1 ]; then
+		$RED
+		echo "::.. Generating Service Report... ..::"
 		echo ""
-		cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.txt
-		$NOCOL
-		echo ""
+		nc -z -w 2 $TARGETMACHINE 22 2>/dev/null
+		if [ "$?" = "0" ]; then
+			bash $RPTLIN servicereport $TARGETMACHINE
+			$WHITE
+			echo ""
+			cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.txt
+			$NOCOL
+			echo ""
+			
+			# adding listening services output image
+			# cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-listeningservice.txt | grep -v "tcp6" | convert label:@- /tmp/$TARGETMACHINE-listeningservices.png
+			echo "" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
+			echo "\newpage" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
+			echo "" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
+			echo "## Listening Service List ##" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
+			echo "" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
+			echo "![](/tmp/$TARGETMACHINE-listeningservices.png){ width=80% }" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
+			echo "" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
+			echo "---" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
 		
-		# adding listening services output image
-		cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-listeningservice.txt | grep -v "tcp6" | convert label:@- /tmp/$TARGETMACHINE-listeningservices.png
-		echo "" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
-		echo "\newpage" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
-		echo "" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
-		echo "## Listening Service List ##" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
-		echo "" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
-		echo "![](/tmp/$TARGETMACHINE-listeningservices.png){ width=80% }" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
-		echo "" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
-		echo "---" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
-		
-		# adding established services output image
-		cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-establishedservice.txt | convert label:@- /tmp/$TARGETMACHINE-establishedservices.png
-		echo "" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
-		###echo "\newpage" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
-		echo "" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
-		echo "## Established Service List ##" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
-		echo "" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
-		echo "![](/tmp/$TARGETMACHINE-establishedservices.png){ width=80% }" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
-		echo "" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
-		echo "---" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
-		
-		pandoc -s -o $PDFSTORE/$TARGETMACHINE-servicereport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
-		mkdir -p $PDFREPORTS/$TARGETMACHINE
-		cp $PDFSTORE/$TARGETMACHINE-servicereport.pdf $PDFREPORTS/$TARGETMACHINE/
-		cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.txt $PDFREPORTS/$TARGETMACHINE/
-                #cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.json $PDFREPORTS/$TARGETMACHINE/
-		
-		echo "Info: Generated $TARGETMACHINE Service Report" > $BOARDFILE
-		pause
-	else
+			# adding established services output image
+			cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-establishedservice.txt | convert label:@- /tmp/$TARGETMACHINE-establishedservices.png
+			echo "" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
+			###echo "\newpage" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
+			echo "" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
+			echo "## Established Service List ##" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
+			echo "" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
+			echo "![](/tmp/$TARGETMACHINE-establishedservices.png){ width=80% }" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
+			echo "" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
+			echo "---" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
+			
+			pandoc -s -o $PDFSTORE/$TARGETMACHINE-servicereport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
+			mkdir -p $PDFREPORTS/$TARGETMACHINE
+			cp $PDFSTORE/$TARGETMACHINE-servicereport.pdf $PDFREPORTS/$TARGETMACHINE/
+			cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.txt $PDFREPORTS/$TARGETMACHINE/
+			#cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.json $PDFREPORTS/$TARGETMACHINE/
+
+			echo "Info: Generated $TARGETMACHINE Service Report" > $BOARDFILE
+			pause
+		else
+			$GREEN
+			echo "Could not reach $TARGETMACHINE from Port 22"
+			$NOCOL
+			echo -e
+			pause
+		fi
+	else # The password prompt returns 0. In this check, else also works outside of 0.
+		$RED
+		echo -e
+		echo "[ Error ]"
+		echo "LastControl SSH-Key Not Found on $TARGETMACHINE"
+		echo -e
 		$GREEN
-                echo "Could not reach $TARGETMACHINE from Port 22"
-                $NOCOL
-                echo -e
-                pause
-        fi
+		echo "You can add the LastControl SSH-Key from menu 40.Add SSH-Key"
+		$NOCOL
+		echo -e
+		pause
+	fi
 }
 
 function create_disk_report(){
