@@ -208,29 +208,45 @@ function create_service_report(){
 function create_disk_report(){
 	read -p "Enter the Machine Hostname : " TARGETMACHINE
 	echo ""
-	$RED
-	echo "::.. Generating Local Disk Report... ..::"
-	echo ""
-	nc -z -w 2 $TARGETMACHINE 22 2>/dev/null
-	if [ "$?" = "0" ]; then
-		bash $RPTLIN diskreport $TARGETMACHINE
-		$WHITE
+	ssh -p22 -i /root/.ssh/lastcontrol -o "StrictHostKeyChecking no" root@$TARGETMACHINE &
+	PID=$!
+	sleep 1
+	kill $PID
+	if [ "$?" = 1 ]; then
+		$RED
+		echo "::.. Generating Local Disk Report... ..::"
 		echo ""
-		cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-diskreport.txt
-		$NOCOL
-		echo ""
-		
-		pandoc -s -o $PDFSTORE/$TARGETMACHINE-diskreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-diskreport.md
-		mkdir -p $PDFREPORTS/$TARGETMACHINE
-		cp $PDFSTORE/$TARGETMACHINE-diskreport.pdf $PDFREPORTS/$TARGETMACHINE/
-		cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-diskreport.txt $PDFREPORTS/$TARGETMACHINE/
-		cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-diskreport.json $PDFREPORTS/$TARGETMACHINE/
-		
-		echo "Info: Generated $TARGETMACHINE Disk Report" > $BOARDFILE
-		pause
-	else
+		nc -z -w 2 $TARGETMACHINE 22 2>/dev/null
+		if [ "$?" = "0" ]; then
+			bash $RPTLIN diskreport $TARGETMACHINE
+			$WHITE
+			echo ""
+			cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-diskreport.txt
+			$NOCOLecho ""
+			
+			pandoc -s -o $PDFSTORE/$TARGETMACHINE-diskreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-diskreport.md
+			mkdir -p $PDFREPORTS/$TARGETMACHINE
+			cp $PDFSTORE/$TARGETMACHINE-diskreport.pdf $PDFREPORTS/$TARGETMACHINE/
+			cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-diskreport.txt $PDFREPORTS/$TARGETMACHINE/
+			cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-diskreport.json $PDFREPORTS/$TARGETMACHINE/
+			
+			echo "Info: Generated $TARGETMACHINE Disk Report" > $BOARDFILE
+			pause
+		else
+			$GREEN
+			echo "Could not reach $TARGETMACHINE from Port 22"
+			$NOCOL
+			echo -e
+			pause
+		fi
+	else # The password prompt returns 0. In this check, else also works outside of 0.
+		$RED
+		echo -e
+		echo "[ Error ]"
+		echo "LastControl SSH-Key Not Found on $TARGETMACHINE"
+		echo -e
 		$GREEN
-		echo "Could not reach $TARGETMACHINE from Port 22"
+		echo "You can add the LastControl SSH-Key from menu 40.Add SSH-Key"
 		$NOCOL
 		echo -e
 		pause
