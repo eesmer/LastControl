@@ -305,29 +305,46 @@ function create_nwconfig_report(){
 function create_ssh_report(){
 	read -p "Enter the Machine Hostname : " TARGETMACHINE
 	echo ""
-	$RED
-	echo "::.. Generating SSH Config Report... ..::"
-	echo ""
-	nc -z -w 2 $TARGETMACHINE 22 2>/dev/null
-	if [ "$?" = "0" ]; then
-		bash $RPTLIN sshreport $TARGETMACHINE
-		tput setaf 7
+	ssh -p22 -i /root/.ssh/lastcontrol -o "StrictHostKeyChecking no" root@$TARGETMACHINE &
+        PID=$!
+        sleep 1
+        kill $PID
+        if [ "$?" = 1 ]; then
+		$RED
+		echo "::.. Generating SSH Config Report... ..::"
 		echo ""
-		cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-sshreport.txt
-		tput sgr 0
-		echo ""
-
-		pandoc -s -o $PDFSTORE/$TARGETMACHINE-sshreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-sshreport.md
-		mkdir -p $PDFREPORTS/$TARGETMACHINE
-		cp $PDFSTORE/$TARGETMACHINE-sshreport.pdf $PDFREPORTS/$TARGETMACHINE/
-		cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-sshreport.txt $PDFREPORTS/$TARGETMACHINE/
-
-		echo "Info: Generated $TARGETMACHINE SSH Report" > $BOARDFILE
-		pause
-	else
-		tput setaf 2
-		echo "Could not reach $TARGETMACHINE from Port 22"
-		tput sgr 0
+		nc -z -w 2 $TARGETMACHINE 22 2>/dev/null
+		if [ "$?" = "0" ]; then
+			bash $RPTLIN sshreport $TARGETMACHINE
+			tput setaf 7
+			echo ""
+			cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-sshreport.txt
+			tput sgr 0
+			echo ""
+			
+			pandoc -s -o $PDFSTORE/$TARGETMACHINE-sshreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-sshreport.md
+			mkdir -p $PDFREPORTS/$TARGETMACHINE
+			cp $PDFSTORE/$TARGETMACHINE-sshreport.pdf $PDFREPORTS/$TARGETMACHINE/
+			cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-sshreport.txt $PDFREPORTS/$TARGETMACHINE/
+			
+			echo "Info: Generated $TARGETMACHINE SSH Report" > $BOARDFILE
+			pause
+		else
+			tput setaf 2
+			echo "Could not reach $TARGETMACHINE from Port 22"
+			tput sgr 0
+			echo -e
+			pause
+		fi
+	else # The password prompt returns 0. In this check, else also works outside of 0.
+		$RED
+		echo -e
+		echo "[ Error ]"
+		echo "LastControl SSH-Key Not Found on $TARGETMACHINE"
+		echo -e
+		$GREEN
+		echo "You can add the LastControl SSH-Key from menu 40.Add SSH-Key"
+		$NOCOL
 		echo -e
 		pause
 	fi
