@@ -25,7 +25,8 @@ rm $RDIR/distrocheck
 # System Update Report
 #----------------------------
 if [ "$REP" = APT ]; then
-	apt list --upgradable > /tmp/updateinfo.txt
+    apt list --upgradable | grep -v "Listing" > /tmp/updateinfo.txt
+        UPGRADEPACK=$(cat /tmp/updateinfo.txt | wc -l)
 fi
 if [ "$REP" = YUM ]; then
 	# check update for system
