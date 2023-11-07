@@ -30,7 +30,7 @@ OS_VER=$(cat /etc/os-release |grep PRETTY_NAME | cut -d '=' -f2 |cut -d '"' -f2)
 LAST_BOOT=$(who -b | awk '{print $3,$4}')
 UPTIME=$(uptime) && UPTIME_MIN=$(awk '{ print "up " $1 /60 " minutes"}' /proc/uptime)
 UTC_TIME=$(date --utc "+%Y-%m-%d %T")
-TIME_SYNC=$(timedatectl |grep "synchronized:" |cut -d ":" -f2 |cut -d " " -f2)
+TIME_SYNC=$(timedatectl |grep "synchronized:" |cut -d ":" -f2 | xargs)
 
 # Grub Control
 if [ "$REP" = APT ]; then
