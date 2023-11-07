@@ -39,7 +39,6 @@ $APPS
 ---
 EOF
 
-
 cat > $RDIR/$HOST_NAME-appsreport.txt << EOF
 ====================================================================================================
 :::. $HOST_NAME INSTALLED APPLICATIONS REPORT :::.
@@ -49,10 +48,12 @@ $DATE
 ----------------------------------------------------------------------------------------------------
 INSTALLED APPLICATIONS
 ----------------------------------------------------------------------------------------------------
-$APPS
 
-====================================================================================================
 EOF
+
+sed -ns '1F;/^\[Desktop Entry\]/,/^\[/{/^Name=/p;/^Exec=/h};${z;x;G;p}' /usr/share/applications/*.desktop >> $RDIR/$HOST_NAME-appsreport.txt
+echo "" >> $RDIR/$HOST_NAME-appsreport.txt
+echo "====================================================================================================" >> $RDIR/$HOST_NAME-appsreport.txt
 
 cat > $RDIR/$HOST_NAME-appsreport.json << EOF
 {
