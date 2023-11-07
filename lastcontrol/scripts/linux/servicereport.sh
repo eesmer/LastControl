@@ -104,3 +104,10 @@ netstat -tn |grep -v "Active Internet connections (servers and established)" |gr
 
 echo "" >> $RDIR/$HOST_NAME-servicereport.txt
 echo "=====================================================================================================" >> $RDIR/$HOST_NAME-servicereport.txt
+
+systemctl list-units --type=service | awk ' {print $1}' | cut -d "." -f1 | grep -v "UNIT" > $RDIR/$HOST_NAME-loadedservices.txt
+echo "|----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-servicereport.txt
+echo "|LOADED SERVICES" >> $RDIR/$HOST_NAME-servicereport.txt
+echo "|----------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-servicereport.txt
+cat $RDIR/$HOST_NAME-loadedservices.txt >> $RDIR/$HOST_NAME-servicereport.txt
+echo "=====================================================================================================" >> $RDIR/$HOST_NAME-servicereport.txt
