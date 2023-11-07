@@ -67,7 +67,7 @@ elif [ "$REP" = YUM ]; then
 fi
 
 # Disk Usage Info
-DISK_USAGE=$(df -H | grep -vE 'Filesystem|tmpfs|cdrom|udev' | awk '{ print $5" "$1"("$2"  "$3")" " --- "}')
+DISK_USAGE=$(df -H | grep -vE 'Filesystem|tmpfs|cdrom|udev' | awk '{ print $5" "$1"("$2"  "$3")" " --- "}'| grep -v "dev/loop")
 
 # Ram & Swap Usage Info
 RAM_TOTAL=$(free -m |grep Mem |awk '{print $2}')
