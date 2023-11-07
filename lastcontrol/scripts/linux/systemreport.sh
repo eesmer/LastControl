@@ -119,7 +119,7 @@ UPDATE_COUNT=0
 if [ "$REP" = APT ]; then
         echo "n" |apt-get upgrade > $RDIR/update_list.txt
         cat $RDIR/update_list.txt |grep "The following packages will be upgraded:" &>/dev/null && CHECK_UPDATE=EXIST \
-                && UPDATE_COUNT=$(cat $RDIR/update_list.txt |grep "upgraded," |cut -d " " -f1)
+                && UPDATE_COUNT=$(cat $RDIR/update_list.txt |grep "upgraded," | awk '{ print $1 }')
 elif [ "$REP" = YUM ]; then
         yum check-update > $RDIR/update_list.txt
         sed -i '/Loaded/d' $RDIR/update_list.txt
