@@ -222,7 +222,8 @@ function create_disk_report(){
 			$WHITE
 			echo ""
 			cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-diskreport.txt
-			$NOCOLecho ""
+			$NOCOL
+            echo ""
 			
 			pandoc -s -o $PDFSTORE/$TARGETMACHINE-diskreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-diskreport.md
 			mkdir -p $PDFREPORTS/$TARGETMACHINE
