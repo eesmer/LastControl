@@ -37,7 +37,7 @@ lspci | egrep -i 'wifi|wireless' > $RDIR/$HOST_NAME.wifi
 	fi
 rm $RDIR/$HOST_NAME.wifi &>/dev/null
 
-DISK_LIST=$(df -H | grep -vE 'Filesystem|tmpfs|cdrom|udev' | awk '{ print $5" "$1"("$2"  "$3")" " --- "}' | sed -e :a -e N -e 's/\n/ /' -e ta)
+DISK_LIST=$(df -H | grep -vE 'Filesystem|tmpfs|cdrom|udev' | grep -v "dev/loop" | awk '{ print $5" "$1"("$2"  "$3")" " --- "}' | sed -e :a -e N -e 's/\n/ /' -e ta)
 VIRT_SET=OFF
 if [ -f "/dev/kvm" ]; then $VIRT_SET=ON; fi
 OS_KERNEL=$(uname -a)
