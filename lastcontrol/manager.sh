@@ -161,7 +161,7 @@ function create_service_report(){
 			echo "" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
 			echo "## Listening Service List ##" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
 			echo "" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
-			echo "![](/tmp/$TARGETMACHINE-listeningservices.png){ width=80% }" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
+			# echo "![](/tmp/$TARGETMACHINE-listeningservices.png){ width=80% }" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
 			echo "" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
 			echo "---" >> $RDIR/$TARGETMACHINE/$TARGETMACHINE-servicereport.md
 		
