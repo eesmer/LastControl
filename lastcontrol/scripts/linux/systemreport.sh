@@ -138,6 +138,9 @@ elif [ "$REP" = YUM ]; then
         fi
 fi
 
+# Recently used commands list
+#history | awk '{cmd[$2]++} END {for(elem in cmd) {print cmd[elem] " " elem}}' | sort -n -r | head -10 | cut -d " " -f2
+
 cat > $RDIR/$HOST_NAME-systemreport.md << EOF
 
 ---
