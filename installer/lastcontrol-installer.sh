@@ -193,7 +193,9 @@ function check_distro(){
 	echo "OS : $OS"
 	echo "VER: $VER"
 	echo -e
+	$DGREEN
 	echo "LastControl installation is $SUPPORT this machine"
+	$NOCOL
 	echo -e
 	pause
 }
