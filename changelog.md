@@ -8,6 +8,10 @@ The version number is updated for major changes, and the update number for addit
 - V3 Update:1
 ---
 
+### V2 Update:25
+**Removed**
+- BOARD and BOARD Message
+
 ### V2 Update:24
 **Added**
 - a new installer script
