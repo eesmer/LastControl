@@ -58,8 +58,7 @@ $GRAY
 echo "    # LastControl Installer Menu # "
 echo "   --------------------------------"
 echo "   1. New Install                  "
-echo "   2. LastControl Update           "
-echo "   3. Check Distro                 "
+echo "   2. Check Distro                 "
 echo "   --------------------------------"
 $RED
 echo "   99.Exit                         "
@@ -207,7 +206,7 @@ read -p "You can choose from the menu numbers " c
 $NOCOL
 case $c in
 1) new_install ;;
-3) check_distro ;;
+2) check_distro ;;
 99) exit 0 ;;
 *)
 $MAGENTA
