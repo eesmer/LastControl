@@ -37,7 +37,7 @@ read -p "$message" readEnterKey
 }
 
 function show_menu(){
-BOARDMSG=$(cat $BOARDFILE)
+#BOARDMSG=$(cat $BOARDFILE)
 MACHDATE=$(date)
 echo -e "\e[1;37;1m$MACHDATE\e[0m"
 pwd
@@ -67,20 +67,19 @@ echo "   | 31. Remove Machine |                                              |"
 echo "   |-------------------------------------------------------------------|"
 echo "   | 40. Add SSH-Key    | 41. Remove SSH-Key                           |"
 echo "   |-------------------------------------------------------------------|"
-$RED
-echo "                             -----------                               "
-echo "                             ** BOARD **                               "
-echo "                             -----------                               "
-$MAGENTA
-$NOCOL
-echo "     $BOARDMSG                                                         "
-echo "   --------------------------------------------------------------------"
+#$RED
+#echo "                             -----------                               "
+#echo "                             ** BOARD **                               "
+#echo "                             -----------                               "
+#$MAGENTA
+#$NOCOL
+#echo "     $BOARDMSG                                                         "
 echo "    Download Reports: http://$HOSTIP/pdfreports                        "
+echo "   --------------------------------------------------------------------"
 echo ""
 echo "    -----------"
 echo "    | 99.Exit |"
 echo "    -----------"
-$NOCOL
 echo -e
 }
 
