@@ -166,7 +166,7 @@ function new_install(){
 	$DGREEN
 	echo "Usage:"
 	$CYAN
-	echo "bash /usr/local/lastcontrol/manager"
+	echo "bash /usr/local/lastcontrol/manager.sh"
 	$NOCOL
 	echo "--------------------------------------------------------"
 	pause
