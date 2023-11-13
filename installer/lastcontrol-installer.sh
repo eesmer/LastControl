@@ -13,8 +13,6 @@ GRAY="tput setaf 8"
 RED="tput setaf 9"
 NOCOL="tput sgr0"
 
-clear
-
 function banner(){
 cat << "EOF"
  _              _    ____            _             _
@@ -30,8 +28,6 @@ echo "Welcome to LastControl installation script"
 ${NOCOL}
 echo -e ""
 }
-
-banner
 
 OS=$(hostnamectl | grep "Operating System" | cut -d ":" -f2 | cut -d " " -f2 | xargs)
 
@@ -52,6 +48,8 @@ local message="$@"
 [ -z $message ] && message="Press Enter to continue"
 read -p "$message" readEnterKey
 }
+
+banner
 
 function installer_menu(){
 $GRAY
@@ -221,7 +219,8 @@ trap '' SIGINT SIGQUIT SIGTSTP
 
 while true
 do
+clear
+banner
 installer_menu
 read_input
-clear
 done
