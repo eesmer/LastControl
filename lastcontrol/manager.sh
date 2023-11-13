@@ -47,7 +47,7 @@ tput setaf "$BANNERCOLOR"
 cat $WDIR/doc/banner.txt
 echo ""
 $RED
-echo "    V2 Update:25"
+echo "    V2 Update:26"
 echo "    $HOSTOS - IP: $HOSTIP"
 $GRAY
 $NOCOL
@@ -56,7 +56,7 @@ echo "   | # REPORT MENU #                                                   |"
 echo "   |-------------------------------------------------------------------|"
 echo "   | 1. System  Report  | 6.  Local User Report | 11. Process Report   |"
 echo "   | 2. Service Report  | 7.  Inventory Report  | 12. Directory Report |"
-echo "   | 3. Disk    Report  | 8.  Update Report     |                      |"
+echo "   | 3. Disk    Report  | 8.  Update Report     | 13. Apps. Report     |"
 echo "   | 4. Network Report  | 9.  Kernel Report     |                      |"
 echo "   | 5. SSH     Report  | 10. Unsecure Packages |                      |"
 echo "   |-------------------------------------------------------------------|"
@@ -682,6 +682,55 @@ function create_directory_report(){
 	fi
 }
 
+function create_apps_report(){
+	read -p "Enter the Machine Hostname : " TARGETMACHINE
+	echo ""
+	ssh -p22 -i /root/.ssh/lastcontrol -o "StrictHostKeyChecking no" root@$TARGETMACHINE &
+	PID=$!
+	sleep 1
+	kill $PID
+	if [ "$?" = 1 ]; then
+		$RED
+		echo "::.. Generating Applications Report... ..::"
+		echo ""
+		nc -z -w 2 $TARGETMACHINE 22 2>/dev/null
+		if [ "$?" = "0" ]; then
+			bash $RPTLIN appsreport $TARGETMACHINE
+			tput setaf 7
+			echo ""
+			cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-appsreport.txt
+			tput sgr 0
+			echo ""
+
+			pandoc -s -o $PDFSTORE/$TARGETMACHINE-appsreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-appsreport.md
+                        mkdir -p $PDFREPORTS/$TARGETMACHINE
+                        cp $PDFSTORE/$TARGETMACHINE-appsreport.pdf $PDFREPORTS/$TARGETMACHINE/
+                        cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-appsreport.txt $PDFREPORTS/$TARGETMACHINE/
+                        cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-appsreport.json $PDFREPORTS/$TARGETMACHINE/
+
+			echo "Info: Generated $TARGETMACHINE Applications Report" > $BOARDFILE
+                        pause
+		else
+			tput setaf 2
+                        echo "Could not reach $TARGETMACHINE from Port 22"
+                        tput sgr 0
+                        echo -e
+                        pause
+		fi
+	else # The password prompt returns 0. In this check, else also works outside of 0.
+		$RED
+                echo -e
+                echo "[ Error ]"
+                echo "LastControl SSH-Key Not Found on $TARGETMACHINE"
+                echo -e
+                $GREEN
+                echo "You can add the LastControl SSH-Key from menu 40.Add SSH-Key"
+                $NOCOL
+                echo -e
+                pause
+        fi
+}
+
 #function take_all_report(){
 #$RED
 #echo "Generating all report for all machine.."
@@ -820,6 +869,7 @@ case $c in
 10) create_unsecurepack_report ;;
 11) create_process_report ;;
 12) create_directory_report ;;
+13) create_apps_report ;;
 30) add_machine ;;
 31) remove_machine ;;
 32) machine_list ;;
