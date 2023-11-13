@@ -10,7 +10,7 @@ The version number is updated for major changes, and the update number for addit
 
 ### V2 Update:26
 **Added**
-- Applications Report Added
+- Applications Report
 
 ### V2 Update:25
 **Removed**
