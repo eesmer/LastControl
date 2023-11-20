@@ -1,5 +1,27 @@
 #!/bin/bash
 
+#---------------------------------------------------------------------
+# Lastcontrol, it does not change any settings in the target system.
+# It just checks and outputs.
+# However, it is your responsibility to run it on any system.
+#---------------------------------------------------------------------
+
+RDIR=/usr/local/lastcontrol-reports
+rm -r $RDIR
+mkdir -p $RDIR
+
+#############################
+# determine distro
+#############################
+cat /etc/redhat-release > $RDIR/distrocheck || cat /etc/*-release > $RDIR/distrocheck || cat /etc/issue > $RDIR/distrocheck
+grep -i "debian" $RDIR/distrocheck &> /dev/null && REP=APT
+grep -i "ubuntu" $RDIR/distrocheck &> /dev/null && REP=APT
+grep -i "centos" $RDIR/distrocheck &> /dev/null && REP=YUM
+grep -i "rocky" $RDIR/distrocheck &> /dev/null && REP=YUM
+grep -i "red hat" $RDIR/distrocheck &> /dev/null && REP=YUM
+#cat /etc/*-release | grep "NAME=" | grep -v "PRETTY_NAME" | grep -v "CPE_NAME" | cut -d "=" -f2
+rm $RDIR/distrocheck
+
 ######################
 # Create TXT Report File
 ######################
