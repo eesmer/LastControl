@@ -70,4 +70,18 @@ $HOST_NAME LastControl Report $DATE
 --------------------------------------------------------------------------------------------------------------------------
 |LOG4J/LOG4SHELL    |$LOG4J_EXIST
 --------------------------------------------------------------------------------------------------------------------------
-
+|Disk Quota Usage:  |$QUOTA_INSTALL | Usr_Quota: $USR_QUOTA | Grp_Quota: $GRP_QUOTA | Mount: $MNT_MOUNT
+|Disk Encrypt Usage:|$CRYPT_INSTALL | $CRYPT_Usage
+|LVM Usage:         |$LVM_Usage
+--------------------------------------------------------------------------------------------------------------------------
+| UPDATE
+--------------------------------------------------------------------------------------------------------------------------
+|Update             |$SYSUPDATE_COUNT
+|Install Package    |$INSTALLPACK
+|BugFix Update      |$BUGFIX
+|Sec. Updated       |$SECUPDATE_COUNT
+|Critical Update    |$CRITICALPACKAGE
+|High-Medium-Low    |$IMMUPDATE_COUNT - $MODERATEPACKAGE - $LOWPACKAGE
+|Total Download     |$TOTALDOWNLOAD
+--------------------------------------------------------------------------------------------------------------------------
+EOF
