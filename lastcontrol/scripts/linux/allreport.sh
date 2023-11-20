@@ -27,3 +27,16 @@ $HOST_NAME LastControl Report $DATE
 |Uptime             |$UPTIME | $UPTIME_MIN
 |Kernel Version:    |$OS_KERNEL
 --------------------------------------------------------------------------------------------------------------------------
+|Date/Time Sync:    |System clock synchronized:$TIME_SYNC
+|Proxy Usage:       |HTTP: $HTTPPROXY_USE
+|SYSLOG Usage:      |$SYSLOGINSTALL | $SYSLOGSERVICE | Socket: $SYSLOGSOCKET | Send: $SYSLOGSEND
+--------------------------------------------------------------------------------------------------------------------------
+|Listening Conn.:   |$LISTENINGCONN
+|Established Conn.: |$ESTABLISHEDCONN
+--------------------------------------------------------------------------------------------------------------------------
+| RESOURCE
+--------------------------------------------------------------------------------------------------------------------------
+|Ram  Usage:        |$RAM_USAGE_PERCENTAGE%
+|Swap Usage:        |$SWAP_USAGE_PERCENTAGE%
+|Disk Usage:        |$DISK_USAGE
+--------------------------------------------------------------------------------------------------------------------------
