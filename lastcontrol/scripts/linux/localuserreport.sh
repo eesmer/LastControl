@@ -45,20 +45,45 @@ lastlog --time 30 | grep -v "Username" | cut -d " " -f1 > /tmp/lastlogin30d
 getent passwd {0..0} {1000..2000} |cut -d ":" -f1 > /tmp/localuserlist
 NOTLOGIN30D=$(diff /tmp/lastlogin30d /tmp/localuserlist -n | grep -v "d1" | grep -v "a0" | grep -v "a1" | grep -v "a2" | grep -v "a3" | grep -v "a4" | paste -sd ",")
 
-rm -f /tmp/passexpireinfo.txt
+rm -f /tmp/passexpireinfo
 USERCOUNT=$(cat /tmp/localuserlist | wc -l)
 PX=1
 while [ $PX -le $USERCOUNT ]; do
 	USERACCOUNTNAME=$(awk "NR==$PX" /tmp/localuserlist)
 	PASSEX=$(chage -l $USERACCOUNTNAME |grep "Password expires" | xargs | cut -d ":" -f2 | xargs)
-	echo "$USERACCOUNTNAME: $PASSEX" >> /tmp/passexpireinfo.txt
+	echo "$USERACCOUNTNAME:$PASSEX" >> /tmp/passexpireinfo
 	PX=$(( PX + 1 ))
 done
-PASSEXINFO=$(cat /tmp/passexpireinfo.txt| paste -sd ",")
+PASSEXINFO=$(cat /tmp/passexpireinfo | paste -sd ",")
+
+rm -f /tmp/passchange
+rm -f /tmp/userstatus
+PC=1
+while [ $PC -le $USERCOUNT ]; do
+	USERACCOUNTNAME=$(awk "NR==$PC" /tmp/localuserlist)
+	PASSCHANGE=$(lslogins "$USERACCOUNTNAME" | grep "Password changed:" | cut -d ":" -f2 | xargs) # Password update date
+	USERSTATUS=$(passwd -S "$USERACCOUNTNAME" >> /tmp/userstatus)                                 # user status information
+	echo "$USERACCOUNTNAME:$PASSCHANGE" >> /tmp/passchange
+	PC=$(( PC + 1 ))
+done
+cat /tmp/userstatus | grep "L" | cut -d " " -f1 > /tmp/lockedusers
+LOCKEDUSERS=$(cat /tmp/lockedusers | paste -sd ",")                                                   # locked users
+PASSUPDATEINFO=$(cat /tmp/passchange | paste -sd ",")
+
+LL=1
+while [ "$LL" -le "$USERCOUNT" ]; do
+        USERACCOUNTNAME=$(ls -l |sed -n $LL{p} /tmp/localuserlist)
+        LOGINDATE=$(lslogins | grep "$USERACCOUNTNAME" | xargs | cut -d " " -f6)
+        echo "$USERACCOUNTNAME:$LOGINDATE" >> /tmp/lastlogininfo
+LL=$(( LL + 1 ))
+done
+LASTLOGININFO=$(cat /tmp/lastlogininfo | paste -sd ",")
 
 rm /tmp/lastlogin30d
 rm /tmp/localuserlist
-rm /tmp/passexpireinfo.txt
+rm /tmp/passexpireinfo
+rm /tmp/lockedusers
+rm /tmp/lastlogininfo
 
 cat > $RDIR/$HOST_NAME-localuserreport.md<< EOF
 
@@ -120,6 +145,11 @@ $NOTLOGIN30D
 
 ---
 
+### Last Login Info
+$LASTLOGININFO
+
+---
+
 ### Password Expire Info
 $PASSEXINFO
 
@@ -140,19 +170,22 @@ $DATE
 
 ----------------------------------------------------------------------------------------------------
 |Local User Account          |$USERACCOUNT
-|SUDO Users                  |$SUDOUSERCOUNT - UserList: $SUDOUSERLIST 
+|SUDO Users                  |$SUDOUSERCOUNT - UserList:$SUDOUSERLIST 
 |Not Logged User Accounts    |$NOTLOGGEDUSER
 |Login Auth. Information     |Login Auth.:$LOGINAUTHUSER - nologin:$NOLOGINUSER
 |Blank Password Accounts     |$BLANKPASSACCOUNT
+|Locked Users                |$LOCKEDUSERS
 ----------------------------------------------------------------------------------------------------
 |Lastlogins in Today         |$LASTLOGIN00D
 |Lastlogins of 1 Week        |$LASTLOGIN07D
 |Lastlogins of 30 Days       |$LASTLOGIN30D
 ----------------------------------------------------------------------------------------------------
 |Not Logged (last 30 Day)    |$NOTLOGIN30D
+|Last Login Info             |$LASTLOGININFO
 ----------------------------------------------------------------------------------------------------
 |Pass .Expire Info           |$PASSEXINFO
-----------------------------------------------------------------------------------------------------
+|Pass. Update Info           |$PASSUPDATEINFO
+|----------------------------------------------------------------------------------------------------
 |Service Accounts            |$SERVICEACCOUNT
 ----------------------------------------------------------------------------------------------------
 
@@ -204,18 +237,23 @@ rm -f /tmp/infopasschange.txt
 cat >> $RDIR/$HOST_NAME.txt << EOF
 
 |---------------------------------------------------------------------------------------------------
-| ::. User Info .::  |
+| ::. User Info .::  
 |---------------------------------------------------------------------------------------------------
 |Local User Account          |$USERACCOUNT
-|SUDO Users                  |$SUDOUSERCOUNT - UserList: $SUDOUSERLIST 
+|SUDO Users                  |$SUDOUSERCOUNT - UserList:$SUDOUSERLIST 
 |Not Logged User Accounts    |$NOTLOGGEDUSER
 |Login Auth. Information     |Login Auth.:$LOGINAUTHUSER - nologin:$NOLOGINUSERNUM
 |Blank Password Accounts     |$BLANKPASSACCOUNT
 |Lastlogins in Today         |$LASTLOGIN00D
 |Lastlogins of 1 Week        |$LASTLOGIN07D
 |Lastlogins of 30 Days       |$LASTLOGIN30D
+|Locked Users                |$LOCKEDUSERS
 |----------------------------------------------------------------------------------------------------
 |Not Logged (last 30 Day)    |$NOTLOGIN30D
+|Last Login Info             |$LASTLOGININFO
+|----------------------------------------------------------------------------------------------------
+|Pass .Expire Info           |$PASSEXINFO
+|Pass. Update Info           |$PASSUPDATEINFO
 |----------------------------------------------------------------------------------------------------
 |Service Accounts            |$SERVICEACCOUNT
 |----------------------------------------------------------------------------------------------------
@@ -239,7 +277,7 @@ echo "--------------------------------------------------------------------------
 rm -f /tmp/loginauthusers.txt
 while IFS=: read -r f1 f2 f3 f4 f5 f6 f7
 do
-	echo "$f1 : Login Setting=$f7" >> /tmp/loginauthusers.txt
+	echo "$f1:Login Setting=$f7" >> /tmp/loginauthusers.txt
 done < /etc/passwd
 cat /tmp/loginauthusers.txt |grep -v "nologin" |grep -v "bin/false" |grep -v "sbin/shutdown" |grep -v "bin/sync" |grep -v "sbin/halt" |tee -a $RDIR/$HOST_NAME.localuserreport |tee -a $RDIR/$HOST_NAME.txt &>/dev/null
 echo "---------------------------------------------------------------------------------------------------" |tee -a $RDIR/$HOST_NAME.localuserreport |tee -a $RDIR/$HOST_NAME.txt &>/dev/null
