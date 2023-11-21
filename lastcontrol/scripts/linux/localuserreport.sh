@@ -40,6 +40,13 @@ LASTLOGINOOD=$(lastlog --time 1 |grep -v "Username" |cut -d "+" -f1 |paste -sd "
 LASTLOGIN07D=$(lastlog --time 7 |grep -v "Username" |cut -d " " -f1 |paste -sd ',')
 LASTLOGIN30D=$(lastlog --time 30 |grep -v "Username" | cut -d " " -f1 | paste -sd ",")
 
+# for not login user list
+lastlog --time 30 | grep -v "Username" | cut -d " " -f1 > /tmp/lastlogin30d
+getent passwd {0..0} {1000..2000} |cut -d ":" -f1 > /tmp/localuserlist
+NOTLOGIN30D=$(diff /tmp/lastlogin30d /tmp/localuserlist -n | grep -v "d1" | grep -v "a0" | grep -v "a1" | grep -v "a2" | grep -v "a3" | grep -v "a4" | paste -sd ",")
+rm /tmp/lastlogin30d
+rm /tmp/localuserlist
+
 cat > $RDIR/$HOST_NAME-localuserreport.md<< EOF
 
 ---
@@ -95,6 +102,11 @@ $LASTLOGIN30D
 
 ---
 
+### Not Logged User List last 30 Days ###
+$NOTLOGIN30D
+
+---
+
 ### Service Accounts ###
 $SERVICEACCOUNT
 
@@ -118,6 +130,8 @@ $DATE
 |Lastlogins in Today         |$LASTLOGIN00D
 |Lastlogins of 1 Week        |$LASTLOGIN07D
 |Lastlogins of 30 Days       |$LASTLOGIN30D
+----------------------------------------------------------------------------------------------------
+|Not Logged (last 30 Day)    |$NOTLOGIN30D
 ----------------------------------------------------------------------------------------------------
 |Service Accounts            |$SERVICEACCOUNT
 ----------------------------------------------------------------------------------------------------
@@ -180,6 +194,9 @@ cat >> $RDIR/$HOST_NAME.txt << EOF
 |Lastlogins in Today         |$LASTLOGIN00D
 |Lastlogins of 1 Week        |$LASTLOGIN07D
 |Lastlogins of 30 Days       |$LASTLOGIN30D
+|----------------------------------------------------------------------------------------------------
+|Not Logged (last 30 Day)    |$NOTLOGIN30D
+|----------------------------------------------------------------------------------------------------
 |Service Accounts            |$SERVICEACCOUNT
 |----------------------------------------------------------------------------------------------------
 
