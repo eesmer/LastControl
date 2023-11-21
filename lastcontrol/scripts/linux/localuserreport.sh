@@ -50,7 +50,6 @@ USERCOUNT=$(cat /tmp/localuserlist | wc -l)
 PX=1
 while [ $PX -le $USERCOUNT ]; do
 	USERACCOUNTNAME=$(awk "NR==$PX" /tmp/localuserlist)
-	####PASSEX=$(chage -l $USERACCOUNTNAME |grep "Password expires" | xargs | cut -d ":" -f2 | xargs)
 	PASSEX=$(chage -l $USERACCOUNTNAME |grep "Password expires" | awk '{print $4}')
 	echo "$USERACCOUNTNAME:$PASSEX" >> /tmp/passexpireinfo
 	PX=$(( PX + 1 ))
@@ -62,7 +61,6 @@ rm -f /tmp/userstatus
 PC=1
 while [ $PC -le $USERCOUNT ]; do
 	USERACCOUNTNAME=$(awk "NR==$PC" /tmp/localuserlist)
-	####PASSCHANGE=$(lslogins "$USERACCOUNTNAME" | grep "Password changed:" | cut -d ":" -f2 | xargs) # Password update date
 	PASSCHANGE=$(lslogins "$USERACCOUNTNAME" | grep "Password changed:" | awk ' { print $3 }')    # Password update date
 	USERSTATUS=$(passwd -S "$USERACCOUNTNAME" >> /tmp/userstatus)                                 # user status information
 	echo "$USERACCOUNTNAME:$PASSCHANGE" >> /tmp/passchange
@@ -77,7 +75,6 @@ PASSUPDATEINFO=$(cat /tmp/passchange | paste -sd ",")
 LL=1
 while [ "$LL" -le "$USERCOUNT" ]; do
         USERACCOUNTNAME=$(ls -l |sed -n $LL{p} /tmp/localuserlist)
-        ####LOGINDATE=$(lslogins | grep "$USERACCOUNTNAME" | xargs | cut -d " " -f6)
 	LOGINDATE=$(lastlog | grep "$USERACCOUNTNAME" | awk '{ print $4,$5,$6,$7 }')
         echo "$USERACCOUNTNAME:$LOGINDATE" >> /tmp/lastlogininfo
 LL=$(( LL + 1 ))
