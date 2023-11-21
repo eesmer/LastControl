@@ -32,11 +32,9 @@ BLANKPASSACCOUNT=$(awk -F: '$2 == "!*" { print $1 }' /etc/shadow |wc -l)
 rm -f /tmp/notloggeduserlist
 
 SUDOUSERCOUNT=$(getent group sudo | awk -F: '{print $4}' | tr ',' "\n" >> /tmp/sudouserlist ; cat /etc/sudoers | grep "ALL" | grep -v "%" | awk '{print $1}' \
-	>> /tmp/sudouserlist ; grep 'ALL' /etc/sudoers.d/* | cut -d":" -f2 | cut -d" " -f1 >> /tmp/sudouserlist ; cat /tmp/sudouserlist | wc -l ; \
-	rm /tmp/sudouserlist)
-SUDOUSERLIST=$(getent group sudo | awk -F: '{print $4}' | tr ',' "\n" >> /tmp/sudouserlist ; cat /etc/sudoers | grep "ALL" | grep -v "%" | awk '{print $1}' \
-	>> /tmp/sudouserlist ; grep 'ALL' /etc/sudoers.d/* | cut -d":" -f2 | cut -d" " -f1 >> /tmp/sudouserlist ; cat /tmp/sudouserlist | paste -sd ',' ; \
-	rm /tmp/sudouserlist)
+	>> /tmp/sudouserlist ; grep 'ALL' /etc/sudoers.d/* | cut -d":" -f2 | cut -d" " -f1 >> /tmp/sudouserlist ; cat /tmp/sudouserlist | wc -l)
+SUDOUSERLIST=$(cat /tmp/sudouserlist | paste -sd ',')
+rm /tmp/sudouserlist
 
 LASTLOGIN07D=$(lastlog --time 30 |grep -v "Username" |cut -d " " -f1 |paste -sd ',')
 LASTLOGIN0TD=$(lastlog --time 1 |grep -v "Username" |cut -d "+" -f1 |paste -sd ",")
