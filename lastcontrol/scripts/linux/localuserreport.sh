@@ -36,11 +36,11 @@ SUDOUSERCOUNT=$(getent group sudo | awk -F: '{print $4}' | tr ',' "\n" >> /tmp/s
 SUDOUSERLIST=$(cat /tmp/sudouserlist | paste -sd ',')
 rm /tmp/sudouserlist
 
-LASTLOGIN00D=$(lastlog --time 1 |grep -v "Username" |cut -d "+" -f1 |paste -sd ",")
-LASTLOGIN07D=$(lastlog --time 7 |grep -v "Username" |cut -d " " -f1 |paste -sd ',')
-LASTLOGIN30D=$(lastlog --time 30 |grep -v "Username" | cut -d " " -f1 | paste -sd ",")
+LASTLOGIN00D=$(lastlog --time 1 |grep -v "Username" | awk '{ print $1}' | paste -sd ',')
+LASTLOGIN07D=$(lastlog --time 7 |grep -v "Username" | awk '{ print $1}' | paste -sd ',')
+LASTLOGIN30D=$(lastlog --time 30 |grep -v "Username" | awk '{ print $1}' | paste -sd ',')
 
-# for not login user list
+# Not Logged User List
 lastlog --time 30 | grep -v "Username" | cut -d " " -f1 > /tmp/lastlogin30d
 getent passwd {0..0} {1000..2000} |cut -d ":" -f1 > /tmp/localuserlist
 NOTLOGIN30D=$(diff /tmp/lastlogin30d /tmp/localuserlist -n | grep -v "d1" | grep -v "a0" | grep -v "a1" | grep -v "a2" | grep -v "a3" | grep -v "a4" | paste -sd ",")
@@ -50,7 +50,8 @@ USERCOUNT=$(cat /tmp/localuserlist | wc -l)
 PX=1
 while [ $PX -le $USERCOUNT ]; do
 	USERACCOUNTNAME=$(awk "NR==$PX" /tmp/localuserlist)
-	PASSEX=$(chage -l $USERACCOUNTNAME |grep "Password expires" | xargs | cut -d ":" -f2 | xargs)
+	####PASSEX=$(chage -l $USERACCOUNTNAME |grep "Password expires" | xargs | cut -d ":" -f2 | xargs)
+	PASSEX=$(chage -l $USERACCOUNTNAME |grep "Password expires" | awk '{print $4}')
 	echo "$USERACCOUNTNAME:$PASSEX" >> /tmp/passexpireinfo
 	PX=$(( PX + 1 ))
 done
@@ -61,7 +62,8 @@ rm -f /tmp/userstatus
 PC=1
 while [ $PC -le $USERCOUNT ]; do
 	USERACCOUNTNAME=$(awk "NR==$PC" /tmp/localuserlist)
-	PASSCHANGE=$(lslogins "$USERACCOUNTNAME" | grep "Password changed:" | cut -d ":" -f2 | xargs) # Password update date
+	####PASSCHANGE=$(lslogins "$USERACCOUNTNAME" | grep "Password changed:" | cut -d ":" -f2 | xargs) # Password update date
+	PASSCHANGE=$(lslogins "$USERACCOUNTNAME" | grep "Password changed:" | awk ' { print $3 }')    # Password update date
 	USERSTATUS=$(passwd -S "$USERACCOUNTNAME" >> /tmp/userstatus)                                 # user status information
 	echo "$USERACCOUNTNAME:$PASSCHANGE" >> /tmp/passchange
 	PC=$(( PC + 1 ))
@@ -70,20 +72,35 @@ cat /tmp/userstatus | grep "L" | cut -d " " -f1 > /tmp/lockedusers
 LOCKEDUSERS=$(cat /tmp/lockedusers | paste -sd ",")                                                   # locked users
 PASSUPDATEINFO=$(cat /tmp/passchange | paste -sd ",")
 
+# Last Login Info
+######USERCOUNT=$(cat /etc/shadow | grep -v "*" | grep -v "!" | wc -l)
 LL=1
 while [ "$LL" -le "$USERCOUNT" ]; do
         USERACCOUNTNAME=$(ls -l |sed -n $LL{p} /tmp/localuserlist)
-        LOGINDATE=$(lslogins | grep "$USERACCOUNTNAME" | xargs | cut -d " " -f6)
+        ####LOGINDATE=$(lslogins | grep "$USERACCOUNTNAME" | xargs | cut -d " " -f6)
+	LOGINDATE=$(lastlog | grep "$USERACCOUNTNAME" | awk '{ print $4,$5,$6,$7 }')
         echo "$USERACCOUNTNAME:$LOGINDATE" >> /tmp/lastlogininfo
 LL=$(( LL + 1 ))
 done
 LASTLOGININFO=$(cat /tmp/lastlogininfo | paste -sd ",")
+
+######USERCOUNT=$(cat /etc/shadow | grep -v "*" | grep -v "!" | wc -l)
+cat /etc/shadow | grep -v "*" | grep -v "!" | cut -d ":" -f1 > /tmp/localuserlist
+rm -f /tmp/notloggeduserlist
+NL=1
+while [ $NL -le $USERCOUNT ]; do
+    USERACCOUNTNAME=$(awk "NR==$NL" /tmp/localuserlist)
+    lastlog | grep "Never logged in" | grep "$USERACCOUNTNAME" >> /tmp/neverloggeduserlist
+    NL=$(( NL + 1 ))
+done
+NEVERLOGGED=$(cat /tmp/neverloggeduserlist | cut -d " " -f1 | paste -sd ",")
 
 rm /tmp/lastlogin30d
 rm /tmp/localuserlist
 rm /tmp/passexpireinfo
 rm /tmp/lockedusers
 rm /tmp/lastlogininfo
+rm /tmp/notloggeduserlist
 
 cat > $RDIR/$HOST_NAME-localuserreport.md<< EOF
 
@@ -150,6 +167,11 @@ $LASTLOGININFO
 
 ---
 
+### Not Logged Users
+$NEVERLOGGED
+
+---
+
 ### Password Expire Info
 $PASSEXINFO
 
@@ -166,8 +188,6 @@ cat > $RDIR/$HOST_NAME-localuserreport.txt << EOF
 :::. $HOST_NAME LOCAL USER INFORMATION ON SYSTEM :::.
 ====================================================================================================
 $DATE
-
-
 ----------------------------------------------------------------------------------------------------
 |Local User Account          |$USERACCOUNT
 |SUDO Users                  |$SUDOUSERCOUNT - UserList:$SUDOUSERLIST 
@@ -182,6 +202,7 @@ $DATE
 ----------------------------------------------------------------------------------------------------
 |Not Logged (last 30 Day)    |$NOTLOGIN30D
 |Last Login Info             |$LASTLOGININFO
+|Never Logged Users          |$NEVERLOGGED
 ----------------------------------------------------------------------------------------------------
 |Pass .Expire Info           |$PASSEXINFO
 |Pass. Update Info           |$PASSUPDATEINFO
@@ -251,6 +272,7 @@ cat >> $RDIR/$HOST_NAME.txt << EOF
 |----------------------------------------------------------------------------------------------------
 |Not Logged (last 30 Day)    |$NOTLOGIN30D
 |Last Login Info             |$LASTLOGININFO
+|Never Logged Users          |$NEVERLOGGED
 |----------------------------------------------------------------------------------------------------
 |Pass .Expire Info           |$PASSEXINFO
 |Pass. Update Info           |$PASSUPDATEINFO
