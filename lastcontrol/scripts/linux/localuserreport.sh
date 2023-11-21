@@ -36,7 +36,7 @@ SUDOUSERCOUNT=$(getent group sudo | awk -F: '{print $4}' | tr ',' "\n" >> /tmp/s
 SUDOUSERLIST=$(cat /tmp/sudouserlist | paste -sd ',')
 rm /tmp/sudouserlist
 
-LASTLOGINOOD=$(lastlog --time 1 |grep -v "Username" |cut -d "+" -f1 |paste -sd ",")
+LASTLOGIN00D=$(lastlog --time 1 |grep -v "Username" |cut -d "+" -f1 |paste -sd ",")
 LASTLOGIN07D=$(lastlog --time 7 |grep -v "Username" |cut -d " " -f1 |paste -sd ',')
 LASTLOGIN30D=$(lastlog --time 30 |grep -v "Username" | cut -d " " -f1 | paste -sd ",")
 
