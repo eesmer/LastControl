@@ -36,8 +36,9 @@ SUDOUSERCOUNT=$(getent group sudo | awk -F: '{print $4}' | tr ',' "\n" >> /tmp/s
 SUDOUSERLIST=$(cat /tmp/sudouserlist | paste -sd ',')
 rm /tmp/sudouserlist
 
-LASTLOGIN07D=$(lastlog --time 30 |grep -v "Username" |cut -d " " -f1 |paste -sd ',')
-LASTLOGIN0TD=$(lastlog --time 1 |grep -v "Username" |cut -d "+" -f1 |paste -sd ",")
+LASTLOGINOOD=$(lastlog --time 1 |grep -v "Username" |cut -d "+" -f1 |paste -sd ",")
+LASTLOGIN07D=$(lastlog --time 7 |grep -v "Username" |cut -d " " -f1 |paste -sd ',')
+LASTLOGIN30D=$(lastlog --time 30 |grep -v "Username" | cut -d " " -f1 | paste -sd ",")
 
 cat > $RDIR/$HOST_NAME-localuserreport.md<< EOF
 
@@ -83,11 +84,14 @@ $BLANKPASSACCOUNT
 
 ---
 
+### Lastlogins in Today ###
+$LASTLOGIN00D
+
+### Lastlogins of 1 Week ###
+$LASTLOGIN07D
+
 ### Lastlogins of 30 Days ###
 $LASTLOGIN30D
-
-### Lastlogins in Today ###
-$LASTLOGIN0TD
 
 ---
 
@@ -111,8 +115,9 @@ $DATE
 |Login Auth. Information     |Login Auth.:$LOGINAUTHUSER - nologin:$NOLOGINUSER
 |Blank Password Accounts     |$BLANKPASSACCOUNT
 ----------------------------------------------------------------------------------------------------
+|Lastlogins in Today         |$LASTLOGIN00D
+|Lastlogins of 1 Week        |$LASTLOGIN07D
 |Lastlogins of 30 Days       |$LASTLOGIN30D
-|Lastlogins in Today         |$LASTLOGIN0TD
 ----------------------------------------------------------------------------------------------------
 |Service Accounts            |$SERVICEACCOUNT
 ----------------------------------------------------------------------------------------------------
@@ -172,8 +177,9 @@ cat >> $RDIR/$HOST_NAME.txt << EOF
 |Not Logged User Accounts    |$NOTLOGGEDUSER
 |Login Auth. Information     |Login Auth.:$LOGINAUTHUSER - nologin:$NOLOGINUSERNUM
 |Blank Password Accounts     |$BLANKPASSACCOUNT
+|Lastlogins in Today         |$LASTLOGIN00D
+|Lastlogins of 1 Week        |$LASTLOGIN07D
 |Lastlogins of 30 Days       |$LASTLOGIN30D
-|Lastlogins in Today         |$LASTLOGIN0TD
 |Service Accounts            |$SERVICEACCOUNT
 |----------------------------------------------------------------------------------------------------
 
