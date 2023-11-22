@@ -71,6 +71,24 @@ grep -i -r 'out of memory' /var/log/ &>/dev/null && OOM=1
 if [ "$OOM" = "1" ]; then OOM_LOGS="Out of Memory Log Found !!"; fi
 SWAP_USAGE_PERCENTAGE=$(free -m |grep Swap |awk '{print $3/$2 * 100}' |cut -d "." -f1)
 DISK_USAGE=$(fdisk -lu | grep "Disk" | grep -v "Disklabel" | grep -v "dev/loop" | grep -v "Disk identifier")
+QUOTA_INSTALL=Pass
+if ! [ "$(command -v quotacheck)" ]; then
+             QUOTA_INSTALL=Fail
+fi
+USR_QUOTA=Fail
+grep -i "usrquota" /etc/fstab >> /dev/null && USR_QUOTA=Pass
+GRP_QUOTA=Fail
+grep -i "grpquota" /etc/fstab >> /dev/null && GRP_QUOTA=Pass
+MNT_QUOTA=Fail
+mount |grep "quota" >> /dev/null && MNT_QUOTA=Pass
+LVM_USAGE=Fail
+lsblk --output type |grep -w "lvm" && LVM_USAGE=Pass
+CRYPT_INSTALL=Fail
+if [ -x "$(command -v cryptsetup)" ]; then CRYPT_INSTALL=Pass; fi
+CRYPT_USAGE=Fail
+lsblk --output type |grep -w "crypt" && CRYPT_USAGE=Pass
+rm -f /tmp/disklist.txt
+
 
 
 ######################ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNECTED"
