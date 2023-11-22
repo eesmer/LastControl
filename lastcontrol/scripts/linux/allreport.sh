@@ -246,7 +246,7 @@ echo "|ESTABLISHED SERVICE LIST" >> $RDIR/$HOST_NAME.txt
 echo "|--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.txt
 netstat -tn |grep -v "Active Internet connections (servers and established)" |grep -v "Active Internet connections (only servers)" |grep "ESTABLISHED" >> $RDIR/$HOST_NAME.txt
 echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.txt
-
+cat >> $RDIR/$HOST_NAME.txt << EOF
 
 
 
