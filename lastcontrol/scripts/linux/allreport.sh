@@ -181,6 +181,22 @@ while [ $PX -le $USERCOUNT ]; do
 done
 PASSEXINFO=$(cat /tmp/passexpireinfo.txt | paste -sd ",")
 
+rm -f /tmp/passchange
+rm -f /tmp/userstatus
+PC=1
+while [ $PC -le $USERCOUNT ]; do
+    USERACCOUNTNAME=$(awk "NR==$PC" /tmp/localuserlist)
+    PASSCHANGE=$(lslogins "$USERACCOUNTNAME" | grep "Password changed:" | awk ' { print $3 }')    # Password update date
+    USERSTATUS=$(passwd -S "$USERACCOUNTNAME" >> /tmp/userstatus)                                 # user status information
+    echo "$USERACCOUNTNAME:$PASSCHANGE" >> /tmp/passchange
+    PC=$(( PC + 1 ))
+done
+
+cat /tmp/userstatus | grep "L" | cut -d " " -f1 > /tmp/lockedusers
+LOCKEDUSERS=$(cat /tmp/lockedusers | paste -sd ",")                                            # locked users
+PASSUPDATEINFO=$(cat /tmp/passchange | paste -sd ",")
+rm /tmp/lockedusers
+
 
 ######################ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNECTED"
 ######################UPTIME=$(uptime | awk '{print $1,$2,$3,$4}' |cut -d "," -f1)
