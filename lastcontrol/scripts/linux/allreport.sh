@@ -197,6 +197,34 @@ LOCKEDUSERS=$(cat /tmp/lockedusers | paste -sd ",")                             
 PASSUPDATEINFO=$(cat /tmp/passchange | paste -sd ",")
 rm /tmp/lockedusers
 
+# LOGIN INFO
+rm -f /tmp/lastlogininfo
+LL=1
+while [ "$LL" -le "$USERCOUNT" ]; do
+        USERACCOUNTNAME=$(ls -l |sed -n $LL{p} /tmp/localuserlist)
+        #LOGINFROM=$(lastlog | grep $USERACCOUNTNAME | xargs)
+        ###lastlog | grep $USERACCOUNTNAME | cut -d "+" -f1 >> /tmp/lastlogininfo
+        LOGINDATE=$(lslogins | grep "$USERACCOUNTNAME" | xargs | cut -d " " -f6)
+        LOGINDATE=$(lastlog | grep "$USERACCOUNTNAME" | awk '{ print $4,$5,$6,$7 }')
+        echo "$USERACCOUNTNAME:$LOGINDATE" >> /tmp/lastlogininfo
+LL=$(( LL + 1 ))
+done
+LASTLOGININFO=$(cat /tmp/lastlogininfo | paste -sd ",")
+
+# NEVER LOGGED USERS
+USERCOUNT=$(cat /etc/shadow | grep -v "*" | grep -v "!" | wc -l)
+cat /etc/shadow | grep -v "*" | grep -v "!" | cut -d ":" -f1 > /tmp/localaccountlist
+rm -f /tmp/notloggeduserlist
+NL=1
+while [ $NL -le $USERCOUNT ]; do
+    USERACCOUNTNAME=$(awk "NR==$NL" /tmp/localaccountlist)
+    lastlog | grep "Never logged in" | grep "$USERACCOUNTNAME" >> /tmp/notloggeduserlist
+    NL=$(( NL + 1 ))
+done
+NOTLOGGEDUSER=$(cat /tmp/notloggeduserlist | cut -d " " -f1 | paste -sd "@")
+
+rm -f /tmp/{localaccountlist,notloggeduserlist}
+rm -f /tmp/{lastlogin30d,localuserlist,userstatus,activeusers,lockedusers,passchange,PasswordBilgileri,userstatus,lastlogininfo}
 
 ######################ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNECTED"
 ######################UPTIME=$(uptime | awk '{print $1,$2,$3,$4}' |cut -d "," -f1)
