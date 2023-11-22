@@ -89,8 +89,22 @@ CRYPT_USAGE=Fail
 lsblk --output type |grep -w "crypt" && CRYPT_USAGE=Pass
 rm -f /tmp/disklist.txt
 
-
-
+#KERNEL MODULE CONTROL
+###KERNEL_VER=$(uname -r)
+CRAMFS="NOT LOADED"
+lsmod |grep cramfs &>/dev/null && CRAMFS=LOADED
+FREEVXFS="NOT LOADED"
+lsmod |grep freevxfs &>/dev/null && FREEVXFS=LOADED
+JFFS2="NOT LOADED"
+lsmod |grep jffs2 &>/dev/null && JFFS2=LOADED
+HFS="NOT LOADED"
+lsmod |grep hfs &>/dev/null && HFS=LOADED
+HFSPLUS="NOT LOADED"
+lsmod |grep hfsplus &>/dev/null && HFS=LOADED
+SQUASHFS="NOT LOADED"
+lsmod |grep squashfs &>/dev/null && SQUASHFS=LOADED
+UDF="NOT LOADED"
+lsmod |grep udf &>/dev/null && UDF=LOADED
 
 # GRUB CONTROL
 if [ "$REP" = APT ]; then
