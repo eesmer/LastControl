@@ -78,6 +78,33 @@ PASSIVE_CONN=$(netstat -s |grep "passive connection openings")
 FAILED_CONN=$(netstat -s |grep "failed connection attempts")
 ESTAB_CONN=$(netstat -s |grep "connections established")
 
+# CHECK TIME SYNC
+TIME_SYNC=$(timedatectl |grep "synchronized:" |cut -d ":" -f2 | xargs)
+
+# CHECK SYSLOG SET
+SYSLOGINSTALL=Not_Installed
+if [ "$REP" = "APT" ]; then
+        dpkg -l |grep rsyslog >> /dev/null && SYSLOGINSTALL=Installed
+fi
+if [ "$REP" = "YUM" ]; then
+        rpm -qa rsyslog >> /dev/null && SYSLOGINSTALL=Installed
+fi
+
+if [ "$SYSLOGINSTALL" = "Installed" ]; then
+        SYSLOGSERVICE=INACTIVE
+        systemctl status rsyslog.service |grep "active (running)" >> /dev/null && SYSLOGSERVICE=ACTIVE
+        SYSLOGSOCKET=INACTIVE
+        systemctl status syslog.socket |grep "active (running)" >> /dev/null && SYSLOGSOCKET=ACTIVE
+        SYSLOGSEND=NO
+        cat /etc/rsyslog.conf |grep "@" |grep -v "#" >> /dev/null && SYSLOGSEND=YES        #??? i will check it
+fi
+
+# CHECK PROXY SET
+HTTP_PROXY_USAGE=FALSE
+env |grep "http_proxy" >> /dev/null && HTTP_PROXY_USAGE=TRUE
+grep -e "export http" /etc/profile |grep -v "#" >> /dev/null && HTTP_PROXY_USAGE=TRUE
+grep -e "export http" /etc/profile.d/* |grep -v "#" >> /dev/null && HTTP_PROXY_USAGE=TRUE
+
 ######################
 # Create TXT Report File
 ######################
