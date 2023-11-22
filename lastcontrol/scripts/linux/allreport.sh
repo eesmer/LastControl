@@ -26,7 +26,7 @@ DATE=$(date)
 HOST_NAME=$(cat /etc/hostname)
 
 #----------------------------
-# Inventory
+# INVENTORY
 #----------------------------
 INT_IPADDR=$(hostname -I)
 EXT_IPADDR=$(curl -4 icanhazip.com)
@@ -36,27 +36,31 @@ RAM_USAGE=$(free -m | head -2 | tail -1| awk '{print $3}')
 GPU=$(lspci | grep VGA | cut -d ":" -f3);GPURAM=$(cardid=$(lspci | grep VGA |cut -d " " -f1);lspci -v -s $cardid | grep " prefetchable"| awk '{print $6}' | head -1)
 VGA_CONTROLLER="'$GPU' '$GPURAM'"
 DISK_LIST=$(fdisk -lu | grep "Disk" | grep -v "Disklabel" | grep -v "dev/loop" | grep -v "Disk identifier" | cut -d ":" -f1)
-
-
-
-
-
-
-
-
-VIRT_CONTROL=NONE
-if [ -f "/dev/kvm" ]; then "$VIRT_CONTROL"=ON; fi
+#----------------------------
+# SYSTEM
+#----------------------------
 OS_KERNEL=$(uname -mrsv)
 OS_VER=$(cat /etc/os-release |grep PRETTY_NAME | cut -d '=' -f2 |cut -d '"' -f2)
-LAST_BOOT=$(who -b | awk '{print $3,$4}')
 UPTIME=$(uptime) && UPTIME_MIN=$(awk '{ print "up " $1 /60 " minutes"}' /proc/uptime)
-ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNECTED"
+LASTBOOT=$(who -b | awk '{print $3,$4}')
+VIRT_CONTROL=NONE
+if [ -f "/dev/kvm" ]; then "$VIRT_CONTROL"=ON; fi
+TIME_SYNC=$(timedatectl |grep "synchronized:" |cut -d ":" -f2 | xargs)
+HTTP_PROXY_USAGE=FALSE
+env |grep "http_proxy" >> /dev/null && HTTP_PROXY_USAGE=TRUE
+grep -e "export http" /etc/profile |grep -v "#" >> /dev/null && HTTP_PROXY_USAGE=TRUE
+grep -e "export http" /etc/profile.d/* |grep -v "#" >> /dev/null && HTTP_PROXY_USAGE=TRUE
+
+
+
+
+
+######################ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNECTED"
+######################UPTIME=$(uptime | awk '{print $1,$2,$3,$4}' |cut -d "," -f1)
 DISTRO=$(cat /etc/os-release | grep PRETTY_NAME | cut -d '=' -f2 |cut -d '"' -f2)
 KERNEL=$(uname -mrs)
 TIMEZONE=$(timedatectl | grep "Time zone:" | cut -d ":" -f2 | xargs)
 LOCALDATE=$(timedatectl | grep "Local time:" | awk '{print $3,$4,$5}')
-LASTBOOT=$(who -b | awk '{print $3,$4}')
-UPTIME=$(uptime | awk '{print $1,$2,$3,$4}' |cut -d "," -f1)
 
 #----------------------------
 # Create System Report
@@ -85,8 +89,6 @@ PASSIVE_CONN=$(netstat -s |grep "passive connection openings")
 FAILED_CONN=$(netstat -s |grep "failed connection attempts")
 ESTAB_CONN=$(netstat -s |grep "connections established")
 
-# CHECK TIME SYNC
-TIME_SYNC=$(timedatectl |grep "synchronized:" |cut -d ":" -f2 | xargs)
 
 # CHECK SYSLOG SET
 SYSLOGINSTALL=Not_Installed
@@ -106,11 +108,6 @@ if [ "$SYSLOGINSTALL" = "Installed" ]; then
         cat /etc/rsyslog.conf |grep "@" |grep -v "#" >> /dev/null && SYSLOGSEND=YES        #??? i will check it
 fi
 
-# CHECK PROXY SET
-HTTP_PROXY_USAGE=FALSE
-env |grep "http_proxy" >> /dev/null && HTTP_PROXY_USAGE=TRUE
-grep -e "export http" /etc/profile |grep -v "#" >> /dev/null && HTTP_PROXY_USAGE=TRUE
-grep -e "export http" /etc/profile.d/* |grep -v "#" >> /dev/null && HTTP_PROXY_USAGE=TRUE
 
 ######################
 # Create TXT Report File
@@ -130,7 +127,26 @@ $HOST_NAME LastControl Report $DATE
 |VGA:               |$VGA_CONTROLLER
 |HDD:               |$DISK_LIST
 --------------------------------------------------------------------------------------------------------------------------
-
+| SYSTEM
+--------------------------------------------------------------------------------------------------------------------------
+|Operation System:  |$OS_KERNEL
+|OS Version:        |$OS_VER
+|Kernel Version:    |$OS_KERNEL
+|Uptime             |$UPTIME | $UPTIME_MIN
+|Last Boot:         |$LAST_BOOT
+|Virtualization:    |$VIRT_CONTROL
+|Date/Time Sync:    |System clock synchronized:$TIME_SYNC
+|Proxy Usage:       |HTTP: $HTTPPROXY_USAGE
+|SYSLOG Usage:      |$SYSLOGINSTALL | $SYSLOGSERVICE | Socket: $SYSLOGSOCKET | Send: $SYSLOGSEND
+--------------------------------------------------------------------------------------------------------------------------
+|Ram  Usage:        |$RAM_USAGE_PERCENTAGE%
+|Swap Usage:        |$SWAP_USAGE_PERCENTAGE%
+|Disk Usage:        |$DISK_USAGE
+--------------------------------------------------------------------------------------------------------------------------
+|Disk Quota Usage:  |$QUOTA_INSTALL | Usr_Quota: $USR_QUOTA | Grp_Quota: $GRP_QUOTA | Mount: $MNT_MOUNT
+|Disk Encrypt Usage:|$CRYPT_INSTALL | $CRYPT_Usage
+|LVM Usage:         |$LVM_Usage
+--------------------------------------------------------------------------------------------------------------------------
 
 
 
