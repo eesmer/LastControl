@@ -153,6 +153,10 @@ ACTIVE_CONN=$(netstat -s |grep "active connection openings")
 PASSIVE_CONN=$(netstat -s |grep "passive connection openings")
 FAILED_CONN=$(netstat -s |grep "failed connection attempts")
 ESTAB_CONN=$(netstat -s |grep "connections established")
+NOC=$(nproc --all)
+LOAD_AVG=$(uptime |grep "load average:" |awk -F: '{print $5}')
+ZO_PROCESS=$(ps -A -ostat,ppid,pid,cmd | grep -e '^[Zz]' | wc -l)
+
 
 
 ######################ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNECTED"
@@ -235,21 +239,6 @@ $HOST_NAME LastControl Report $DATE
 
 
 
-
-
-
---------------------------------------------------------------------------------------------------------------------------
-| SERVICES
---------------------------------------------------------------------------------------------------------------------------
-|Running Services:  |$NUM_SERVICES
-|Services Info:     |Loaded: | Active: | Failed: | Inactive:
---------------------------------------------------------------------------------------------------------------------------
-| PROCESS
---------------------------------------------------------------------------------------------------------------------------
-|Process Info:      |Total:$TO_PROCESS | Running:$RU_PROCESS | Sleeping:$SL_PROCESS
-|Stopping Process:  |$ST_PROCESS
-|Zombie Process:    |$ZO_PROCESS
---------------------------------------------------------------------------------------------------------------------------
 | USERS
 --------------------------------------------------------------------------------------------------------------------------
 |SUDO Member Count: |$SUDOMEMBERCOUNT
