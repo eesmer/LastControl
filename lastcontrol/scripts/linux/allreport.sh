@@ -35,7 +35,6 @@ RAM_TOTAL=$(free -m | head -2 | tail -1| awk '{print $2}')
 RAM_USAGE=$(free -m | head -2 | tail -1| awk '{print $3}')
 GPU=$(lspci | grep VGA | cut -d ":" -f3);GPURAM=$(cardid=$(lspci | grep VGA |cut -d " " -f1);lspci -v -s $cardid | grep " prefetchable"| awk '{print $6}' | head -1)
 VGA_CONTROLLER="'$GPU' '$GPURAM'"
-##################DISK_LIST=$(df -lh | grep -vE 'Filesystem|tmpfs|cdrom|udev' | awk '{ print $5" "$1"("$2"  "$3")" " --- "}' | sed -e :a -e N -e 's/\n/ /' -e ta)
 DISK_LIST=$(fdisk -lu | grep "Disk" | grep -v "Disklabel" | grep -v "dev/loop" | grep -v "Disk identifier" | cut -d ":" -f1)
 VIRT_CONTROL=NONE
 if [ -f "/dev/kvm" ]; then "$VIRT_CONTROL"=ON; fi
