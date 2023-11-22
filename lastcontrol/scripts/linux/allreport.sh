@@ -247,6 +247,14 @@ echo "|-------------------------------------------------------------------------
 netstat -tn |grep -v "Active Internet connections (servers and established)" |grep -v "Active Internet connections (only servers)" |grep "ESTABLISHED" >> $RDIR/$HOST_NAME.txt
 echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.txt
 cat >> $RDIR/$HOST_NAME.txt << EOF
+| USERS
+--------------------------------------------------------------------------------------------------------------------------
+|Local User Count:  |$USERCOUNT
+|Local User List:   |$USERLIST
+|SUDO Users:        |$SUDOUSERLIST
+|Blank Pass. Users  |$BLANKPASSUSERLIST
+|Locked Users       |$LOCKEDUSERS
+--------------------------------------------------------------------------------------------------------------------------
 
 
 
