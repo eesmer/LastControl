@@ -51,6 +51,33 @@ LOCALDATE=$(timedatectl | grep "Local time:" | awk '{print $3,$4,$5}')
 LASTBOOT=$(who -b | awk '{print $3,$4}')
 UPTIME=$(uptime | awk '{print $1,$2,$3,$4}' |cut -d "," -f1)
 
+#----------------------------
+# Create System Report
+#----------------------------
+# DISK USAGE INFORMATION
+DISK_USAGE=$(fdisk -lu | grep "Disk" | grep -v "Disklabel" | grep -v "dev/loop" | grep -v "Disk identifier")
+RAM_TOTAL=$(free -m |grep Mem |awk '{print $2}')
+RAM_USAGE_PERCENTAGE=$(free |grep Mem |awk '{print $3/$2 * 100}' |cut -d "." -f1)
+# OUT of MEMORY LOGs
+OOM=0
+grep -i -r 'out of memory' /var/log/ &>/dev/null && OOM=1
+if [ "$OOM" = "1" ]; then OOM_LOGS="Out of Memory Log Found !!"; fi
+
+SWAP_TOTAL=$(free -m |grep Swap |awk '{print $2}')
+SWAP_USAGE_PERCENTAGE=$(free -m |grep Swap |awk '{print $3/$2 * 100}' |cut -d "." -f1)
+
+# CHECK SERVICE MANAGER
+SERVICE_MANAGER="$(ps --no-headers -o comm 1)"
+if [ "$SERVICE_MANAGER" = systemd ]; then
+        systemctl list-units --type service |grep running > $RDIR/runningservices.txt
+        RUNNING_SERVICE=$(wc -l $RDIR/runningservices.txt |cut -d ' ' -f1)
+        LOADED_SERVICE=$(systemctl list-units --type service |grep "units." |cut -d "." -f1)
+fi
+ACTIVE_CONN=$(netstat -s |grep "active connection openings")
+PASSIVE_CONN=$(netstat -s |grep "passive connection openings")
+FAILED_CONN=$(netstat -s |grep "failed connection attempts")
+ESTAB_CONN=$(netstat -s |grep "connections established")
+
 ######################
 # Create TXT Report File
 ######################
