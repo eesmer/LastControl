@@ -140,24 +140,9 @@ elif [ "$REP" = YUM ]; then
         GRUB_SEC="Fail"
         if [ -a "/boot/grub2/user.cfg" ]; then GRUB_SEC="Pass"; fi
 fi
-
-
-
-
-
-
-
-
-
-######################ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNECTED"
-######################UPTIME=$(uptime | awk '{print $1,$2,$3,$4}' |cut -d "," -f1)
-DISTRO=$(cat /etc/os-release | grep PRETTY_NAME | cut -d '=' -f2 |cut -d '"' -f2)
-KERNEL=$(uname -mrs)
-TIMEZONE=$(timedatectl | grep "Time zone:" | cut -d ":" -f2 | xargs)
-LOCALDATE=$(timedatectl | grep "Local time:" | awk '{print $3,$4,$5}')
-
-
-# CHECK SERVICE MANAGER
+#----------------------------
+# SERVICE & PROCESSES
+#----------------------------
 SERVICE_MANAGER="$(ps --no-headers -o comm 1)"
 if [ "$SERVICE_MANAGER" = systemd ]; then
         systemctl list-units --type service |grep running > $RDIR/runningservices.txt
@@ -168,6 +153,14 @@ ACTIVE_CONN=$(netstat -s |grep "active connection openings")
 PASSIVE_CONN=$(netstat -s |grep "passive connection openings")
 FAILED_CONN=$(netstat -s |grep "failed connection attempts")
 ESTAB_CONN=$(netstat -s |grep "connections established")
+
+
+######################ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNECTED"
+######################UPTIME=$(uptime | awk '{print $1,$2,$3,$4}' |cut -d "," -f1)
+DISTRO=$(cat /etc/os-release | grep PRETTY_NAME | cut -d '=' -f2 |cut -d '"' -f2)
+KERNEL=$(uname -mrs)
+TIMEZONE=$(timedatectl | grep "Time zone:" | cut -d ":" -f2 | xargs)
+LOCALDATE=$(timedatectl | grep "Local time:" | awk '{print $3,$4,$5}')
 
 
 
