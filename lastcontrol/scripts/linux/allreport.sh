@@ -36,6 +36,14 @@ RAM_USAGE=$(free -m | head -2 | tail -1| awk '{print $3}')
 GPU=$(lspci | grep VGA | cut -d ":" -f3);GPURAM=$(cardid=$(lspci | grep VGA |cut -d " " -f1);lspci -v -s $cardid | grep " prefetchable"| awk '{print $6}' | head -1)
 VGA_CONTROLLER="'$GPU' '$GPURAM'"
 DISK_LIST=$(fdisk -lu | grep "Disk" | grep -v "Disklabel" | grep -v "dev/loop" | grep -v "Disk identifier" | cut -d ":" -f1)
+
+
+
+
+
+
+
+
 VIRT_CONTROL=NONE
 if [ -f "/dev/kvm" ]; then "$VIRT_CONTROL"=ON; fi
 OS_KERNEL=$(uname -mrsv)
@@ -116,12 +124,23 @@ $HOST_NAME LastControl Report $DATE
 --------------------------------------------------------------------------------------------------------------------------
 |Hostname:          |$HOST_NAME
 |IP Address:        |$INT_IPADDR | $EXT_IPADDR
-|Internet Conn.     |$INTERNET   | Installation Check: $INSTALL_CHECK
---------------------------------------------------------------------------------------------------------------------------
-|CPU Info:          |$CPUINFO
+|Internet Conn.     |$INTERNET
+|CPU:               |$CPUINFO
 |RAM:               |Total:$RAM_TOTAL | Usage:$RAM_USAGE
-|VGA Controller:    |$VGA_CONTROLLER
+|VGA:               |$VGA_CONTROLLER
 |HDD:               |$DISK_LIST
+--------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
 |Virtualization:    |$VIRT_CONTROL
 |Operation System:  |$OS_KERNEL
 |OS Version:        |$OS_VER
