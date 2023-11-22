@@ -255,9 +255,18 @@ cat >> $RDIR/$HOST_NAME.txt << EOF
 |Blank Pass. Users  |$BLANKPASSUSERLIST
 |Locked Users       |$LOCKEDUSERS
 --------------------------------------------------------------------------------------------------------------------------
-
-
-
+|Last Login Today   |$LASTLOGIN00D
+|Last Login 7 Days  |$LASTLOGIN07D
+|Last Login 30 Days |$LASTLOGIN30D
+|Not Logged(30 Days)|$NOTLOGIN30D
+|Last Login Info    |$LASTLOGININFO
+|Never Logged Users |$NEVERLOGGED
+--------------------------------------------------------------------------------------------------------------------------
+|Pass. Expire Info  |$PASSEXINFO
+|Pass. Update Info  |$PASSUPDATEINFO
+--------------------------------------------------------------------------------------------------------------------------
+|Service Users:     |$SERVICEUSERLIST
+--------------------------------------------------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------------------------------------------------
 | UPDATE
