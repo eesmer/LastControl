@@ -157,6 +157,14 @@ NOC=$(nproc --all)
 LOAD_AVG=$(uptime |grep "load average:" |awk -F: '{print $5}')
 ZO_PROCESS=$(ps -A -ostat,ppid,pid,cmd | grep -e '^[Zz]' | wc -l)
 
+USERCOUNT=$(cat /etc/shadow |grep -v "*" |grep -v "!" |wc -l)
+USERLIST=$(cat /etc/passwd | grep -v "/sbin/nologin" | grep -v "/bin/false" | grep -E "/bin/bash|/bin/zsh|/bin/sh" | cut -d":" -f1 | paste -sd ",")
+SUDOUSERLIST=$(getent group sudo | awk -F: '{print $4}' | tr ',' "\n" >> /tmp/sudouserlist ; cat /etc/sudoers | grep "ALL" | grep -v "%" | awk '{print $1}' >> /tmp/sudouserlist ; grep 'ALL' /etc/sudoers.d/* | cut -d":" -f2 | cut -d" " -f1 >> /tmp/sudouserlist ; cat /tmp/sudouserlist | sort -u | paste -sd "," ; rm -f /tmp/sudouserlist)
+SERVICEUSERLIST=$(awk -F: '$2 == "*"' /etc/shadow | cut -d ":" -f1 | paste -sd ",")
+BLANKPASSUSERLIST=$(awk -F: '$2 == "!*" { print $1 }' /etc/shadow | paste -sd ",")
+LASTLOGIN00D=$(lastlog --time 1 |grep -v "Username" | awk '{ print $1}' | paste -sd ',')
+LASTLOGIN07D=$(lastlog --time 7 |grep -v "Username" | awk '{ print $1}' | paste -sd ',')
+LASTLOGIN30D=$(lastlog --time 30 |grep -v "Username" | awk '{ print $1}' | paste -sd ',')
 
 
 ######################ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNECTED"
