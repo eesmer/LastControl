@@ -39,7 +39,7 @@ DISK_LIST=$(fdisk -lu | grep "Disk" | grep -v "Disklabel" | grep -v "dev/loop" |
 # SYSTEM
 #----------------------------
 OS_KERNEL=$(uname -mrsv)
-OS_VER=$(cat /etc/os-release |grep PRETTY_NAME | cut -d '=' -f2 |cut -d '"' -f2)
+DISTRO=$(cat /etc/os-release |grep PRETTY_NAME | cut -d '=' -f2 |cut -d '"' -f2)
 UPTIME=$(uptime) && UPTIME_MIN=$(awk '{ print "up " $1 /60 " minutes"}' /proc/uptime)
 LASTBOOT=$(who -b | awk '{print $3,$4}')
 VIRT_CONTROL=NONE
@@ -256,8 +256,7 @@ $HOST_NAME LastControl Report $DATE
 --------------------------------------------------------------------------------------------------------------------------
 | SYSTEM
 --------------------------------------------------------------------------------------------------------------------------
-|Operation System:  |$OS_KERNEL
-|OS Version:        |$OS_VER
+|Operation System:  |$DISTRO
 |Kernel Version:    |$OS_KERNEL
 |Uptime             |$UPTIME | $UPTIME_MIN
 |Last Boot:         |$LAST_BOOT
