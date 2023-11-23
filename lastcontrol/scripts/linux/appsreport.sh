@@ -51,7 +51,8 @@ INSTALLED APPLICATIONS
 
 EOF
 
-sed -ns '1F;/^\[Desktop Entry\]/,/^\[/{/^Name=/p;/^Exec=/h};${z;x;G;p}' /usr/share/applications/*.desktop >> $RDIR/$HOST_NAME-appsreport.txt
+sed -ns '1F;/^\[Desktop Entry\]/,/^\[/{/^Name=/p;/^Exec=/h};${z;x;G;p}' /usr/share/applications/*.desktop | grep -v "/usr/share/applications/" >> $RDIR/$HOST_NAME-appsreport.txt && sed -i '/^Name=/ s/./- &/' $RDIR/$HOST_NAME-appsreport.txt && sed -i '/^\s*$/d' $RDIR/$HOST_NAME-appsreport.txt
+
 echo "" >> $RDIR/$HOST_NAME-appsreport.txt
 echo "====================================================================================================" >> $RDIR/$HOST_NAME-appsreport.txt
 
