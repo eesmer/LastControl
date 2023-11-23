@@ -44,6 +44,8 @@ UPTIME=$(uptime) && UPTIME_MIN=$(awk '{ print "up " $1 /60 " minutes"}' /proc/up
 LASTBOOT=$(who -b | awk '{print $3,$4}')
 VIRT_CONTROL=NONE
 if [ -f "/dev/kvm" ]; then "$VIRT_CONTROL"=ON; fi
+LOCALDATE=$(timedatectl | grep "Local time:" | awk '{print $3,$4,$5}')
+TIMEZONE=$(timedatectl | grep "Time zone:" | cut -d ":" -f2 | xargs)
 TIME_SYNC=$(timedatectl |grep "synchronized:" |cut -d ":" -f2 | xargs)
 HTTP_PROXY_USAGE=FALSE
 env |grep "http_proxy" >> /dev/null && HTTP_PROXY_USAGE=TRUE
@@ -230,8 +232,6 @@ rm -f /tmp/{lastlogin30d,localuserlist,userstatus,activeusers,lockedusers,passch
 ######################UPTIME=$(uptime | awk '{print $1,$2,$3,$4}' |cut -d "," -f1)
 DISTRO=$(cat /etc/os-release | grep PRETTY_NAME | cut -d '=' -f2 |cut -d '"' -f2)
 KERNEL=$(uname -mrs)
-TIMEZONE=$(timedatectl | grep "Time zone:" | cut -d ":" -f2 | xargs)
-LOCALDATE=$(timedatectl | grep "Local time:" | awk '{print $3,$4,$5}')
 
 
 
@@ -261,7 +261,8 @@ $HOST_NAME LastControl Report $DATE
 |Uptime             |$UPTIME | $UPTIME_MIN
 |Last Boot:         |$LAST_BOOT
 |Virtualization:    |$VIRT_CONTROL
-|Date/Time Sync:    |System clock synchronized:$TIME_SYNC
+|Date/Time Sync:    |Date:$LOCALDATE - System clock synchronized:$TIME_SYNC
+|Timezone:          |$TIMEZONE
 |Proxy Usage:       |HTTP: $HTTPPROXY_USAGE
 |SYSLOG Usage:      |$SYSLOGINSTALL | $SYSLOGSERVICE | Socket: $SYSLOGSOCKET | Send: $SYSLOGSEND
 --------------------------------------------------------------------------------------------------------------------------
