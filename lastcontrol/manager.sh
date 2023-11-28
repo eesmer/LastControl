@@ -902,6 +902,16 @@ else
 fi
 }
 
+function take_allreport(){
+echo ""
+read -p "Enter the Machine Hostname : " TARGETMACHINE
+nc -z -w 2 $TARGETMACHINE 22 2>/dev/null
+if [ "$?" = "0" ]; then
+    bash $MACHINESCRIPT/add-sshkey.sh $TARGETMACHINE
+    echo "Info: SSH-Key removed to $TARGETMACHINE" > $BOARDFILE
+    pause
+fi}
+
 function read_input(){
 $WHITE
 local c
