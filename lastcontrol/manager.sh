@@ -62,6 +62,8 @@ echo "   | 5.SSH     Report   | 10.Unsecure Packages |                     |"
 echo "   |-----------------------------------------------------------------|"
 echo "   | # MACHINE MENU #                                                |"
 echo "   |-----------------------------------------------------------------|"
+echo "   | 50.Take all Report |                                            |"
+echo "   |-----------------------------------------------------------------|"
 echo "   | 30. Add    Machine | 32. Machine List                           |"
 echo "   | 31. Remove Machine |                                            |"
 echo "   |-----------------------------------------------------------------|"
@@ -925,6 +927,7 @@ case $c in
 32) machine_list ;;
 40) add_sshkey ;;
 41) remove_sshkey ;;
+50) take_allreport ;;
 99) exit 0 ;;
 *)
 $MAGENTA
