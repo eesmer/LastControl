@@ -8,6 +8,10 @@ The version number is updated for major changes, and the update number for addit
 - V3 Update:1
 ---
 
+### V2 Update:27
+**Added**
+- All Controls Report
+
 ### V2 Update:26
 **Added**
 - Applications Report
