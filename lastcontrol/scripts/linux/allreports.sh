@@ -6,7 +6,11 @@
 # However, it is your responsibility to run it on any system.
 #---------------------------------------------------------------------
 
-RDIR=/usr/local/lastcontrol-reports
+HOST_NAME=$(cat /etc/hostname)
+RDIR=/usr/local/lcreports/$HOST_NAME
+LOGO=/usr/local/lastcontrol/images/lastcontrol_logo.png
+DATE=$(date)
+
 rm -r $RDIR
 mkdir -p $RDIR
 
@@ -236,8 +240,8 @@ KERNEL=$(uname -mrs)
 ######################
 # Create TXT Report File
 ######################
-rm $RDIR/$HOST_NAME.txt
-cat > $RDIR/$HOST_NAME.txt << EOF
+rm $RDIR/$HOST_NAME-allreports.txt
+cat > $RDIR/$HOST_NAME-allreports.txt << EOF
 $HOST_NAME LastControl Report $DATE
 =======================================================================================================================================================================
 --------------------------------------------------------------------------------------------------------------------------
@@ -301,16 +305,16 @@ $HOST_NAME LastControl Report $DATE
 |Zombie Process:    |$ZO_PROCESS
 -------------------------------------------------------------------------------------------------------------------------
 EOF
-echo "|LISTENING SERVICE LIST" >> $RDIR/$HOST_NAME.txt
-echo "|--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.txt
-netstat -tl |grep -v "Active Internet connections (servers and established)" |grep -v "Active Internet connections (only servers)" >> $RDIR/$HOST_NAME.txt
-echo "" >> $RDIR/$HOST_NAME.txt
-echo "|--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.txt
-echo "|ESTABLISHED SERVICE LIST" >> $RDIR/$HOST_NAME.txt
-echo "|--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.txt
-netstat -tn |grep -v "Active Internet connections (servers and established)" |grep -v "Active Internet connections (only servers)" |grep "ESTABLISHED" >> $RDIR/$HOST_NAME.txt
-echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME.txt
-cat >> $RDIR/$HOST_NAME.txt << EOF
+echo "|LISTENING SERVICE LIST" >> $RDIR/$HOST_NAME-allreports.txt
+echo "|--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+netstat -tl |grep -v "Active Internet connections (servers and established)" |grep -v "Active Internet connections (only servers)" >> $RDIR/$HOST_NAME-allreports.txt
+echo "" >> $RDIR/$HOST_NAME-allreports.txt
+echo "|--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+echo "|ESTABLISHED SERVICE LIST" >> $RDIR/$HOST_NAME-allreports.txt
+echo "|--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+netstat -tn |grep -v "Active Internet connections (servers and established)" |grep -v "Active Internet connections (only servers)" |grep "ESTABLISHED" >> $RDIR/$HOST_NAME-allreports.txt
+echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+cat >> $RDIR/$HOST_NAME-allreports.txt << EOF
 | USERS
 --------------------------------------------------------------------------------------------------------------------------
 |Local User Count:  |$USERCOUNT
