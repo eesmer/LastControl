@@ -47,7 +47,7 @@ tput setaf "$BANNERCOLOR"
 cat $WDIR/doc/banner.txt
 echo ""
 $RED
-echo "    V2 Update:26"
+echo "    V2 Update:27"
 echo "    $HOSTOS - IP: $HOSTIP"
 $GRAY
 $NOCOL
