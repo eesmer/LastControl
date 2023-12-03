@@ -233,9 +233,6 @@ rm -f /tmp/{lastlogin30d,localuserlist,userstatus,activeusers,lockedusers,passch
 DISTRO=$(cat /etc/os-release | grep PRETTY_NAME | cut -d '=' -f2 |cut -d '"' -f2)
 KERNEL=$(uname -mrs)
 
-
-
-
 ######################
 # Create TXT Report File
 ######################

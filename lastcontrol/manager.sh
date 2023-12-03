@@ -907,10 +907,11 @@ echo ""
 read -p "Enter the Machine Hostname : " TARGETMACHINE
 nc -z -w 2 $TARGETMACHINE 22 2>/dev/null
 if [ "$?" = "0" ]; then
-    bash $MACHINESCRIPT/add-sshkey.sh $TARGETMACHINE
-    echo "Info: SSH-Key removed to $TARGETMACHINE" > $BOARDFILE
+    bash $MACHINESCRIPT/allreport.sh $TARGETMACHINE
+    echo "Info: All Report run for $TARGETMACHINE" > $BOARDFILE
     pause
-fi}
+fi
+}
 
 function read_input(){
 $WHITE
