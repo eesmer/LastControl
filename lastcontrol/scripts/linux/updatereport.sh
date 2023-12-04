@@ -27,12 +27,20 @@ rm $RDIR/distrocheck
 if [ "$REP" = APT ]; then
     apt list --upgradable | grep -v "Listing" > /tmp/updateinfo.txt
         UPGRADEPACK=$(cat /tmp/updateinfo.txt | wc -l)
+	echo n | apt upgrade | grep "upgraded" | grep -v "The following packages will be" > /tmp/updateinfo.txt
+	NEWINSTALL=$(cat /tmp/updateinfo.txt | cut -d "," -f2 | xargs | cut -d " " -f1)
+
+	TOTALDOWNLOAD=$(cat /tmp/updatecheck.txt | grep "Total download size:" | cut -d ":" -f2 | xargs)
+	IMPUPDATECOUNT=$(cat /tmp/updateinfo.txt |grep "Important Security" | xargs)
+        MODUPDATECOUNT=$(cat /tmp/updateinfo.txt |grep "Moderate Security" | xargs)
+        LOWUPDATECOUNT=$(cat /tmp/updateinfo.txt |grep "Low Security" | xargs)
+        BUGFIXCOUNT=$(cat /tmp/updateinfo.txt |grep "Bugfix" | xargs)
 fi
 if [ "$REP" = YUM ]; then
 	# check update for system
 	echo N | yum update > /tmp/updatecheck.txt 2>/dev/null
-	NEWINSTALL=$(cat /tmp/updatecheck.txt | grep "Install" | grep "Packages")
 	UPGRADEPACK=$(cat /tmp/updatecheck.txt | grep "Upgrade" | grep "Packages")
+	NEWINSTALL=$(cat /tmp/updatecheck.txt | grep "Install" | grep "Packages")
 	TOTALDOWNLOAD=$(cat /tmp/updatecheck.txt | grep "Total download size:" | cut -d ":" -f2 | xargs)
 	
 	# check update for security packages
@@ -48,18 +56,18 @@ cat > $RDIR/$HOST_NAME-updatereport.txt << EOF
 |---------------------------------------------------------------------------------------------------
 | ::. System Update Report .:: 
 |---------------------------------------------------------------------------------------------------
-|Packages to New Install   | $NEWINSTALL
-|Packages to Upgrade       | $UPGRADEPACK
+|Packages to Update/Upgrade | $UPGRADEPACK
+|Packages to New Install    | $NEWINSTALL
 |---------------------------------------------------------------------------------------------------
 | ::. Security Update Report .:: 
 |---------------------------------------------------------------------------------------------------
-|Important Security Update | $IMPUPDATECOUNT
-|Moderate  Security Update | $MODUPDATECOUNT
-|Low       Security Update | $LOWUPDATECOUNT
+|Important Security Update  | $IMPUPDATECOUNT
+|Moderate  Security Update  | $MODUPDATECOUNT
+|Low       Security Update  | $LOWUPDATECOUNT
 |---------------------------------------------------------------------------------------------------
-|Bugfixes                  | $BUGFIXCOUNT
+|Bugfixes                   | $BUGFIXCOUNT
 |----------------------------------------------------------------------------------------------------
-|Total Download Size       | $TOTALDOWNLOAD
+|Total Download Size        | $TOTALDOWNLOAD
 |---------------------------------------------------------------------------------------------------
 
 EOF
