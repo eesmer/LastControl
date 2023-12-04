@@ -251,7 +251,7 @@ $HOST_NAME LastControl All Controls Report $DATE
 |IP Address:        |$INT_IPADDR | $EXT_IPADDR
 |Internet Conn.     |$INTERNET
 |CPU:               |$CPUINFO
-|RAM:               |Total:$RAM_TOTAL | Usage:$RAM_USAGE
+|RAM:               |Total:$RAM_TOTAL
 |VGA:               |$VGA_CONTROLLER
 |HDD:               |$DISK_LIST
 --------------------------------------------------------------------------------------------------------------------------
