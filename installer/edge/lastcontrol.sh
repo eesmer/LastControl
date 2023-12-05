@@ -22,3 +22,24 @@ if [ "$1" = "--help" ]; then
 
         exit 1
 fi
+
+if [ "$1" = "--create" ]; then
+        clear
+        echo -e
+        echo "Report Generating.."
+        #systemctl restart lastcontrol.service
+        diskreport
+        unsecurepackreport
+        localuserreport
+        exit 99
+elif [ "$1" = "--disk" ]; then
+        clear
+        REPORT=diskreport
+        if [ ! -f "$RDIR/$HNAME/$HNAME-$REPORT.txt" ]; then
+                echo "Report Not Found!! Please use --create option"
+                exit 98
+        else
+                cat $RDIR/$HNAME/$HNAME-$REPORT.txt
+                exit 99
+        fi
+fi
