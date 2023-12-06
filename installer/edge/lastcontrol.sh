@@ -1,7 +1,20 @@
 #!/bin/bash
 
+#------------------
+# Color Codes
+#------------------
+MAGENTA="tput setaf 1"
+GREEN="tput setaf 2"
+YELLOW="tput setaf 3"
+DGREEN="tput setaf 4"
+CYAN="tput setaf 6"
+WHITE="tput setaf 7"
+GRAY="tput setaf 8"
+RED="tput setaf 9"
+NOCOL="tput sgr0"
+
 if [ "$1" = "" ]; then
-	echo "Parameter missinig.. Usage: lastcontrol --create"
+	echo "Parameter missing.. Usage: lastcontrol --help"
 	exit 98
 fi
 
@@ -13,7 +26,10 @@ if [ "$1" = "--help" ]; then
 	echo "---------------------"
 	echo "Usage: lastcontrol [OPTION]"
 	echo "---------------------"
-	echo "--ver                 Show LastControl Binary Version"
+	echo "--install             LastControl Install"
+	echo "--update              Update LastControl App."
+	echo "--version             Show LastControl Binary Version"
+	echo "-----------------------------------------------------"
 	echo "--create              Create all System Report"
 	echo "--disk                Show System Disk Report"
 	echo "--localuser           Show System Local User Report"
@@ -32,15 +48,61 @@ if [ ! "$SYSTEM_MANAGER" = "systemd" ]; then
 	exit 98
 fi
 
+#----------------------
+# --install PARAMETER
+#----------------------
+if [ "$1" = "--install" ]; then
+systemctl stop lastcontrol.service
+rm /etc/systemd/system/multi-user.target.wants/lastcontrol.service
+
+cat >> /etc/systemd/system/lastcontrol.service << EOF
+[Unit]
+Description=LastControl Service
+
+[Service]
+User=root
+Group=root
+ExecStart=/sbin/lastcontrol --create
+Restart=always
+RestartSec=1hour
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+ln -s /etc/systemd/system/lastcontrol.service /etc/systemd/system/multi-user.target.wants/
+chmod -R 755 /usr/local/lastcontrol
+chmod +x /usr/local/lastcontrol/lastcontrol
+systemctl enable lastcontrol.service
+systemctl start lastcontrol.service
+fi
+
+#----------------------
+# --version PARAMETER
+#----------------------
+if [ "$1" = "--version" ]; then
+clear
+cat << "EOF"
+ _              _    ____            _             _
+| |    __ _ ___| |_ / ___|___  _ __ | |_ _ __ ___ | |
+| |   / _` / __| __| |   / _ \| '_ \| __| '__/ _ \| |
+| |__| (_| \__ \ |_| |__| (_) | | | | |_| | | (_) | |
+|_____\__,_|___/\__|\____\___/|_| |_|\__|_|  \___/|_|
+
+V2 Update:27
+------------
+https://github.com/eesmer/LastControl
+EOF
+echo -e
+exit 99
+fi
+
+#----------------------
+# --create and show Report PARAMETER
+#----------------------
+
 RDIR=/usr/local/lcreports
 HNAME=$(cat /etc/hostname)
-
-if [ "$1" = "--ver" ]; then
-	clear
-	echo -e
-	echo "LastControl 2 Update:27"
-	exit 99
-fi
 
 if [ "$1" = "--create" ]; then
 	clear
