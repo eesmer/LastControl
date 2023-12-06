@@ -21,15 +21,19 @@ fi
 if [ "$1" = "--help" ]; then
 	
 	clear
-
+	
+	${CYAN}
 	echo "LastControl CLI"
+	${NOCOL}
 	echo "---------------------"
 	echo "Usage: lastcontrol [OPTION]"
 	echo "---------------------"
 	echo "--install             LastControl Install"
 	echo "--update              Update LastControl App."
 	echo "--version             Show LastControl Binary Version"
+	${CYAN}
 	echo "-----------------------------------------------------"
+	${NOCOL}
 	echo "--create              Create all System Report"
 	echo "--disk                Show System Disk Report"
 	echo "--localuser           Show System Local User Report"
@@ -38,6 +42,7 @@ if [ "$1" = "--help" ]; then
 	echo "(example: lastcontrol --create)"
 	echo "(example: lastcontrol --disk)"
 	echo "(example: lastcontrol --localuser)"
+	echo -e
 
 	exit 1
 fi
