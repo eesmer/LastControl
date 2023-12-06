@@ -76,10 +76,19 @@ WantedBy=multi-user.target
 EOF
 
 ln -s /etc/systemd/system/lastcontrol.service /etc/systemd/system/multi-user.target.wants/
-chmod -R 755 /usr/local/lastcontrol
-chmod +x /usr/local/lastcontrol/lastcontrol
+######chmod -R 755 /usr/local/lastcontrol
+######chmod +x /usr/local/lastcontrol/lastcontrol
+
+wget -P /tmp/ -r -np -nH --cut-dirs=1 https://esmerkan.com/lastcontrol/edge/lastcontrol
+wget -P /tmp/ -r -np -nH --cut-dirs=1 https://esmerkan.com/lastcontrol/edge/lc-binary/ && rm /tmp/edge/lc-binary/*index.*
+cp -r /tmp/edge/lc-binary/* /sbin/
+cp /tmp/edge/lastcontrol /sbin/
+chmod +x /sbin/lc-*
+chmod +x /sbin/lastcontrol
+
 systemctl enable lastcontrol.service
 systemctl start lastcontrol.service
+
 fi
 
 #----------------------
