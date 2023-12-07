@@ -155,9 +155,59 @@ if [ "$1" = "create" ]; then
 	lc-unsecurepackreport
 	lc-updatereport
 	exit 99
-elif [ "$1" = "disk" ]; then
+elif [ "$1" = "appsreport" ]; then
 	clear
-	REPORT=lc-diskreport
+	REPORT=appsreport
+	if [ ! -f "$RDIR/$HNAME/$HNAME-$REPORT.txt" ]; then
+		echo "Report Not Found!! Please use create option"
+		exit 98
+	else
+		cat $RDIR/$HNAME/$HNAME-$REPORT.txt
+		exit 99
+	fi
+elif [ "$1" = "directoryreport" ]; then
+	clear
+	REPORT=directoryreport
+	if [ ! -f "$RDIR/$HNAME/$HNAME-$REPORT.txt" ]; then
+		echo "Report Not Found!! Please use create option"
+		exit 98
+	else
+		cat $RDIR/$HNAME/$HNAME-$REPORT.txt
+		exit 99
+	fi
+elif [ "$1" = "diskreport" ]; then
+	clear
+	REPORT=diskreport
+	if [ ! -f "$RDIR/$HNAME/$HNAME-$REPORT.txt" ]; then
+		echo "Report Not Found!! Please use create option"
+		exit 98
+	else
+		cat $RDIR/$HNAME/$HNAME-$REPORT.txt
+		exit 99
+	fi
+elif [ "$1" = "inventoryreport" ]; then
+	clear
+	REPORT=inventoryreport
+	if [ ! -f "$RDIR/$HNAME/$HNAME-$REPORT.txt" ]; then
+		echo "Report Not Found!! Please use create option"
+		exit 98
+	else
+		cat $RDIR/$HNAME/$HNAME-$REPORT.txt
+		exit 99
+	fi
+elif [ "$1" = "kernelreport" ]; then
+	clear
+	REPORT=kernelreport
+	if [ ! -f "$RDIR/$HNAME/$HNAME-$REPORT.txt" ]; then
+		echo "Report Not Found!! Please use create option"
+		exit 98
+	else
+		cat $RDIR/$HNAME/$HNAME-$REPORT.txt
+		exit 99
+	fi
+elif [ "$1" = "localuserreport" ]; then
+	clear
+	REPORT=localuserreport
 	if [ ! -f "$RDIR/$HNAME/$HNAME-$REPORT.txt" ]; then
 		echo "Report Not Found!! Please use create option"
 		exit 98
