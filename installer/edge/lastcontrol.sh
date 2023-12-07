@@ -26,22 +26,24 @@ if [ "$1" = "--help" ]; then
 	echo "LastControl CLI"
 	${NOCOL}
 	echo "---------------------"
+	${WHITE}
 	echo "Usage: lastcontrol [OPTION]"
+	${NOCOL}
 	echo "---------------------"
-	echo "--install             LastControl Install"
-	echo "--update              Update LastControl App."
-	echo "--version             Show LastControl Binary Version"
+	echo "install             LastControl Install"
+	echo "update              Update LastControl App."
+	echo "version             Show LastControl Binary Version"
 	${CYAN}
 	echo "-----------------------------------------------------"
 	${NOCOL}
-	echo "--create              Create all System Report"
-	echo "--disk                Show System Disk Report"
-	echo "--localuser           Show System Local User Report"
-	echo "--unsecurepack        Show Unsecure Package List"
+	echo "create              Create all System Report"
+	echo "disk                Show System Disk Report"
+	echo "localuser           Show System Local User Report"
+	echo "unsecurepack        Show Unsecure Package List"
 	echo -e
-	echo "(example: lastcontrol --create)"
-	echo "(example: lastcontrol --disk)"
-	echo "(example: lastcontrol --localuser)"
+	echo "(example: lastcontrol create)"
+	echo "(example: lastcontrol disk)"
+	echo "(example: lastcontrol localuser)"
 	echo -e
 
 	exit 1
@@ -56,7 +58,7 @@ fi
 #----------------------
 # --install PARAMETER
 #----------------------
-if [ "$1" = "--install" ]; then
+if [ "$1" = "install" ]; then
 systemctl stop lastcontrol.service
 rm /etc/systemd/system/multi-user.target.wants/lastcontrol.service
 
@@ -94,7 +96,7 @@ fi
 #----------------------
 # --version PARAMETER
 #----------------------
-if [ "$1" = "--version" ]; then
+if [ "$1" = "version" ]; then
 clear
 cat << "EOF"
  _              _    ____            _             _
@@ -118,20 +120,30 @@ fi
 RDIR=/usr/local/lcreports
 HNAME=$(cat /etc/hostname)
 
-if [ "$1" = "--create" ]; then
+if [ "$1" = "create" ]; then
 	clear
 	echo -e
 	echo "Report Generating.."
-	#systemctl restart lastcontrol.service
-	diskreport
-	unsecurepackreport
-	localuserreport
+	lc-appsreport
+	lc-directoryreport
+	lc-diskreport
+	lc-inventoryreport
+	lc-kernelreport
+	lc-localuserreport
+	lc-nwconfigreport
+	lc-processreport
+	lc-servicereport
+	lc-sshreport
+	lc-suidsgidreport
+	lc-systemreport
+	lc-unsecurepackreport
+	lc-updatereport
 	exit 99
-elif [ "$1" = "--disk" ]; then
+elif [ "$1" = "disk" ]; then
 	clear
-	REPORT=diskreport
+	REPORT=lc-diskreport
 	if [ ! -f "$RDIR/$HNAME/$HNAME-$REPORT.txt" ]; then
-		echo "Report Not Found!! Please use --create option"
+		echo "Report Not Found!! Please use create option"
 		exit 98
 	else
 		cat $RDIR/$HNAME/$HNAME-$REPORT.txt
