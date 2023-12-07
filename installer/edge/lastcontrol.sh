@@ -13,19 +13,8 @@ GRAY="tput setaf 8"
 RED="tput setaf 9"
 NOCOL="tput sgr0"
 
-if [ "$1" = "" ]; then
-	${RED}
-	echo "Parameter missing.."
-	${GRAY}
-	echo "Usage: lastcontrol --help"
-	${NOCOL}
-	exit 98
-fi
-
-if [ "$1" = "--help" ]; then
-	
+function help(){
 	clear
-	
 	${CYAN}
 	echo "LastControl CLI"
 	${NOCOL}
@@ -63,6 +52,19 @@ if [ "$1" = "--help" ]; then
 	echo -e
 
 	exit 1
+}
+
+if [ "$1" = "" ]; then
+	${RED}
+	echo "Parameter missing.."
+	${GRAY}
+	echo "Usage: lastcontrol --help"
+	${NOCOL}
+	exit 98
+fi
+
+if [ "$1" = "--help" ]; then
+	help
 fi
 
 SYSTEM_MANAGER=$(ps --no-headers -o comm 1)
@@ -215,4 +217,6 @@ elif [ "$1" = "localuserreport" ]; then
 		cat $RDIR/$HNAME/$HNAME-$REPORT.txt
 		exit 99
 	fi
+else
+	help
 fi
