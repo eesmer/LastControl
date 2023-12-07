@@ -80,14 +80,14 @@ if [ "$1" = "install" ]; then
 systemctl stop lastcontrol.service
 rm /etc/systemd/system/multi-user.target.wants/lastcontrol.service
 
-cat >> /etc/systemd/system/lastcontrol.service << EOF
+cat > /etc/systemd/system/lastcontrol.service << EOF
 [Unit]
 Description=LastControl Service
 
 [Service]
 User=root
 Group=root
-ExecStart=/sbin/lastcontrol --create
+ExecStart=/sbin/lastcontrol create
 Restart=always
 RestartSec=1hour
 
@@ -96,9 +96,6 @@ WantedBy=multi-user.target
 EOF
 
 ln -s /etc/systemd/system/lastcontrol.service /etc/systemd/system/multi-user.target.wants/
-######chmod -R 755 /usr/local/lastcontrol
-######chmod +x /usr/local/lastcontrol/lastcontrol
-
 wget -P /tmp/ -r -np -nH --cut-dirs=1 https://esmerkan.com/lastcontrol/edge/lastcontrol
 wget -P /tmp/ -r -np -nH --cut-dirs=1 https://esmerkan.com/lastcontrol/edge/lc-binary/ && rm /tmp/edge/lc-binary/*index.*
 cp -r /tmp/edge/lc-binary/* /sbin/
@@ -156,7 +153,6 @@ if [ "$1" = "create" ]; then
 	lc-systemreport
 	lc-unsecurepackreport
 	lc-updatereport
-	exit 99
 elif [ "$1" = "appsreport" ]; then
 	clear
 	REPORT=appsreport
