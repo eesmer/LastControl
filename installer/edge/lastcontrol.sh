@@ -14,7 +14,11 @@ RED="tput setaf 9"
 NOCOL="tput sgr0"
 
 if [ "$1" = "" ]; then
-	echo "Parameter missing.. Usage: lastcontrol --help"
+	${RED}
+	echo "Parameter missing.."
+	${GRAY}
+	echo "Usage: lastcontrol --help"
+	${NOCOL}
 	exit 98
 fi
 
