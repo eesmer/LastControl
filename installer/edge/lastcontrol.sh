@@ -23,13 +23,13 @@ function help(){
 	echo "Usage: lastcontrol [OPTION]"
 	${NOCOL}
 	echo "---------------------"
-	echo "install             LastControl Install"
+	echo "install             Install LastControl"
 	echo "update              Update LastControl App."
 	echo "version             Show LastControl Binary Version"
 	${CYAN}
 	echo "-----------------------------------------------------"
 	${NOCOL}
-	echo "create              Create all System Report"
+	echo "create              Create all System Report - Use this to run it once"
 	echo "appsreport          Show Application List"
 	echo "directoryreport     Show System Directory Report"
 	echo "diskreport          Show System Disk Report"
@@ -50,8 +50,6 @@ function help(){
 	echo "(example: lastcontrol disk)"
 	echo "(example: lastcontrol localuser)"
 	echo -e
-
-	exit 1
 }
 
 if [ "$1" = "" ]; then
@@ -60,7 +58,6 @@ if [ "$1" = "" ]; then
 	${GRAY}
 	echo "Usage: lastcontrol --help"
 	${NOCOL}
-	exit 98
 fi
 
 if [ "$1" = "--help" ]; then
@@ -70,7 +67,6 @@ fi
 SYSTEM_MANAGER=$(ps --no-headers -o comm 1)
 if [ ! "$SYSTEM_MANAGER" = "systemd" ]; then
 	echo "This system is not LastControl compatible!!"
-	exit 98
 fi
 
 #----------------------
@@ -125,7 +121,6 @@ V2 Update:27
 https://github.com/eesmer/LastControl
 EOF
 echo -e
-exit 99
 fi
 
 #----------------------
@@ -158,60 +153,48 @@ elif [ "$1" = "appsreport" ]; then
 	REPORT=appsreport
 	if [ ! -f "$RDIR/$HNAME/$HNAME-$REPORT.txt" ]; then
 		echo "Report Not Found!! Please use create option"
-		exit 98
 	else
 		cat $RDIR/$HNAME/$HNAME-$REPORT.txt
-		exit 99
 	fi
 elif [ "$1" = "directoryreport" ]; then
 	clear
 	REPORT=directoryreport
 	if [ ! -f "$RDIR/$HNAME/$HNAME-$REPORT.txt" ]; then
 		echo "Report Not Found!! Please use create option"
-		exit 98
 	else
 		cat $RDIR/$HNAME/$HNAME-$REPORT.txt
-		exit 99
 	fi
 elif [ "$1" = "diskreport" ]; then
 	clear
 	REPORT=diskreport
 	if [ ! -f "$RDIR/$HNAME/$HNAME-$REPORT.txt" ]; then
 		echo "Report Not Found!! Please use create option"
-		exit 98
 	else
 		cat $RDIR/$HNAME/$HNAME-$REPORT.txt
-		exit 99
 	fi
 elif [ "$1" = "inventoryreport" ]; then
 	clear
 	REPORT=inventoryreport
 	if [ ! -f "$RDIR/$HNAME/$HNAME-$REPORT.txt" ]; then
 		echo "Report Not Found!! Please use create option"
-		exit 98
 	else
 		cat $RDIR/$HNAME/$HNAME-$REPORT.txt
-		exit 99
 	fi
 elif [ "$1" = "kernelreport" ]; then
 	clear
 	REPORT=kernelreport
 	if [ ! -f "$RDIR/$HNAME/$HNAME-$REPORT.txt" ]; then
 		echo "Report Not Found!! Please use create option"
-		exit 98
 	else
 		cat $RDIR/$HNAME/$HNAME-$REPORT.txt
-		exit 99
 	fi
 elif [ "$1" = "localuserreport" ]; then
 	clear
 	REPORT=localuserreport
 	if [ ! -f "$RDIR/$HNAME/$HNAME-$REPORT.txt" ]; then
 		echo "Report Not Found!! Please use create option"
-		exit 98
 	else
 		cat $RDIR/$HNAME/$HNAME-$REPORT.txt
-		exit 99
 	fi
 else
 	help
