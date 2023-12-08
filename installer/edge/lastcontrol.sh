@@ -75,14 +75,21 @@ fi
 # --one-shot PARAMETER
 #----------------------
 if [ "$1" = "one-shot" ]; then
-	wget -P /tmp/ -q -r -np -nH --cut-dirs=1 https://esmerkan.com/lastcontrol/edge/lastcontrol
-	wget -P /tmp/ -q -r -np -nH --cut-dirs=1 https://esmerkan.com/lastcontrol/edge/lc-binary/ && rm /tmp/edge/lc-binary/*index.*
-	cp -r /tmp/edge/lc-binary/* /sbin/
-	cp /tmp/edge/lastcontrol /sbin/
-	chmod +x /sbin/lc-*
-	chmod +x /sbin/lastcontrol
+	ping -c 1 esmerkan.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNECTED"
+	if [ "$INTERNET" = "CONNECTED" ]; then
+		wget -P /tmp/ -q -r -np -nH --cut-dirs=1 https://esmerkan.com/lastcontrol/edge/lastcontrol
+		wget -P /tmp/ -q -r -np -nH --cut-dirs=1 https://esmerkan.com/lastcontrol/edge/lc-binary/ && rm /tmp/edge/lc-binary/*index.*
+		cp -r /tmp/edge/lc-binary/* /sbin/
+		cp /tmp/edge/lastcontrol /sbin/
+		chmod +x /sbin/lc-*
+		chmod +x /sbin/lastcontrol
+		lastcontrol create
+	else
+		echo "Internet access was not available. (esmerkan.com)"
+		echo "Please check internet access"
 
-	lastcontrol create
+		exit 98
+	fi
 fi
 
 #----------------------
