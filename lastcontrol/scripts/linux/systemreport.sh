@@ -31,6 +31,7 @@ LAST_BOOT=$(who -b | awk '{print $3,$4}')
 UPTIME=$(uptime) && UPTIME_MIN=$(awk '{ print "up " $1 /60 " minutes"}' /proc/uptime)
 UTC_TIME=$(date --utc "+%Y-%m-%d %T")
 TIME_SYNC=$(timedatectl |grep "synchronized:" |cut -d ":" -f2 | xargs)
+ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNECTED"
 
 # Grub Control
 if [ "$REP" = APT ]; then
@@ -234,6 +235,7 @@ cat > $RDIR/$HOST_NAME-systemreport.txt << EOF
 |UPTIME             | $UPTIME | $UPTIME_MIN
 |UTC TIME           | $UTC_TIME
 |TIME SYNC          | $TIME_SYNC
+|Internet Conn.     | $INTERNET
 |----------------------------------------------------------------------------------------------------
 |GRUB EXIST         | $GRUB_EXIST
 |GRUB SECURITY      | $GRUB_SEC
