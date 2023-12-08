@@ -72,6 +72,20 @@ if [ ! "$SYSTEM_MANAGER" = "systemd" ]; then
 fi
 
 #----------------------
+# --one-shot PARAMETER
+#----------------------
+if [ "$1" = "one-shot" ]; then
+	wget -P /tmp/ -q -r -np -nH --cut-dirs=1 https://esmerkan.com/lastcontrol/edge/lastcontrol
+	wget -P /tmp/ -q -r -np -nH --cut-dirs=1 https://esmerkan.com/lastcontrol/edge/lc-binary/ && rm /tmp/edge/lc-binary/*index.*
+	cp -r /tmp/edge/lc-binary/* /sbin/
+	cp /tmp/edge/lastcontrol /sbin/
+	chmod +x /sbin/lc-*
+	chmod +x /sbin/lastcontrol
+
+	lastcontrol create
+fi
+
+#----------------------
 # --install PARAMETER
 #----------------------
 if [ "$1" = "install" ]; then
