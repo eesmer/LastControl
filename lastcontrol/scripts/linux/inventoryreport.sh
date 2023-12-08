@@ -44,8 +44,6 @@ OS_KERNEL=$(uname -a)
 OS_VER=$(cat /etc/os-release |grep PRETTY_NAME | cut -d '=' -f2 |cut -d '"' -f2)
 LAST_BOOT=$(who -b | awk '{print $3,$4}')
 UPTIME=$(uptime) && UPTIME_MIN=$(awk '{ print "up " $1 /60 " minutes"}' /proc/uptime)
-ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNECTED"
-
 
 cat > $RDIR/$HOST_NAME-inventoryreport.md<< EOF
 
