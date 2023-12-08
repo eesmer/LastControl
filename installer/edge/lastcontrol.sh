@@ -243,6 +243,38 @@ elif [ "$1" = "servicereport" ]; then
 	else
 		cat $RDIR/$HNAME/$HNAME-$REPORT.txt
 	fi
+elif [ "$1" = "sshreport" ]; then
+	clear
+	REPORT=sshreport
+	if [ ! -f "$RDIR/$HNAME/$HNAME-$REPORT.txt" ]; then
+		echo "Report Not Found!! Please use create option"
+	else
+		cat $RDIR/$HNAME/$HNAME-$REPORT.txt
+	fi
+elif [ "$1" = "suidsgidreport" ]; then
+	clear
+	REPORT=suidsgidreport
+	if [ ! -f "$RDIR/$HNAME/$HNAME-$REPORT.txt" ]; then
+		echo "Report Not Found!! Please use create option"
+	else
+		cat $RDIR/$HNAME/$HNAME-$REPORT.txt
+	fi
+elif [ "$1" = "systemreport" ]; then
+	clear
+	REPORT=systemreport
+	if [ ! -f "$RDIR/$HNAME/$HNAME-$REPORT.txt" ]; then
+		echo "Report Not Found!! Please use create option"
+	else
+		cat $RDIR/$HNAME/$HNAME-$REPORT.txt
+	fi
+elif [ "$1" = "unsecurepackreport" ]; then
+	clear
+	REPORT=unsecurepackreport
+	if [ ! -f "$RDIR/$HNAME/$HNAME-$REPORT.txt" ]; then
+		echo "Report Not Found!! Please use create option"
+	else
+		cat $RDIR/$HNAME/$HNAME-$REPORT.txt
+	fi
 else
 	help
 fi
