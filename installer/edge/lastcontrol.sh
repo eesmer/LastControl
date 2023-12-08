@@ -275,6 +275,14 @@ elif [ "$1" = "unsecurepackreport" ]; then
 	else
 		cat $RDIR/$HNAME/$HNAME-$REPORT.txt
 	fi
+elif [ "$1" = "updatereport" ]; then
+	clear
+	REPORT=updatereport
+	if [ ! -f "$RDIR/$HNAME/$HNAME-$REPORT.txt" ]; then
+		echo "Report Not Found!! Please use create option"
+	else
+		cat $RDIR/$HNAME/$HNAME-$REPORT.txt
+	fi
 else
 	help
 fi
