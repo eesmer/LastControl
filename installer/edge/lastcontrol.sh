@@ -72,7 +72,7 @@ if [ ! "$SYSTEM_MANAGER" = "systemd" ]; then
 fi
 
 #----------------------
-# --one-shot PARAMETER
+# one-shot PARAMETER
 #----------------------
 if [ "$1" = "one-shot" ]; then
 	ping -c 1 esmerkan.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNECTED"
@@ -93,7 +93,7 @@ if [ "$1" = "one-shot" ]; then
 fi
 
 #----------------------
-# --install PARAMETER
+# install PARAMETER
 #----------------------
 if [ "$1" = "install" ]; then
 systemctl stop lastcontrol.service
@@ -128,7 +128,7 @@ systemctl start lastcontrol.service
 fi
 
 #----------------------
-# --version PARAMETER
+# version PARAMETER
 #----------------------
 if [ "$1" = "version" ]; then
 clear
@@ -147,7 +147,7 @@ echo -e
 fi
 
 #----------------------
-# --create and show Report PARAMETER
+# create and show Report PARAMETER
 #----------------------
 
 RDIR=/usr/local/lcreports
@@ -214,6 +214,30 @@ elif [ "$1" = "kernelreport" ]; then
 elif [ "$1" = "localuserreport" ]; then
 	clear
 	REPORT=localuserreport
+	if [ ! -f "$RDIR/$HNAME/$HNAME-$REPORT.txt" ]; then
+		echo "Report Not Found!! Please use create option"
+	else
+		cat $RDIR/$HNAME/$HNAME-$REPORT.txt
+	fi
+elif [ "$1" = "nwconfigreport" ]; then
+	clear
+	REPORT=nwconfigreport
+	if [ ! -f "$RDIR/$HNAME/$HNAME-$REPORT.txt" ]; then
+		echo "Report Not Found!! Please use create option"
+	else
+		cat $RDIR/$HNAME/$HNAME-$REPORT.txt
+	fi
+elif [ "$1" = "processreport" ]; then
+	clear
+	REPORT=processreport
+	if [ ! -f "$RDIR/$HNAME/$HNAME-$REPORT.txt" ]; then
+		echo "Report Not Found!! Please use create option"
+	else
+		cat $RDIR/$HNAME/$HNAME-$REPORT.txt
+	fi
+elif [ "$1" = "servicereport" ]; then
+	clear
+	REPORT=servicereport
 	if [ ! -f "$RDIR/$HNAME/$HNAME-$REPORT.txt" ]; then
 		echo "Report Not Found!! Please use create option"
 	else
