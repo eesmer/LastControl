@@ -22,14 +22,16 @@ function help(){
 	${WHITE}
 	echo "Usage: lastcontrol [OPTION]"
 	${NOCOL}
-	echo "---------------------"
+	echo "-----------------------------------------------------"
+	echo "one-shot            Use this to run it once"
+	echo "-----------------------------------------------------"
 	echo "install             Install LastControl"
 	echo "update              Update LastControl App."
 	echo "version             Show LastControl Binary Version"
 	${CYAN}
 	echo "-----------------------------------------------------"
 	${NOCOL}
-	echo "create              Create all System Report - Use this to run it once"
+	echo "create              Create all System Report"
 	echo "appsreport          Show Application List"
 	echo "directoryreport     Show System Directory Report"
 	echo "diskreport          Show System Disk Report"
@@ -134,20 +136,20 @@ if [ "$1" = "create" ]; then
 	clear
 	echo -e
 	echo "Report Generating.."
-	lc-appsreport
-	lc-directoryreport
-	lc-diskreport
-	lc-inventoryreport
-	lc-kernelreport
-	lc-localuserreport
-	lc-nwconfigreport
-	lc-processreport
-	lc-servicereport
-	lc-sshreport
-	lc-suidsgidreport
-	lc-systemreport
-	lc-unsecurepackreport
-	lc-updatereport
+	if [ ! -f "/sbin/lc-appsreport" ]; then lc-appsreport; else echo "Failed to create Application Report"; fi
+	if [ ! -f "/sbin/lc-directoryreport" ]; then lc-directoryreport; else echo "Failed to create Directory Report"; fi
+	if [ ! -f "/sbin/lc-diskreport" ]; then lc-diskreport; else echo "Failed to create Disk Report"; fi
+	if [ ! -f "/sbin/lc-inventoryreport" ]; then lc-inventoryreport; else echo "Failed to create Inventory Report"; fi
+	if [ ! -f "/sbin/lc-kernelreport" ]; then lc-kernelreport; else echo "Failed to create Kernel Report"; fi
+	if [ ! -f "/sbin/lc-localuserreport" ]; then lc-localuserreport; else echo "Failed to create Local User Report"; fi
+	if [ ! -f "/sbin/lc-nwconfigreport" ]; then lc-nwconfigreport; else echo "Failed to create Network Config Report"; fi
+	if [ ! -f "/sbin/lc-processreport" ]; then lc-processreport; else echo "Failed to create Process Report"; fi
+	if [ ! -f "/sbin/lc-servicereport" ]; then lc-servicereport; else echo "Failed to create Service Report"; fi
+	if [ ! -f "/sbin/lc-sshreport" ]; then lc-sshreport; else echo "Failed to create SSH Config Report"; fi
+	if [ ! -f "/sbin/lc-suidsgidreport" ]; then lc-suidsgidreport; else echo "Failed to create SUID/SGID Report"; fi
+	if [ ! -f "/sbin/lc-systemreport" ]; then lc-systemreport; else echo "Failed to create System Report"; fi
+	if [ ! -f "/sbin/lc-unsecurepackreport" ]; then lc-unsecurepackreport; else echo "Failed to create UnSecure Package Report"; fi
+	if [ ! -f "/sbin/lc-updatereport" ]; then lc-updatereport; else echo "Failed to create Uptade Report"; fi
 elif [ "$1" = "appsreport" ]; then
 	clear
 	REPORT=appsreport
