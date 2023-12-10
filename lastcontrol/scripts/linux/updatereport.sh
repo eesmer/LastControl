@@ -29,6 +29,9 @@ if [ "$REP" = APT ]; then
         UPGRADEPACK=$(cat /tmp/updateinfo.txt | wc -l)
 	echo n | apt upgrade | grep "upgraded" | grep -v "The following packages will be" > /tmp/updateinfo.txt
 	NEWINSTALL=$(cat /tmp/updateinfo.txt | cut -d "," -f2 | xargs | cut -d " " -f1)
+	UNATTENDED_SERVICE=$(systemctl is-active unattended-upgrades)
+	UNATTENDED_LIST=$(cat /etc/apt/apt.conf.d/20auto-upgrades | grep "Update-Package-Lists" | awk {'print $2'} | cut -d ";" -f1)
+	UNATTENDED_UPGR=$(cat /etc/apt/apt.conf.d/20auto-upgrades | grep "Unattended-Upgrade" | awk {'print $2'} | cut -d ";" -f1)
 
 	TOTALDOWNLOAD=$(cat /tmp/updatecheck.txt | grep "Total download size:" | cut -d ":" -f2 | xargs)
 	IMPUPDATECOUNT=$(cat /tmp/updateinfo.txt |grep "Important Security" | xargs)
@@ -58,6 +61,10 @@ cat > $RDIR/$HOST_NAME-updatereport.txt << EOF
 |---------------------------------------------------------------------------------------------------
 |Packages to Update/Upgrade | $UPGRADEPACK
 |Packages to New Install    | $NEWINSTALL
+|---------------------------------------------------------------------------------------------------
+|Unattended Upgrade Service | $UNATTENDED_SERVICE
+|Unattended Package List    | $UNATTENDED_LIST
+|Unattended Upgrade         | $NEWINSTALL_UPGR
 |---------------------------------------------------------------------------------------------------
 | ::. Security Update Report .:: 
 |---------------------------------------------------------------------------------------------------
