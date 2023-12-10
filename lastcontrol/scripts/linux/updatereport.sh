@@ -64,7 +64,7 @@ cat > $RDIR/$HOST_NAME-updatereport.txt << EOF
 |---------------------------------------------------------------------------------------------------
 |Unattended Upgrade Service | $UNATTENDED_SERVICE
 |Unattended Package List    | $UNATTENDED_LIST
-|Unattended Upgrade         | $NEWINSTALL_UPGR
+|Unattended Upgrade         | $UNATTENDED_UPGR
 |---------------------------------------------------------------------------------------------------
 | ::. Security Update Report .:: 
 |---------------------------------------------------------------------------------------------------
