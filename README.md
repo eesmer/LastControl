@@ -23,6 +23,7 @@ You can create and read reports with the CLI provided by Edge.<br>
 ```bash
 wget https://esmerkan.com/lastcontrol/edge/lastcontrol
 chmod +x lastcontrol
+./lastcontrol
 ```
 
 ```bash
