@@ -38,13 +38,6 @@ if [ "$REP" = YUM ]; then
 	UPGRADEPACK=$(cat /tmp/updatecheck.txt | grep "Upgrade" | grep "Packages")
 	NEWINSTALL=$(cat /tmp/updatecheck.txt | grep "Install" | grep "Packages")
 	TOTALDOWNLOAD=$(cat /tmp/updatecheck.txt | grep "Total download size:" | cut -d ":" -f2 | xargs)
-	
-	## check update for security packages
-	#yum updateinfo --installed > /tmp/updateinfo.txt
-	#IMPUPDATECOUNT=$(cat /tmp/updateinfo.txt |grep "Important Security" | xargs)
-	#MODUPDATECOUNT=$(cat /tmp/updateinfo.txt |grep "Moderate Security" | xargs)
-	#LOWUPDATECOUNT=$(cat /tmp/updateinfo.txt |grep "Low Security" | xargs)
-	#BUGFIXCOUNT=$(cat /tmp/updateinfo.txt |grep "Bugfix" | xargs)
 fi
 
 cat > $RDIR/$HOST_NAME-updatereport.txt << EOF
