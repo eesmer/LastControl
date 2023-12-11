@@ -25,6 +25,9 @@ wget https://esmerkan.com/lastcontrol/edge/lastcontrol
 chmod +x lastcontrol
 ./lastcontrol
 ```
+```bash
+./lastcontrol --help
+```
 
 ```bash
 wget https://raw.githubusercontent.com/eesmer/LastControl/master/installer/lastcontrol-installer.sh
