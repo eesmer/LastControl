@@ -15,8 +15,8 @@ https://www.cisecurity.org/
 
 ---
 
-### LastControl Install
-#### LastControl Edge
+## LastControl Install
+### LastControl Edge
 Edge runs locally on the server and produces reports.<br>
 You can create and read reports with the CLI provided by Edge.<br>
 ##### Usage
@@ -28,7 +28,9 @@ chmod +x lastcontrol
 ```bash
 ./lastcontrol --help
 ```
-
+### LastControl Server
+LastControl Server provides centralized reporting.<br>
+With LastControl Server, you can send reporting instructions to remote servers.<br>
 ```bash
 wget https://raw.githubusercontent.com/eesmer/LastControl/master/installer/lastcontrol-installer.sh
 ```
@@ -42,7 +44,3 @@ bash lastcontrol-installer.sh
 ---
 
 ![alt text](images/tui_report-2.png "LastControl Reports TUI Screen")
-
----
-
-![alt text](images/lastcontrol_report2.png "LastControl Network Report Web Screen")
