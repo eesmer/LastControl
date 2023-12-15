@@ -1,4 +1,4 @@
-![alt text](images/lastcontrol_logo.png "LastControl")
+![alt text](doc/images/lastcontrol_logo.png "LastControl")
 <br>
 
 
