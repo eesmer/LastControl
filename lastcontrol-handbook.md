@@ -1,29 +1,10 @@
-## LastControl Install
-### LastControl Edge
-Edge runs locally on the server and produces reports.<br>
-You can create and read reports with the CLI provided by Edge.<br>
-##### Usage
-```bash
-wget https://esmerkan.com/lastcontrol/edge/lastcontrol
-chmod +x lastcontrol
-./lastcontrol
-```
-```bash
-./lastcontrol --help
-```
-### LastControl Server
-LastControl Server provides centralized reporting.<br>
-With LastControl Server, you can send reporting instructions to remote servers.<br>
-```bash
-wget https://raw.githubusercontent.com/eesmer/LastControl/master/installer/lastcontrol-installer.sh
-```
-```bash
-bash lastcontrol-installer.sh
-```
----
 
-![alt text](images/LastControl_MainMenu.png "LastControl Reports TUI Screen")
+# LastControl-Handbook / User Guide
+
+The document contains detailed information about the use for the LastControl
+
+[1. Edge Installation](https://github.com/eesmer/DebianDC/blob/master/docs/installation.md) <br>
+[2. Server Installation ](https://github.com/eesmer/DebianDC/blob/master/docs/access_to_debiandc.md) <br>
+[3. Hardening Notes](https://github.com/eesmer/DebianDC/blob/master/docs/debiandc-manager.md) <br>
 
 ---
-
-![alt text](images/tui_report-2.png "LastControl Reports TUI Screen")
