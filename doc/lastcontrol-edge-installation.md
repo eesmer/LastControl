@@ -11,5 +11,3 @@ chmod +x lastcontrol
 ```bash
 ./lastcontrol --help
 ```
-
----
