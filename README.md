@@ -14,3 +14,5 @@ All checks are made according to CIS Benchmark bulletins.<br>
 https://www.cisecurity.org/
 
 ---
+
+[LastControl Handbook ](https://github.com/eesmer/LastControl/blob/main/lastcontrol-handbook.md) <br>
