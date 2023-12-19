@@ -23,8 +23,7 @@ PDFREPORTS=/var/www/html/reports
 BOARDFILE=/usr/local/lastcontrol/doc/board.txt
 
 NWADAPTER=$(ip r | grep onlink | cut -d " " -f5)
-#HOSTIP=$(ifconfig enp0s3 |grep "inet" |grep "netmask" | xargs | cut -d " " -f2)
-HOSTIP=$(hostname -I)
+HOSTIP=$(hostname -I | xargs)
 HOSTOS=$(hostnamectl | grep "Operating System" | cut -d ":" -f2 | xargs)
 HOSTHNAME=$(cat /etc/hostname)
 
