@@ -15,4 +15,6 @@ https://www.cisecurity.org/
 
 ---
 
+## Help
+
 [LastControl Handbook ](https://github.com/eesmer/LastControl/blob/main/lastcontrol-handbook.md) <br>
