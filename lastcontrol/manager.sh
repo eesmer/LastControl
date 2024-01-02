@@ -781,6 +781,55 @@ function create_suidsgid_report(){
 	fi
 }
 
+function create_repository_report(){
+        read -p "Enter the Machine Hostname : " TARGETMACHINE
+        echo ""
+        ssh -p22 -i /root/.ssh/lastcontrol -o "StrictHostKeyChecking no" root@$TARGETMACHINE &
+        PID=$!
+        sleep 1
+        kill $PID
+        if [ "$?" = 1 ]; then
+                $RED
+                echo "::.. Generating Repository Report... ..::"
+                echo ""
+                nc -z -w 2 $TARGETMACHINE 22 2>/dev/null
+                if [ "$?" = "0" ]; then
+                        bash $RPTLIN repositoryreport $TARGETMACHINE
+                        tput setaf 7
+                        echo ""
+                        cat $RDIR/$TARGETMACHINE/$TARGETMACHINE-repositoryreport.txt
+                        tput sgr 0
+                        echo ""
+
+                        #pandoc -s -o $PDFSTORE/$TARGETMACHINE-repositoryreport.pdf $RDIR/$TARGETMACHINE/$TARGETMACHINE-repositoryreport.md
+                        #mkdir -p $PDFREPORTS/$TARGETMACHINE
+                        #cp $PDFSTORE/$TARGETMACHINE-repositoryreport.pdf $PDFREPORTS/$TARGETMACHINE/
+                        cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-repositoryreport.txt $PDFREPORTS/$TARGETMACHINE/
+                        #cp $RDIR/$TARGETMACHINE/$TARGETMACHINE-repositoryreport.json $PDFREPORTS/$TARGETMACHINE/
+
+                        echo "Info: Generated $TARGETMACHINE Repository Report" > $BOARDFILE
+                        pause
+                else
+                        tput setaf 2
+                        echo "Could not reach $TARGETMACHINE from Port 22"
+                        tput sgr 0
+                        echo -e
+                        pause
+                fi
+        else # The password prompt returns 0. In this check, else also works outside of 0.
+                $RED
+                echo -e
+                echo "[ Error ]"
+                echo "LastControl SSH-Key Not Found on $TARGETMACHINE"
+                echo -e
+                $GREEN
+                echo "You can add the LastControl SSH-Key from menu 40.Add SSH-Key"
+                $NOCOL
+                echo -e
+                pause
+        fi
+}
+
 #function take_all_report(){
 #$RED
 #echo "Generating all report for all machine.."
