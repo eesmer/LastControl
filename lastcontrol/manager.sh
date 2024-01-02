@@ -981,6 +981,7 @@ case $c in
 12) create_directory_report ;;
 13) create_apps_report ;;
 14) create_suidsgid_report ;;
+15) create_repository_report ;;
 30) add_machine ;;
 31) remove_machine ;;
 32) machine_list ;;
