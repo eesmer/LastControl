@@ -10,6 +10,7 @@ The document contains detailed information about the use for the LastControl
 
 ### Hardening Notes
 
-[1. Linux Hardening ](https://github.com/eesmer/LastControl/blob/main/doc/lastcontrol-handbook.md)
+[1. Linux Hardening ](https://github.com/eesmer/LastControl/blob/main/lastcontrol-handbook.md)
+
 
 ---
