@@ -17,4 +17,4 @@ https://www.cisecurity.org/
 
 ## Help
 
-[Installation Guide ](https://github.com/eesmer/LastControl/blob/main/lastcontrol-handbook.md)
+[Installation Guide - Handbook ](https://github.com/eesmer/LastControl/blob/main/lastcontrol-handbook.md)
