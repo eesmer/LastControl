@@ -1,5 +1,6 @@
 ## LastControl Install
-### LastControl
+You can download the installer script from the link below.<br>
+Installer script allows you to make a new installation.<br>
 
 ---
 
