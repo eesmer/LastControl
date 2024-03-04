@@ -14,7 +14,8 @@ bash lastcontrol-installer.sh
 ![alt text](doc/images/LastControl-install-menu.png "LastControl Installer Menu")
 
 You can check the support of the installation by checking the distro from the Installer menu.<br>
-You can install LastControl in the environment using the New Install menu. Then you can get reports from your local or remote servers with Manager.<br>
+You can install LastControl in the environment using the New Install menu. <br>
+Then you can get reports from your local or remote servers with Manager.<br>
 
 ---
 
