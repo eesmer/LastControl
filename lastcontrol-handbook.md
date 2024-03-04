@@ -13,6 +13,8 @@ bash lastcontrol-installer.sh
 
 ![alt text](doc/images/LastControl-install-menu.png "LastControl Installer Menu")
 
+You can check the support of the installation by checking the distro from the Installer menu.<br>
+
 ---
 
 ![alt text](doc/images/LastControl_MainMenu.png "LastControl Reports TUI Screen")
