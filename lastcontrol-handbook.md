@@ -11,6 +11,10 @@ bash lastcontrol-installer.sh
 ```
 ---
 
+![alt text](doc/images/LastControl-install-menu.png "LastControl Installer Menu")
+
+---
+
 ![alt text](doc/images/LastControl_MainMenu.png "LastControl Reports TUI Screen")
 
 ---
