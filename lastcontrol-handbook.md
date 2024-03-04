@@ -1,16 +1,19 @@
+## LastControl Install
+### LastControl
+LastControl Server provides centralized reporting.<br>
+With LastControl Server, you can send reporting instructions to remote servers.<br>
+```bash
+wget https://raw.githubusercontent.com/eesmer/LastControl/master/installer/server/lastcontrol-installer.sh
+```
+```bash
+bash lastcontrol-installer.sh
+```
+---
 
-# LastControl-Handbook / User Guide
-
-The document contains detailed information about the use for the LastControl
-
-[1. Edge Installation](https://github.com/eesmer/LastControl/blob/master/doc/lastcontrol-edge-installation.md) <br>
-[2. Server Installation ](https://github.com/eesmer/LastControl/blob/main/doc/lastcontrol-server-installation.md) <br>
+![alt text](images/LastControl_MainMenu.png "LastControl Reports TUI Screen")
 
 ---
 
-### Hardening Notes
-
-[1. Linux Hardening ](https://github.com/eesmer/LastControl/blob/main/lastcontrol-handbook.md)
-
+![alt text](images/tui_report-2.png "LastControl Reports TUI Screen")
 
 ---
