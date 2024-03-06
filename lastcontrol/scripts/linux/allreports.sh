@@ -14,9 +14,9 @@ DATE=$(date)
 rm -r $RDIR
 mkdir -p $RDIR
 
-#############################
+#----------------------------
 # determine distro
-#############################
+#----------------------------
 cat /etc/*-release /etc/issue > "$RDIR/distrocheck"
 if grep -qi "debian\|ubuntu" "$RDIR/distrocheck"; then
     REP=APT
@@ -231,7 +231,7 @@ NOTLOGGEDUSER=$(cat /tmp/notloggeduserlist | cut -d " " -f1 | paste -sd "@")
 rm -f /tmp/{localaccountlist,notloggeduserlist}
 rm -f /tmp/{lastlogin30d,localuserlist,userstatus,activeusers,lockedusers,passchange,PasswordBilgileri,userstatus,lastlogininfo}
 
-######################ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNECTED"
+ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNECTED"
 ######################UPTIME=$(uptime | awk '{print $1,$2,$3,$4}' |cut -d "," -f1)
 DISTRO=$(cat /etc/os-release | grep PRETTY_NAME | cut -d '=' -f2 |cut -d '"' -f2)
 KERNEL=$(uname -mrs)
@@ -335,15 +335,4 @@ cat >> $RDIR/$HOST_NAME-allreports.txt << EOF
 |Service Users:     |$SERVICEUSERLIST
 --------------------------------------------------------------------------------------------------------------------------
 
---------------------------------------------------------------------------------------------------------------------------
-| UPDATE
---------------------------------------------------------------------------------------------------------------------------
-|Update             |$SYSUPDATE_COUNT
-|Install Package    |$INSTALLPACK
-|BugFix Update      |$BUGFIX
-|Sec. Updated       |$SECUPDATE_COUNT
-|Critical Update    |$CRITICALPACKAGE
-|High-Medium-Low    |$IMMUPDATE_COUNT - $MODERATEPACKAGE - $LOWPACKAGE
-|Total Download     |$TOTALDOWNLOAD
---------------------------------------------------------------------------------------------------------------------------
 EOF
