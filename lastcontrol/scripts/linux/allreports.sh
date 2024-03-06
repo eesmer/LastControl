@@ -17,6 +17,13 @@ mkdir -p $RDIR
 #############################
 # determine distro
 #############################
+cat /etc/*-release /etc/issue > "$RDIR/distrocheck"
+if grep -qi "debian\|ubuntu" "$RDIR/distrocheck"; then
+    REP=APT
+elif grep -qi "centos\|rocky\|red hat" "$RDIR/distrocheck"; then
+    REP=YUM
+fi
+rm $RDIR/distrocheck
 
 DATE=$(date)
 HOST_NAME=$(cat /etc/hostname)
