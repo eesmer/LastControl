@@ -16,6 +16,17 @@ grep -i "red hat" $RDIR/distrocheck &>/dev/null && REP=YUM && DISTRO=RedHat
 grep -i "rocky" /tmp/distrocheck &>/dev/null && REP=YUM && DISTRO=Rocky
 rm $RDIR/distrocheck
 
+#----------------------------
+# determine distro
+#----------------------------
+cat /etc/*-release /etc/issue > "$RDIR/distrocheck"
+if grep -qi "debian\|ubuntu" "$RDIR/distrocheck"; then
+    REP=APT
+elif grep -qi "centos\|rocky\|red hat" "$RDIR/distrocheck"; then
+    REP=YUM
+fi
+rm $RDIR/distrocheck
+
 # repository list
 if [ "$REP" = "APT" ]; then
         #SYSREPO1=$(grep -hE '^\s*deb\s' /etc/apt/sources.list | grep -v '^#' | awk '{print $2}')
