@@ -12,15 +12,15 @@ DATE=$(date)
 
 mkdir -p $RDIR
 
-# Which Distro
-#cat /etc/redhat-release > $RDIR/distrocheck 2>/dev/null || cat /etc/*-release > $RDIR/distrocheck 2>/dev/null || cat /etc/issue > $RDIR/distrocheck 2>/dev/null
-cat /etc/*-release > $RDIR/distrocheck 2>/dev/null
-grep -i "debian" $RDIR/distrocheck &>/dev/null && REP=APT && DISTRO=Debian
-grep -i "ubuntu" $RDIR/distrocheck &>/dev/null && REP=APT && DISTRO=Ubuntu
-grep -i "centos" $RDIR/distrocheck &>/dev/null && REP=YUM && DISTRO=Centos
-grep -i "red hat" $RDIR/distrocheck &>/dev/null && REP=YUM && DISTRO=RedHat
-grep -i "oracle" $RDIR/distrocheck &>/dev/null && REP=YUM && DISTRO=Oracle
-grep -i "rocky" /tmp/distrocheck &>/dev/null && REP=YUM && DISTRO=Rocky
+#----------------------------
+# determine distro/repo
+#----------------------------
+cat /etc/*-release /etc/issue > "$RDIR/distrocheck"
+if grep -qi "debian\|ubuntu" "$RDIR/distrocheck"; then
+    REP=APT
+elif grep -qi "centos\|rocky\|red hat" "$RDIR/distrocheck"; then
+    REP=YUM
+fi
 rm $RDIR/distrocheck
 
 #----------------------------
