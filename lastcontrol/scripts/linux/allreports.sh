@@ -15,7 +15,7 @@ rm -r $RDIR
 mkdir -p $RDIR
 
 #----------------------------
-# determine distro
+# determine distro/repo
 #----------------------------
 cat /etc/*-release /etc/issue > "$RDIR/distrocheck"
 if grep -qi "debian\|ubuntu" "$RDIR/distrocheck"; then
