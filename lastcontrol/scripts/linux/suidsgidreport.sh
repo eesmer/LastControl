@@ -1,9 +1,10 @@
 #!/bin/bash
 
-#--------------------------------------------------------
-# This script,
-# It produces the report of SUID and SGID files
-#--------------------------------------------------------
+#---------------------------------------------------------------------
+# Lastcontrol, it does not change any settings in the target system.
+# It just checks and outputs.
+# However, it is your responsibility to run it on any system.
+#---------------------------------------------------------------------
 
 HOST_NAME=$(hostnamectl --static)
 RDIR=/usr/local/lcreports/$HOST_NAME
