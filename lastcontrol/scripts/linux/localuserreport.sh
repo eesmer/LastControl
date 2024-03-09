@@ -1,9 +1,10 @@
 #!/bin/bash
 
-#--------------------------------------------------------
-# This script,
-# It produces the report of Local User Controls.
-#--------------------------------------------------------
+#---------------------------------------------------------------------
+# Lastcontrol, it does not change any settings in the target system.
+# It just checks and outputs.
+# However, it is your responsibility to run it on any system.
+#---------------------------------------------------------------------
 
 HOST_NAME=$(hostnamectl --static)
 RDIR=/usr/local/lcreports/$HOST_NAME
@@ -12,7 +13,6 @@ DATE=$(date)
 
 mkdir -p $RDIR
 
-####TOTALACCOUNT=$(getent passwd |wc -l)
 USERACCOUNT=$(cat /etc/shadow |grep -v "*" |grep -v "!" |wc -l)
 cat /etc/shadow |grep -v "*" |grep -v "!" |cut -d ":" -f1 > /tmp/localaccountlist
 rm -f /tmp/notloggeduserlist
