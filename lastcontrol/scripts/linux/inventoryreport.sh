@@ -16,7 +16,6 @@ mkdir -p $RDIR
 #--------------------------------------------
 # MACHINE INVENTORY
 #--------------------------------------------
-#HOST_NAME=$(hostnamectl --static)
 INTERNAL_IP=$(hostname -I)
 EXTERNAL_IP=$(curl -4 icanhazip.com)
 CPU_INFO=$(cat /proc/cpuinfo |grep "model name" |cut -d ":" -f2 > $RDIR/cpuinfooutput.txt \
