@@ -1,5 +1,11 @@
 #!/bin/bash
 
+#---------------------------------------------------------------------
+# Lastcontrol, it does not change any settings in the target system.
+# It just checks and outputs.
+# However, it is your responsibility to run it on any system.
+#---------------------------------------------------------------------
+
 HOST_NAME=$(cat /etc/hostname)
 RDIR=/usr/local/lcreports/$HOST_NAME
 LOGO=/usr/local/lastcontrol/images/lastcontrol_logo.png
