@@ -23,6 +23,7 @@ for USERNAME in $USER_ACCOUNTS; do
         echo "$USERNAME" >> /tmp/notloggeduserlist
     fi
 done
+NOT_LOGGED_USER=$(wc -l < /tmp/notloggeduserlist)
 
 NOLOGINUSER=$(getent passwd |grep "nologin" |wc -l)
 #FALSELOGINUSER=$(getent passwd |grep "bin/false" |wc -l)
