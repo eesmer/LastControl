@@ -16,16 +16,13 @@ mkdir -p $RDIR
 #----------------------
 # Not Logged User
 #----------------------
-#USERACCOUNT=$(cat /etc/shadow |grep -v "*" |grep -v "!" |wc -l)
-#cat /etc/shadow |grep -v "*" |grep -v "!" |cut -d ":" -f1 > /tmp/localaccountlist
-#rm -f /tmp/notloggeduserlist
-#i=1
-#while [ $i -le $USERACCOUNT ]; do
-#        USERACCOUNTNAME=$(awk "NR==$i" /tmp/localaccountlist)
-#	lastlog |grep "Never logged in" |grep "$USERACCOUNTNAME" >> /tmp/notloggeduserlist
-#i=$(( i + 1 ))
-#done
-#NOTLOGGEDUSER=$(wc -l /tmp/notloggeduserlist |cut -d " " -f1)
+USER_ACCOUNTS=$(awk -F: '!/\*|!/' /etc/shadow | cut -d: -f1)
+touch /tmp/notloggeduserlist
+for USERNAME in $USER_ACCOUNTS; do
+    if lastlog -u "$USERNAME" | grep -q "Never logged in"; then
+        echo "$USERNAME" >> /tmp/notloggeduserlist
+    fi
+done
 
 NOLOGINUSER=$(getent passwd |grep "nologin" |wc -l)
 #FALSELOGINUSER=$(getent passwd |grep "bin/false" |wc -l)
