@@ -13,16 +13,19 @@ DATE=$(date)
 
 mkdir -p $RDIR
 
-USERACCOUNT=$(cat /etc/shadow |grep -v "*" |grep -v "!" |wc -l)
-cat /etc/shadow |grep -v "*" |grep -v "!" |cut -d ":" -f1 > /tmp/localaccountlist
-rm -f /tmp/notloggeduserlist
-i=1
-while [ $i -le $USERACCOUNT ]; do
-        USERACCOUNTNAME=$(awk "NR==$i" /tmp/localaccountlist)
-	lastlog |grep "Never logged in" |grep "$USERACCOUNTNAME" >> /tmp/notloggeduserlist
-i=$(( i + 1 ))
-done
-NOTLOGGEDUSER=$(wc -l /tmp/notloggeduserlist |cut -d " " -f1)
+#----------------------
+# Not Logged User
+#----------------------
+#USERACCOUNT=$(cat /etc/shadow |grep -v "*" |grep -v "!" |wc -l)
+#cat /etc/shadow |grep -v "*" |grep -v "!" |cut -d ":" -f1 > /tmp/localaccountlist
+#rm -f /tmp/notloggeduserlist
+#i=1
+#while [ $i -le $USERACCOUNT ]; do
+#        USERACCOUNTNAME=$(awk "NR==$i" /tmp/localaccountlist)
+#	lastlog |grep "Never logged in" |grep "$USERACCOUNTNAME" >> /tmp/notloggeduserlist
+#i=$(( i + 1 ))
+#done
+#NOTLOGGEDUSER=$(wc -l /tmp/notloggeduserlist |cut -d " " -f1)
 
 NOLOGINUSER=$(getent passwd |grep "nologin" |wc -l)
 #FALSELOGINUSER=$(getent passwd |grep "bin/false" |wc -l)
@@ -115,7 +118,7 @@ Hostname : $HOST_NAME
 ---
 
 Local User Accounts :
- ~ $USERACCOUNT
+ ~ $USER_ACCOUNTS
 
 SUDO User Count :
  ~ $SUDOUSERCOUNT
@@ -126,7 +129,7 @@ $SUDOUSERLIST
 ---
 
 ### Not Logged User Accounts ###
-$NOTLOGGEDUSER
+$NOT_LOGGED_USER
 
 ### Login Auth. Information ###
 * Login Auth. Users :
@@ -186,9 +189,9 @@ cat > $RDIR/$HOST_NAME-localuserreport.txt << EOF
 ====================================================================================================
 $DATE
 ----------------------------------------------------------------------------------------------------
-|Local User Account          |$USERACCOUNT
+|Local User Accounts         |$USER_ACCOUNTS
 |SUDO Users                  |$SUDOUSERCOUNT - UserList:$SUDOUSERLIST 
-|Not Logged User Accounts    |$NOTLOGGEDUSER
+|Not Logged User Accounts    |$NOT_LOGGED_USER
 |Login Auth. Information     |Login Auth.:$LOGINAUTHUSER - nologin:$NOLOGINUSER
 |Blank Password Accounts     |$BLANKPASSACCOUNT
 |Locked Users                |$LOCKEDUSERS
@@ -257,9 +260,9 @@ cat >> $RDIR/$HOST_NAME.txt << EOF
 |---------------------------------------------------------------------------------------------------
 | ::. User Info .::  
 |---------------------------------------------------------------------------------------------------
-|Local User Account          |$USERACCOUNT
+|Local User Accounts         |$USER_ACCOUNTS
 |SUDO Users                  |$SUDOUSERCOUNT - UserList:$SUDOUSERLIST 
-|Not Logged User Accounts    |$NOTLOGGEDUSER
+|Not Logged User Accounts    |$NOT_LOGGED_USER
 |Login Auth. Information     |Login Auth.:$LOGINAUTHUSER - nologin:$NOLOGINUSERNUM
 |Blank Password Accounts     |$BLANKPASSACCOUNT
 |Lastlogins in Today         |$LASTLOGIN00D
