@@ -13,9 +13,7 @@ DATE=$(date)
 
 mkdir -p $RDIR
 
-#----------------------
-# Not Logged User
-#----------------------
+# Not Logged User Count
 USER_ACCOUNTS=$(awk -F: '!/\*|!/' /etc/shadow | cut -d: -f1)
 touch /tmp/notloggeduserlist
 for USERNAME in $USER_ACCOUNTS; do
@@ -40,7 +38,7 @@ LASTLOGIN07D=$(lastlog --time 7 |grep -v "Username" | awk '{ print $1}' | paste 
 LASTLOGIN30D=$(lastlog --time 30 |grep -v "Username" | awk '{ print $1}' | paste -sd ',')
 
 # Not Logged User List
-lastlog --time 30 | grep -v "Username" | cut -d " " -f1 > /tmp/lastlogin30d
+lastlog -t 30 | grep -v "Username" | grep -v "Never" | awk '{print $1}' | sort -u > /tmp/lastlogin30d
 getent passwd {0..0} {1000..2000} |cut -d ":" -f1 > /tmp/localuserlist
 NOTLOGIN30D=$(diff /tmp/lastlogin30d /tmp/localuserlist -n | grep -v "d1" | grep -v "a0" | grep -v "a1" | grep -v "a2" | grep -v "a3" | grep -v "a4" | paste -sd ",")
 
