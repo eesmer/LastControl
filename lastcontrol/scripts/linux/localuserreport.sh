@@ -71,10 +71,10 @@ PASSUPDATEINFO=$(cat /tmp/passchange | paste -sd ",")
 ######USERCOUNT=$(cat /etc/shadow | grep -v "*" | grep -v "!" | wc -l)
 LL=1
 while [ "$LL" -le "$USERCOUNT" ]; do
-        USERACCOUNTNAME=$(ls -l |sed -n $LL{p} /tmp/localuserlist)
-	LOGINDATE=$(lastlog | grep "$USERACCOUNTNAME" | awk '{ print $4,$5,$6,$7 }')
-        echo "$USERACCOUNTNAME:$LOGINDATE" >> /tmp/lastlogininfo
-LL=$(( LL + 1 ))
+    USERACCOUNTNAME=$(ls -l |sed -n $LL{p} /tmp/localuserlist)
+    LOGINDATE=$(lastlog | grep "$USERACCOUNTNAME" | awk '{ print $4,$5,$6,$7 }')
+    echo "$USERACCOUNTNAME:$LOGINDATE" >> /tmp/lastlogininfo
+    LL=$(( LL + 1 ))
 done
 LASTLOGININFO=$(cat /tmp/lastlogininfo | paste -sd ",")
 
