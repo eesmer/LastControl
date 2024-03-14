@@ -46,10 +46,10 @@ rm -f /tmp/passexpireinfo
 USERCOUNT=$(cat /tmp/localuserlist | wc -l)
 PX=1
 while [ $PX -le $USERCOUNT ]; do
-	USERACCOUNTNAME=$(awk "NR==$PX" /tmp/localuserlist)
-	PASSEX=$(chage -l $USERACCOUNTNAME |grep "Password expires" | awk '{print $4}')
-	echo "$USERACCOUNTNAME:$PASSEX" >> /tmp/passexpireinfo
-	PX=$(( PX + 1 ))
+USERACCOUNTNAME=$(awk "NR==$PX" /tmp/localuserlist)
+PASSEX=$(chage -l $USERACCOUNTNAME |grep "Password expires" | awk '{print $4}')
+echo "$USERACCOUNTNAME:$PASSEX" >> /tmp/passexpireinfo
+PX=$(( PX + 1 ))
 done
 PASSEXINFO=$(cat /tmp/passexpireinfo | paste -sd ",")
 
@@ -57,11 +57,11 @@ rm -f /tmp/passchange
 rm -f /tmp/userstatus
 PC=1
 while [ $PC -le $USERCOUNT ]; do
-	USERACCOUNTNAME=$(awk "NR==$PC" /tmp/localuserlist)
-	PASSCHANGE=$(lslogins "$USERACCOUNTNAME" | grep "Password changed:" | awk ' { print $3 }')    # Password update date
-	USERSTATUS=$(passwd -S "$USERACCOUNTNAME" >> /tmp/userstatus)                                 # user status information
-	echo "$USERACCOUNTNAME:$PASSCHANGE" >> /tmp/passchange
-	PC=$(( PC + 1 ))
+USERACCOUNTNAME=$(awk "NR==$PC" /tmp/localuserlist)
+PASSCHANGE=$(lslogins "$USERACCOUNTNAME" | grep "Password changed:" | awk ' { print $3 }')    # Password update date
+USERSTATUS=$(passwd -S "$USERACCOUNTNAME" >> /tmp/userstatus)                                 # user status information
+echo "$USERACCOUNTNAME:$PASSCHANGE" >> /tmp/passchange
+PC=$(( PC + 1 ))
 done
 cat /tmp/userstatus | grep "L" | cut -d " " -f1 > /tmp/lockedusers
 LOCKEDUSERS=$(cat /tmp/lockedusers | paste -sd ",")                                                   # locked users
