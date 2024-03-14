@@ -30,9 +30,8 @@ LOGINAUTHUSER=$(awk -F: '$NF ~ "/bin/(ba)?sh$"{print $1}' /etc/passwd)
 #NOLOGINUSER=$(getent passwd |grep "nologin" |wc -l)
 #FALSELOGINUSER=$(getent passwd |grep "bin/false" |wc -l)
 #LOGINAUTHUSER=$(getent passwd |grep -v "nologin" |grep -v "bin/false" |grep -v "sbin/shutdown" |grep -v "bin/sync" |grep -v "sbin/halt" |wc -l)
-
-SERVICEACCOUNT=$(awk -F: '$2 == "*"' /etc/shadow |wc -l)
-BLANKPASSACCOUNT=$(awk -F: '$2 == "!*" { print $1 }' /etc/shadow |wc -l)
+SERVICEACCOUNT=$(awk -F: '$2 == "*" {print $1}' /etc/shadow | wc -l)
+BLANKPASSACCOUNT=$(awk -F: '$2 == "!*" {print $1}' /etc/shadow |wc -l)
 rm -f /tmp/notloggeduserlist
 
 SUDOUSERCOUNT=$(getent group sudo | awk -F: '{print $4}' | tr ',' "\n" >> /tmp/sudouserlist ; cat /etc/sudoers | grep "ALL" | grep -v "%" | awk '{print $1}' \
