@@ -14,7 +14,7 @@ DATE=$(date)
 mkdir -p $RDIR
 
 # Not Logged User Count
-USER_ACCOUNTS=$(awk -F: '!/\*|!/' /etc/shadow | cut -d: -f1)
+USER_ACCOUNTS=$(awk -F: '!/\*|!/' /etc/shadow | cut -d: -f1 | paste -sd ',')
 touch /tmp/notloggeduserlist
 for USERNAME in $USER_ACCOUNTS; do
     if lastlog -u "$USERNAME" | grep -q "Never logged in"; then
