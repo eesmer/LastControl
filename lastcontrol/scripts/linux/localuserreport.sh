@@ -27,7 +27,9 @@ NOT_LOGGED_USER=$(wc -l < /tmp/notloggeduserlist)
 
 NOLOGINUSER=$(getent passwd |grep "nologin" |wc -l)
 #FALSELOGINUSER=$(getent passwd |grep "bin/false" |wc -l)
-LOGINAUTHUSER=$(getent passwd |grep -v "nologin" |grep -v "bin/false" |grep -v "sbin/shutdown" |grep -v "bin/sync" |grep -v "sbin/halt" |wc -l)
+#LOGINAUTHUSER=$(getent passwd |grep -v "nologin" |grep -v "bin/false" |grep -v "sbin/shutdown" |grep -v "bin/sync" |grep -v "sbin/halt" |wc -l)
+LOGINAUTHUSER=$(awk -F: '$NF ~ "/bin/(ba)?sh$"{print $1}' /etc/passwd)
+
 SERVICEACCOUNT=$(awk -F: '$2 == "*"' /etc/shadow |wc -l)
 BLANKPASSACCOUNT=$(awk -F: '$2 == "!*" { print $1 }' /etc/shadow |wc -l)
 rm -f /tmp/notloggeduserlist
