@@ -33,12 +33,8 @@ LOGINAUTHUSER=$(awk -F: '$NF ~ "/bin/(ba)?sh$"{print $1}' /etc/passwd)
 SERVICEACCOUNT=$(awk -F: '$2 == "*" {print $1}' /etc/shadow | wc -l)
 BLANKPASSACCOUNT=$(awk -F: '$2 == "!*" {print $1}' /etc/shadow |wc -l)
 rm -f /tmp/notloggeduserlist
-
-SUDOUSERCOUNT=$(getent group sudo | awk -F: '{print $4}' | tr ',' "\n" >> /tmp/sudouserlist ; cat /etc/sudoers | grep "ALL" | grep -v "%" | awk '{print $1}' \
-	>> /tmp/sudouserlist ; grep 'ALL' /etc/sudoers.d/* | cut -d":" -f2 | cut -d" " -f1 >> /tmp/sudouserlist ; cat /tmp/sudouserlist | wc -l)
-SUDOUSERLIST=$(cat /tmp/sudouserlist | paste -sd ',')
-rm /tmp/sudouserlist
-
+SUDOUSERCOUNT=$(sudo grep -Po '^sudo.+:\K.*$' /etc/group | tr ',' '\n' | sort -u | wc -l)
+SUDOUSERLIST=$(sudo grep -Po '^sudo.+:\K.*$' /etc/group | tr ',' '\n' | sort -u)
 LASTLOGIN00D=$(lastlog --time 1 |grep -v "Username" | awk '{ print $1}' | paste -sd ',')
 LASTLOGIN07D=$(lastlog --time 7 |grep -v "Username" | awk '{ print $1}' | paste -sd ',')
 LASTLOGIN30D=$(lastlog --time 30 |grep -v "Username" | awk '{ print $1}' | paste -sd ',')
