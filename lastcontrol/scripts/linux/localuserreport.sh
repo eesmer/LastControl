@@ -22,6 +22,7 @@ for USERNAME in $USER_ACCOUNTS; do
     fi
 done
 NOT_LOGGED_USER=$(wc -l < /tmp/notloggeduserlist)
+USER_ACCOUNTS=$(awk -F: '!/\*|!/' /etc/shadow | cut -d: -f1 | paste -sd ',')
 
 NOLOGINUSER=$(awk -F: '$NF !~ "/(bash|sh)$" && $NF != "" {print $1}' /etc/passwd | wc -l)
 LOGINAUTHUSER=$(awk -F: '$NF ~ "/bin/(ba)?sh$"{print $1}' /etc/passwd)
