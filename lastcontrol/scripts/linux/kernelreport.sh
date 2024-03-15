@@ -13,30 +13,22 @@ DATE=$(date)
 
 # CHECK KERNEL and OS VERSION
 KERNELVER=$(uname -r)
-OSVER=$(cat /etc/os-release |grep PRETTY_NAME | cut -d '=' -f2 |cut -d '"' -f2)
+OSVER=$(grep PRETTY_NAME /etc/os-release | cut -d '=' -f2 | cut -d '"' -f2)
 
 # CHECK KERNEL MODULES
-CRAMFS=FALSE
-lsmod |grep cramfs > /tmp/kernel_modules.txt && CRAMFS=LOADED 
-if [ "$CRAMFS" = LOADED ]; then echo "<a href='$HANDBOOK#-hardening_loaded_kernel_modules'>CRAMFS Filesystem loaded</a>" >> /tmp/$HOST_NAME.hardeningsys; fi
-FREEVXFS=FALSE
-lsmod |grep freevxfs > /tmp/kernel_modules.txt && FREEVXFS=LOADED
-if [ "$FREEVXFS" = LOADED ]; then echo "<a href='$HANDBOOK#-hardening_loaded_kernel_modules'>FREEVXFS Filesystem loaded</a>" >> /tmp/$HOST_NAME.hardeningsys; fi
-JFFS2=FALSE
-lsmod |grep jffs2 > /tmp/kernel_modules.txt && JFFS2=LOADED
-if [ "$JFFS2" = LOADED ]; then echo "<a href='$HANDBOOK#-hardening_loaded_kernel_modules'>JFFS2 Filesystem loaded</a>" >> /tmp/$HOST_NAME.hardeningsys; fi
-HFS=FALSE
-lsmod |grep hfs > /tmp/kernel_modules.txt && HFS=LOADED
-if [ "$HFS" = LOADED ]; then echo "<a href='$HANDBOOK#-hardening_loaded_kernel_modules'>HFS Filesystem loaded</a>" >> /tmp/$HOST_NAME.hardeningsys; fi
-HFSPLUS=FALSE
-lsmod |grep hfsplus > /tmp/kernel_modules.txt && HFSPLUS=LOADED
-if [ "$HFSPLUS" = LOADED ]; then echo "<a href='$HANDBOOK#-hardening_loaded_kernel_modules'>HFSPLUS Filesystem loaded</a>" >> /tmp/$HOST_NAME.hardeningsys; fi
-SQUASHFS=FALSE
-lsmod |grep squashfs > /tmp/kernel_modules.txt && SQUASHFS=LOADED
-if [ "$SQUASHFS" = LOADED ]; then echo "<a href='$HANDBOOK#-hardening_loaded_kernel_modules'>HFSPLUS Filesystem loaded</a>" >> /tmp/$HOST_NAME.hardeningsys; fi
-UDF=FALSE
-lsmod |grep udf > /tmp/kernel_modules.txt && UDF=LOADED
-if [ "$UDF" = LOADED ]; then echo "<a href='$HANDBOOK#-hardening_loaded_kernel_modules'>UDF Filesystem loaded</a>" >> /tmp/$HOST_NAME.hardeningsys; fi
+modules=("cramfs" "freevxfs" "jffs2" "hfs" "hfsplus" "squashfs" "udf")
+
+# Initialize a variable to hold the module statuses
+declare -A module_statuses
+
+# Loop through the modules array and check their status
+for module in "${modules[@]}"; do
+    module_statuses["$module"]="FALSE"
+    if lsmod | grep -q "$module"; then
+        module_statuses["$module"]="LOADED"
+        echo "<a href='$HANDBOOK#-hardening_loaded_kernel_modules'>$module Filesystem loaded</a>" >> "/tmp/the.hardeningsys"
+    fi
+done
 
 cat > $RDIR/$HOST_NAME-kernelreport.md<< EOF
 
@@ -89,7 +81,7 @@ UDF Module :
 ---
 EOF
 
-cat > $RDIR/$HOST_NAME-kernelreport.txt << EOF
+cat > "/tmp/the_kernelreport.txt" << EOF
 ====================================================================================================
 :::. $HOST_NAME KERNEL INFORMATION REPORT :::.
 ====================================================================================================
@@ -98,13 +90,13 @@ $DATE
 ----------------------------------------------------------------------------------------------------
 |Kernel Version  |$KERNELVER
 |OS Version      |$OSVER
-|CRAMFS Module   |$CRAMFS
-|FREEVXFS Module |$FREEVXFS
-|JFFS2 Module    |$JFFS2
-|HFS Module      |$HFS
-|HFSPLUS Module  |$HFSPLUS
-|SQUASHFS Module |$SQUASHFS
-|UDF Module      |$UDF
+|CRAMFS Module   |${module_statuses["cramfs"]}
+|FREEVXFS Module |${module_statuses["freevxfs"]}
+|JFFS2 Module    |${module_statuses["jffs2"]}
+|HFS Module      |${module_statuses["hfs"]}
+|HFSPLUS Module  |${module_statuses["hfsplus"]}
+|SQUASHFS Module |${module_statuses["squashfs"]}
+|UDF Module      |${module_statuses["udf"]}
 ----------------------------------------------------------------------------------------------------
 EOF
 
