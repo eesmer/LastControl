@@ -76,7 +76,7 @@ SQUASH Module :
  ~ ${module_statuses["squashfs"]}
 
 UDF Module :
- ~ $UDF
+ ~ ${module_statuses["udf"]}
 
 ---
 EOF
