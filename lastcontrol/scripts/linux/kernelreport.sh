@@ -104,12 +104,12 @@ cat > $RDIR/$HOST_NAME-kernelreport.json << EOF
 {
     "KernelReport": {
     	"Kernel and OS Version": "$KERNELVER - $OSVER",
-        "CRAMFS Module": "$CRAMFS",
-        "FREEVXFS Module": "$FREEVXFS",
-        "JFFS2 Module": "$JFFS2",
-        "HFS Module": "$HFS",
-        "HFSPLUS Module": "$HFSPLUS",
-        "SQUASHFS Module": "$SQUASHFS",
+        "CRAMFS Module": "${module_statuses["cramfs"]}",
+        "FREEVXFS Module": "${module_statuses["freevxfs"]}",
+        "JFFS2 Module": "${module_statuses["jffs2"]}",
+        "HFS Module": "${module_statuses["hfs"]}",
+        "HFSPLUS Module": "${module_statuses["hfsplus"]}",
+        "SQUASHFS Module": "${module_statuses["squashfs"]}",
         "UDF Module": "$UDF"
     }
 }
