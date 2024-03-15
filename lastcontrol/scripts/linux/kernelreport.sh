@@ -110,7 +110,7 @@ cat > $RDIR/$HOST_NAME-kernelreport.json << EOF
         "HFS Module": "${module_statuses["hfs"]}",
         "HFSPLUS Module": "${module_statuses["hfsplus"]}",
         "SQUASHFS Module": "${module_statuses["squashfs"]}",
-        "UDF Module": "$UDF"
+        "UDF Module": "${module_statuses["udf"]}"
     }
 }
 EOF
