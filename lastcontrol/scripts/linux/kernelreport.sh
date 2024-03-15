@@ -64,16 +64,16 @@ FREEVXFS Module :
  ~ ${module_statuses["freevxfs"]}
 
 JFFS2 Module :
- ~ $JFFS2
+ ~ ${module_statuses["jffs2"]}
 
 HFS Module :
- ~ $HFS
+ ~ ${module_statuses["hfs"]}
 
 HFSPLUS Module :
- ~ $HFSPLUS
+ ~ ${module_statuses["hfsplus"]}
 
 SQUASH Module :
- ~ $SQUASHFS
+ ~ ${module_statuses["squashfs"]}
 
 UDF Module :
  ~ $UDF
