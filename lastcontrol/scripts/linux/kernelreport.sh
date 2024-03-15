@@ -58,10 +58,10 @@ OS Version :
 ### Kernel Modules Information ###
 
 CRAMFS Module :
- ~ $CRAMFS
+ ~ ${module_statuses["cramfs"]}
 
 FREEVXFS Module :
- ~ $FREEVXFS
+ ~ ${module_statuses["freevxfs"]}
 
 JFFS2 Module :
  ~ $JFFS2
