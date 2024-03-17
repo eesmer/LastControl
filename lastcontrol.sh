@@ -64,6 +64,7 @@ GPU_INFO=$(lspci | grep -i vga | cut -d ':' -f3)
 GPU_RAM=$(lspci -v | awk '/ prefetchable/{print $6}' | head -n 1)
 DISK_LIST=$(lsblk -o NAME,SIZE -d -e 11,2 | tail -n +2)
 DISK_INFO=$(df -h --total | awk 'END{print}')
+ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNECTED"
 
 #----------------------------
 # SYSTEM
@@ -258,7 +259,7 @@ NOTLOGGEDUSER=$(cat /tmp/notloggeduserlist | cut -d " " -f1 | paste -sd "@")
 rm -f /tmp/{localaccountlist,notloggeduserlist}
 rm -f /tmp/{lastlogin30d,localuserlist,userstatus,activeusers,lockedusers,passchange,PasswordBilgileri,userstatus,lastlogininfo}
 
-ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNECTED"
+######################ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNECTED"
 ######################UPTIME=$(uptime | awk '{print $1,$2,$3,$4}' |cut -d "," -f1)
 DISTRO=$(cat /etc/os-release | grep PRETTY_NAME | cut -d '=' -f2 |cut -d '"' -f2)
 KERNEL=$(uname -mrs)
