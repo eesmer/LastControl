@@ -20,7 +20,7 @@ RED="tput setaf 9"
 NOCOL="tput sgr0"
 
 HOST_NAME=$(cat /etc/hostname)
-RDIR=/usr/local/lcreports/$HOST_NAME
+RDIR=/usr/local/lastcontrol/reports/$HOST_NAME
 LOGO=/usr/local/lastcontrol/images/lastcontrol_logo.png
 DATE=$(date)
 
@@ -58,11 +58,12 @@ fi
 INTERNAL_IP=$(hostname -I)
 EXTERNAL_IP=$(curl -4 icanhazip.com)
 CPUINFO=$(cat /proc/cpuinfo |grep "model name" |cut -d ':' -f2 > /tmp/cpuinfooutput.txt && tail -n1 /tmp/cpuinfooutput.txt > /tmp/cpuinfo.txt && rm /tmp/cpuinfooutput.txt && cat /tmp/cpuinfo.txt) && rm /tmp/cpuinfo.txt
-RAM_TOTAL=$(free -m | head -2 | tail -1| awk '{print $2}')
-RAM_USAGE=$(free -m |grep Mem |awk '{print $3}')
+RAM_TOTAL=$(free -m | awk 'NR==2{print $2 " MB"}')
+RAM_USAGE=$(free -m | awk 'NR==2{print $3 " MB"}')
 GPU=$(lspci | grep VGA | cut -d ":" -f3);GPURAM=$(cardid=$(lspci | grep VGA |cut -d " " -f1);lspci -v -s $cardid | grep " prefetchable"| awk '{print $6}' | head -1)
 VGA="'$GPU' '$GPURAM'"
 DISK_LIST=$(fdisk -lu | grep "Disk" | grep -v "Disk model" | grep -v "Disklabel" | grep -v "dev/loop" | grep -v "Disk identifier" | cut -d ":" -f1)
+DISK_INFO=$(df -h --total | awk 'END{print}')
 
 #----------------------------
 # SYSTEM
@@ -279,8 +280,9 @@ $HOST_NAME LastControl All Controls Report $DATE
 |Internet Conn.     |$INTERNET
 |CPU:               |$CPU_INFO
 |RAM:               |Total:$RAM_TOTAL | Ram Usage: $RAM_USAGE MB
-|GPU / VGA:         | GPU: $GPU | VGA: $VGA
-|HDD:               |$DISK_LIST
+|GPU / VGA:         |GPU: $GPU | VGA: $VGA
+|DISK LIST:         |$DISK_LIST
+|DISK INFO:         |$DISK_INFO
 --------------------------------------------------------------------------------------------------------------------------
 | SYSTEM INFORMATION
 --------------------------------------------------------------------------------------------------------------------------
