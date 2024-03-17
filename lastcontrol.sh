@@ -57,12 +57,12 @@ fi
 #----------------------------
 INTERNAL_IP=$(hostname -I)
 EXTERNAL_IP=$(curl -4 icanhazip.com)
-CPUINFO=$(cat /proc/cpuinfo |grep "model name" |cut -d ':' -f2 > /tmp/cpuinfooutput.txt && tail -n1 /tmp/cpuinfooutput.txt > /tmp/cpuinfo.txt && rm /tmp/cpuinfooutput.txt && cat /tmp/cpuinfo.txt) && rm /tmp/cpuinfo.txt
+CPU_INFO=$(awk -F ':' '/model name/ {print $2}' /proc/cpuinfo | head -n 1)
 RAM_TOTAL=$(free -m | awk 'NR==2{print $2 " MB"}')
 RAM_USAGE=$(free -m | awk 'NR==2{print $3 " MB"}')
-GPU=$(lspci | grep VGA | cut -d ":" -f3);GPURAM=$(cardid=$(lspci | grep VGA |cut -d " " -f1);lspci -v -s $cardid | grep " prefetchable"| awk '{print $6}' | head -1)
-VGA="'$GPU' '$GPURAM'"
-DISK_LIST=$(fdisk -lu | grep "Disk" | grep -v "Disk model" | grep -v "Disklabel" | grep -v "dev/loop" | grep -v "Disk identifier" | cut -d ":" -f1)
+GPU_INFO=$(lspci | grep -i vga | cut -d ':' -f3)
+GPU_RAM=$(lspci -v | awk '/ prefetchable/{print $6}' | head -n 1)
+DISK_LIST=$(lsblk -o NAME,SIZE -d -e 11,2 | tail -n +2)
 DISK_INFO=$(df -h --total | awk 'END{print}')
 
 #----------------------------
@@ -263,8 +263,6 @@ ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNEC
 DISTRO=$(cat /etc/os-release | grep PRETTY_NAME | cut -d '=' -f2 |cut -d '"' -f2)
 KERNEL=$(uname -mrs)
 
-
-
 ######################
 # Create TXT Report File
 ######################
@@ -279,8 +277,8 @@ $HOST_NAME LastControl All Controls Report $DATE
 |IP Address:        |$INTERNAL_IP | $EXTERNAL_IP
 |Internet Conn.     |$INTERNET
 |CPU:               |$CPU_INFO
-|RAM:               |Total:$RAM_TOTAL | Ram Usage: $RAM_USAGE MB
-|GPU / VGA:         |GPU: $GPU | VGA: $VGA
+|RAM:               |Total:$RAM_TOTAL | Ram Usage: $RAM_USAGE
+|GPU / VGA:         |VGA: $GPU_INFO   | VGA Ram: $GPU_RAM 
 |DISK LIST:         |$DISK_LIST
 |DISK INFO:         |$DISK_INFO
 --------------------------------------------------------------------------------------------------------------------------
