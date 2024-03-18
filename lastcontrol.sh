@@ -69,7 +69,7 @@ ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNEC
 #----------------------------
 # SYSTEM
 #----------------------------
-OS_KERNEL=$(uname -sr)
+KERNEL=$(uname -sr)
 DISTRO=$(grep PRETTY_NAME /etc/os-release | cut -d '"' -f2)
 UPTIME=$(uptime) && UPTIME_MIN=$(awk '{print "up", $1/60, "minutes"}' /proc/uptime)
 LASTBOOT=$(uptime -s)
@@ -287,8 +287,8 @@ rm -f /tmp/{lastlogin30d,localuserlist,userstatus,activeusers,lockedusers,passch
 
 ######################ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNECTED"
 ######################UPTIME=$(uptime | awk '{print $1,$2,$3,$4}' |cut -d "," -f1)
-DISTRO=$(cat /etc/os-release | grep PRETTY_NAME | cut -d '=' -f2 |cut -d '"' -f2)
-KERNEL=$(uname -mrs)
+#DISTRO=$(cat /etc/os-release | grep PRETTY_NAME | cut -d '=' -f2 |cut -d '"' -f2)
+#KERNEL=$(uname -mrs)
 
 ######################
 # Create TXT Report File
@@ -312,7 +312,7 @@ $HOST_NAME LastControl All Controls Report $DATE
 | SYSTEM INFORMATION
 --------------------------------------------------------------------------------------------------------------------------
 |Operation System:  |$DISTRO
-|Kernel Version:    |$OS_KERNEL
+|Kernel Version:    |$KERNEL
 |Uptime             |$UPTIME | $UPTIME_MIN
 |Last Boot:         |$LAST_BOOT
 |Virtualization:    |$VIRT_CONTROL
