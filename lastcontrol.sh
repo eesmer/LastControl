@@ -75,9 +75,12 @@ UPTIME=$(uptime) && UPTIME_MIN=$(awk '{print "up", $1/60, "minutes"}' /proc/upti
 LASTBOOT=$(uptime -s)
 VIRT_CONTROL=NONE
 [ -e "/dev/kvm" ] && VIRT_CONTROL=ON
-LOCALDATE=$(timedatectl | grep "Local time:" | awk '{print $3,$4,$5}')
-TIMEZONE=$(timedatectl | grep "Time zone:" | cut -d ":" -f2 | xargs)
-TIME_SYNC=$(timedatectl |grep "synchronized:" |cut -d ":" -f2 | xargs)
+#LOCALDATE=$(timedatectl | grep "Local time:" | awk '{print $3,$4,$5}')
+#TIMEZONE=$(timedatectl | grep "Time zone:" | cut -d ":" -f2 | xargs)
+#TIME_SYNC=$(timedatectl |grep "synchronized:" |cut -d ":" -f2 | xargs)
+LOCALDATE=$(timedatectl status | awk '/Local time:/ {print $3,$4,$5}')
+TIMEZONE=$(timedatectl status | awk -F ': ' '/Time zone:/ {print $2}')
+TIME_SYNC=$(timedatectl status | awk '/synchronized:/ {print $2}')
 HTTP_PROXY_USAGE=FALSE
 env |grep "http_proxy" >> /dev/null && HTTP_PROXY_USAGE=TRUE
 grep -e "export http" /etc/profile |grep -v "#" >> /dev/null && HTTP_PROXY_USAGE=TRUE
