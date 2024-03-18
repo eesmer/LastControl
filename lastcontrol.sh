@@ -74,7 +74,7 @@ DISTRO=$(grep PRETTY_NAME /etc/os-release | cut -d '"' -f2)
 UPTIME=$(uptime) && UPTIME_MIN=$(awk '{print "up", $1/60, "minutes"}' /proc/uptime)
 LASTBOOT=$(uptime -s)
 VIRT_CONTROL=NONE
-if [ -f "/dev/kvm" ]; then "$VIRT_CONTROL"=ON; fi
+[ -e "/dev/kvm" ] && VIRT_CONTROL=ON
 LOCALDATE=$(timedatectl | grep "Local time:" | awk '{print $3,$4,$5}')
 TIMEZONE=$(timedatectl | grep "Time zone:" | cut -d ":" -f2 | xargs)
 TIME_SYNC=$(timedatectl |grep "synchronized:" |cut -d ":" -f2 | xargs)
