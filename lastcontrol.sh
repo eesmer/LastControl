@@ -83,6 +83,9 @@ env |grep "http_proxy" >> /dev/null && HTTP_PROXY_USAGE=TRUE
 grep -e "export http" /etc/profile |grep -v "#" >> /dev/null && HTTP_PROXY_USAGE=TRUE
 grep -e "export http" /etc/profile.d/* |grep -v "#" >> /dev/null && HTTP_PROXY_USAGE=TRUE
 
+#----------------------------
+# SYSLOG Service
+#----------------------------
 SYSLOGINSTALL=Not_Installed
 if [ "$REP" = "APT" ]; then
     dpkg -l | grep -q rsyslog && SYSLOGINSTALL=Installed
@@ -98,7 +101,7 @@ if [ "$SYSLOGINSTALL" = "Installed" ]; then
     systemctl is-active syslog.socket && SYSLOGSOCKET=ACTIVE
 
     SYSLOGSEND=NO
-    grep -q "@" /etc/rsyslog.conf && SYSLOGSEND=YES # ??? kontrol edilecek
+    grep -q "@" /etc/rsyslog.conf && SYSLOGSEND=YES
 
 else
         SYSLOGSERVICE=NONE
