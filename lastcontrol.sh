@@ -95,10 +95,10 @@ fi
 
 if [ "$SYSLOGINSTALL" = "Installed" ]; then
     SYSLOGSERVICE=INACTIVE
-    systemctl is-active rsyslog.service && SYSLOGSERVICE=ACTIVE
+    systemctl is-active --quiet service && SYSLOGSERVICE=ACTIVE
 
     SYSLOGSOCKET=INACTIVE
-    systemctl is-active syslog.socket && SYSLOGSOCKET=ACTIVE
+    systemctl is-active --quiet syslog.socket && SYSLOGSOCKET=ACTIVE
 
     SYSLOGSEND=NO
     grep -q "@" /etc/rsyslog.conf && SYSLOGSEND=YES
