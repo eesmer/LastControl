@@ -125,6 +125,7 @@ fi
 #        SYSLOGSEND=NO
 #        cat /etc/rsyslog.conf |grep "@" |grep -v "#" >> /dev/null && SYSLOGSEND=YES        #??? i will check it
 #fi
+
 RAM_USAGE_PERCENTAGE=$(free |grep Mem |awk '{print $3/$2 * 100}' |cut -d "." -f1)
 OOM=0
 grep -i -r 'out of memory' /var/log/ &>/dev/null && OOM=1
