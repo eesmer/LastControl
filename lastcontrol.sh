@@ -70,9 +70,9 @@ ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNEC
 # SYSTEM
 #----------------------------
 OS_KERNEL=$(uname -sr)
-DISTRO=$(cat /etc/os-release |grep PRETTY_NAME | cut -d '=' -f2 |cut -d '"' -f2)
+DISTRO=$(grep PRETTY_NAME /etc/os-release | cut -d '"' -f2)
 UPTIME=$(uptime) && UPTIME_MIN=$(awk '{ print "up " $1 /60 " minutes"}' /proc/uptime)
-LASTBOOT=$(who -b | awk '{print $3,$4}')
+LASTBOOT=$(uptime -s)
 VIRT_CONTROL=NONE
 if [ -f "/dev/kvm" ]; then "$VIRT_CONTROL"=ON; fi
 LOCALDATE=$(timedatectl | grep "Local time:" | awk '{print $3,$4,$5}')
