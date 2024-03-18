@@ -82,22 +82,46 @@ HTTP_PROXY_USAGE=FALSE
 env |grep "http_proxy" >> /dev/null && HTTP_PROXY_USAGE=TRUE
 grep -e "export http" /etc/profile |grep -v "#" >> /dev/null && HTTP_PROXY_USAGE=TRUE
 grep -e "export http" /etc/profile.d/* |grep -v "#" >> /dev/null && HTTP_PROXY_USAGE=TRUE
+
 SYSLOGINSTALL=Not_Installed
 if [ "$REP" = "APT" ]; then
-        dpkg -l |grep rsyslog >> /dev/null && SYSLOGINSTALL=Installed
-fi
-if [ "$REP" = "YUM" ]; then
-        rpm -qa rsyslog >> /dev/null && SYSLOGINSTALL=Installed
+    dpkg -l | grep -q rsyslog && SYSLOGINSTALL=Installed
+elif [ "$REP" = "YUM" ]; then
+    rpm -qa | grep -q rsyslog && SYSLOGINSTALL=Installed
 fi
 
 if [ "$SYSLOGINSTALL" = "Installed" ]; then
-        SYSLOGSERVICE=INACTIVE
-        systemctl status rsyslog.service |grep "active (running)" >> /dev/null && SYSLOGSERVICE=ACTIVE
-        SYSLOGSOCKET=INACTIVE
-        systemctl status syslog.socket |grep "active (running)" >> /dev/null && SYSLOGSOCKET=ACTIVE
-        SYSLOGSEND=NO
-        cat /etc/rsyslog.conf |grep "@" |grep -v "#" >> /dev/null && SYSLOGSEND=YES        #??? i will check it
+    SYSLOGSERVICE=INACTIVE
+    systemctl is-active rsyslog.service && SYSLOGSERVICE=ACTIVE
+
+    SYSLOGSOCKET=INACTIVE
+    systemctl is-active syslog.socket && SYSLOGSOCKET=ACTIVE
+
+    SYSLOGSEND=NO
+    grep -q "@" /etc/rsyslog.conf && SYSLOGSEND=YES # ??? kontrol edilecek
+
+else
+        SYSLOGSERVICE=NONE
+        SYSLOGSOCKET=NONE
+        SYSLOGSEND=NONE
 fi
+
+#SYSLOGINSTALL=Not_Installed
+#if [ "$REP" = "APT" ]; then
+#        dpkg -l |grep rsyslog >> /dev/null && SYSLOGINSTALL=Installed
+#fi
+#if [ "$REP" = "YUM" ]; then
+#        rpm -qa rsyslog >> /dev/null && SYSLOGINSTALL=Installed
+#fi
+#
+#if [ "$SYSLOGINSTALL" = "Installed" ]; then
+#        SYSLOGSERVICE=INACTIVE
+#        systemctl status rsyslog.service |grep "active (running)" >> /dev/null && SYSLOGSERVICE=ACTIVE
+#        SYSLOGSOCKET=INACTIVE
+#        systemctl status syslog.socket |grep "active (running)" >> /dev/null && SYSLOGSOCKET=ACTIVE
+#        SYSLOGSEND=NO
+#        cat /etc/rsyslog.conf |grep "@" |grep -v "#" >> /dev/null && SYSLOGSEND=YES        #??? i will check it
+#fi
 RAM_USAGE_PERCENTAGE=$(free |grep Mem |awk '{print $3/$2 * 100}' |cut -d "." -f1)
 OOM=0
 grep -i -r 'out of memory' /var/log/ &>/dev/null && OOM=1
