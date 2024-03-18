@@ -45,7 +45,7 @@ if [ -z "$REP" ]; then
 	$RED
 	echo -e
 	echo "--------------------------------------------------------------"
-	echo "Repository could not be detected. This distro is not supported"
+	echo -e "Repository could not be detected.\nThis distro is not supported"
 	echo "--------------------------------------------------------------"
 	echo -e
 	$NOCOL
