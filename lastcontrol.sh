@@ -69,7 +69,7 @@ ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNEC
 #----------------------------
 # SYSTEM
 #----------------------------
-OS_KERNEL=$(uname -mrsv)
+OS_KERNEL=$(uname -sr)
 DISTRO=$(cat /etc/os-release |grep PRETTY_NAME | cut -d '=' -f2 |cut -d '"' -f2)
 UPTIME=$(uptime) && UPTIME_MIN=$(awk '{ print "up " $1 /60 " minutes"}' /proc/uptime)
 LASTBOOT=$(who -b | awk '{print $3,$4}')
