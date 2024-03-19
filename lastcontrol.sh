@@ -70,6 +70,22 @@ CHECK_QUOTA() {
     fi
 }
 
+LVM_CRYPT() {
+    if lsblk --output type | grep -qw "lvm"; then
+        LVM_USAGE=Pass
+    else
+        LVM_USAGE=Fail
+    fi
+
+    if command -v cryptsetup &> /dev/null && lsblk --output type | grep -qw "crypt"; then
+        CRYPT_INSTALL=Pass
+        CRYPT_USAGE=Pass
+    else
+        CRYPT_INSTALL=Fail
+        CRYPT_USAGE=Fail
+    fi
+}
+
 #----------------------------
 # HARDWARE INVENTORY
 #----------------------------
@@ -131,14 +147,6 @@ grep -i -r 'out of memory' /var/log/ &>/dev/null && OOM=1
 if [ "$OOM" = "1" ]; then OOM_LOGS="Out of Memory Log Found !!"; fi
 SWAP_USAGE_PERCENTAGE=$(free -m |grep Swap |awk '{print $3/$2 * 100}' |cut -d "." -f1)
 DISK_USAGE=$(fdisk -lu | grep "Disk" | grep -v "Disklabel" | grep -v "dev/loop" | grep -v "Disk identifier")
-
-LVM_USAGE=Fail
-lsblk --output type |grep -w "lvm" && LVM_USAGE=Pass
-CRYPT_INSTALL=Fail
-if [ -x "$(command -v cryptsetup)" ]; then CRYPT_INSTALL=Pass; fi
-CRYPT_USAGE=Fail
-lsblk --output type |grep -w "crypt" && CRYPT_USAGE=Pass
-rm -f /tmp/disklist.txt
 
 #KERNEL MODULE CONTROL
 ###KERNEL_VER=$(uname -r)
@@ -283,6 +291,7 @@ rm -f /tmp/{lastlogin30d,localuserlist,userstatus,activeusers,lockedusers,passch
 #KERNEL=$(uname -mrs)
 
 CHECK_QUOTA
+LVM_CRYPT
 
 #-------------------------
 # Create TXT Report File
