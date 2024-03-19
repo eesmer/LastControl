@@ -147,22 +147,50 @@ TIME_SYNC=$(timedatectl status | awk '/synchronized:/ {print $4}')
 HTTP_PROXY_USAGE=FALSE
 { env | grep -q "http_proxy"; } || { grep -q -e "export http" /etc/profile /etc/profile.d/*; } && HTTP_PROXY_USAGE=TRUE
 
-#KERNEL MODULE CONTROL
-###KERNEL_VER=$(uname -r)
-CRAMFS="NOT LOADED"
-lsmod |grep cramfs &>/dev/null && CRAMFS=LOADED
-FREEVXFS="NOT LOADED"
-lsmod |grep freevxfs &>/dev/null && FREEVXFS=LOADED
-JFFS2="NOT LOADED"
-lsmod |grep jffs2 &>/dev/null && JFFS2=LOADED
-HFS="NOT LOADED"
-lsmod |grep hfs &>/dev/null && HFS=LOADED
-HFSPLUS="NOT LOADED"
-lsmod |grep hfsplus &>/dev/null && HFS=LOADED
-SQUASHFS="NOT LOADED"
-lsmod |grep squashfs &>/dev/null && SQUASHFS=LOADED
-UDF="NOT LOADED"
-lsmod |grep udf &>/dev/null && UDF=LOADED
+
+# CHECK KERNEL and OS VERSION
+KERNELVER=$(uname -r)
+OSVER=$(grep PRETTY_NAME /etc/os-release | cut -d '=' -f2 | cut -d '"' -f2)
+
+# CHECK KERNEL MODULES
+modules=("cramfs" "freevxfs" "jffs2" "hfs" "hfsplus" "squashfs" "udf")
+
+# Initialize a variable to hold the module statuses
+declare -A module_statuses
+
+# Loop through the modules array and check their status
+for module in "${modules[@]}"; do
+        module_statuses["$module"]="FALSE"
+        if lsmod | grep -q "$module"; then
+                module_statuses["$module"]="LOADED"
+                #echo "<a href='$HANDBOOK#-hardening_loaded_kernel_modules'>$module Filesystem loaded</a>" >> "/tmp/the.hardeningsys"
+        fi
+done
+
+echo ${module_statuses["cramfs"]}
+echo ${module_statuses["freevxfs"]}
+echo ${module_statuses["jffs2"]}
+echo ${module_statuses["hfs"]}
+echo ${module_statuses["hfsplus"]}
+echo ${module_statuses["squashfs"]}
+echo ${module_statuses["udf"]}
+
+##KERNEL MODULE CONTROL
+####KERNEL_VER=$(uname -r)
+#CRAMFS="NOT LOADED"
+#lsmod |grep cramfs &>/dev/null && CRAMFS=LOADED
+#FREEVXFS="NOT LOADED"
+#lsmod |grep freevxfs &>/dev/null && FREEVXFS=LOADED
+#JFFS2="NOT LOADED"
+#lsmod |grep jffs2 &>/dev/null && JFFS2=LOADED
+#HFS="NOT LOADED"
+#lsmod |grep hfs &>/dev/null && HFS=LOADED
+#HFSPLUS="NOT LOADED"
+#lsmod |grep hfsplus &>/dev/null && HFS=LOADED
+#SQUASHFS="NOT LOADED"
+#lsmod |grep squashfs &>/dev/null && SQUASHFS=LOADED
+#UDF="NOT LOADED"
+#lsmod |grep udf &>/dev/null && UDF=LOADED
 
 # GRUB CONTROL
 if [ "$REP" = APT ]; then
