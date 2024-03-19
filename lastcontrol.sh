@@ -108,6 +108,14 @@ SYSLOG_INFO() {
                 fi
 }
 
+MEMORY_INFO() {
+        RAM_USAGE_PERCENTAGE=$(free |grep Mem |awk '{print $3/$2 * 100}' |cut -d "." -f1)
+        OOM=0
+        grep -i -r 'out of memory' /var/log/ &>/dev/null && OOM=1
+        if [ "$OOM" = "1" ]; then OOM_LOGS="Out of Memory Log Found !!"; fi
+        SWAP_USAGE_PERCENTAGE=$(free -m |grep Swap |awk '{print $3/$2 * 100}' |cut -d "." -f1)
+}
+
 
 #----------------------------
 # HARDWARE INVENTORY
@@ -121,6 +129,7 @@ GPU_INFO=$(lspci | grep -i vga | cut -d ':' -f3)
 GPU_RAM=$(lspci -v | awk '/ prefetchable/{print $6}' | head -n 1)
 DISK_LIST=$(lsblk -o NAME,SIZE -d -e 11,2 | tail -n +2)
 DISK_INFO=$(df -h --total | awk 'END{print}')
+DISK_USAGE=$(fdisk -lu | grep "Disk" | grep -v "Disklabel" | grep -v "dev/loop" | grep -v "Disk identifier")
 ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNECTED"
 
 #----------------------------
@@ -138,12 +147,14 @@ TIME_SYNC=$(timedatectl status | awk '/synchronized:/ {print $4}')
 HTTP_PROXY_USAGE=FALSE
 { env | grep -q "http_proxy"; } || { grep -q -e "export http" /etc/profile /etc/profile.d/*; } && HTTP_PROXY_USAGE=TRUE
 
-RAM_USAGE_PERCENTAGE=$(free |grep Mem |awk '{print $3/$2 * 100}' |cut -d "." -f1)
-OOM=0
-grep -i -r 'out of memory' /var/log/ &>/dev/null && OOM=1
-if [ "$OOM" = "1" ]; then OOM_LOGS="Out of Memory Log Found !!"; fi
-SWAP_USAGE_PERCENTAGE=$(free -m |grep Swap |awk '{print $3/$2 * 100}' |cut -d "." -f1)
-DISK_USAGE=$(fdisk -lu | grep "Disk" | grep -v "Disklabel" | grep -v "dev/loop" | grep -v "Disk identifier")
+
+
+#RAM_USAGE_PERCENTAGE=$(free |grep Mem |awk '{print $3/$2 * 100}' |cut -d "." -f1)
+#OOM=0
+#grep -i -r 'out of memory' /var/log/ &>/dev/null && OOM=1
+#if [ "$OOM" = "1" ]; then OOM_LOGS="Out of Memory Log Found !!"; fi
+#SWAP_USAGE_PERCENTAGE=$(free -m |grep Swap |awk '{print $3/$2 * 100}' |cut -d "." -f1)
+
 
 #KERNEL MODULE CONTROL
 ###KERNEL_VER=$(uname -r)
