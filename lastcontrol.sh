@@ -147,15 +147,6 @@ TIME_SYNC=$(timedatectl status | awk '/synchronized:/ {print $4}')
 HTTP_PROXY_USAGE=FALSE
 { env | grep -q "http_proxy"; } || { grep -q -e "export http" /etc/profile /etc/profile.d/*; } && HTTP_PROXY_USAGE=TRUE
 
-
-
-#RAM_USAGE_PERCENTAGE=$(free |grep Mem |awk '{print $3/$2 * 100}' |cut -d "." -f1)
-#OOM=0
-#grep -i -r 'out of memory' /var/log/ &>/dev/null && OOM=1
-#if [ "$OOM" = "1" ]; then OOM_LOGS="Out of Memory Log Found !!"; fi
-#SWAP_USAGE_PERCENTAGE=$(free -m |grep Swap |awk '{print $3/$2 * 100}' |cut -d "." -f1)
-
-
 #KERNEL MODULE CONTROL
 ###KERNEL_VER=$(uname -r)
 CRAMFS="NOT LOADED"
