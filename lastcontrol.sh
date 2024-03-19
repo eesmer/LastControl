@@ -52,6 +52,24 @@ if [ -z "$REP" ]; then
 	exit 1
 fi
 
+CHECK_QUOTA() {
+    if command -v quotacheck &> /dev/null; then
+        QUOTA_INSTALL=Pass
+    else
+        QUOTA_INSTALL=Fail
+    fi
+
+    if grep -q -E 'usrquota|grpquota' /proc/mounts; then
+        USR_QUOTA=Pass
+        GRP_QUOTA=Pass
+        MNT_QUOTA=Pass
+    else
+        USR_QUOTA=Fail
+        GRP_QUOTA=Fail
+        MNT_QUOTA=Fail
+    fi
+}
+
 #----------------------------
 # HARDWARE INVENTORY
 #----------------------------
@@ -273,9 +291,11 @@ rm -f /tmp/{lastlogin30d,localuserlist,userstatus,activeusers,lockedusers,passch
 #DISTRO=$(cat /etc/os-release | grep PRETTY_NAME | cut -d '=' -f2 |cut -d '"' -f2)
 #KERNEL=$(uname -mrs)
 
-######################
+CHECK_QUOTA
+
+#-------------------------
 # Create TXT Report File
-######################
+#-------------------------
 rm $RDIR/$HOST_NAME-allreports.txt
 cat > $RDIR/$HOST_NAME-allreports.txt << EOF
 $HOST_NAME LastControl All Controls Report $DATE
