@@ -138,32 +138,6 @@ TIME_SYNC=$(timedatectl status | awk '/synchronized:/ {print $4}')
 HTTP_PROXY_USAGE=FALSE
 { env | grep -q "http_proxy"; } || { grep -q -e "export http" /etc/profile /etc/profile.d/*; } && HTTP_PROXY_USAGE=TRUE
 
-##----------------------------
-## SYSLOG Service
-##----------------------------
-#SYSLOGINSTALL=Not_Installed
-#if [ "$REP" = "APT" ]; then
-#    dpkg -l | grep -q rsyslog && SYSLOGINSTALL=Installed
-#elif [ "$REP" = "YUM" ]; then
-#    rpm -qa | grep -q rsyslog && SYSLOGINSTALL=Installed
-#fi
-#
-#if [ "$SYSLOGINSTALL" = "Installed" ]; then
-#    SYSLOGSERVICE=INACTIVE
-#    systemctl is-active --quiet service && SYSLOGSERVICE=ACTIVE
-#
-#   SYSLOGSOCKET=INACTIVE
-#   systemctl is-active --quiet syslog.socket && SYSLOGSOCKET=ACTIVE
-#
-#    SYSLOGSEND=NO
-#    grep -q "@" /etc/rsyslog.conf && SYSLOGSEND=YES
-#
-#else
-#        SYSLOGSERVICE=NONE
-#        SYSLOGSOCKET=NONE
-#        SYSLOGSEND=NONE
-#fi
-
 RAM_USAGE_PERCENTAGE=$(free |grep Mem |awk '{print $3/$2 * 100}' |cut -d "." -f1)
 OOM=0
 grep -i -r 'out of memory' /var/log/ &>/dev/null && OOM=1
