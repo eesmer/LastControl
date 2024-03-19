@@ -107,23 +107,6 @@ else
         SYSLOGSEND=NONE
 fi
 
-#SYSLOGINSTALL=Not_Installed
-#if [ "$REP" = "APT" ]; then
-#        dpkg -l |grep rsyslog >> /dev/null && SYSLOGINSTALL=Installed
-#fi
-#if [ "$REP" = "YUM" ]; then
-#        rpm -qa rsyslog >> /dev/null && SYSLOGINSTALL=Installed
-#fi
-#
-#if [ "$SYSLOGINSTALL" = "Installed" ]; then
-#        SYSLOGSERVICE=INACTIVE
-#        systemctl status rsyslog.service |grep "active (running)" >> /dev/null && SYSLOGSERVICE=ACTIVE
-#        SYSLOGSOCKET=INACTIVE
-#        systemctl status syslog.socket |grep "active (running)" >> /dev/null && SYSLOGSOCKET=ACTIVE
-#        SYSLOGSEND=NO
-#        cat /etc/rsyslog.conf |grep "@" |grep -v "#" >> /dev/null && SYSLOGSEND=YES        #??? i will check it
-#fi
-
 RAM_USAGE_PERCENTAGE=$(free |grep Mem |awk '{print $3/$2 * 100}' |cut -d "." -f1)
 OOM=0
 grep -i -r 'out of memory' /var/log/ &>/dev/null && OOM=1
