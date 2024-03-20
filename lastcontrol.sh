@@ -217,7 +217,10 @@ if [ "$SERVICE_MANAGER" = systemd ]; then
         RUNNING_SERVICE=$(wc -l $RDIR/runningservices.txt |cut -d ' ' -f1)
         LOADED_SERVICE=$(systemctl list-units --type service |grep "units." |cut -d "." -f1)
 fi
-ACTIVE_CONN=$(netstat -s |grep "active connection openings")
+
+#ACTIVE_CONN=$(netstat -s |grep "active connection openings")
+ACTIVE_CONN=$(netstat -s | awk '/active connection openings/ {print $1}')
+
 PASSIVE_CONN=$(netstat -s |grep "passive connection openings")
 FAILED_CONN=$(netstat -s |grep "failed connection attempts")
 ESTAB_CONN=$(netstat -s |grep "connections established")
