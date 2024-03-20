@@ -116,6 +116,14 @@ MEMORY_INFO() {
         if [ "$OOM" = "1" ]; then OOM_LOGS="Out of Memory Log Found !!"; fi
 }
 
+USER_LIST(){
+    tmpfile=$(mktemp)
+    USERCOUNT=$(grep -v "[*!]" /etc/shadow | wc -l)
+    grep -E "/bin/bash|/bin/zsh|/bin/sh" /etc/passwd | grep -v "/sbin/nologin" | grep -v "/bin/false" | cut -d":" -f1 > "$tmpfile"
+    USERLIST=$(paste -sd "," "$tmpfile")
+    rm -f "$tmpfile"
+}
+
 SUDO_USER_LIST(){
     tmpfile=$(mktemp)
     getent group sudo | awk -F: '{print $4}' | tr ',' "\n" >> "$tmpfile"
@@ -230,9 +238,8 @@ NOC=$(nproc --all)
 LOAD_AVG=$(uptime | grep "load average:" | awk -F: '{print $5}')
 ZO_PROCESS=$(ps -A -ostat,ppid,pid,cmd | grep -e '^[Zz]' | wc -l)
 
-USERCOUNT=$(cat /etc/shadow |grep -v "*" |grep -v "!" |wc -l)
-USERLIST=$(cat /etc/passwd | grep -v "/sbin/nologin" | grep -v "/bin/false" | grep -E "/bin/bash|/bin/zsh|/bin/sh" | cut -d":" -f1 | paste -sd ",")
-
+#USERCOUNT=$(cat /etc/shadow |grep -v "*" |grep -v "!" |wc -l)
+#USERLIST=$(cat /etc/passwd | grep -v "/sbin/nologin" | grep -v "/bin/false" | grep -E "/bin/bash|/bin/zsh|/bin/sh" | cut -d":" -f1 | paste -sd ",")
 #SUDOUSERLIST=$(getent group sudo | awk -F: '{print $4}' | tr ',' "\n" >> /tmp/sudouserlist ; cat /etc/sudoers | grep "ALL" | grep -v "%" | awk '{print $1}' >> /tmp/sudouserlist ; grep 'ALL' /etc/sudoers.d/* | cut -d":" -f2 | cut -d" " -f1 >> /tmp/sudouserlist ; cat /tmp/sudouserlist | sort -u | paste -sd "," ; rm -f /tmp/sudouserlist)
 
 SERVICEUSERLIST=$(awk -F: '$2 == "*"' /etc/shadow | cut -d ":" -f1 | paste -sd ",")
