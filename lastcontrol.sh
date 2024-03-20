@@ -219,10 +219,12 @@ if [ "$SERVICE_MANAGER" = systemd ]; then
 fi
 
 ACTIVE_CONN=$(netstat -s | awk '/active connection openings/ {print $1}')
-#PASSIVE_CONN=$(netstat -s |grep "passive connection openings")
 PASSIVE_CONN=$(netstat -s | awk '/passive connection openings/ {print $1}')
-FAILED_CONN=$(netstat -s |grep "failed connection attempts")
-ESTAB_CONN=$(netstat -s |grep "connections established")
+#FAILED_CONN=$(netstat -s |grep "failed connection attempts")
+#ESTAB_CONN=$(netstat -s |grep "connections established")
+FAILED_CONN=$(netstat -s | awk '/failed connection attempts/ {print $1}')
+ESTAB_CONN=$(netstat -s | awk '/connections established/ {print $1}')
+
 NOC=$(nproc --all)
 LOAD_AVG=$(uptime |grep "load average:" |awk -F: '{print $5}')
 ZO_PROCESS=$(ps -A -ostat,ppid,pid,cmd | grep -e '^[Zz]' | wc -l)
