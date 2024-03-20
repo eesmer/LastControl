@@ -147,17 +147,12 @@ TIME_SYNC=$(timedatectl status | awk '/synchronized:/ {print $4}')
 HTTP_PROXY_USAGE=FALSE
 { env | grep -q "http_proxy"; } || { grep -q -e "export http" /etc/profile /etc/profile.d/*; } && HTTP_PROXY_USAGE=TRUE
 
-
-# CHECK KERNEL and OS VERSION
+# CHECK KERNEL and KERNEL MODULES
 KERNELVER=$(uname -r)
 OSVER=$(grep PRETTY_NAME /etc/os-release | cut -d '=' -f2 | cut -d '"' -f2)
-
-# CHECK KERNEL MODULES
 modules=("cramfs" "freevxfs" "jffs2" "hfs" "hfsplus" "squashfs" "udf")
-
 # Initialize a variable to hold the module statuses
 declare -A module_statuses
-
 # Loop through the modules array and check their status
 for module in "${modules[@]}"; do
         module_statuses["$module"]="FALSE"
