@@ -247,6 +247,8 @@ BLANKPASSUSERLIST=$(awk -F: '$2 == "!*" { print $1 }' /etc/shadow | paste -sd ",
 LASTLOGIN00D=$(lastlog --time 1 |grep -v "Username" | awk '{ print $1}' | paste -sd ',')
 LASTLOGIN07D=$(lastlog --time 7 |grep -v "Username" | awk '{ print $1}' | paste -sd ',')
 LASTLOGIN30D=$(lastlog --time 30 |grep -v "Username" | awk '{ print $1}' | paste -sd ',')
+NOLOGINUSER=$(awk -F: '$NF !~ "/(bash|sh)$" && $NF != "" {print $1}' /etc/passwd | wc -l)
+LOGINAUTHUSER=$(awk -F: '$NF ~ "/bin/(ba)?sh$"{print $1}' /etc/passwd)
 # NOTLOGIN USERLIST last 30 Day
 lastlog --time 30 | grep -v "Username" | cut -d " " -f1 > /tmp/lastlogin30d
 getent passwd {0..0} {1000..2000} |cut -d ":" -f1 > /tmp/localuserlist
@@ -307,6 +309,9 @@ NOTLOGGEDUSER=$(cat /tmp/notloggeduserlist | cut -d " " -f1 | paste -sd "@")
 
 rm -f /tmp/{localaccountlist,notloggeduserlist}
 rm -f /tmp/{lastlogin30d,localuserlist,userstatus,activeusers,lockedusers,passchange,PasswordBilgileri,userstatus,lastlogininfo}
+
+
+
 
 CHECK_QUOTA
 LVM_CRYPT
