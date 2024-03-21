@@ -308,9 +308,6 @@ NOTLOGGEDUSER=$(cat /tmp/notloggeduserlist | cut -d " " -f1 | paste -sd "@")
 rm -f /tmp/{localaccountlist,notloggeduserlist}
 rm -f /tmp/{lastlogin30d,localuserlist,userstatus,activeusers,lockedusers,passchange,PasswordBilgileri,userstatus,lastlogininfo}
 
-######################ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNECTED"
-######################UPTIME=$(uptime | awk '{print $1,$2,$3,$4}' |cut -d "," -f1)
-
 CHECK_QUOTA
 LVM_CRYPT
 SYSLOG_INFO
