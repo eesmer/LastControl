@@ -310,8 +310,6 @@ rm -f /tmp/{lastlogin30d,localuserlist,userstatus,activeusers,lockedusers,passch
 
 ######################ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNECTED"
 ######################UPTIME=$(uptime | awk '{print $1,$2,$3,$4}' |cut -d "," -f1)
-#DISTRO=$(cat /etc/os-release | grep PRETTY_NAME | cut -d '=' -f2 |cut -d '"' -f2)
-#KERNEL=$(uname -mrs)
 
 CHECK_QUOTA
 LVM_CRYPT
