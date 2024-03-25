@@ -42,6 +42,19 @@ DISK_INFO=$(df -h --total | awk 'END{print}')
 DISK_USAGE=$(fdisk -lu | grep "Disk" | grep -v "Disklabel" | grep -v "dev/loop" | grep -v "Disk identifier")
 ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNECTED"
 
+# SYSTEM INFO
+KERNEL=$(uname -sr)
+DISTRO=$(grep PRETTY_NAME /etc/os-release | cut -d '"' -f2)
+UPTIME=$(uptime) && UPTIME_MIN=$(awk '{print "up", $1/60, "minutes"}' /proc/uptime)
+LASTBOOT=$(uptime -s)
+VIRT_CONTROL=NONE
+[ -e "/dev/kvm" ] && VIRT_CONTROL=ON
+LOCALDATE=$(timedatectl status | awk '/Local time:/ {print $3,$4,$5}')
+TIMEZONE=$(timedatectl status | awk -F ': ' '/Time zone:/ {print $2}') #TIME_SYNC=$(timedatectl |grep "synchronized:" |cut -d ":" -f2 | xargs)
+TIME_SYNC=$(timedatectl status | awk '/synchronized:/ {print $4}')
+HTTP_PROXY_USAGE=FALSE
+{ env | grep -q "http_proxy"; } || { grep -q -e "export http" /etc/profile /etc/profile.d/*; } && HTTP_PROXY_USAGE=TRUE
+
 rm -r $RDIR
 mkdir -p $RDIR
 
@@ -160,20 +173,6 @@ PASSWORD_EXPIRE_INFO() {
 }
 
 
-#----------------------------
-# SYSTEM
-#----------------------------
-KERNEL=$(uname -sr)
-DISTRO=$(grep PRETTY_NAME /etc/os-release | cut -d '"' -f2)
-UPTIME=$(uptime) && UPTIME_MIN=$(awk '{print "up", $1/60, "minutes"}' /proc/uptime)
-LASTBOOT=$(uptime -s)
-VIRT_CONTROL=NONE
-[ -e "/dev/kvm" ] && VIRT_CONTROL=ON
-LOCALDATE=$(timedatectl status | awk '/Local time:/ {print $3,$4,$5}')
-TIMEZONE=$(timedatectl status | awk -F ': ' '/Time zone:/ {print $2}') #TIME_SYNC=$(timedatectl |grep "synchronized:" |cut -d ":" -f2 | xargs)
-TIME_SYNC=$(timedatectl status | awk '/synchronized:/ {print $4}')
-HTTP_PROXY_USAGE=FALSE
-{ env | grep -q "http_proxy"; } || { grep -q -e "export http" /etc/profile /etc/profile.d/*; } && HTTP_PROXY_USAGE=TRUE
 
 # CHECK KERNEL MODULES
 ####OSVER=$(grep PRETTY_NAME /etc/os-release | cut -d '=' -f2 | cut -d '"' -f2)
