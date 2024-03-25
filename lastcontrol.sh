@@ -25,7 +25,8 @@ LOGO=/usr/local/lastcontrol/images/lastcontrol_logo.png
 DATE=$(date)
 
 # LOCAL USERS
-getent passwd {0..0} {1000..2000} |cut -d ":" -f1 > /tmp/localusers
+grep -E "/bin/bash|/bin/zsh|/bin/sh" /etc/passwd | grep -v "/sbin/nologin" | grep -v "/bin/false" | cut -d":" -f1 > /tmp/localusers
+                                                               #getent passwd {0..0} {1000..2000} |cut -d ":" -f1 > /tmp/localusers
 LOCAL_USER_COUNT=$(cat /tmp/localusers | wc -l)
 
 rm -r $RDIR
@@ -122,7 +123,7 @@ MEMORY_INFO() {
 
 USER_LIST(){
     tmpfile=$(mktemp)
-    USERCOUNT=$(grep -v "[*!]" /etc/shadow | wc -l)
+    ###USERCOUNT=$(grep -v "[*!]" /etc/shadow | wc -l)
     grep -E "/bin/bash|/bin/zsh|/bin/sh" /etc/passwd | grep -v "/sbin/nologin" | grep -v "/bin/false" | cut -d":" -f1 > "$tmpfile"
     USERLIST=$(paste -sd "," "$tmpfile")
     rm -f "$tmpfile"
@@ -399,7 +400,7 @@ echo "--------------------------------------------------------------------------
 cat >> $RDIR/$HOST_NAME-allreports.txt << EOF
 | USERS
 --------------------------------------------------------------------------------------------------------------------------
-|Local User Count:  |$USERCOUNT
+|Local User Count:  |$LOCAL_USER_COUNT
 |Local User List:   |$USERLIST
 |SUDO Users:        |$SUDOUSERLIST
 |Blank Pass. Users  |$BLANKPASSUSERLIST
