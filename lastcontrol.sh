@@ -123,11 +123,7 @@ MEMORY_INFO() {
 }
 
 USER_LIST(){
-    ###tmpfile=$(mktemp)
-    ###USERCOUNT=$(grep -v "[*!]" /etc/shadow | wc -l)
-    ###grep -E "/bin/bash|/bin/zsh|/bin/sh" /etc/passwd | grep -v "/sbin/nologin" | grep -v "/bin/false" | cut -d":" -f1 > "$tmpfile"
     USER_LIST=$(paste -sd "," "$LOCAL_USER_LIST_FILE")
-    #rm -f "$tmpfile"
 }
 
 SUDO_USER_LIST(){
@@ -137,7 +133,6 @@ SUDO_USER_LIST(){
     grep 'ALL' /etc/sudoers.d/* | cut -d":" -f2 | cut -d" " -f1 >> "$tmpfile"
     SUDOUSERLIST=$(sort -u "$tmpfile" | paste -sd ",")
     rm -f "$tmpfile"
-    #echo $SUDOUSERLIST
 }
 
 PASSWORD_EXPIRE_INFO() {
