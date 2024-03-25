@@ -137,9 +137,8 @@ SUDO_USER_LIST(){
 
 PASSWORD_EXPIRE_INFO() {
         rm -f /tmp/passexpireinfo.txt
-        USERCOUNT=$(cat /tmp/localuserlist | wc -l)
         PX=1
-        while [ $PX -le $USERCOUNT ]; do
+        while [ $PX -le $LOCAL_USER_COUNT ]; do
                 USERACCOUNTNAME=$(awk "NR==$PX" /tmp/localuserlist)
                 PASSEX=$(chage -l $USERACCOUNTNAME |grep "Password expires" | awk '{print $4}')
                 echo "$USERACCOUNTNAME:$PASSEX" >> /tmp/passexpireinfo.txt
@@ -268,7 +267,7 @@ NOTLOGIN30D=$(diff /tmp/lastlogin30d /tmp/localuserlist -n | grep -v "d1" | grep
 rm -f /tmp/passchange
 rm -f /tmp/userstatus
 PC=1
-while [ $PC -le $USERCOUNT ]; do
+while [ $PC -le $LOCAL_USER_COUNT ]; do
     USERACCOUNTNAME=$(awk "NR==$PC" /tmp/localuserlist)
     PASSCHANGE=$(lslogins "$USERACCOUNTNAME" | grep "Password changed:" | awk ' { print $3 }')    # Password update date
     USERSTATUS=$(passwd -S "$USERACCOUNTNAME" >> /tmp/userstatus)                                 # user status information
@@ -284,7 +283,7 @@ rm /tmp/lockedusers
 # LOGIN INFO
 rm -f /tmp/lastlogininfo
 LL=1
-while [ "$LL" -le "$USERCOUNT" ]; do
+while [ "$LL" -le "$LOCAL_USER_COUNT" ]; do
         USERACCOUNTNAME=$(ls -l |sed -n $LL{p} /tmp/localuserlist)
         #LOGINFROM=$(lastlog | grep $USERACCOUNTNAME | xargs)
         ###lastlog | grep $USERACCOUNTNAME | cut -d "+" -f1 >> /tmp/lastlogininfo
@@ -296,11 +295,11 @@ done
 LASTLOGININFO=$(cat /tmp/lastlogininfo | paste -sd ",")
 
 # NEVER LOGGED USERS
-USERCOUNT=$(cat /etc/shadow | grep -v "*" | grep -v "!" | wc -l)
+LOCAL_USER_COUNT=$(cat /etc/shadow | grep -v "*" | grep -v "!" | wc -l)
 cat /etc/shadow | grep -v "*" | grep -v "!" | cut -d ":" -f1 > /tmp/localaccountlist
 rm -f /tmp/notloggeduserlist
 NL=1
-while [ $NL -le $USERCOUNT ]; do
+while [ $NL -le $LOCAL_USER_COUNT ]; do
     USERACCOUNTNAME=$(awk "NR==$NL" /tmp/localaccountlist)
     lastlog | grep "Never logged in" | grep "$USERACCOUNTNAME" >> /tmp/notloggeduserlist
     NL=$(( NL + 1 ))
