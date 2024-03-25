@@ -26,7 +26,6 @@ DATE=$(date)
 
 # LOCAL USERS
 grep -E "/bin/bash|/bin/zsh|/bin/sh" /etc/passwd | grep -v "/sbin/nologin" | grep -v "/bin/false" | cut -d":" -f1 > /tmp/localusers
-                                                               #getent passwd {0..0} {1000..2000} |cut -d ":" -f1 > /tmp/localusers
 LOCAL_USER_LIST_FILE=$(/tmp/localusers)
 LOCAL_USER_COUNT=$(cat /tmp/localusers | wc -l)
 
@@ -177,9 +176,8 @@ TIME_SYNC=$(timedatectl status | awk '/synchronized:/ {print $4}')
 HTTP_PROXY_USAGE=FALSE
 { env | grep -q "http_proxy"; } || { grep -q -e "export http" /etc/profile /etc/profile.d/*; } && HTTP_PROXY_USAGE=TRUE
 
-# CHECK KERNEL and KERNEL MODULES
-KERNELVER=$(uname -r)
-OSVER=$(grep PRETTY_NAME /etc/os-release | cut -d '=' -f2 | cut -d '"' -f2)
+# CHECK KERNEL MODULES
+####OSVER=$(grep PRETTY_NAME /etc/os-release | cut -d '=' -f2 | cut -d '"' -f2)
 modules=("cramfs" "freevxfs" "jffs2" "hfs" "hfsplus" "squashfs" "udf")
 # Initialize a variable to hold the module statuses
 declare -A module_statuses
