@@ -308,10 +308,7 @@ done
 NOTLOGGEDUSER=$(cat /tmp/notloggeduserlist | cut -d " " -f1 | paste -sd "@")
 
 rm -f /tmp/{localaccountlist,notloggeduserlist}
-rm -f /tmp/{lastlogin30d,localuserlist,userstatus,activeusers,lockedusers,passchange,PasswordBilgileri,userstatus,lastlogininfo}
-
-
-
+rm -f /tmp/{lastlogin30d,localuserlist,userstatus,activeusers,lockedusers,passchange,PasswordBilgileri,lastlogininfo}
 
 CHECK_QUOTA
 LVM_CRYPT
