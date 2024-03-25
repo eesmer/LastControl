@@ -238,10 +238,6 @@ NOC=$(nproc --all)
 LOAD_AVG=$(uptime | grep "load average:" | awk -F: '{print $5}')
 ZO_PROCESS=$(ps -A -ostat,ppid,pid,cmd | grep -e '^[Zz]' | wc -l)
 
-#USERCOUNT=$(cat /etc/shadow |grep -v "*" |grep -v "!" |wc -l)
-#USERLIST=$(cat /etc/passwd | grep -v "/sbin/nologin" | grep -v "/bin/false" | grep -E "/bin/bash|/bin/zsh|/bin/sh" | cut -d":" -f1 | paste -sd ",")
-#SUDOUSERLIST=$(getent group sudo | awk -F: '{print $4}' | tr ',' "\n" >> /tmp/sudouserlist ; cat /etc/sudoers | grep "ALL" | grep -v "%" | awk '{print $1}' >> /tmp/sudouserlist ; grep 'ALL' /etc/sudoers.d/* | cut -d":" -f2 | cut -d" " -f1 >> /tmp/sudouserlist ; cat /tmp/sudouserlist | sort -u | paste -sd "," ; rm -f /tmp/sudouserlist)
-
 SERVICEUSERLIST=$(awk -F: '$2 == "*"' /etc/shadow | cut -d ":" -f1 | paste -sd ",")
 BLANKPASSUSERLIST=$(awk -F: '$2 == "!*" { print $1 }' /etc/shadow | paste -sd ",")
 LASTLOGIN00D=$(lastlog --time 1 |grep -v "Username" | awk '{ print $1}' | paste -sd ',')
@@ -249,10 +245,12 @@ LASTLOGIN07D=$(lastlog --time 7 |grep -v "Username" | awk '{ print $1}' | paste 
 LASTLOGIN30D=$(lastlog --time 30 |grep -v "Username" | awk '{ print $1}' | paste -sd ',')
 NOLOGINUSER=$(awk -F: '$NF !~ "/(bash|sh)$" && $NF != "" {print $1}' /etc/passwd | wc -l)
 LOGINAUTHUSER=$(awk -F: '$NF ~ "/bin/(ba)?sh$"{print $1}' /etc/passwd)
+
 # NOTLOGIN USERLIST last 30 Day
 lastlog --time 30 | grep -v "Username" | cut -d " " -f1 > /tmp/lastlogin30d
 getent passwd {0..0} {1000..2000} |cut -d ":" -f1 > /tmp/localuserlist
 NOTLOGIN30D=$(diff /tmp/lastlogin30d /tmp/localuserlist -n | grep -v "d1" | grep -v "a0" | grep -v "a1" | grep -v "a2" | grep -v "a3" | grep -v "a4" | paste -sd ",")
+
 # PASSWORD EXPIRE INFO
 rm -f /tmp/passexpireinfo.txt
 USERCOUNT=$(cat /tmp/localuserlist | wc -l)
