@@ -264,18 +264,6 @@ lastlog --time 30 | grep -v "Username" | cut -d " " -f1 > /tmp/lastlogin30d
 getent passwd {0..0} {1000..2000} |cut -d ":" -f1 > /tmp/localuserlist
 NOTLOGIN30D=$(diff /tmp/lastlogin30d /tmp/localuserlist -n | grep -v "d1" | grep -v "a0" | grep -v "a1" | grep -v "a2" | grep -v "a3" | grep -v "a4" | paste -sd ",")
 
-## PASSWORD EXPIRE INFO
-#rm -f /tmp/passexpireinfo.txt
-#USERCOUNT=$(cat /tmp/localuserlist | wc -l)
-#PX=1
-#while [ $PX -le $USERCOUNT ]; do
-#    USERACCOUNTNAME=$(awk "NR==$PX" /tmp/localuserlist)
-#    PASSEX=$(chage -l $USERACCOUNTNAME |grep "Password expires" | awk '{print $4}')
-#    echo "$USERACCOUNTNAME:$PASSEX" >> /tmp/passexpireinfo.txt
-#    PX=$(( PX + 1 ))
-#done
-#PASSEXINFO=$(cat /tmp/passexpireinfo.txt | paste -sd ",")
-
 rm -f /tmp/passchange
 rm -f /tmp/userstatus
 PC=1
