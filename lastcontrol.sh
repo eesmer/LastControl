@@ -134,6 +134,19 @@ SUDO_USER_LIST(){
     #echo $SUDOUSERLIST
 }
 
+PASSWORD_EXPIRE_INFO() {
+        rm -f /tmp/passexpireinfo.txt
+        USERCOUNT=$(cat /tmp/localuserlist | wc -l)
+        PX=1
+        while [ $PX -le $USERCOUNT ]; do
+                USERACCOUNTNAME=$(awk "NR==$PX" /tmp/localuserlist)
+                PASSEX=$(chage -l $USERACCOUNTNAME |grep "Password expires" | awk '{print $4}')
+                echo "$USERACCOUNTNAME:$PASSEX" >> /tmp/passexpireinfo.txt
+                PX=$(( PX + 1 ))
+        done
+        PASSEXINFO=$(cat /tmp/passexpireinfo.txt | paste -sd ",")
+}
+
 #----------------------------
 # HARDWARE INVENTORY
 #----------------------------
