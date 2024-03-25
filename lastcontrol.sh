@@ -26,6 +26,7 @@ DATE=$(date)
 
 # LOCAL USERS
 getent passwd {0..0} {1000..2000} |cut -d ":" -f1 > /tmp/localusers
+LOCAL_USER_COUNT=$(cat /tmp/localusers | wc -l)
 
 rm -r $RDIR
 mkdir -p $RDIR
