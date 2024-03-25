@@ -24,6 +24,9 @@ RDIR=/usr/local/lastcontrol/reports/$HOST_NAME
 LOGO=/usr/local/lastcontrol/images/lastcontrol_logo.png
 DATE=$(date)
 
+# LOCAL USERS
+getent passwd {0..0} {1000..2000} |cut -d ":" -f1 > /tmp/localusers
+
 rm -r $RDIR
 mkdir -p $RDIR
 
