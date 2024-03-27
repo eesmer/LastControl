@@ -174,7 +174,6 @@ PASSWORD_EXPIRE_INFO() {
 }
 
 NEVER_LOOGED_USERS() {
-        #####LOCAL_USER_COUNT=$(cat /etc/shadow | grep -v "*" | grep -v "!" | wc -l)
         cat /etc/shadow | grep -v "*" | grep -v "!" | cut -d ":" -f1 > /tmp/localaccountlist
         rm -f /tmp/notloggeduserlist
         NL=1
