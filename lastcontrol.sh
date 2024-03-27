@@ -187,8 +187,6 @@ NEVER_LOOGED_USERS() {
         rm /tmp/notloggeduserlist
 }
 
-
-
 # CHECK KERNEL MODULES
 ####OSVER=$(grep PRETTY_NAME /etc/os-release | cut -d '=' -f2 | cut -d '"' -f2)
 modules=("cramfs" "freevxfs" "jffs2" "hfs" "hfsplus" "squashfs" "udf")
@@ -305,17 +303,17 @@ LL=$(( LL + 1 ))
 done
 LASTLOGININFO=$(cat /tmp/lastlogininfo | paste -sd ",")
 
-# NEVER LOGGED USERS
-LOCAL_USER_COUNT=$(cat /etc/shadow | grep -v "*" | grep -v "!" | wc -l)
-cat /etc/shadow | grep -v "*" | grep -v "!" | cut -d ":" -f1 > /tmp/localaccountlist
-rm -f /tmp/notloggeduserlist
-NL=1
-while [ $NL -le $LOCAL_USER_COUNT ]; do
-    USERACCOUNTNAME=$(awk "NR==$NL" /tmp/localaccountlist)
-    lastlog | grep "Never logged in" | grep "$USERACCOUNTNAME" >> /tmp/notloggeduserlist
-    NL=$(( NL + 1 ))
-done
-NOTLOGGEDUSER=$(cat /tmp/notloggeduserlist | cut -d " " -f1 | paste -sd "@")
+## NEVER LOGGED USERS
+#LOCAL_USER_COUNT=$(cat /etc/shadow | grep -v "*" | grep -v "!" | wc -l)
+#cat /etc/shadow | grep -v "*" | grep -v "!" | cut -d ":" -f1 > /tmp/localaccountlist
+#rm -f /tmp/notloggeduserlist
+#NL=1
+#while [ $NL -le $LOCAL_USER_COUNT ]; do
+#    USERACCOUNTNAME=$(awk "NR==$NL" /tmp/localaccountlist)
+#    lastlog | grep "Never logged in" | grep "$USERACCOUNTNAME" >> /tmp/notloggeduserlist
+#    NL=$(( NL + 1 ))
+#done
+#NOTLOGGEDUSER=$(cat /tmp/notloggeduserlist | cut -d " " -f1 | paste -sd "@")
 
 rm -f /tmp/{localaccountlist,notloggeduserlist}
 rm -f /tmp/{lastlogin30d,localuserlist,userstatus,activeusers,lockedusers,passchange,PasswordBilgileri,lastlogininfo}
@@ -324,6 +322,7 @@ CHECK_QUOTA
 LVM_CRYPT
 SYSLOG_INFO
 SUDO_USER_LIST
+NEVER_LOGGED_USERS
 
 #-------------------------
 # Create TXT Report File
