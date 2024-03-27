@@ -173,7 +173,7 @@ PASSWORD_EXPIRE_INFO() {
         PASSEXINFO=$(cat /tmp/passexpireinfo.txt | paste -sd ",")
 }
 
-NEVER_LOOGED_USERS() {
+NEVER_LOGGED_USERS() {
         cat /etc/shadow | grep -v "*" | grep -v "!" | cut -d ":" -f1 > /tmp/localaccountlist
         rm -f /tmp/notloggeduserlist
         NL=1
@@ -302,18 +302,6 @@ while [ "$LL" -le "$LOCAL_USER_COUNT" ]; do
 LL=$(( LL + 1 ))
 done
 LASTLOGININFO=$(cat /tmp/lastlogininfo | paste -sd ",")
-
-## NEVER LOGGED USERS
-#LOCAL_USER_COUNT=$(cat /etc/shadow | grep -v "*" | grep -v "!" | wc -l)
-#cat /etc/shadow | grep -v "*" | grep -v "!" | cut -d ":" -f1 > /tmp/localaccountlist
-#rm -f /tmp/notloggeduserlist
-#NL=1
-#while [ $NL -le $LOCAL_USER_COUNT ]; do
-#    USERACCOUNTNAME=$(awk "NR==$NL" /tmp/localaccountlist)
-#    lastlog | grep "Never logged in" | grep "$USERACCOUNTNAME" >> /tmp/notloggeduserlist
-#    NL=$(( NL + 1 ))
-#done
-#NOTLOGGEDUSER=$(cat /tmp/notloggeduserlist | cut -d " " -f1 | paste -sd "@")
 
 rm -f /tmp/{localaccountlist,notloggeduserlist}
 rm -f /tmp/{lastlogin30d,localuserlist,userstatus,activeusers,lockedusers,passchange,PasswordBilgileri,lastlogininfo}
