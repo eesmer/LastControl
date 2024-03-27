@@ -173,6 +173,21 @@ PASSWORD_EXPIRE_INFO() {
         PASSEXINFO=$(cat /tmp/passexpireinfo.txt | paste -sd ",")
 }
 
+NEVER_LOOGED_USERS() {
+        #####LOCAL_USER_COUNT=$(cat /etc/shadow | grep -v "*" | grep -v "!" | wc -l)
+        cat /etc/shadow | grep -v "*" | grep -v "!" | cut -d ":" -f1 > /tmp/localaccountlist
+        rm -f /tmp/notloggeduserlist
+        NL=1
+        while [ $NL -le $LOCAL_USER_COUNT ]; do
+                USER_ACCOUNT_NAME=$(awk "NR==$NL" $LOCAL_USER_LIST_FILE)
+                lastlog | grep "Never logged in" | grep "$USER_ACCOUNT_NAME" >> /tmp/notloggeduserlist
+                NL=$(( NL + 1 ))
+        done
+
+        NOTLOGGEDUSER=$(cat /tmp/notloggeduserlist | cut -d " " -f1 | paste -sd "@")
+        rm /tmp/notloggeduserlist
+}
+
 
 
 # CHECK KERNEL MODULES
