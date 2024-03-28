@@ -27,8 +27,9 @@ DATE=$(date)
 # LOCAL USERS
 #grep -E "/bin/bash|/bin/zsh|/bin/sh" /etc/passwd | grep -v "/sbin/nologin" | grep -v "/bin/false" | cut -d":" -f1 > /tmp/localusers
 cat /etc/shadow | grep -v "*" | grep -v "!" | cut -d ":" -f1 > /tmp/localusers
-LOCAL_USER_LIST_FILE=/tmp/localusers
 LOCAL_USER_COUNT=$(cat /tmp/localusers | wc -l)
+LOCAL_USER_LIST_FILE=/tmp/localusers
+
 
 # HARDWARE INVENTORY
 INTERNAL_IP=$(hostname -I)
