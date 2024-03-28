@@ -188,6 +188,19 @@ NEVER_LOGGED_USERS() {
         rm /tmp/notloggeduserlist
 }
 
+LOGIN_INFO() {
+        rm -f /tmp/lastlogininfo
+        LL=1
+        while [ "$LL" -le "$LOCAL_USER_COUNT" ]; do
+                USERACCOUNTNAME=$(ls -l |sed -n $LL{p} $LOCAL_USER_LIST_FILE)
+                LOGINDATE=$(lslogins | grep "$USERACCOUNTNAME" | xargs | cut -d " " -f6)
+                LOGINDATE=$(lastlog | grep "$USERACCOUNTNAME" | awk '{ print $4,$5,$6,$7 }')
+                echo "$USERACCOUNTNAME:$LOGINDATE" >> /tmp/lastlogininfo
+                LL=$(( LL + 1 ))
+        done
+        LASTLOGININFO=$(cat /tmp/lastlogininfo | paste -sd ",")
+}
+
 # CHECK KERNEL MODULES
 ####OSVER=$(grep PRETTY_NAME /etc/os-release | cut -d '=' -f2 | cut -d '"' -f2)
 modules=("cramfs" "freevxfs" "jffs2" "hfs" "hfsplus" "squashfs" "udf")
@@ -290,33 +303,6 @@ LOCKEDUSERS=$(cat /tmp/lockedusers | paste -sd ",")                             
 PASSUPDATEINFO=$(cat /tmp/passchange | paste -sd ",")
 rm /tmp/lockedusers
 
-LOGIN_INFO() {
-        rm -f /tmp/lastlogininfo
-        LL=1
-        while [ "$LL" -le "$LOCAL_USER_COUNT" ]; do
-                USERACCOUNTNAME=$(ls -l |sed -n $LL{p} $LOCAL_USER_LIST_FILE)
-                LOGINDATE=$(lslogins | grep "$USERACCOUNTNAME" | xargs | cut -d " " -f6)
-                LOGINDATE=$(lastlog | grep "$USERACCOUNTNAME" | awk '{ print $4,$5,$6,$7 }')
-                echo "$USERACCOUNTNAME:$LOGINDATE" >> /tmp/lastlogininfo
-                LL=$(( LL + 1 ))
-        done
-        LASTLOGININFO=$(cat /tmp/lastlogininfo | paste -sd ",")
-}
-
-## LOGIN INFO
-#rm -f /tmp/lastlogininfo
-#LL=1
-#while [ "$LL" -le "$LOCAL_USER_COUNT" ]; do
-#        USERACCOUNTNAME=$(ls -l |sed -n $LL{p} $LOCAL_USER_LIST_FILE)
-#        #LOGINFROM=$(lastlog | grep $USERACCOUNTNAME | xargs)
-#        ###lastlog | grep $USERACCOUNTNAME | cut -d "+" -f1 >> /tmp/lastlogininfo
-#        LOGINDATE=$(lslogins | grep "$USERACCOUNTNAME" | xargs | cut -d " " -f6)
-#        LOGINDATE=$(lastlog | grep "$USERACCOUNTNAME" | awk '{ print $4,$5,$6,$7 }')
-#        echo "$USERACCOUNTNAME:$LOGINDATE" >> /tmp/lastlogininfo
-#LL=$(( LL + 1 ))
-#done
-#LASTLOGININFO=$(cat /tmp/lastlogininfo | paste -sd ",")
-
 rm -f /tmp/{localaccountlist,notloggeduserlist}
 rm -f /tmp/{lastlogin30d,localuserlist,userstatus,activeusers,lockedusers,passchange,PasswordBilgileri,lastlogininfo}
 
@@ -325,6 +311,7 @@ LVM_CRYPT
 SYSLOG_INFO
 SUDO_USER_LIST
 NEVER_LOGGED_USERS
+LOGIN_INFO
 
 #-------------------------
 # Create TXT Report File
