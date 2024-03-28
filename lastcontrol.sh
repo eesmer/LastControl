@@ -192,10 +192,10 @@ LOGIN_INFO() {
         rm -f /tmp/lastlogininfo
         LL=1
         while [ "$LL" -le "$LOCAL_USER_COUNT" ]; do
-                USERACCOUNTNAME=$(ls -l |sed -n $LL{p} $LOCAL_USER_LIST_FILE)
-                LOGINDATE=$(lslogins | grep "$USERACCOUNTNAME" | xargs | cut -d " " -f6)
-                LOGINDATE=$(lastlog | grep "$USERACCOUNTNAME" | awk '{ print $4,$5,$6,$7 }')
-                echo "$USERACCOUNTNAME:$LOGINDATE" >> /tmp/lastlogininfo
+                USER_ACCOUNT_NAME=$(ls -l |sed -n $LL{p} $LOCAL_USER_LIST_FILE)
+                LOGINDATE=$(lslogins | grep "$USER_ACCOUNT_NAME" | xargs | cut -d " " -f6)
+                LOGINDATE=$(lastlog | grep "$USER_ACCOUNT_NAME" | awk '{ print $4,$5,$6,$7 }')
+                echo "$USER_ACCOUNT_NAME:$LOGINDATE" >> /tmp/lastlogininfo
                 LL=$(( LL + 1 ))
         done
         LASTLOGININFO=$(cat /tmp/lastlogininfo | paste -sd ",")
