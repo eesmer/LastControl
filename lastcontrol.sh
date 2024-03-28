@@ -27,7 +27,7 @@ DATE=$(date)
 # LOCAL USERS
 #grep -E "/bin/bash|/bin/zsh|/bin/sh" /etc/passwd | grep -v "/sbin/nologin" | grep -v "/bin/false" | cut -d":" -f1 > /tmp/localusers
 cat /etc/shadow | grep -v "*" | grep -v "!" | cut -d ":" -f1 > /tmp/localusers
-LOCAL_USER_LIST_FILE=$(/tmp/localusers)
+LOCAL_USER_LIST_FILE=/tmp/localusers
 LOCAL_USER_COUNT=$(cat /tmp/localusers | wc -l)
 
 # HARDWARE INVENTORY
@@ -293,7 +293,7 @@ rm /tmp/lockedusers
 rm -f /tmp/lastlogininfo
 LL=1
 while [ "$LL" -le "$LOCAL_USER_COUNT" ]; do
-        USERACCOUNTNAME=$(ls -l |sed -n $LL{p} /tmp/localuserlist)
+        USERACCOUNTNAME=$(ls -l |sed -n $LL{p} $LOCAL_USER_LIST_FILE)
         #LOGINFROM=$(lastlog | grep $USERACCOUNTNAME | xargs)
         ###lastlog | grep $USERACCOUNTNAME | cut -d "+" -f1 >> /tmp/lastlogininfo
         LOGINDATE=$(lslogins | grep "$USERACCOUNTNAME" | xargs | cut -d " " -f6)
