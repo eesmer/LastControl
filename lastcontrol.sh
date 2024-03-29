@@ -39,7 +39,7 @@ RAM_TOTAL=$(free -m | awk 'NR==2{print $2 " MB"}')
 RAM_USAGE=$(free -m | awk 'NR==2{print $3 " MB"}')
 GPU_INFO=$(lspci | grep -i vga | cut -d ':' -f3)
 GPU_RAM=$(lspci -v | awk '/ prefetchable/{print $6}' | head -n 1)
-DISK_LIST=$(lsblk -o NAME,SIZE -d -e 11,2 | tail -n +2)
+DISK_LIST=$(lsblk -o NAME,SIZE -d -e 11,2 | tail -n +2 | grep -v "loop")
 DISK_INFO=$(df -h --total | awk 'END{print}')
 DISK_USAGE=$(fdisk -lu | grep "Disk" | grep -v "Disklabel" | grep -v "dev/loop" | grep -v "Disk identifier")
 ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNECTED"
