@@ -25,10 +25,10 @@ LOGO=/usr/local/lastcontrol/images/lastcontrol_logo.png
 DATE=$(date)
 
 # LOCAL USERS
-#grep -E "/bin/bash|/bin/zsh|/bin/sh" /etc/passwd | grep -v "/sbin/nologin" | grep -v "/bin/false" | cut -d":" -f1 > /tmp/localusers
-cat /etc/shadow | grep -v "*" | grep -v "!" | cut -d ":" -f1 > /tmp/localusers
-LOCAL_USER_COUNT=$(cat /tmp/localusers | wc -l)
-LOCAL_USER_LIST_FILE=/tmp/localusers
+#grep -E "/bin/bash|/bin/zsh|/bin/sh" /etc/passwd | grep -v "/sbin/nologin" | grep -v "/bin/false" | cut -d":" -f1 > $RDIR/localusers
+cat /etc/shadow | grep -v "*" | grep -v "!" | cut -d ":" -f1 > "$RDIR"/localusers
+LOCAL_USER_COUNT=$(cat $RDIR/localusers | wc -l)
+LOCAL_USER_LIST_FILE=$RDIR/localusers
 
 # HARDWARE INVENTORY
 INTERNAL_IP=$(hostname -I)
@@ -163,42 +163,42 @@ SUDO_USER_LIST(){
 }
 
 PASSWORD_EXPIRE_INFO() {
-        rm -f /tmp/passexpireinfo.txt
+        rm -f $RDIR/passexpireinfo.txt
         PX=1
         while [ $PX -le $LOCAL_USER_COUNT ]; do
                 USER_ACCOUNT_NAME=$(awk "NR==$PX" $LOCAL_USER_LIST_FILE)
                 PASSEX=$(chage -l $USER_ACCOUNT_NAME |grep "Password expires" | awk '{print $4}')
-                echo "$USER_ACCOUNT_NAME:$PASSEX" >> /tmp/passexpireinfo.txt
+                echo "$USER_ACCOUNT_NAME:$PASSEX" >> $RDIR/passexpireinfo.txt
                 PX=$(( PX + 1 ))
         done
-        PASSEXINFO=$(cat /tmp/passexpireinfo.txt | paste -sd ",")
+        PASSEXINFO=$(cat $RDIR/passexpireinfo.txt | paste -sd ",")
 }
 
 NEVER_LOGGED_USERS() {
-        cat /etc/shadow | grep -v "*" | grep -v "!" | cut -d ":" -f1 > /tmp/localaccountlist
-        rm -f /tmp/notloggeduserlist
+        #cat /etc/shadow | grep -v "*" | grep -v "!" | cut -d ":" -f1 > $LOCAL_USER_LIST_FILE
+        rm -f $RDIR/notloggeduserlist
         NL=1
         while [ $NL -le $LOCAL_USER_COUNT ]; do
                 USER_ACCOUNT_NAME=$(awk "NR==$NL" $LOCAL_USER_LIST_FILE)
-                lastlog | grep "Never logged in" | grep "$USER_ACCOUNT_NAME" >> /tmp/notloggeduserlist
+                lastlog | grep "Never logged in" | grep "$USER_ACCOUNT_NAME" >> $RDIR/notloggeduserlist
                 NL=$(( NL + 1 ))
         done
 
-        NOT_LOGGED_USER=$(cat /tmp/notloggeduserlist | cut -d " " -f1 | paste -sd "@")
-        rm /tmp/notloggeduserlist
+        NOT_LOGGED_USER=$(cat $RDIR/notloggeduserlist | cut -d " " -f1 | paste -sd "@")
+        rm $RDIR/notloggeduserlist
 }
 
 LOGIN_INFO() {
-        rm -f /tmp/lastlogininfo
+        rm -f $RDIR/lastlogininfo
         LL=1
         while [ "$LL" -le "$LOCAL_USER_COUNT" ]; do
                 USER_ACCOUNT_NAME=$(ls -l |sed -n $LL{p} $LOCAL_USER_LIST_FILE)
                 LOGIN_DATE=$(lslogins | grep "$USER_ACCOUNT_NAME" | xargs | cut -d " " -f6)
                 LOGIN_DATE=$(lastlog | grep "$USER_ACCOUNT_NAME" | awk '{ print $4,$5,$6,$7 }')
-                echo "$USER_ACCOUNT_NAME:$LOGIN_DATE" >> /tmp/lastlogininfo
+                echo "$USER_ACCOUNT_NAME:$LOGIN_DATE" >> $RDIR/lastlogininfo
                 LL=$(( LL + 1 ))
         done
-        LAST_LOGIN_INFO=$(cat /tmp/lastlogininfo | paste -sd ",")
+        LAST_LOGIN_INFO=$(cat $RDIR/lastlogininfo | paste -sd ",")
 }
 
 # CHECK KERNEL MODULES
@@ -211,7 +211,6 @@ for module in "${modules[@]}"; do
         module_statuses["$module"]="FALSE"
         if lsmod | grep -q "$module"; then
                 module_statuses["$module"]="LOADED"
-                #echo "<a href='$HANDBOOK#-hardening_loaded_kernel_modules'>$module Filesystem loaded</a>" >> "/tmp/the.hardeningsys"
         fi
 done
 
@@ -265,6 +264,7 @@ if [ "$SERVICE_MANAGER" = systemd ]; then
         systemctl list-units --type service |grep running > $RDIR/runningservices.txt
         RUNNING_SERVICE=$(wc -l $RDIR/runningservices.txt |cut -d ' ' -f1)
         LOADED_SERVICE=$(systemctl list-units --type service |grep "units." |cut -d "." -f1)
+	rm $RDIR/runningservices.txt
 fi
 
 ACTIVE_CONN=$(netstat -s | awk '/active connection openings/ {print $1}')
@@ -284,28 +284,28 @@ NO_LOGIN_USER=$(awk -F: '$NF !~ "/(bash|sh)$" && $NF != "" {print $1}' /etc/pass
 LOGIN_AUTH_USER=$(awk -F: '$NF ~ "/bin/(ba)?sh$"{print $1}' /etc/passwd)
 
 # NOTLOGIN USERLIST last 30 Day
-lastlog --time 30 | grep -v "Username" | cut -d " " -f1 > /tmp/lastlogin30d
-getent passwd {0..0} {1000..2000} |cut -d ":" -f1 > /tmp/localuserlist
-NOT_LOGIN_30D=$(diff /tmp/lastlogin30d /tmp/localuserlist -n | grep -v "d1" | grep -v "a0" | grep -v "a1" | grep -v "a2" | grep -v "a3" | grep -v "a4" | paste -sd ",")
+lastlog --time 30 | grep -v "Username" | cut -d " " -f1 > $RDIR/lastlogin30d
+getent passwd {0..0} {1000..2000} |cut -d ":" -f1 > $LOCAL_USER_LIST_FILE
+NOT_LOGIN_30D=$(diff $RDIR/lastlogin30d $LOCAL_USER_LIST_FILE -n | grep -v "d1" | grep -v "a0" | grep -v "a1" | grep -v "a2" | grep -v "a3" | grep -v "a4" | paste -sd ",")
 
-rm -f /tmp/passchange
-rm -f /tmp/userstatus
+rm -f $RDIR/passchange
+rm -f $RDIR/userstatus
 PC=1
 while [ $PC -le $LOCAL_USER_COUNT ]; do
-    USER_ACCOUNT_NAME=$(awk "NR==$PC" /tmp/localuserlist)
+    USER_ACCOUNT_NAME=$(awk "NR==$PC" $LOCAL_USER_LIST_FILE)
     PASS_CHANGE=$(lslogins "$USER_ACCOUNT_NAME" | grep "Password changed:" | awk ' { print $3 }')    # Password update date
-    USERSTATUS=$(passwd -S "$USER_ACCOUNT_NAME" >> /tmp/userstatus)                                 # user status information
-    echo "$USER_ACCOUNT_NAME:$PASS_CHANGE" >> /tmp/passchange
+    USERSTATUS=$(passwd -S "$USER_ACCOUNT_NAME" >> $RDIR/userstatus)                                 # user status information
+    echo "$USER_ACCOUNT_NAME:$PASS_CHANGE" >> $RDIR/passchange
     PC=$(( PC + 1 ))
 done
 
-cat /tmp/userstatus | grep "L" | cut -d " " -f1 > /tmp/lockedusers
-LOCKED_USERS=$(cat /tmp/lockedusers | paste -sd ",")                                            # locked users
-PASS_UPDATE_INFO=$(cat /tmp/passchange | paste -sd ",")
-rm /tmp/lockedusers
+cat $RDIR/userstatus | grep "L" | cut -d " " -f1 > $RDIR/lockedusers
+LOCKED_USERS=$(cat $RDIR/lockedusers | paste -sd ",")                                            # locked users
+PASS_UPDATE_INFO=$(cat $RDIR/passchange | paste -sd ",")
+rm $RDIR/lockedusers
 
-rm -f /tmp/{localaccountlist,notloggeduserlist}
-rm -f /tmp/{lastlogin30d,localuserlist,userstatus,activeusers,lockedusers,passchange,PasswordBilgileri,lastlogininfo}
+#rm -f /tmp/{localaccountlist,notloggeduserlist}
+#rm -f /tmp/{lastlogin30d,localuserlist,userstatus,activeusers,lockedusers,passchange,PasswordBilgileri,lastlogininfo}
 
 USER_LIST
 PASSWORD_EXPIRE_INFO
