@@ -354,8 +354,8 @@ $HOST_NAME LastControl All Controls Report $DATE
 |Disk Usage:        |$DISK_USAGE
 |Out of Memory Logs |$OOM_LOGS
 --------------------------------------------------------------------------------------------------------------------------
-|Disk Quota Usage:  |$QUOTA_INSTALL | Usr_Quota: $USR_QUOTA | Grp_Quota: $GRP_QUOTA | Mount: $MNT_MOUNT
-|Disk Encrypt Usage:|$CRYPT_INSTALL | $CRYPT_USAGE
+|Disk Quota Usage:  |Install: $QUOTA_INSTALL | Usr_Quota: $USR_QUOTA | Grp_Quota: $GRP_QUOTA | Mount: $MNT_MOUNT
+|Disk Encrypt Usage:|Install: $CRYPT_INSTALL | Usage: $CRYPT_USAGE
 |LVM Usage:         |$LVM_USAGE
 --------------------------------------------------------------------------------------------------------------------------
 | Kernel Modules
