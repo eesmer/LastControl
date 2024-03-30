@@ -158,7 +158,7 @@ SUDO_USER_LIST(){
     getent group sudo | awk -F: '{print $4}' | tr ',' "\n" >> "$tmpfile"
     cat /etc/sudoers | grep "ALL" | grep -v "%" | awk '{print $1}' >> "$tmpfile"
     grep 'ALL' /etc/sudoers.d/* | cut -d":" -f2 | cut -d" " -f1 >> "$tmpfile"
-    SUDOUSERLIST=$(sort -u "$tmpfile" | paste -sd ",")
+    SUDO_USER_LIST=$(sort -u "$tmpfile" | paste -sd ",")
     rm -f "$tmpfile"
 }
 
@@ -166,9 +166,9 @@ PASSWORD_EXPIRE_INFO() {
         rm -f /tmp/passexpireinfo.txt
         PX=1
         while [ $PX -le $LOCAL_USER_COUNT ]; do
-                USERACCOUNTNAME=$(awk "NR==$PX" /tmp/localuserlist)
-                PASSEX=$(chage -l $USERACCOUNTNAME |grep "Password expires" | awk '{print $4}')
-                echo "$USERACCOUNTNAME:$PASSEX" >> /tmp/passexpireinfo.txt
+                USER_ACCOUNT_NAME=$(awk "NR==$PX" /tmp/localuserlist)
+                PASSEX=$(chage -l $USER_ACCOUNT_NAME |grep "Password expires" | awk '{print $4}')
+                echo "$USER_ACCOUNT_NAME:$PASSEX" >> /tmp/passexpireinfo.txt
                 PX=$(( PX + 1 ))
         done
         PASSEXINFO=$(cat /tmp/passexpireinfo.txt | paste -sd ",")
@@ -184,7 +184,7 @@ NEVER_LOGGED_USERS() {
                 NL=$(( NL + 1 ))
         done
 
-        NOTLOGGEDUSER=$(cat /tmp/notloggeduserlist | cut -d " " -f1 | paste -sd "@")
+        NOT_LOGGED_USER=$(cat /tmp/notloggeduserlist | cut -d " " -f1 | paste -sd "@")
         rm /tmp/notloggeduserlist
 }
 
@@ -193,12 +193,12 @@ LOGIN_INFO() {
         LL=1
         while [ "$LL" -le "$LOCAL_USER_COUNT" ]; do
                 USER_ACCOUNT_NAME=$(ls -l |sed -n $LL{p} $LOCAL_USER_LIST_FILE)
-                LOGINDATE=$(lslogins | grep "$USER_ACCOUNT_NAME" | xargs | cut -d " " -f6)
-                LOGINDATE=$(lastlog | grep "$USER_ACCOUNT_NAME" | awk '{ print $4,$5,$6,$7 }')
-                echo "$USER_ACCOUNT_NAME:$LOGINDATE" >> /tmp/lastlogininfo
+                LOGIN_DATE=$(lslogins | grep "$USER_ACCOUNT_NAME" | xargs | cut -d " " -f6)
+                LOGIN_DATE=$(lastlog | grep "$USER_ACCOUNT_NAME" | awk '{ print $4,$5,$6,$7 }')
+                echo "$USER_ACCOUNT_NAME:$LOGIN_DATE" >> /tmp/lastlogininfo
                 LL=$(( LL + 1 ))
         done
-        LASTLOGININFO=$(cat /tmp/lastlogininfo | paste -sd ",")
+        LAST_LOGIN_INFO=$(cat /tmp/lastlogininfo | paste -sd ",")
 }
 
 # CHECK KERNEL MODULES
@@ -275,7 +275,7 @@ NOC=$(nproc --all)
 LOAD_AVG=$(uptime | grep "load average:" | awk -F: '{print $5}')
 ZO_PROCESS=$(ps -A -ostat,ppid,pid,cmd | grep -e '^[Zz]' | wc -l)
 
-SERVICEUSERLIST=$(awk -F: '$2 == "*"' /etc/shadow | cut -d ":" -f1 | paste -sd ",")
+SERVICE_USER_LIST=$(awk -F: '$2 == "*"' /etc/shadow | cut -d ":" -f1 | paste -sd ",")
 BLANKPASSUSERLIST=$(awk -F: '$2 == "!*" { print $1 }' /etc/shadow | paste -sd ",")
 LASTLOGIN00D=$(lastlog --time 1 |grep -v "Username" | awk '{ print $1}' | paste -sd ',')
 LASTLOGIN07D=$(lastlog --time 7 |grep -v "Username" | awk '{ print $1}' | paste -sd ',')
@@ -292,10 +292,10 @@ rm -f /tmp/passchange
 rm -f /tmp/userstatus
 PC=1
 while [ $PC -le $LOCAL_USER_COUNT ]; do
-    USERACCOUNTNAME=$(awk "NR==$PC" /tmp/localuserlist)
-    PASSCHANGE=$(lslogins "$USERACCOUNTNAME" | grep "Password changed:" | awk ' { print $3 }')    # Password update date
-    USERSTATUS=$(passwd -S "$USERACCOUNTNAME" >> /tmp/userstatus)                                 # user status information
-    echo "$USERACCOUNTNAME:$PASSCHANGE" >> /tmp/passchange
+    USER_ACCOUNT_NAME=$(awk "NR==$PC" /tmp/localuserlist)
+    PASSCHANGE=$(lslogins "$USER_ACCOUNT_NAME" | grep "Password changed:" | awk ' { print $3 }')    # Password update date
+    USERSTATUS=$(passwd -S "$USER_ACCOUNT_NAME" >> /tmp/userstatus)                                 # user status information
+    echo "$USER_ACCOUNT_NAME:$PASSCHANGE" >> /tmp/passchange
     PC=$(( PC + 1 ))
 done
 
@@ -308,6 +308,7 @@ rm -f /tmp/{localaccountlist,notloggeduserlist}
 rm -f /tmp/{lastlogin30d,localuserlist,userstatus,activeusers,lockedusers,passchange,PasswordBilgileri,lastlogininfo}
 
 USER_LIST
+PASSWORD_EXPIRE_INFO
 CHECK_QUOTA
 LVM_CRYPT
 SYSLOG_INFO
@@ -402,7 +403,7 @@ cat >> $RDIR/$HOST_NAME-allreports.txt << EOF
 --------------------------------------------------------------------------------------------------------------------------
 |Local User Count:  |$LOCAL_USER_COUNT
 |Local User List:   |$USER_LIST
-|SUDO Users:        |$SUDOUSERLIST
+|SUDO Users:        |$SUDO_USER_LIST
 |Blank Pass. Users  |$BLANKPASSUSERLIST
 |Locked Users       |$LOCKEDUSERS
 --------------------------------------------------------------------------------------------------------------------------
@@ -410,13 +411,13 @@ cat >> $RDIR/$HOST_NAME-allreports.txt << EOF
 |Last Login 7 Days  |$LASTLOGIN07D
 |Last Login 30 Days |$LASTLOGIN30D
 |Not Logged(30 Days)|$NOTLOGIN30D
-|Last Login Info    |$LASTLOGININFO
-|Never Logged Users |$NEVERLOGGED
+|Last Login Info    |$LAST_LOGIN_INFO
+|Never Logged Users |$NOT_LOGGED_USER
 --------------------------------------------------------------------------------------------------------------------------
 |Pass. Expire Info  |$PASSEXINFO
 |Pass. Update Info  |$PASSUPDATEINFO
 --------------------------------------------------------------------------------------------------------------------------
-|Service Users:     |$SERVICEUSERLIST
+|Service Users:     |$SERVICE_USER_LIST
 --------------------------------------------------------------------------------------------------------------------------
 
 EOF
