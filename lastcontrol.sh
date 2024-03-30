@@ -48,7 +48,7 @@ ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNEC
 KERNEL=$(uname -sr)
 DISTRO=$(grep PRETTY_NAME /etc/os-release | cut -d '"' -f2)
 UPTIME=$(uptime) && UPTIME_MIN=$(awk '{print "up", $1/60, "minutes"}' /proc/uptime)
-LASTBOOT=$(uptime -s)
+LAST_BOOT=$(uptime -s)
 VIRT_CONTROL=NONE
 [ -e "/dev/kvm" ] && VIRT_CONTROL=ON
 LOCALDATE=$(timedatectl status | awk '/Local time:/ {print $3,$4,$5}')
