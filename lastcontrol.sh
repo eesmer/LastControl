@@ -215,13 +215,6 @@ for module in "${modules[@]}"; do
                 #echo "<a href='$HANDBOOK#-hardening_loaded_kernel_modules'>$module Filesystem loaded</a>" >> "/tmp/the.hardeningsys"
         fi
 done
-#echo ${module_statuses["cramfs"]}
-#echo ${module_statuses["freevxfs"]}
-#echo ${module_statuses["jffs2"]}
-#echo ${module_statuses["hfs"]}
-#echo ${module_statuses["hfsplus"]}
-#echo ${module_statuses["squashfs"]}
-#echo ${module_statuses["udf"]}
 
 CRAMFS=${module_statuses["cramfs"]}
 FREEVXFS=${module_statuses["freevxfs"]}
