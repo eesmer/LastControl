@@ -324,7 +324,7 @@ printf "%50s %s\n" "                 LastControl Report                   "
 $NOCOL
 printf "%50s %s\n" "------------------------------------------------------"
 $CYAN
-printf "%50s %s\n" "Hardware Inventory                                    " 
+printf "%50s %s\n" "Hardware                                              " 
 $NOCOL
 printf "%50s %s\n" "------------------------------------------------------"
 printf "%30s %s\n" "Hostname            :" "$HOST_NAME"
@@ -335,6 +335,17 @@ printf "%30s %s\n" "CPU Info            :" "$CPU_INFO"
 printf "%30s %s\n" "Ram Info            :" "Total Ram: $RAM_TOTAL - Ram Usage: $RAM_USAGE"
 printf "%30s %s\n" "VGA Info            :" "VGA: $GPU_INFO - VGA Ram: $GPU_RAM"
 printf "%50s %s\n" "------------------------------------------------------"
+$CYAN
+printf "%50s %s\n" "System                                                " 
+$NOCOL
+printf "%50s %s\n" "------------------------------------------------------"
+printf "%30s %s\n" "Distro            :" "$DISTRO"
+printf "%30s %s\n" "Kernel Version    :" "$KERNEL"
+printf "%30s %s\n" "Uptime            :" "$UPTIME - $UPTIME_MIN"
+printf "%30s %s\n" "Last Boot         :" "$LAST_BOOT"
+printf "%30s %s\n" "Virtualization    :" "$VIRT_CONTROL"
+printf "%30s %s\n" "Date              :" "Date:$LOCAL_DATE"
+printf "%30s %s\n" "Timezone          :" "$TIME_ZONE"
 
 #rm -f /tmp/{lastlogin30d,localuserlist,userstatus,activeusers,lockedusers,passchange,PasswordBilgileri,lastlogininfo}
 rm -f "$RDIR"/{lastlogin30d,lastlogininfo,passchange,passexpireinfo.txt,userstatus}
