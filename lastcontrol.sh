@@ -320,7 +320,7 @@ MEMORY_INFO
 #-------------------------
 # Create TXT Report File
 #-------------------------
-if [ -f "$RDIR/$HOST_NAME-lastcontrolreport.txt" ]; then
+if [ -f "$RDIR/$HOST_NAME-allreports.txt" ]; then
         rm $RDIR/$HOST_NAME-allreports.txt
 fi
 
