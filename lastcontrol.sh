@@ -317,9 +317,18 @@ NEVER_LOGGED_USERS
 LOGIN_INFO
 MEMORY_INFO
 
+clear
+printf "%50s %s\n" "------------------------------------------------------"
+$RED
+printf "%50s %s\n" "                 LastControl Report                   " 
+$NOCOL
+printf "%50s %s\n" "------------------------------------------------------"
+printf "%30s %s\n" "Hostname            :" "$HOST_NAME"
+printf "%30s %s\n" "Internal IP Address :" "$INTERNAL_IP"
+printf "%30s %s\n" "External IP Address :" "$EXTERNAL_IP"
+
 #rm -f /tmp/{lastlogin30d,localuserlist,userstatus,activeusers,lockedusers,passchange,PasswordBilgileri,lastlogininfo}
 rm -f "$RDIR"/{lastlogin30d,lastlogininfo,passchange,passexpireinfo.txt,userstatus}
-
 rm -f "$RDIR"/lastlogininfo
 rm -f "$RDIR"/passexpireinfo.txt
 rm -f "$RDIR"/localusers
