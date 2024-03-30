@@ -24,6 +24,11 @@ RDIR=/usr/local/lastcontrol/reports/$HOST_NAME
 LOGO=/usr/local/lastcontrol/images/lastcontrol_logo.png
 DATE=$(date)
 
+if [ -d "$RDIR" ]; then
+	rm -r $RDIR
+fi
+mkdir -p $RDIR
+
 # LOCAL USERS
 #grep -E "/bin/bash|/bin/zsh|/bin/sh" /etc/passwd | grep -v "/sbin/nologin" | grep -v "/bin/false" | cut -d":" -f1 > $RDIR/localusers
 cat /etc/shadow | grep -v "*" | grep -v "!" | cut -d ":" -f1 > "$RDIR"/localusers
@@ -56,8 +61,6 @@ TIME_SYNC=$(timedatectl status | awk '/synchronized:/ {print $4}')
 HTTP_PROXY_USAGE=FALSE
 { env | grep -q "http_proxy"; } || { grep -q -e "export http" /etc/profile /etc/profile.d/*; } && HTTP_PROXY_USAGE=TRUE
 
-rm -r $RDIR
-mkdir -p $RDIR
 
 #----------------------------
 # determine distro
@@ -304,9 +307,6 @@ LOCKED_USERS=$(cat $RDIR/lockedusers | paste -sd ",")                           
 PASS_UPDATE_INFO=$(cat $RDIR/passchange | paste -sd ",")
 rm $RDIR/lockedusers
 
-#rm -f /tmp/{localaccountlist,notloggeduserlist}
-#rm -f /tmp/{lastlogin30d,localuserlist,userstatus,activeusers,lockedusers,passchange,PasswordBilgileri,lastlogininfo}
-
 USER_LIST
 PASSWORD_EXPIRE_INFO
 CHECK_QUOTA
@@ -316,6 +316,13 @@ SUDO_USER_LIST
 NEVER_LOGGED_USERS
 LOGIN_INFO
 MEMORY_INFO
+
+#rm -f /tmp/{lastlogin30d,localuserlist,userstatus,activeusers,lockedusers,passchange,PasswordBilgileri,lastlogininfo}
+rm -f "$RDIR"/{lastlogin30d,lastlogininfo,passchange,passexpireinfo.txt,userstatus}
+
+rm -f "$RDIR"/lastlogininfo
+rm -f "$RDIR"/passexpireinfo.txt
+rm -f "$RDIR"/localusers
 
 #-------------------------
 # Create TXT Report File
