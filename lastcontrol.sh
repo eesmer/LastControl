@@ -316,7 +316,10 @@ LOGIN_INFO
 #-------------------------
 # Create TXT Report File
 #-------------------------
-rm $RDIR/$HOST_NAME-allreports.txt
+if [ -f "$RDIR/$HOST_NAME-lastcontrolreport.txt" ]; then
+        rm $RDIR/$HOST_NAME-allreports.txt
+fi
+
 cat > $RDIR/$HOST_NAME-allreports.txt << EOF
 $HOST_NAME LastControl All Controls Report $DATE
 =======================================================================================================================================================================
