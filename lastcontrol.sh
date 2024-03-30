@@ -166,7 +166,7 @@ PASSWORD_EXPIRE_INFO() {
         rm -f /tmp/passexpireinfo.txt
         PX=1
         while [ $PX -le $LOCAL_USER_COUNT ]; do
-                USER_ACCOUNT_NAME=$(awk "NR==$PX" /tmp/localuserlist)
+                USER_ACCOUNT_NAME=$(awk "NR==$PX" $LOCAL_USER_LIST_FILE)
                 PASSEX=$(chage -l $USER_ACCOUNT_NAME |grep "Password expires" | awk '{print $4}')
                 echo "$USER_ACCOUNT_NAME:$PASSEX" >> /tmp/passexpireinfo.txt
                 PX=$(( PX + 1 ))
