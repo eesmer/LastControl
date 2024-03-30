@@ -223,6 +223,14 @@ done
 #echo ${module_statuses["squashfs"]}
 #echo ${module_statuses["udf"]}
 
+CRAMFS=${module_statuses["cramfs"]}
+FREEVXFS=${module_statuses["freevxfs"]}
+JFFS2=${module_statuses["jffs2"]}
+HFS=${module_statuses["hfs"]}
+HFSPLUS=${module_statuses["hfsplus"]}
+SQUASHFS=${module_statuses["squashfs"]}
+UDF=${module_statuses["udf"]}
+
 # GRUB CONTROL
 if [ "$REP" = APT ]; then
         GRUB_EXIST=Fail
