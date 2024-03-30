@@ -320,7 +320,7 @@ MEMORY_INFO
 clear
 printf "%50s %s\n" "------------------------------------------------------"
 $RED
-printf "%50s %s\n" "                 LastControl Report                   " 
+printf "%50s %s\n" "               LastControl Summary Report             " 
 $NOCOL
 printf "%50s %s\n" "------------------------------------------------------"
 $CYAN
