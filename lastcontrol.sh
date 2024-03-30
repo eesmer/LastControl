@@ -30,7 +30,6 @@ cat /etc/shadow | grep -v "*" | grep -v "!" | cut -d ":" -f1 > /tmp/localusers
 LOCAL_USER_COUNT=$(cat /tmp/localusers | wc -l)
 LOCAL_USER_LIST_FILE=/tmp/localusers
 
-
 # HARDWARE INVENTORY
 INTERNAL_IP=$(hostname -I)
 EXTERNAL_IP=$(curl -4 icanhazip.com 2>/dev/null)
@@ -51,8 +50,8 @@ UPTIME=$(uptime) && UPTIME_MIN=$(awk '{print "up", $1/60, "minutes"}' /proc/upti
 LAST_BOOT=$(uptime -s)
 VIRT_CONTROL=NONE
 [ -e "/dev/kvm" ] && VIRT_CONTROL=ON
-LOCALDATE=$(timedatectl status | awk '/Local time:/ {print $3,$4,$5}')
-TIMEZONE=$(timedatectl status | awk -F ': ' '/Time zone:/ {print $2}') #TIME_SYNC=$(timedatectl |grep "synchronized:" |cut -d ":" -f2 | xargs)
+LOCAL_DATE=$(timedatectl status | awk '/Local time:/ {print $3,$4,$5}')
+TIME_ZONE=$(timedatectl status | awk -F ': ' '/Time zone:/ {print $2}') #TIME_SYNC=$(timedatectl |grep "synchronized:" |cut -d ":" -f2 | xargs)
 TIME_SYNC=$(timedatectl status | awk '/synchronized:/ {print $4}')
 HTTP_PROXY_USAGE=FALSE
 { env | grep -q "http_proxy"; } || { grep -q -e "export http" /etc/profile /etc/profile.d/*; } && HTTP_PROXY_USAGE=TRUE
@@ -120,24 +119,24 @@ LVM_CRYPT() {
 }
 
 SYSLOG_INFO() {
-        SYSLOGINSTALL=Not_Installed
+        SYSLOG_INSTALL=Not_Installed
                 if [ "$REP" = "APT" ]; then
-                        dpkg -l | grep -q rsyslog && SYSLOGINSTALL=Installed
+                        dpkg -l | grep -q rsyslog && SYSLOG_INSTALL=Installed
                 elif [ "$REP" = "YUM" ]; then
-                        rpm -qa | grep -q rsyslog && SYSLOGINSTALL=Installed
+                        rpm -qa | grep -q rsyslog && SYSLOG_INSTALL=Installed
                 fi
 
-                if [ "$SYSLOGINSTALL" = "Installed" ]; then
-                        SYSLOGSERVICE=INACTIVE
-                        systemctl is-active rsyslog.service >/dev/null 2>&1 && SYSLOGSERVICE=ACTIVE
-                        SYSLOGSOCKET=INACTIVE
-                        systemctl is-active syslog.socket >/dev/null 2>&1 && SYSLOGSOCKET=ACTIVE
-                        SYSLOGSEND=NO
-                        grep -q "@" /etc/rsyslog.conf && SYSLOGSEND=YES # ??? kontrol edilecek
+                if [ "$SYSLOG_INSTALL" = "Installed" ]; then
+                        SYSLOG_SERVICE=INACTIVE
+                        systemctl is-active rsyslog.service >/dev/null 2>&1 && SYSLOG_SERVICE=ACTIVE
+                        SYSLOG_SOCKET=INACTIVE
+                        systemctl is-active syslog.socket >/dev/null 2>&1 && SYSLOG_SOCKET=ACTIVE
+                        SYSLOG_SEND=NO
+                        grep -q "@" /etc/rsyslog.conf && SYSLOG_SEND=YES # ??? will check
                 else
-                        SYSLOGSERVICE=NONE
-                        SYSLOGSOCKET=NONE
-                        SYSLOGSEND=NONE
+                        SYSLOG_SERVICE=NONE
+                        SYSLOG_SOCKET=NONE
+                        SYSLOG_SEND=NONE
                 fi
 }
 
@@ -308,6 +307,7 @@ rm /tmp/lockedusers
 rm -f /tmp/{localaccountlist,notloggeduserlist}
 rm -f /tmp/{lastlogin30d,localuserlist,userstatus,activeusers,lockedusers,passchange,PasswordBilgileri,lastlogininfo}
 
+USER_LIST
 CHECK_QUOTA
 LVM_CRYPT
 SYSLOG_INFO
@@ -345,17 +345,17 @@ $HOST_NAME LastControl All Controls Report $DATE
 |Uptime             |$UPTIME | $UPTIME_MIN
 |Last Boot:         |$LAST_BOOT
 |Virtualization:    |$VIRT_CONTROL
-|Date/Time Sync:    |Date:$LOCALDATE - System clock synchronized:$TIME_SYNC
-|Timezone:          |$TIMEZONE
-|Proxy Usage:       |HTTP: $HTTPPROXY_USAGE
-|SYSLOG Usage:      |$SYSLOGINSTALL | $SYSLOGSERVICE | Socket: $SYSLOGSOCKET | Send: $SYSLOGSEND
+|Date/Time Sync:    |Date:$LOCAL_DATE - System clock synchronized:$TIME_SYNC
+|Timezone:          |$TIME_ZONE
+|Proxy Usage:       |HTTP: $HTTP_PROXY_USAGE
+|SYSLOG Usage:      |$SYSLOG_INSTALL | $SYSLOG_SERVICE | Socket: $SYSLOG_SOCKET | Send: $SYSLOG_SEND
 --------------------------------------------------------------------------------------------------------------------------
 |Ram  Usage:        |$RAM_USAGE_PERCENTAGE%
 |Swap Usage:        |$SWAP_USAGE_PERCENTAGE%
 |Disk Usage:        |$DISK_USAGE
 |Out of Memory Logs |$OOM_LOGS
 --------------------------------------------------------------------------------------------------------------------------
-|Disk Quota Usage:  |Install: $QUOTA_INSTALL | Usr_Quota: $USR_QUOTA | Grp_Quota: $GRP_QUOTA | Mount: $MNT_MOUNT
+|Disk Quota Usage:  |Install: $QUOTA_INSTALL | Usr_Quota: $USR_QUOTA | Grp_Quota: $GRP_QUOTA | Mount: $MNT_QUOTA
 |Disk Encrypt Usage:|Install: $CRYPT_INSTALL | Usage: $CRYPT_USAGE
 |LVM Usage:         |$LVM_USAGE
 --------------------------------------------------------------------------------------------------------------------------
