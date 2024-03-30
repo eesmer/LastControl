@@ -129,9 +129,9 @@ SYSLOG_INFO() {
 
                 if [ "$SYSLOGINSTALL" = "Installed" ]; then
                         SYSLOGSERVICE=INACTIVE
-                        systemctl is-active rsyslog.service && SYSLOGSERVICE=ACTIVE
+                        systemctl is-active rsyslog.service >/dev/null 2>&1 && SYSLOGSERVICE=ACTIVE
                         SYSLOGSOCKET=INACTIVE
-                        systemctl is-active syslog.socket && SYSLOGSOCKET=ACTIVE
+                        systemctl is-active syslog.socket >/dev/null 2>&1 && SYSLOGSOCKET=ACTIVE
                         SYSLOGSEND=NO
                         grep -q "@" /etc/rsyslog.conf && SYSLOGSEND=YES # ??? kontrol edilecek
                 else
