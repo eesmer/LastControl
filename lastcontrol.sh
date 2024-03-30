@@ -312,6 +312,7 @@ SYSLOG_INFO
 SUDO_USER_LIST
 NEVER_LOGGED_USERS
 LOGIN_INFO
+MEMORY_INFO
 
 #-------------------------
 # Create TXT Report File
