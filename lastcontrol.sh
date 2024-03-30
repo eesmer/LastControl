@@ -293,15 +293,15 @@ rm -f /tmp/userstatus
 PC=1
 while [ $PC -le $LOCAL_USER_COUNT ]; do
     USER_ACCOUNT_NAME=$(awk "NR==$PC" /tmp/localuserlist)
-    PASSCHANGE=$(lslogins "$USER_ACCOUNT_NAME" | grep "Password changed:" | awk ' { print $3 }')    # Password update date
+    PASS_CHANGE=$(lslogins "$USER_ACCOUNT_NAME" | grep "Password changed:" | awk ' { print $3 }')    # Password update date
     USERSTATUS=$(passwd -S "$USER_ACCOUNT_NAME" >> /tmp/userstatus)                                 # user status information
-    echo "$USER_ACCOUNT_NAME:$PASSCHANGE" >> /tmp/passchange
+    echo "$USER_ACCOUNT_NAME:$PASS_CHANGE" >> /tmp/passchange
     PC=$(( PC + 1 ))
 done
 
 cat /tmp/userstatus | grep "L" | cut -d " " -f1 > /tmp/lockedusers
-LOCKEDUSERS=$(cat /tmp/lockedusers | paste -sd ",")                                            # locked users
-PASSUPDATEINFO=$(cat /tmp/passchange | paste -sd ",")
+LOCKED_USERS=$(cat /tmp/lockedusers | paste -sd ",")                                            # locked users
+PASS_UPDATE_INFO=$(cat /tmp/passchange | paste -sd ",")
 rm /tmp/lockedusers
 
 rm -f /tmp/{localaccountlist,notloggeduserlist}
@@ -405,7 +405,7 @@ cat >> $RDIR/$HOST_NAME-allreports.txt << EOF
 |Local User List:   |$USER_LIST
 |SUDO Users:        |$SUDO_USER_LIST
 |Blank Pass. Users  |$BLANK_PASS_USER_LIST
-|Locked Users       |$LOCKEDUSERS
+|Locked Users       |$LOCKED_USERS
 --------------------------------------------------------------------------------------------------------------------------
 |Last Login Today   |$LAST_LOGIN_00D
 |Last Login 7 Days  |$LAST_LOGIN_07D
@@ -417,7 +417,7 @@ cat >> $RDIR/$HOST_NAME-allreports.txt << EOF
 |NoLogin User Count |$NO_LOGIN_USER
 --------------------------------------------------------------------------------------------------------------------------
 |Pass. Expire Info  |$PASSEXINFO
-|Pass. Update Info  |$PASSUPDATEINFO
+|Pass. Update Info  |$PASS_UPDATE_INFO
 --------------------------------------------------------------------------------------------------------------------------
 |Service Users:     |$SERVICE_USER_LIST
 --------------------------------------------------------------------------------------------------------------------------
