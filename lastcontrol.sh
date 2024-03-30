@@ -276,17 +276,17 @@ LOAD_AVG=$(uptime | grep "load average:" | awk -F: '{print $5}')
 ZO_PROCESS=$(ps -A -ostat,ppid,pid,cmd | grep -e '^[Zz]' | wc -l)
 
 SERVICE_USER_LIST=$(awk -F: '$2 == "*"' /etc/shadow | cut -d ":" -f1 | paste -sd ",")
-BLANKPASSUSERLIST=$(awk -F: '$2 == "!*" { print $1 }' /etc/shadow | paste -sd ",")
-LASTLOGIN00D=$(lastlog --time 1 |grep -v "Username" | awk '{ print $1}' | paste -sd ',')
-LASTLOGIN07D=$(lastlog --time 7 |grep -v "Username" | awk '{ print $1}' | paste -sd ',')
-LASTLOGIN30D=$(lastlog --time 30 |grep -v "Username" | awk '{ print $1}' | paste -sd ',')
-NOLOGINUSER=$(awk -F: '$NF !~ "/(bash|sh)$" && $NF != "" {print $1}' /etc/passwd | wc -l)
-LOGINAUTHUSER=$(awk -F: '$NF ~ "/bin/(ba)?sh$"{print $1}' /etc/passwd)
+BLANK_PASS_USER_LIST=$(awk -F: '$2 == "!*" { print $1 }' /etc/shadow | paste -sd ",")
+LAST_LOGIN_00D=$(lastlog --time 1 |grep -v "Username" | awk '{ print $1}' | paste -sd ',')
+LAST_LOGIN_07D=$(lastlog --time 7 |grep -v "Username" | awk '{ print $1}' | paste -sd ',')
+LAST_LOGIN_30D=$(lastlog --time 30 |grep -v "Username" | awk '{ print $1}' | paste -sd ',')
+NO_LOGIN_USER=$(awk -F: '$NF !~ "/(bash|sh)$" && $NF != "" {print $1}' /etc/passwd | wc -l)
+LOGIN_AUTH_USER=$(awk -F: '$NF ~ "/bin/(ba)?sh$"{print $1}' /etc/passwd)
 
 # NOTLOGIN USERLIST last 30 Day
 lastlog --time 30 | grep -v "Username" | cut -d " " -f1 > /tmp/lastlogin30d
 getent passwd {0..0} {1000..2000} |cut -d ":" -f1 > /tmp/localuserlist
-NOTLOGIN30D=$(diff /tmp/lastlogin30d /tmp/localuserlist -n | grep -v "d1" | grep -v "a0" | grep -v "a1" | grep -v "a2" | grep -v "a3" | grep -v "a4" | paste -sd ",")
+NOT_LOGIN_30D=$(diff /tmp/lastlogin30d /tmp/localuserlist -n | grep -v "d1" | grep -v "a0" | grep -v "a1" | grep -v "a2" | grep -v "a3" | grep -v "a4" | paste -sd ",")
 
 rm -f /tmp/passchange
 rm -f /tmp/userstatus
@@ -404,15 +404,17 @@ cat >> $RDIR/$HOST_NAME-allreports.txt << EOF
 |Local User Count:  |$LOCAL_USER_COUNT
 |Local User List:   |$USER_LIST
 |SUDO Users:        |$SUDO_USER_LIST
-|Blank Pass. Users  |$BLANKPASSUSERLIST
+|Blank Pass. Users  |$BLANK_PASS_USER_LIST
 |Locked Users       |$LOCKEDUSERS
 --------------------------------------------------------------------------------------------------------------------------
-|Last Login Today   |$LASTLOGIN00D
-|Last Login 7 Days  |$LASTLOGIN07D
-|Last Login 30 Days |$LASTLOGIN30D
-|Not Logged(30 Days)|$NOTLOGIN30D
+|Last Login Today   |$LAST_LOGIN_00D
+|Last Login 7 Days  |$LAST_LOGIN_07D
+|Last Login 30 Days |$LAST_LOGIN_30D
+|Not Logged(30 Days)|$NOT_LOGIN_30D
 |Last Login Info    |$LAST_LOGIN_INFO
 |Never Logged Users |$NOT_LOGGED_USER
+|Login Auth. Users  |$LOGIN_AUTH_USER
+|NoLogin User Count |$NO_LOGIN_USER
 --------------------------------------------------------------------------------------------------------------------------
 |Pass. Expire Info  |$PASSEXINFO
 |Pass. Update Info  |$PASSUPDATEINFO
