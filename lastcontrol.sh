@@ -323,9 +323,18 @@ $RED
 printf "%50s %s\n" "                 LastControl Report                   " 
 $NOCOL
 printf "%50s %s\n" "------------------------------------------------------"
+$CYAN
+printf "%50s %s\n" "Hardware Inventory                                    " 
+$NOCOL
+printf "%50s %s\n" "------------------------------------------------------"
 printf "%30s %s\n" "Hostname            :" "$HOST_NAME"
 printf "%30s %s\n" "Internal IP Address :" "$INTERNAL_IP"
 printf "%30s %s\n" "External IP Address :" "$EXTERNAL_IP"
+printf "%30s %s\n" "Internet Connection :" "$INTERNET"
+printf "%30s %s\n" "CPU Info            :" "$CPU_INFO"
+printf "%30s %s\n" "Ram Info            :" "Total Ram: $RAM_TOTAL - Ram Usage: $RAM_USAGE"
+printf "%30s %s\n" "VGA Info            :" "VGA: $GPU_INFO - VGA Ram: $GPU_RAM"
+printf "%50s %s\n" "------------------------------------------------------"
 
 #rm -f /tmp/{lastlogin30d,localuserlist,userstatus,activeusers,lockedusers,passchange,PasswordBilgileri,lastlogininfo}
 rm -f "$RDIR"/{lastlogin30d,lastlogininfo,passchange,passexpireinfo.txt,userstatus}
