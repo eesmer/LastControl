@@ -318,44 +318,44 @@ LOGIN_INFO
 MEMORY_INFO
 
 clear
-printf "%50s %s\n" "------------------------------------------------------"
+printf "%30s %s\n" "------------------------------------------------------"
 $RED
-printf "%50s %s\n" "               LastControl Summary Report             " 
+printf "%30s %s\n" "               LastControl Summary Report             " 
 $NOCOL
-printf "%50s %s\n" "------------------------------------------------------"
+printf "%30s %s\n" "------------------------------------------------------"
 $CYAN
-printf "%50s %s\n" "Hardware                                              " 
+printf "%30s %s\n" "Hardware                                              " 
 $NOCOL
-printf "%50s %s\n" "------------------------------------------------------"
-printf "%30s %s\n" "Hostname            :"$HOST_NAME""
-printf "%30s %s\n" "Internal IP Address :"$INTERNAL_IP""
-printf "%30s %s\n" "External IP Address :"$EXTERNAL_IP""
-printf "%30s %s\n" "Internet Connection :"$INTERNET""
-printf "%30s %s\n" "CPU Info            :"$CPU_INFO""
-printf "%30s %s\n" "Ram Info            :"Total Ram: $RAM_TOTAL - Ram Usage: $RAM_USAGE""
-printf "%30s %s\n" "VGA Info            :"VGA: $GPU_INFO - VGA Ram: $GPU_RAM""
-printf "%50s %s\n" "------------------------------------------------------"
+printf "%32s %s\n" "------------------------------------------------------"
+printf "%32s %s\n" "Hostname            :" "$HOST_NAME"
+printf "%32s %s\n" "Internal IP Address :" "$INTERNAL_IP"
+printf "%32s %s\n" "External IP Address :" "$EXTERNAL_IP"
+printf "%32s %s\n" "Internet Connection :" "$INTERNET"
+printf "%32s %s\n" "CPU Info            :" "$CPU_INFO"
+printf "%32s %s\n" "Ram Info            :" "Total Ram: $RAM_TOTAL - Ram Usage: $RAM_USAGE"
+printf "%32s %s\n" "VGA Info            :" "VGA: $GPU_INFO - VGA Ram: $GPU_RAM"
+printf "%32s %s\n" "------------------------------------------------------"
 $CYAN
 printf "%50s %s\n" "System                                                " 
 $NOCOL
-printf "%50s %s\n" "------------------------------------------------------"
-printf "%30s %s\n" "Distro            :"$DISTRO""
-printf "%30s %s\n" "Kernel Version    :"$KERNEL""
-printf "%30s %s\n" "Uptime            :"$UPTIME - $UPTIME_MIN""
-printf "%30s %s\n" "Last Boot         :"$LAST_BOOT""
-printf "%30s %s\n" "Virtualization    :"$VIRT_CONTROL""
-printf "%30s %s\n" "Date              :"Date:$LOCAL_DATE""
-printf "%30s %s\n" "Timezone          :"$TIME_ZONE""
-printf "%50s %s\n" "------------------------------------------------------"
+printf "%30s %s\n" "------------------------------------------------------"
+printf "%30s %s\n" "Distro            :" "$DISTRO"
+printf "%30s %s\n" "Kernel Version    :" "$KERNEL"
+printf "%30s %s\n" "Uptime            :" "$UPTIME - $UPTIME_MIN"
+printf "%30s %s\n" "Last Boot         :" "$LAST_BOOT"
+printf "%30s %s\n" "Virtualization    :" "$VIRT_CONTROL"
+printf "%30s %s\n" "Date              :" "Date:$LOCAL_DATE"
+printf "%30s %s\n" "Timezone          :" "$TIME_ZONE"
+printf "%30s %s\n" "------------------------------------------------------"
 $CYAN
-printf "%50s %s\n" "- Current Status                                       "
+printf "%30s %s\n" "- Current Status                                      "
 $NOCOL
-printf "%50s %s\n" "------------------------------------------------------"
-printf "%30s %s\n" "Ram Usage           :"$RAM_USAGE_PERCENTAGE%""
-printf "%30s %s\n" "Swap Usage          :"$SWAP_USAGE_PERCENTAGE%""
+printf "%30s %s\n" "------------------------------------------------------"
+printf "%30s %s\n" "Ram Usage         :" "$RAM_USAGE_PERCENTAGE%"
+printf "%30s %s\n" "Swap Usage        :" "$SWAP_USAGE_PERCENTAGE%"
 
 
-#rm -f /tmp/{lastlogin30d,localuserlist,userstatus,activeusers,lockedusers,passchange,PasswordBilgileri,lastlogininfo}
+#rm -f /tmp/{lastlogin30d,localuserlist,userstatus,activeusers,lockedusers,passchange,lastlogininfo}
 rm -f "$RDIR"/{lastlogin30d,lastlogininfo,passchange,passexpireinfo.txt,userstatus}
 rm -f "$RDIR"/lastlogininfo
 rm -f "$RDIR"/passexpireinfo.txt
