@@ -324,7 +324,7 @@ printf "%30s %s\n" "               LastControl Summary Report             "
 $NOCOL
 printf "%30s %s\n" "------------------------------------------------------"
 $CYAN
-printf "%30s %s\n" "Hardware                                              " 
+printf "%30s %s\n" "- Hardware                                              " 
 $NOCOL
 printf "%32s %s\n" "------------------------------------------------------"
 printf "%32s %s\n" "Hostname            :" "$HOST_NAME"
@@ -336,7 +336,7 @@ printf "%32s %s\n" "Ram Info            :" "Total Ram: $RAM_TOTAL - Ram Usage: $
 printf "%32s %s\n" "VGA Info            :" "VGA: $GPU_INFO - VGA Ram: $GPU_RAM"
 printf "%32s %s\n" "------------------------------------------------------"
 $CYAN
-printf "%50s %s\n" "System                                                " 
+printf "%50s %s\n" "- System                                                " 
 $NOCOL
 printf "%30s %s\n" "------------------------------------------------------"
 printf "%30s %s\n" "Distro              :" "$DISTRO"
@@ -356,6 +356,9 @@ printf "%30s %s\n" "Swap Usage          :" "$SWAP_USAGE_PERCENTAGE%"
 printf "%30s %s\n" "Service Manager     :" "$SERVICE_MANAGER"
 printf "%30s %s\n" "Running Service     :" "$RUNNING_SERVICE"
 printf "%30s %s\n" "Loaded Service      :" "$LOADED_SERVICE"
+printf "%30s %s\n" "Active Connections  :" "$ACTIVE_CONN"
+printf "%30s %s\n" "Passive Connections :" "$PASSIVE_CONN"
+printf "%30s %s\n" "Failed Connections  :" "$FAILED_CONN"
 printf "%30s %s\n" "------------------------------------------------------"
 echo -e
 
