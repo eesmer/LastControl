@@ -354,6 +354,8 @@ printf "%30s %s\n" "------------------------------------------------------"
 printf "%30s %s\n" "Ram Usage           :" "$RAM_USAGE_PERCENTAGE%"
 printf "%30s %s\n" "Swap Usage          :" "$SWAP_USAGE_PERCENTAGE%"
 printf "%30s %s\n" "Service Manager     :" "$SERVICE_MANAGER"
+printf "%30s %s\n" "------------------------------------------------------"
+echo -e
 
 #rm -f /tmp/{lastlogin30d,localuserlist,userstatus,activeusers,lockedusers,passchange,lastlogininfo}
 rm -f "$RDIR"/{lastlogin30d,lastlogininfo,passchange,passexpireinfo.txt,userstatus}
