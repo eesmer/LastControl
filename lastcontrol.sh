@@ -469,7 +469,6 @@ echo "|LISTENING SERVICE and PORT LIST" >> $RDIR/$HOST_NAME-allreports.txt
 echo "|--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 #netstat -tl |grep -v "Active Internet connections (servers and established)" |grep -v "Active Internet connections (only servers)" >> $RDIR/$HOST_NAME-allreports.txt
 lsof -nP -iTCP -sTCP:LISTEN | grep -v "IPv6" >> $RDIR/$HOST_NAME-allreports.txt
-#echo "" >> $RDIR/$HOST_NAME-allreports.txt
 echo "|--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 echo "|ESTABLISHED SERVICE LIST" >> $RDIR/$HOST_NAME-allreports.txt
 echo "|--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
