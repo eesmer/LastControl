@@ -51,7 +51,7 @@ ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNEC
 # SYSTEM INFO
 KERNEL=$(uname -sr)
 DISTRO=$(grep PRETTY_NAME /etc/os-release | cut -d '"' -f2)
-UPTIME=$(uptime) && UPTIME_MIN=$(awk '{print "up", $1/60, "minutes"}' /proc/uptime)
+UPTIME=$(uptime | xargs) && UPTIME_MIN=$(awk '{print "up", $1/60, "minutes"}' /proc/uptime)
 LAST_BOOT=$(uptime -s)
 VIRT_CONTROL=NONE
 [ -e "/dev/kvm" ] && VIRT_CONTROL=ON
