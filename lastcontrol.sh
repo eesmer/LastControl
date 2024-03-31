@@ -361,6 +361,7 @@ printf "%30s %s\n" "Passive Connections :" "$PASSIVE_CONN"
 printf "%30s %s\n" "Failed Connections  :" "$FAILED_CONN"
 printf "%30s %s\n" "Established Conn.   :" "$ESTAB_CONN"
 printf "%30s %s\n" "Load Average        :" "$LOAD_AVG"
+printf "%30s %s\n" "Zombie Process      :" "$ZO_PROCESS"
 printf "%30s %s\n" "------------------------------------------------------"
 echo -e
 
