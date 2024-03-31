@@ -38,7 +38,7 @@ LOCAL_USER_LIST_FILE=$RDIR/localusers
 # HARDWARE INVENTORY
 INTERNAL_IP=$(hostname -I)
 EXTERNAL_IP=$(curl -4 icanhazip.com 2>/dev/null)
-CPU_INFO=$(awk -F ':' '/model name/ {print $2}' /proc/cpuinfo | head -n 1)
+CPU_INFO=$(awk -F ':' '/model name/ {print $2}' /proc/cpuinfo | head -n 1 | xargs)
 RAM_TOTAL=$(free -m | awk 'NR==2{print $2 " MB"}')
 RAM_USAGE=$(free -m | awk 'NR==2{print $3 " MB"}')
 GPU_INFO=$(lspci | grep -i vga | cut -d ':' -f3)
