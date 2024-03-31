@@ -326,15 +326,15 @@ printf "%30s %s\n" "------------------------------------------------------"
 $CYAN
 printf "%30s %s\n" "- Hardware                                              " 
 $NOCOL
-printf "%32s %s\n" "------------------------------------------------------"
-printf "%32s %s\n" "Hostname            :" "$HOST_NAME"
-printf "%32s %s\n" "Internal IP Address :" "$INTERNAL_IP"
-printf "%32s %s\n" "External IP Address :" "$EXTERNAL_IP"
-printf "%32s %s\n" "Internet Connection :" "$INTERNET"
-printf "%32s %s\n" "CPU Info            :" "$CPU_INFO - Number of CPU: $NOC"
-printf "%32s %s\n" "Ram Info            :" "Total Ram: $RAM_TOTAL - Ram Usage: $RAM_USAGE"
-printf "%32s %s\n" "VGA Info            :" "VGA: $GPU_INFO - VGA Ram: $GPU_RAM"
-printf "%32s %s\n" "------------------------------------------------------"
+printf "%30s %s\n" "------------------------------------------------------"
+printf "%30s %s\n" "Hostname            :" "$HOST_NAME"
+printf "%30s %s\n" "Internal IP Address :" "$INTERNAL_IP"
+printf "%30s %s\n" "External IP Address :" "$EXTERNAL_IP"
+printf "%30s %s\n" "Internet Connection :" "$INTERNET"
+printf "%30s %s\n" "CPU Info            :" "$CPU_INFO - Number of CPU: $NOC"
+printf "%30s %s\n" "Ram Info            :" "Total Ram: $RAM_TOTAL - Ram Usage: $RAM_USAGE"
+printf "%30s %s\n" "VGA Info            :" "VGA: $GPU_INFO - VGA Ram: $GPU_RAM"
+printf "%30s %s\n" "------------------------------------------------------"
 $CYAN
 printf "%50s %s\n" "- System                                                " 
 $NOCOL
@@ -442,17 +442,6 @@ $HOST_NAME LastControl All Controls Report $DATE
 |Load Avarage       |$LOAD_AVG
 |Zombie Process:    |$ZO_PROCESS
 -------------------------------------------------------------------------------------------------------------------------
-EOF
-echo "|LISTENING SERVICE LIST" >> $RDIR/$HOST_NAME-allreports.txt
-echo "|--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-netstat -tl |grep -v "Active Internet connections (servers and established)" |grep -v "Active Internet connections (only servers)" >> $RDIR/$HOST_NAME-allreports.txt
-echo "" >> $RDIR/$HOST_NAME-allreports.txt
-echo "|--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-echo "|ESTABLISHED SERVICE LIST" >> $RDIR/$HOST_NAME-allreports.txt
-echo "|--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-netstat -tn |grep -v "Active Internet connections (servers and established)" |grep -v "Active Internet connections (only servers)" |grep "ESTABLISHED" >> $RDIR/$HOST_NAME-allreports.txt
-echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-cat >> $RDIR/$HOST_NAME-allreports.txt << EOF
 | USERS
 --------------------------------------------------------------------------------------------------------------------------
 |Local User Count:  |$LOCAL_USER_COUNT
@@ -475,5 +464,14 @@ cat >> $RDIR/$HOST_NAME-allreports.txt << EOF
 --------------------------------------------------------------------------------------------------------------------------
 |Service Users:     |$SERVICE_USER_LIST
 --------------------------------------------------------------------------------------------------------------------------
-
 EOF
+echo "|LISTENING SERVICE and PORT LIST" >> $RDIR/$HOST_NAME-allreports.txt
+echo "|--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+#netstat -tl |grep -v "Active Internet connections (servers and established)" |grep -v "Active Internet connections (only servers)" >> $RDIR/$HOST_NAME-allreports.txt
+lsof -nP -iTCP -sTCP:LISTEN | grep -v "IPv6" >> $RDIR/$HOST_NAME-allreports.txt
+#echo "" >> $RDIR/$HOST_NAME-allreports.txt
+echo "|--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+echo "|ESTABLISHED SERVICE LIST" >> $RDIR/$HOST_NAME-allreports.txt
+echo "|--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+netstat -tn |grep -v "Active Internet connections (servers and established)" |grep -v "Active Internet connections (only servers)" |grep "ESTABLISHED" >> $RDIR/$HOST_NAME-allreports.txt
+echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
