@@ -354,6 +354,8 @@ printf "%30s %s\n" "------------------------------------------------------"
 printf "%30s %s\n" "Ram Usage           :" "$RAM_USAGE_PERCENTAGE%"
 printf "%30s %s\n" "Swap Usage          :" "$SWAP_USAGE_PERCENTAGE%"
 printf "%30s %s\n" "Service Manager     :" "$SERVICE_MANAGER"
+printf "%30s %s\n" "Running Service     :" "$RUNNING_SERVICE"
+printf "%30s %s\n" "Loaded Service      :" "$LOADED_SERVICE"
 printf "%30s %s\n" "------------------------------------------------------"
 echo -e
 
