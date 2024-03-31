@@ -346,6 +346,13 @@ printf "%30s %s\n" "Last Boot         :" "$LAST_BOOT"
 printf "%30s %s\n" "Virtualization    :" "$VIRT_CONTROL"
 printf "%30s %s\n" "Date              :" "Date:$LOCAL_DATE"
 printf "%30s %s\n" "Timezone          :" "$TIME_ZONE"
+printf "%50s %s\n" "------------------------------------------------------"
+$CYAN
+printf "%50s %s\n" "- Current Status                                       "
+$NOCOL
+printf "%50s %s\n" "------------------------------------------------------"
+printf "%30s %s\n" "Ram Usage           :" "$RAM_USAGE_PERCENTAGE%"
+
 
 #rm -f /tmp/{lastlogin30d,localuserlist,userstatus,activeusers,lockedusers,passchange,PasswordBilgileri,lastlogininfo}
 rm -f "$RDIR"/{lastlogin30d,lastlogininfo,passchange,passexpireinfo.txt,userstatus}
