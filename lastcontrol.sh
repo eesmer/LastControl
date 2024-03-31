@@ -359,6 +359,7 @@ printf "%30s %s\n" "Loaded Service      :" "$LOADED_SERVICE"
 printf "%30s %s\n" "Active Connections  :" "$ACTIVE_CONN"
 printf "%30s %s\n" "Passive Connections :" "$PASSIVE_CONN"
 printf "%30s %s\n" "Failed Connections  :" "$FAILED_CONN"
+printf "%30s %s\n" "Established Conn.   :" "$ESTAB_CONN"
 printf "%30s %s\n" "------------------------------------------------------"
 echo -e
 
