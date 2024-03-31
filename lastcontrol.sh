@@ -275,7 +275,7 @@ PASSIVE_CONN=$(netstat -s | awk '/passive connection openings/ {print $1}')
 FAILED_CONN=$(netstat -s | awk '/failed connection attempts/ {print $1}')
 ESTAB_CONN=$(netstat -s | awk '/connections established/ {print $1}')
 NOC=$(nproc --all)
-LOAD_AVG=$(uptime | grep "load average:" | awk -F: '{print $5}')
+LOAD_AVG=$(uptime | grep "load average:" | awk -F: '{print $5}' | xargs)
 ZO_PROCESS=$(ps -A -ostat,ppid,pid,cmd | grep -e '^[Zz]' | wc -l)
 
 SERVICE_USER_LIST=$(awk -F: '$2 == "*"' /etc/shadow | cut -d ":" -f1 | paste -sd ",")
