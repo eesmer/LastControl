@@ -9,7 +9,7 @@ Installer script allows you to make a new installation.<br>
 wget https://raw.githubusercontent.com/eesmer/LastControl/master/lastcontrol.sh
 ```
 ```bash
-bash lastcontrol-installer.sh
+bash lastcontrol.sh
 ```
 ---
 
