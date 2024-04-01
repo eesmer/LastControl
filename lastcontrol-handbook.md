@@ -6,7 +6,7 @@ Installer script allows you to make a new installation.<br>
 ---
 
 ```bash
-wget https://raw.githubusercontent.com/eesmer/LastControl/master/installer/server/lastcontrol-installer.sh
+wget https://raw.githubusercontent.com/eesmer/LastControl/master/lastcontrol.sh
 ```
 ```bash
 bash lastcontrol-installer.sh
