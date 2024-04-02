@@ -371,6 +371,8 @@ printf "%10s %s\n" "The Full Report System:"
 $NOCOL
 printf "%10s %s\n" "$RDIR/$HOST_NAME/$HOST_NAME-allreports.txt"
 $NORMAL
+printf "%30s %s\n" "------------------------------------------------------"
+echo -e
 
 #rm -f /tmp/{lastlogin30d,localuserlist,userstatus,activeusers,lockedusers,passchange,lastlogininfo}
 rm -f "$RDIR"/{lastlogin30d,lastlogininfo,passchange,passexpireinfo.txt,userstatus}
