@@ -322,11 +322,15 @@ MEMORY_INFO
 clear
 printf "%30s %s\n" "------------------------------------------------------"
 $RED
+$BOLD
 printf "%30s %s\n" "               LastControl Summary Report             " 
+$NORMAL
 $NOCOL
 printf "%30s %s\n" "------------------------------------------------------"
 $CYAN
-printf "%30s %s\n" "- Hardware                                              " 
+$BOLD
+printf "%30s %s\n" "- Hardware                                              "
+$NORMAL
 $NOCOL
 printf "%30s %s\n" "------------------------------------------------------"
 printf "%30s %s\n" "Hostname            :" "$HOST_NAME"
