@@ -342,7 +342,9 @@ printf "%30s %s\n" "Ram Info            :" "Total Ram: $RAM_TOTAL - Ram Usage: $
 printf "%30s %s\n" "VGA Info            :" "VGA: $GPU_INFO - VGA Ram: $GPU_RAM"
 printf "%30s %s\n" "------------------------------------------------------"
 $CYAN
+$BOLD
 printf "%50s %s\n" "- System                                                " 
+$NORMAL
 $NOCOL
 printf "%30s %s\n" "------------------------------------------------------"
 printf "%30s %s\n" "Distro              :" "$DISTRO"
@@ -354,7 +356,9 @@ printf "%30s %s\n" "Date                :" "Date:$LOCAL_DATE"
 printf "%30s %s\n" "Timezone            :" "$TIME_ZONE"
 printf "%30s %s\n" "------------------------------------------------------"
 $CYAN
+$BOLD
 printf "%30s %s\n" "- Current Status                                      "
+$NORMAL
 $NOCOL
 printf "%30s %s\n" "------------------------------------------------------"
 printf "%30s %s\n" "Ram Usage           :" "$RAM_USAGE_PERCENTAGE%"
