@@ -365,7 +365,12 @@ printf "%30s %s\n" "Established Conn.   :" "$ESTAB_CONN"
 printf "%30s %s\n" "Load Average        :" "$LOAD_AVG"
 printf "%30s %s\n" "Zombie Process      :" "$ZO_PROCESS"
 printf "%30s %s\n" "------------------------------------------------------"
-echo -e
+$RED
+$BOLD
+printf "%10s %s\n" "The Full Report System:"
+$NOCOL
+printf "%10s %s\n" "$RDIR/$HOST_NAME/$HOST_NAME-allreports.txt"
+$NORMAL
 
 #rm -f /tmp/{lastlogin30d,localuserlist,userstatus,activeusers,lockedusers,passchange,lastlogininfo}
 rm -f "$RDIR"/{lastlogin30d,lastlogininfo,passchange,passexpireinfo.txt,userstatus}
