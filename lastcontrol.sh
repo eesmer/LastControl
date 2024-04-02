@@ -365,9 +365,9 @@ printf "%30s %s\n" "Established Conn.   :" "$ESTAB_CONN"
 printf "%30s %s\n" "Load Average        :" "$LOAD_AVG"
 printf "%30s %s\n" "Zombie Process      :" "$ZO_PROCESS"
 printf "%30s %s\n" "------------------------------------------------------"
-$RED
+$CYAN
 $BOLD
-printf "%10s %s\n" "The Full Report System:"
+printf "%10s %s\n" "- The Full Report System"
 $NOCOL
 printf "%10s %s\n" "$RDIR/$HOST_NAME/$HOST_NAME-allreports.txt"
 $NORMAL
