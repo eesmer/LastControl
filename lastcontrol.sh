@@ -375,7 +375,7 @@ printf "%30s %s\n" "Zombie Process      :" "$ZO_PROCESS"
 printf "%30s %s\n" "------------------------------------------------------"
 $CYAN
 $BOLD
-printf "%10s %s\n" "- The Full Report System"
+printf "%10s %s\n" "- The Full Report"
 $NOCOL
 printf "%10s %s\n" "$RDIR/$HOST_NAME/$HOST_NAME-allreports.txt"
 $NORMAL
