@@ -18,6 +18,8 @@ WHITE="tput setaf 7"
 GRAY="tput setaf 8"
 RED="tput setaf 9"
 NOCOL="tput sgr0"
+BOLD="tput bold"
+NORMAL="tput sgr0"
 
 HOST_NAME=$(cat /etc/hostname)
 RDIR=/usr/local/lastcontrol/reports/$HOST_NAME
