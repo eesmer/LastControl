@@ -17,11 +17,8 @@ EOF
 }
 
 if [ "$1" = "--help" ] || [ "$1" = "-h" ] || [ -z "$1" ]; then
-        clear
-        printf "%10s %s\n" "Usage: lastcontrol.sh [OPTION]"
-        printf "%10s %s\n" "optional arguments:"
-        printf "%10s %s\n" "--help -h           show this help message and exit"
-        printf "%10s %s\n" "--server-config             It installs the LastControl as a server."
+    show_help
+    exit 0
 fi
 
 #------------------
