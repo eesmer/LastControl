@@ -6,11 +6,12 @@
 # However, it is your responsibility to run it on any system.
 #---------------------------------------------------------------------
 
-if [ "$1" = "--help" ]; then
-       printf "%10s %s\n" "Usage: lastcontrol.sh [OPTION]"
-       printf "%10s %s\n" "optional arguments:"
-       printf "%45s %s\n" "--help       show this help message and exit"
-       printf "%45 s %s\n" "--server-config     It installs the LastControl as a server."
+if [ "$1" = "--help" ] || [ "$1" = "-h" ] || [ -z "$1" ]; then
+        clear
+        printf "%10s %s\n" "Usage: lastcontrol.sh [OPTION]"
+        printf "%10s %s\n" "optional arguments:"
+        printf "%10s %s\n" "--help -h           show this help message and exit"
+        printf "%10s %s\n" "--server-config             It installs the LastControl as a server."
 fi
 
 #------------------
