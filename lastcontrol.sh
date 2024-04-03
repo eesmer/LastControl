@@ -21,88 +21,89 @@ if [ "$1" = "--help" ] || [ "$1" = "-h" ] || [ -z "$1" ]; then
     exit 0
 fi
 
-#------------------
-# Color Codes
-#------------------
-MAGENTA="tput setaf 1"
-GREEN="tput setaf 2"
-YELLOW="tput setaf 3"
-DGREEN="tput setaf 4"
-CYAN="tput setaf 6"
-WHITE="tput setaf 7"
-GRAY="tput setaf 8"
-RED="tput setaf 9"
-NOCOL="tput sgr0"
-BOLD="tput bold"
-NORMAL="tput sgr0"
-
-HOST_NAME=$(cat /etc/hostname)
-RDIR=/usr/local/lastcontrol/reports/$HOST_NAME
-LOGO=/usr/local/lastcontrol/images/lastcontrol_logo.png
-DATE=$(date)
-
-if [ -d "$RDIR" ]; then
-	rm -r $RDIR
-fi
-mkdir -p $RDIR
-
-# LOCAL USERS
-#grep -E "/bin/bash|/bin/zsh|/bin/sh" /etc/passwd | grep -v "/sbin/nologin" | grep -v "/bin/false" | cut -d":" -f1 > $RDIR/localusers
-cat /etc/shadow | grep -v "*" | grep -v "!" | cut -d ":" -f1 > "$RDIR"/localusers
-LOCAL_USER_COUNT=$(cat $RDIR/localusers | wc -l)
-LOCAL_USER_LIST_FILE=$RDIR/localusers
-
-# HARDWARE INVENTORY
-INTERNAL_IP=$(hostname -I)
-EXTERNAL_IP=$(curl -4 icanhazip.com 2>/dev/null)
-CPU_INFO=$(awk -F ':' '/model name/ {print $2}' /proc/cpuinfo | head -n 1 | xargs)
-RAM_TOTAL=$(free -m | awk 'NR==2{print $2 " MB"}')
-RAM_USAGE=$(free -m | awk 'NR==2{print $3 " MB"}')
-GPU_INFO=$(lspci | grep -i vga | cut -d ':' -f3)
-GPU_RAM=$(lspci -v | awk '/ prefetchable/{print $6}' | head -n 1)
-DISK_LIST=$(lsblk -o NAME,SIZE -d -e 11,2 | tail -n +2 | grep -v "loop")
-DISK_INFO=$(df -h --total | awk 'END{print}')
-DISK_USAGE=$(fdisk -lu | grep "Disk" | grep -v "Disklabel" | grep -v "dev/loop" | grep -v "Disk identifier")
-ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNECTED"
-
-# SYSTEM INFO
-KERNEL=$(uname -sr)
-DISTRO=$(grep PRETTY_NAME /etc/os-release | cut -d '"' -f2)
-UPTIME=$(uptime | xargs) && UPTIME_MIN=$(awk '{print "up", $1/60, "minutes"}' /proc/uptime)
-LAST_BOOT=$(uptime -s)
-VIRT_CONTROL=NONE
-[ -e "/dev/kvm" ] && VIRT_CONTROL=ON
-LOCAL_DATE=$(timedatectl status | awk '/Local time:/ {print $3,$4,$5}')
-TIME_ZONE=$(timedatectl status | awk -F ': ' '/Time zone:/ {print $2}') #TIME_SYNC=$(timedatectl |grep "synchronized:" |cut -d ":" -f2 | xargs)
-TIME_SYNC=$(timedatectl status | awk '/synchronized:/ {print $4}')
-HTTP_PROXY_USAGE=FALSE
-{ env | grep -q "http_proxy"; } || { grep -q -e "export http" /etc/profile /etc/profile.d/*; } && HTTP_PROXY_USAGE=TRUE
-
-
-#----------------------------
-# determine distro
-#----------------------------
-cat /etc/*-release /etc/issue > "$RDIR/distrocheck"
-if grep -qi "debian\|ubuntu" "$RDIR/distrocheck"; then
-    REP=APT
-elif grep -qi "centos\|rocky\|red hat" "$RDIR/distrocheck"; then
-    REP=YUM
-fi
-rm $RDIR/distrocheck
-
-#----------------------------
-# Not support message
-#----------------------------
-if [ -z "$REP" ]; then
-	$RED
-	echo -e
-	echo "--------------------------------------------------------------"
-	echo -e "Repository could not be detected.\nThis distro is not supported"
-	echo "--------------------------------------------------------------"
-	echo -e
-	$NOCOL
-	exit 1
-fi
+create_report() {
+	#------------------
+	# Color Codes
+	#------------------
+	MAGENTA="tput setaf 1"
+	GREEN="tput setaf 2"
+	YELLOW="tput setaf 3"
+	DGREEN="tput setaf 4"
+	CYAN="tput setaf 6"
+	WHITE="tput setaf 7"
+	GRAY="tput setaf 8"
+	RED="tput setaf 9"
+	NOCOL="tput sgr0"
+	BOLD="tput bold"
+	NORMAL="tput sgr0"
+	
+	HOST_NAME=$(cat /etc/hostname)
+	RDIR=/usr/local/lastcontrol/reports/$HOST_NAME
+	LOGO=/usr/local/lastcontrol/images/lastcontrol_logo.png
+	DATE=$(date)
+	
+	if [ -d "$RDIR" ]; then
+		rm -r $RDIR
+	fi
+	mkdir -p $RDIR
+	
+	# LOCAL USERS
+	#grep -E "/bin/bash|/bin/zsh|/bin/sh" /etc/passwd | grep -v "/sbin/nologin" | grep -v "/bin/false" | cut -d":" -f1 > $RDIR/localusers
+	cat /etc/shadow | grep -v "*" | grep -v "!" | cut -d ":" -f1 > "$RDIR"/localusers
+	LOCAL_USER_COUNT=$(cat $RDIR/localusers | wc -l)
+	LOCAL_USER_LIST_FILE=$RDIR/localusers
+	
+	# HARDWARE INVENTORY
+	INTERNAL_IP=$(hostname -I)
+	EXTERNAL_IP=$(curl -4 icanhazip.com 2>/dev/null)
+	CPU_INFO=$(awk -F ':' '/model name/ {print $2}' /proc/cpuinfo | head -n 1 | xargs)
+	RAM_TOTAL=$(free -m | awk 'NR==2{print $2 " MB"}')
+	RAM_USAGE=$(free -m | awk 'NR==2{print $3 " MB"}')
+	GPU_INFO=$(lspci | grep -i vga | cut -d ':' -f3)
+	GPU_RAM=$(lspci -v | awk '/ prefetchable/{print $6}' | head -n 1)
+	DISK_LIST=$(lsblk -o NAME,SIZE -d -e 11,2 | tail -n +2 | grep -v "loop")
+	DISK_INFO=$(df -h --total | awk 'END{print}')
+	DISK_USAGE=$(fdisk -lu | grep "Disk" | grep -v "Disklabel" | grep -v "dev/loop" | grep -v "Disk identifier")
+	ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNECTED"
+	
+	# SYSTEM INFO
+	KERNEL=$(uname -sr)
+	DISTRO=$(grep PRETTY_NAME /etc/os-release | cut -d '"' -f2)
+	UPTIME=$(uptime | xargs) && UPTIME_MIN=$(awk '{print "up", $1/60, "minutes"}' /proc/uptime)
+	LAST_BOOT=$(uptime -s)
+	VIRT_CONTROL=NONE
+	[ -e "/dev/kvm" ] && VIRT_CONTROL=ON
+	LOCAL_DATE=$(timedatectl status | awk '/Local time:/ {print $3,$4,$5}')
+	TIME_ZONE=$(timedatectl status | awk -F ': ' '/Time zone:/ {print $2}') #TIME_SYNC=$(timedatectl |grep "synchronized:" |cut -d ":" -f2 | xargs)
+	TIME_SYNC=$(timedatectl status | awk '/synchronized:/ {print $4}')
+	HTTP_PROXY_USAGE=FALSE
+	{ env | grep -q "http_proxy"; } || { grep -q -e "export http" /etc/profile /etc/profile.d/*; } && HTTP_PROXY_USAGE=TRUE
+		
+	#----------------------------
+	# determine distro
+	#----------------------------
+	cat /etc/*-release /etc/issue > "$RDIR/distrocheck"
+	if grep -qi "debian\|ubuntu" "$RDIR/distrocheck"; then
+		REP=APT
+	elif grep -qi "centos\|rocky\|red hat" "$RDIR/distrocheck"; then
+		REP=YUM
+	fi
+	rm $RDIR/distrocheck
+	
+	#----------------------------
+	# Not support message
+	#----------------------------
+	if [ -z "$REP" ]; then
+		$RED
+		echo -e
+		echo "--------------------------------------------------------------"
+		echo -e "Repository could not be detected.\nThis distro is not supported"
+		echo "--------------------------------------------------------------"
+		echo -e
+		$NOCOL
+		exit 1
+	fi
+}
 
 CHECK_QUOTA() {
     if command -v quotacheck &> /dev/null; then
@@ -337,15 +338,11 @@ MEMORY_INFO
 clear
 printf "%30s %s\n" "------------------------------------------------------"
 $RED
-$BOLD
 printf "%30s %s\n" "               LastControl Summary Report             " 
-$NORMAL
 $NOCOL
 printf "%30s %s\n" "------------------------------------------------------"
 $CYAN
-$BOLD
-printf "%30s %s\n" "- Hardware                                              "
-$NORMAL
+printf "%30s %s\n" "- Hardware                                              " 
 $NOCOL
 printf "%30s %s\n" "------------------------------------------------------"
 printf "%30s %s\n" "Hostname            :" "$HOST_NAME"
@@ -357,9 +354,7 @@ printf "%30s %s\n" "Ram Info            :" "Total Ram: $RAM_TOTAL - Ram Usage: $
 printf "%30s %s\n" "VGA Info            :" "VGA: $GPU_INFO - VGA Ram: $GPU_RAM"
 printf "%30s %s\n" "------------------------------------------------------"
 $CYAN
-$BOLD
 printf "%50s %s\n" "- System                                                " 
-$NORMAL
 $NOCOL
 printf "%30s %s\n" "------------------------------------------------------"
 printf "%30s %s\n" "Distro              :" "$DISTRO"
@@ -371,9 +366,7 @@ printf "%30s %s\n" "Date                :" "Date:$LOCAL_DATE"
 printf "%30s %s\n" "Timezone            :" "$TIME_ZONE"
 printf "%30s %s\n" "------------------------------------------------------"
 $CYAN
-$BOLD
 printf "%30s %s\n" "- Current Status                                      "
-$NORMAL
 $NOCOL
 printf "%30s %s\n" "------------------------------------------------------"
 printf "%30s %s\n" "Ram Usage           :" "$RAM_USAGE_PERCENTAGE%"
@@ -390,7 +383,7 @@ printf "%30s %s\n" "Zombie Process      :" "$ZO_PROCESS"
 printf "%30s %s\n" "------------------------------------------------------"
 $CYAN
 $BOLD
-printf "%10s %s\n" "- The Full Report"
+printf "%10s %s\n" "- The Full Report System"
 $NOCOL
 printf "%10s %s\n" "$RDIR/$HOST_NAME/$HOST_NAME-allreports.txt"
 $NORMAL
