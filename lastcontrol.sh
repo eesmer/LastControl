@@ -17,31 +17,32 @@ Optional arguments:
 EOF
 }
 
+#------------------
+# Color Codes
+#------------------
+MAGENTA="tput setaf 1"
+GREEN="tput setaf 2"
+YELLOW="tput setaf 3"
+DGREEN="tput setaf 4"
+CYAN="tput setaf 6"
+WHITE="tput setaf 7"
+GRAY="tput setaf 8"
+RED="tput setaf 9"
+NOCOL="tput sgr0"
+BOLD="tput bold"
+NORMAL="tput sgr0"
+	
+HOST_NAME=$(cat /etc/hostname)
+RDIR=/usr/local/lastcontrol/reports/$HOST_NAME
+LOGO=/usr/local/lastcontrol/images/lastcontrol_logo.png
+DATE=$(date)
+
 if [ "$1" = "--help" ] || [ "$1" = "-h" ] || [ -z "$1" ]; then
     show_help
     exit 0
 fi
 
-create_report() {
-	#------------------
-	# Color Codes
-	#------------------
-	MAGENTA="tput setaf 1"
-	GREEN="tput setaf 2"
-	YELLOW="tput setaf 3"
-	DGREEN="tput setaf 4"
-	CYAN="tput setaf 6"
-	WHITE="tput setaf 7"
-	GRAY="tput setaf 8"
-	RED="tput setaf 9"
-	NOCOL="tput sgr0"
-	BOLD="tput bold"
-	NORMAL="tput sgr0"
-	
-	HOST_NAME=$(cat /etc/hostname)
-	RDIR=/usr/local/lastcontrol/reports/$HOST_NAME
-	LOGO=/usr/local/lastcontrol/images/lastcontrol_logo.png
-	DATE=$(date)
+SYSTEM_REPORT() {
 	
 	if [ -d "$RDIR" ]; then
 		rm -r $RDIR
@@ -140,13 +141,6 @@ LVM_CRYPT() {
 	fi
 }
 
-if [ "$1" = "--localhost" ]; then
-        create_report
-	CHECK_QUOTA
-	LVM_CRYPT
-        exit 0
-fi
-
 SYSLOG_INFO() {
         SYSLOG_INSTALL=Not_Installed
                 if [ "$REP" = "APT" ]; then
@@ -181,6 +175,16 @@ MEMORY_INFO() {
 USER_LIST(){
     USER_LIST=$(paste -sd "," "$LOCAL_USER_LIST_FILE")
 }
+
+if [ "$1" = "--localhost" ]; then
+        SYSTEM_REPORT
+	CHECK_QUOTA
+	LVM_CRYPT
+	SYSLOG_INFO
+	MEMORY_INFO
+	USER_LIST
+        exit 0
+fi
 
 SUDO_USER_LIST(){
     tmpfile=$(mktemp)
