@@ -106,44 +106,46 @@ create_report() {
 	fi
 }
 
-if [ "$1" = "--localhost" ]; then
-	create_report
-	exit 0
-fi
-
 CHECK_QUOTA() {
-    if command -v quotacheck &> /dev/null; then
-        QUOTA_INSTALL=Pass
-    else
-        QUOTA_INSTALL=Fail
-    fi
-
-    if grep -q -E 'usrquota|grpquota' /proc/mounts; then
-        USR_QUOTA=Pass
-        GRP_QUOTA=Pass
-        MNT_QUOTA=Pass
-    else
-        USR_QUOTA=Fail
-        GRP_QUOTA=Fail
-        MNT_QUOTA=Fail
-    fi
+	if command -v quotacheck &> /dev/null; then
+		QUOTA_INSTALL=Pass
+	else
+		QUOTA_INSTALL=Fail
+	fi
+	
+	if grep -q -E 'usrquota|grpquota' /proc/mounts; then
+		USR_QUOTA=Pass
+		GRP_QUOTA=Pass
+		MNT_QUOTA=Pass
+	else
+		USR_QUOTA=Fail
+		GRP_QUOTA=Fail
+		MNT_QUOTA=Fail
+	fi
 }
 
 LVM_CRYPT() {
-    if lsblk --output type | grep -qw "lvm"; then
-        LVM_USAGE=Pass
-    else
-        LVM_USAGE=Fail
-    fi
-
-    if command -v cryptsetup &> /dev/null && lsblk --output type | grep -qw "crypt"; then
-        CRYPT_INSTALL=Pass
-        CRYPT_USAGE=Pass
-    else
-        CRYPT_INSTALL=Fail
-        CRYPT_USAGE=Fail
-    fi
+	if lsblk --output type | grep -qw "lvm"; then
+		LVM_USAGE=Pass
+	else
+		LVM_USAGE=Fail
+	fi
+	
+	if command -v cryptsetup &> /dev/null && lsblk --output type | grep -qw "crypt"; then
+		CRYPT_INSTALL=Pass
+		CRYPT_USAGE=Pass
+	else
+		CRYPT_INSTALL=Fail
+		CRYPT_USAGE=Fail
+	fi
 }
+
+if [ "$1" = "--localhost" ]; then
+        create_report
+	CHECK_QUOTA
+	LVM_CRYPT
+        exit 0
+fi
 
 SYSLOG_INFO() {
         SYSLOG_INSTALL=Not_Installed
