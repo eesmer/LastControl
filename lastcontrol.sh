@@ -6,6 +6,10 @@
 # However, it is your responsibility to run it on any system.
 #---------------------------------------------------------------------
 
+if [ "$1" = "--help" ]; then
+       printf "%30s %s\n" "Usage: lastcontrol.sh [OPTION]"
+fi
+
 #------------------
 # Color Codes
 #------------------
