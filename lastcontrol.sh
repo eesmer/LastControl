@@ -9,6 +9,7 @@
 if [ "$1" = "--help" ]; then
        printf "%10s %s\n" "Usage: lastcontrol.sh [OPTION]"
        printf "%10s %s\n" "optional arguments:"
+       printf "%45s %s\n" "--help       show this help message and exit"
 fi
 
 #------------------
