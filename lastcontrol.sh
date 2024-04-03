@@ -176,16 +176,6 @@ USER_LIST(){
     USER_LIST=$(paste -sd "," "$LOCAL_USER_LIST_FILE")
 }
 
-if [ "$1" = "--localhost" ]; then
-        SYSTEM_REPORT
-	CHECK_QUOTA
-	LVM_CRYPT
-	SYSLOG_INFO
-	MEMORY_INFO
-	USER_LIST
-        exit 0
-fi
-
 SUDO_USER_LIST(){
     tmpfile=$(mktemp)
     getent group sudo | awk -F: '{print $4}' | tr ',' "\n" >> "$tmpfile"
@@ -233,6 +223,20 @@ LOGIN_INFO() {
         done
         LAST_LOGIN_INFO=$(cat $RDIR/lastlogininfo | paste -sd ",")
 }
+
+if [ "$1" = "--localhost" ]; then
+        SYSTEM_REPORT
+	CHECK_QUOTA
+	LVM_CRYPT
+	SYSLOG_INFO
+	MEMORY_INFO
+	USER_LIST
+	SUDO_USER_LIST
+	PASSWORD_EXPIRE_INFO
+	NEVER_LOGGED_USERS
+	LOGIN_INFO
+        exit 0
+fi
 
 # CHECK KERNEL MODULES
 ####OSVER=$(grep PRETTY_NAME /etc/os-release | cut -d '=' -f2 | cut -d '"' -f2)
