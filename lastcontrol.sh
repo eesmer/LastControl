@@ -6,6 +6,16 @@
 # However, it is your responsibility to run it on any system.
 #---------------------------------------------------------------------
 
+show_help() {
+    cat << EOF
+Usage: $(basename "$0") [OPTION]
+
+Optional arguments:
+  --help, -h              show this help message and exit
+  --server-config         It installs the LastControl as a server.
+EOF
+}
+
 if [ "$1" = "--help" ] || [ "$1" = "-h" ] || [ -z "$1" ]; then
         clear
         printf "%10s %s\n" "Usage: lastcontrol.sh [OPTION]"
