@@ -11,8 +11,9 @@ show_help() {
 Usage: $(basename "$0") [OPTION]
 
 Optional arguments:
-  --help, -h              show this help message and exit
-  --server-config         It installs the LastControl as a server.
+  --help, -h		show this help message and exit
+  --server-config	It installs the LastControl as a server.
+  --localhost		It controls the server (local machine) you are running on.
 EOF
 }
 
@@ -104,6 +105,11 @@ create_report() {
 		exit 1
 	fi
 }
+
+if [ "$1" = "--localhost" ]; then
+	create_report
+	exit 0
+fi
 
 CHECK_QUOTA() {
     if command -v quotacheck &> /dev/null; then
