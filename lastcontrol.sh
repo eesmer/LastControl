@@ -43,7 +43,6 @@ if [ "$1" = "--help" ] || [ "$1" = "-h" ] || [ -z "$1" ]; then
 fi
 
 SYSTEM_REPORT() {
-	
 	if [ -d "$RDIR" ]; then
 		rm -r $RDIR
 	fi
@@ -224,40 +223,42 @@ LOGIN_INFO() {
         LAST_LOGIN_INFO=$(cat $RDIR/lastlogininfo | paste -sd ",")
 }
 
+CHECK_KERNEL_MODULES() {
+        ####OSVER=$(grep PRETTY_NAME /etc/os-release | cut -d '=' -f2 | cut -d '"' -f2)
+        modules=("cramfs" "freevxfs" "jffs2" "hfs" "hfsplus" "squashfs" "udf")
+        # Initialize a variable to hold the module statuses
+        declare -A module_statuses
+        # Loop through the modules array and check their status
+        for module in "${modules[@]}"; do
+                module_statuses["$module"]="FALSE"
+                if lsmod | grep -q "$module"; then
+                        module_statuses["$module"]="LOADED"
+                fi
+        done
+
+        CRAMFS=${module_statuses["cramfs"]}
+        FREEVXFS=${module_statuses["freevxfs"]}
+        JFFS2=${module_statuses["jffs2"]}
+        HFS=${module_statuses["hfs"]}
+        HFSPLUS=${module_statuses["hfsplus"]}
+        SQUASHFS=${module_statuses["squashfs"]}
+        UDF=${module_statuses["udf"]}
+}
+
 if [ "$1" = "--localhost" ]; then
         SYSTEM_REPORT
-	CHECK_QUOTA
-	LVM_CRYPT
-	SYSLOG_INFO
-	MEMORY_INFO
-	USER_LIST
-	SUDO_USER_LIST
-	PASSWORD_EXPIRE_INFO
-	NEVER_LOGGED_USERS
-	LOGIN_INFO
+        CHECK_QUOTA
+        LVM_CRYPT
+        SYSLOG_INFO
+        MEMORY_INFO
+        USER_LIST
+        SUDO_USER_LIST
+        PASSWORD_EXPIRE_INFO
+        NEVER_LOGGED_USERS
+        LOGIN_INFO
+        CHECK_KERNEL_MODULES
         exit 0
 fi
-
-# CHECK KERNEL MODULES
-####OSVER=$(grep PRETTY_NAME /etc/os-release | cut -d '=' -f2 | cut -d '"' -f2)
-modules=("cramfs" "freevxfs" "jffs2" "hfs" "hfsplus" "squashfs" "udf")
-# Initialize a variable to hold the module statuses
-declare -A module_statuses
-# Loop through the modules array and check their status
-for module in "${modules[@]}"; do
-        module_statuses["$module"]="FALSE"
-        if lsmod | grep -q "$module"; then
-                module_statuses["$module"]="LOADED"
-        fi
-done
-
-CRAMFS=${module_statuses["cramfs"]}
-FREEVXFS=${module_statuses["freevxfs"]}
-JFFS2=${module_statuses["jffs2"]}
-HFS=${module_statuses["hfs"]}
-HFSPLUS=${module_statuses["hfsplus"]}
-SQUASHFS=${module_statuses["squashfs"]}
-UDF=${module_statuses["udf"]}
 
 # GRUB CONTROL
 if [ "$REP" = APT ]; then
