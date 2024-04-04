@@ -184,6 +184,37 @@ SUDO_USER_LIST(){
     rm -f "$tmpfile"
 }
 
+USER_LOGINS() {
+	SERVICE_USER_LIST=$(awk -F: '$2 == "*"' /etc/shadow | cut -d ":" -f1 | paste -sd ",")
+	BLANK_PASS_USER_LIST=$(awk -F: '$2 == "!*" { print $1 }' /etc/shadow | paste -sd ",")
+	LAST_LOGIN_00D=$(lastlog --time 1 |grep -v "Username" | awk '{ print $1}' | paste -sd ',')
+	LAST_LOGIN_07D=$(lastlog --time 7 |grep -v "Username" | awk '{ print $1}' | paste -sd ',')
+	LAST_LOGIN_30D=$(lastlog --time 30 |grep -v "Username" | awk '{ print $1}' | paste -sd ',')
+	NO_LOGIN_USER=$(awk -F: '$NF !~ "/(bash|sh)$" && $NF != "" {print $1}' /etc/passwd | wc -l)
+	LOGIN_AUTH_USER=$(awk -F: '$NF ~ "/bin/(ba)?sh$"{print $1}' /etc/passwd)
+	
+	# NOTLOGIN USERLIST last 30 Day
+	lastlog --time 30 | grep -v "Username" | cut -d " " -f1 > $RDIR/lastlogin30d
+	getent passwd {0..0} {1000..2000} |cut -d ":" -f1 > $LOCAL_USER_LIST_FILE
+	NOT_LOGIN_30D=$(diff $RDIR/lastlogin30d $LOCAL_USER_LIST_FILE -n | grep -v "d1" | grep -v "a0" | grep -v "a1" | grep -v "a2" | grep -v "a3" | grep -v "a4" | paste -sd ",")
+	
+	rm -f $RDIR/passchange
+	rm -f $RDIR/userstatus
+	PC=1
+	while [ $PC -le $LOCAL_USER_COUNT ]; do
+		USER_ACCOUNT_NAME=$(awk "NR==$PC" $LOCAL_USER_LIST_FILE)
+		PASS_CHANGE=$(lslogins "$USER_ACCOUNT_NAME" | grep "Password changed:" | awk ' { print $3 }')    # Password update date
+		USERSTATUS=$(passwd -S "$USER_ACCOUNT_NAME" >> $RDIR/userstatus)                                 # user status information
+		echo "$USER_ACCOUNT_NAME:$PASS_CHANGE" >> $RDIR/passchange
+		PC=$(( PC + 1 ))
+	done
+	
+	cat $RDIR/userstatus | grep "L" | cut -d " " -f1 > $RDIR/lockedusers
+	LOCKED_USERS=$(cat $RDIR/lockedusers | paste -sd ",")                                            # locked users
+	PASS_UPDATE_INFO=$(cat $RDIR/passchange | paste -sd ",")
+	rm $RDIR/lockedusers
+}
+
 PASSWORD_EXPIRE_INFO() {
         rm -f $RDIR/passexpireinfo.txt
         PX=1
@@ -282,6 +313,24 @@ GRUB_CONTROL() {
         fi
 }
 
+SERVICE_PROCESS(){
+	SERVICE_MANAGER="$(ps --no-headers -o comm 1)"
+	if [ "$SERVICE_MANAGER" = systemd ]; then
+		systemctl list-units --type service |grep running > $RDIR/runningservices.txt
+		RUNNING_SERVICE=$(wc -l $RDIR/runningservices.txt |cut -d ' ' -f1)
+		LOADED_SERVICE=$(systemctl list-units --type service |grep "units." |cut -d "." -f1)
+		rm $RDIR/runningservices.txt
+	fi
+	
+	ACTIVE_CONN=$(netstat -s | awk '/active connection openings/ {print $1}')
+	PASSIVE_CONN=$(netstat -s | awk '/passive connection openings/ {print $1}')
+	FAILED_CONN=$(netstat -s | awk '/failed connection attempts/ {print $1}')
+	ESTAB_CONN=$(netstat -s | awk '/connections established/ {print $1}')
+	NOC=$(nproc --all)
+	LOAD_AVG=$(uptime | grep "load average:" | awk -F: '{print $5}' | xargs)
+	ZO_PROCESS=$(ps -A -ostat,ppid,pid,cmd | grep -e '^[Zz]' | wc -l)
+}
+
 if [ "$1" = "--localhost" ]; then
         SYSTEM_REPORT
 	CHECK_QUOTA
@@ -290,71 +339,25 @@ if [ "$1" = "--localhost" ]; then
 	MEMORY_INFO
 	USER_LIST
 	SUDO_USER_LIST
+	USER_LOGINS
 	PASSWORD_EXPIRE_INFO
 	NEVER_LOGGED_USERS
 	LOGIN_INFO
 	CHECK_KERNEL_MODULES
 	GRUB_CONTROL
-        exit 0
+	SERVICE_PROCESS
+        #exit 0
 fi
 
-#----------------------------
-# SERVICE & PROCESSES
-#----------------------------
-SERVICE_MANAGER="$(ps --no-headers -o comm 1)"
-if [ "$SERVICE_MANAGER" = systemd ]; then
-        systemctl list-units --type service |grep running > $RDIR/runningservices.txt
-        RUNNING_SERVICE=$(wc -l $RDIR/runningservices.txt |cut -d ' ' -f1)
-        LOADED_SERVICE=$(systemctl list-units --type service |grep "units." |cut -d "." -f1)
-	rm $RDIR/runningservices.txt
-fi
-
-ACTIVE_CONN=$(netstat -s | awk '/active connection openings/ {print $1}')
-PASSIVE_CONN=$(netstat -s | awk '/passive connection openings/ {print $1}')
-FAILED_CONN=$(netstat -s | awk '/failed connection attempts/ {print $1}')
-ESTAB_CONN=$(netstat -s | awk '/connections established/ {print $1}')
-NOC=$(nproc --all)
-LOAD_AVG=$(uptime | grep "load average:" | awk -F: '{print $5}' | xargs)
-ZO_PROCESS=$(ps -A -ostat,ppid,pid,cmd | grep -e '^[Zz]' | wc -l)
-
-SERVICE_USER_LIST=$(awk -F: '$2 == "*"' /etc/shadow | cut -d ":" -f1 | paste -sd ",")
-BLANK_PASS_USER_LIST=$(awk -F: '$2 == "!*" { print $1 }' /etc/shadow | paste -sd ",")
-LAST_LOGIN_00D=$(lastlog --time 1 |grep -v "Username" | awk '{ print $1}' | paste -sd ',')
-LAST_LOGIN_07D=$(lastlog --time 7 |grep -v "Username" | awk '{ print $1}' | paste -sd ',')
-LAST_LOGIN_30D=$(lastlog --time 30 |grep -v "Username" | awk '{ print $1}' | paste -sd ',')
-NO_LOGIN_USER=$(awk -F: '$NF !~ "/(bash|sh)$" && $NF != "" {print $1}' /etc/passwd | wc -l)
-LOGIN_AUTH_USER=$(awk -F: '$NF ~ "/bin/(ba)?sh$"{print $1}' /etc/passwd)
-
-# NOTLOGIN USERLIST last 30 Day
-lastlog --time 30 | grep -v "Username" | cut -d " " -f1 > $RDIR/lastlogin30d
-getent passwd {0..0} {1000..2000} |cut -d ":" -f1 > $LOCAL_USER_LIST_FILE
-NOT_LOGIN_30D=$(diff $RDIR/lastlogin30d $LOCAL_USER_LIST_FILE -n | grep -v "d1" | grep -v "a0" | grep -v "a1" | grep -v "a2" | grep -v "a3" | grep -v "a4" | paste -sd ",")
-
-rm -f $RDIR/passchange
-rm -f $RDIR/userstatus
-PC=1
-while [ $PC -le $LOCAL_USER_COUNT ]; do
-    USER_ACCOUNT_NAME=$(awk "NR==$PC" $LOCAL_USER_LIST_FILE)
-    PASS_CHANGE=$(lslogins "$USER_ACCOUNT_NAME" | grep "Password changed:" | awk ' { print $3 }')    # Password update date
-    USERSTATUS=$(passwd -S "$USER_ACCOUNT_NAME" >> $RDIR/userstatus)                                 # user status information
-    echo "$USER_ACCOUNT_NAME:$PASS_CHANGE" >> $RDIR/passchange
-    PC=$(( PC + 1 ))
-done
-
-cat $RDIR/userstatus | grep "L" | cut -d " " -f1 > $RDIR/lockedusers
-LOCKED_USERS=$(cat $RDIR/lockedusers | paste -sd ",")                                            # locked users
-PASS_UPDATE_INFO=$(cat $RDIR/passchange | paste -sd ",")
-rm $RDIR/lockedusers
-
-USER_LIST
-PASSWORD_EXPIRE_INFO
-CHECK_QUOTA
-LVM_CRYPT
-SYSLOG_INFO
-SUDO_USER_LIST
-NEVER_LOGGED_USERS
-LOGIN_INFO
-MEMORY_INFO
+#USER_LIST
+#PASSWORD_EXPIRE_INFO
+#CHECK_QUOTA
+#LVM_CRYPT
+#SYSLOG_INFO
+#SUDO_USER_LIST
+#NEVER_LOGGED_USERS
+#LOGIN_INFO
+#MEMORY_INFO
 
 clear
 printf "%30s %s\n" "------------------------------------------------------"
