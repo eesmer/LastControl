@@ -6,7 +6,7 @@
 # However, it is your responsibility to run it on any system.
 #---------------------------------------------------------------------
 
-show_help() {
+SHOW_HELP() {
     cat << EOF
 Usage: $(basename "$0") [OPTION]
 
@@ -38,7 +38,7 @@ LOGO=/usr/local/lastcontrol/images/lastcontrol_logo.png
 DATE=$(date)
 
 if [ "$1" = "--help" ] || [ "$1" = "-h" ] || [ -z "$1" ]; then
-    show_help
+    SHOW_HELP
     exit 0
 fi
 
