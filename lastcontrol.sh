@@ -346,85 +346,76 @@ if [ "$1" = "--localhost" ]; then
 	CHECK_KERNEL_MODULES
 	GRUB_CONTROL
 	SERVICE_PROCESS
-        #exit 0
+	
+	clear
+	printf "%30s %s\n" "------------------------------------------------------"
+	$RED
+	printf "%30s %s\n" "               LastControl Summary Report             " 
+	$NOCOL
+	printf "%30s %s\n" "------------------------------------------------------"
+	$CYAN
+	printf "%30s %s\n" "- Hardware                                              " 
+	$NOCOL
+	printf "%30s %s\n" "------------------------------------------------------"
+	printf "%30s %s\n" "Hostname            :" "$HOST_NAME"
+	printf "%30s %s\n" "Internal IP Address :" "$INTERNAL_IP"
+	printf "%30s %s\n" "External IP Address :" "$EXTERNAL_IP"
+	printf "%30s %s\n" "Internet Connection :" "$INTERNET"
+	printf "%30s %s\n" "CPU Info            :" "$CPU_INFO - Number of CPU: $NOC"
+	printf "%30s %s\n" "Ram Info            :" "Total Ram: $RAM_TOTAL - Ram Usage: $RAM_USAGE"
+	printf "%30s %s\n" "VGA Info            :" "VGA: $GPU_INFO - VGA Ram: $GPU_RAM"
+	printf "%30s %s\n" "------------------------------------------------------"
+	$CYAN
+	printf "%50s %s\n" "- System                                              " 
+	$NOCOL
+	printf "%30s %s\n" "------------------------------------------------------"
+	printf "%30s %s\n" "Distro              :" "$DISTRO"
+	printf "%30s %s\n" "Kernel Version      :" "$KERNEL"
+	printf "%30s %s\n" "Uptime              :" "$UPTIME - $UPTIME_MIN"
+	printf "%30s %s\n" "Last Boot           :" "$LAST_BOOT"
+	printf "%30s %s\n" "Virtualization      :" "$VIRT_CONTROL"
+	printf "%30s %s\n" "Date                :" "Date:$LOCAL_DATE"
+	printf "%30s %s\n" "Timezone            :" "$TIME_ZONE"
+	printf "%30s %s\n" "------------------------------------------------------"
+	$CYAN
+	printf "%30s %s\n" "- Current Status                                      "
+	$NOCOL
+	printf "%30s %s\n" "------------------------------------------------------"
+	printf "%30s %s\n" "Ram Usage           :" "$RAM_USAGE_PERCENTAGE%"
+	printf "%30s %s\n" "Swap Usage          :" "$SWAP_USAGE_PERCENTAGE%"
+	printf "%30s %s\n" "Service Manager     :" "$SERVICE_MANAGER"
+	printf "%30s %s\n" "Running Service     :" "$RUNNING_SERVICE"
+	printf "%30s %s\n" "Loaded Service      :" "$LOADED_SERVICE"
+	printf "%30s %s\n" "Active Connections  :" "$ACTIVE_CONN"
+	printf "%30s %s\n" "Passive Connections :" "$PASSIVE_CONN"
+	printf "%30s %s\n" "Failed Connections  :" "$FAILED_CONN"
+	printf "%30s %s\n" "Established Conn.   :" "$ESTAB_CONN"
+	printf "%30s %s\n" "Load Average        :" "$LOAD_AVG"
+	printf "%30s %s\n" "Zombie Process      :" "$ZO_PROCESS"
+	printf "%30s %s\n" "------------------------------------------------------"
+	$CYAN
+	$BOLD
+	printf "%10s %s\n" "- The Full Report System"
+	$NOCOL
+	printf "%10s %s\n" "$RDIR/$HOST_NAME/$HOST_NAME-allreports.txt"
+	$NORMAL
+	printf "%30s %s\n" "------------------------------------------------------"
+	echo -e
+	
+	#rm -f /tmp/{lastlogin30d,localuserlist,userstatus,activeusers,lockedusers,passchange,lastlogininfo}
+	rm -f "$RDIR"/{lastlogin30d,lastlogininfo,passchange,passexpireinfo.txt,userstatus}
+	rm -f "$RDIR"/lastlogininfo
+	rm -f "$RDIR"/passexpireinfo.txt
+	rm -f "$RDIR"/localusers
+	
+	exit 0
 fi
-
-#USER_LIST
-#PASSWORD_EXPIRE_INFO
-#CHECK_QUOTA
-#LVM_CRYPT
-#SYSLOG_INFO
-#SUDO_USER_LIST
-#NEVER_LOGGED_USERS
-#LOGIN_INFO
-#MEMORY_INFO
-
-clear
-printf "%30s %s\n" "------------------------------------------------------"
-$RED
-printf "%30s %s\n" "               LastControl Summary Report             " 
-$NOCOL
-printf "%30s %s\n" "------------------------------------------------------"
-$CYAN
-printf "%30s %s\n" "- Hardware                                              " 
-$NOCOL
-printf "%30s %s\n" "------------------------------------------------------"
-printf "%30s %s\n" "Hostname            :" "$HOST_NAME"
-printf "%30s %s\n" "Internal IP Address :" "$INTERNAL_IP"
-printf "%30s %s\n" "External IP Address :" "$EXTERNAL_IP"
-printf "%30s %s\n" "Internet Connection :" "$INTERNET"
-printf "%30s %s\n" "CPU Info            :" "$CPU_INFO - Number of CPU: $NOC"
-printf "%30s %s\n" "Ram Info            :" "Total Ram: $RAM_TOTAL - Ram Usage: $RAM_USAGE"
-printf "%30s %s\n" "VGA Info            :" "VGA: $GPU_INFO - VGA Ram: $GPU_RAM"
-printf "%30s %s\n" "------------------------------------------------------"
-$CYAN
-printf "%50s %s\n" "- System                                                " 
-$NOCOL
-printf "%30s %s\n" "------------------------------------------------------"
-printf "%30s %s\n" "Distro              :" "$DISTRO"
-printf "%30s %s\n" "Kernel Version      :" "$KERNEL"
-printf "%30s %s\n" "Uptime              :" "$UPTIME - $UPTIME_MIN"
-printf "%30s %s\n" "Last Boot           :" "$LAST_BOOT"
-printf "%30s %s\n" "Virtualization      :" "$VIRT_CONTROL"
-printf "%30s %s\n" "Date                :" "Date:$LOCAL_DATE"
-printf "%30s %s\n" "Timezone            :" "$TIME_ZONE"
-printf "%30s %s\n" "------------------------------------------------------"
-$CYAN
-printf "%30s %s\n" "- Current Status                                      "
-$NOCOL
-printf "%30s %s\n" "------------------------------------------------------"
-printf "%30s %s\n" "Ram Usage           :" "$RAM_USAGE_PERCENTAGE%"
-printf "%30s %s\n" "Swap Usage          :" "$SWAP_USAGE_PERCENTAGE%"
-printf "%30s %s\n" "Service Manager     :" "$SERVICE_MANAGER"
-printf "%30s %s\n" "Running Service     :" "$RUNNING_SERVICE"
-printf "%30s %s\n" "Loaded Service      :" "$LOADED_SERVICE"
-printf "%30s %s\n" "Active Connections  :" "$ACTIVE_CONN"
-printf "%30s %s\n" "Passive Connections :" "$PASSIVE_CONN"
-printf "%30s %s\n" "Failed Connections  :" "$FAILED_CONN"
-printf "%30s %s\n" "Established Conn.   :" "$ESTAB_CONN"
-printf "%30s %s\n" "Load Average        :" "$LOAD_AVG"
-printf "%30s %s\n" "Zombie Process      :" "$ZO_PROCESS"
-printf "%30s %s\n" "------------------------------------------------------"
-$CYAN
-$BOLD
-printf "%10s %s\n" "- The Full Report System"
-$NOCOL
-printf "%10s %s\n" "$RDIR/$HOST_NAME/$HOST_NAME-allreports.txt"
-$NORMAL
-printf "%30s %s\n" "------------------------------------------------------"
-echo -e
-
-#rm -f /tmp/{lastlogin30d,localuserlist,userstatus,activeusers,lockedusers,passchange,lastlogininfo}
-rm -f "$RDIR"/{lastlogin30d,lastlogininfo,passchange,passexpireinfo.txt,userstatus}
-rm -f "$RDIR"/lastlogininfo
-rm -f "$RDIR"/passexpireinfo.txt
-rm -f "$RDIR"/localusers
 
 #-------------------------
 # Create TXT Report File
 #-------------------------
 if [ -f "$RDIR/$HOST_NAME-allreports.txt" ]; then
-        rm $RDIR/$HOST_NAME-allreports.txt
+	rm $RDIR/$HOST_NAME-allreports.txt
 fi
 
 cat > $RDIR/$HOST_NAME-allreports.txt << EOF
