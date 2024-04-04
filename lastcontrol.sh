@@ -298,42 +298,6 @@ if [ "$1" = "--localhost" ]; then
         exit 0
 fi
 
-## GRUB CONTROL
-#if [ "$REP" = APT ]; then
-#        GRUB_EXIST=Fail
-#        dpkg -l |grep -w "grub" &>/dev/null && GRUB_EXIST=GRUB
-#        dpkg -l |grep -w "grub2" &>/dev/null && GRUB_EXIST=GRUB2
-#
-#        if [ "$GRUB_EXIST" = "GRUB" ]; then
-#                GRUB_PACKAGE=$(dpkg -l |grep -w "grub" |grep "common")
-#        elif [ "$GRUB_EXIST" = "GRUB2" ]; then
-#                GRUB_PACKAGE=$(dpkg -l |grep -w "grub2" |grep "common")
-#        elif [ "$GRUB_EXIST" = "Fail" ]; then
-#                GRUB_PACKAGE="Fail"
-#        fi
-#        # GRUB Security
-#        GRUB_SEC=Fail
-#        grep "set superusers=" /etc/grub.d/* &>/dev/null && GRUB_SEC=Pass
-#
-#elif [ "$REP" = YUM ]; then
-#        GRUB_EXIST=Fail
-#        rpm -qa |grep -w "grub" &>/dev/null && GRUB_EXIST=GRUB
-#        rpm -qa |grep -w "grub2" &>/dev/null && GRUB_EXIST=GRUB2
-#
-#        if [ "$GRUB_EXIST" = "GRUB" ]; then
-#                GRUB_PACKAGE=$(rpm -qa |grep -w "grub" |grep "common")
-#        elif [ "$GRUB_EXIST" = "GRUB2" ]; then
-#                GRUB_PACKAGE=$(rpm -qa |grep -w "grub2" |grep "common")
-#        elif [ "$GRUB_EXIST" = "Fail" ]; then
-#                GRUB_PACKAGE="Fail"
-#        fi
-#
-#        # GRUB Security
-#        GRUB_SEC="Fail"
-#        if [ -a "/boot/grub2/user.cfg" ]; then GRUB_SEC="Pass"; fi
-#fi
-
-
 #----------------------------
 # SERVICE & PROCESSES
 #----------------------------
