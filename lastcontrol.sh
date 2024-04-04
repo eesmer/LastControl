@@ -408,15 +408,12 @@ if [ "$1" = "--localhost" ]; then
 	rm -f "$RDIR"/passexpireinfo.txt
 	rm -f "$RDIR"/localusers
 	
-	exit 0
-fi
-
-#-------------------------
-# Create TXT Report File
-#-------------------------
-if [ -f "$RDIR/$HOST_NAME-allreports.txt" ]; then
-	rm $RDIR/$HOST_NAME-allreports.txt
-fi
+	#-------------------------
+	# Create TXT Report File
+	#-------------------------
+	if [ -f "$RDIR/$HOST_NAME-allreports.txt" ]; then
+		rm $RDIR/$HOST_NAME-allreports.txt
+	fi
 
 cat > $RDIR/$HOST_NAME-allreports.txt << EOF
 $HOST_NAME LastControl All Controls Report $DATE
@@ -505,12 +502,15 @@ $HOST_NAME LastControl All Controls Report $DATE
 |Service Users:     |$SERVICE_USER_LIST
 --------------------------------------------------------------------------------------------------------------------------
 EOF
-echo "|LISTENING SERVICE and PORT LIST" >> $RDIR/$HOST_NAME-allreports.txt
-echo "|--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-#netstat -tl |grep -v "Active Internet connections (servers and established)" |grep -v "Active Internet connections (only servers)" >> $RDIR/$HOST_NAME-allreports.txt
-lsof -nP -iTCP -sTCP:LISTEN | grep -v "IPv6" >> $RDIR/$HOST_NAME-allreports.txt
-echo "|--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-echo "|ESTABLISHED SERVICE LIST" >> $RDIR/$HOST_NAME-allreports.txt
-echo "|--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-netstat -tn |grep -v "Active Internet connections (servers and established)" |grep -v "Active Internet connections (only servers)" |grep "ESTABLISHED" >> $RDIR/$HOST_NAME-allreports.txt
-echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+
+	echo "|LISTENING SERVICE and PORT LIST" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "|--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	#netstat -tl |grep -v "Active Internet connections (servers and established)" |grep -v "Active Internet connections (only servers)" >> $RDIR/$HOST_NAME-allreports.txt
+	lsof -nP -iTCP -sTCP:LISTEN | grep -v "IPv6" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "|--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "|ESTABLISHED SERVICE LIST" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "|--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	netstat -tn |grep -v "Active Internet connections (servers and established)" |grep -v "Active Internet connections (only servers)" |grep "ESTABLISHED" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+exit 0
+fi
