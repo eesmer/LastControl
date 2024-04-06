@@ -1,6 +1,6 @@
 ## LastControl Usage
 
-You can download the installer script from the link below.<br>
+You can download lastcontrol script from the link below.<br>
 
 ---
 
