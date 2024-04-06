@@ -163,8 +163,8 @@ SYSLOG_INFO() {
 }
 
 MEMORY_INFO() {
-        RAM_USAGE_PERCENTAGE=$(free |grep Mem |awk '{print $3/$2 * 100}' |cut -d "." -f1)
-        SWAP_USAGE_PERCENTAGE=$(free -m |grep Swap |awk '{print $3/$2 * 100}' |cut -d "." -f1)
+        RAM_USAGE_PERCENTAGE=$(free -m | grep Mem | awk '{ print $3/$2 * 100 }' | cut -d "." -f1)
+        SWAP_USAGE_PERCENTAGE=$(free -m | grep Swap | awk '{ print $3/$2 * 100 }' | cut -d "." -f1)
         OOM=0
         grep -i -r 'out of memory' /var/log/ &>/dev/null && OOM=1
         OOM_LOGS="None"
