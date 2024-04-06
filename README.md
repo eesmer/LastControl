@@ -30,8 +30,6 @@ bash lastcontrol.sh [OPTION] <br>
 
 ---
 
----
-
 ## Help
 
 [Usage](https://github.com/eesmer/LastControl/blob/main/lastcontrol-handbook.md)
