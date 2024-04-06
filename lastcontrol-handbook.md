@@ -8,6 +8,6 @@ You can download the installer script from the link below.<br>
 wget https://raw.githubusercontent.com/eesmer/LastControl/master/lastcontrol.sh
 ```
 ```bash
-bash lastcontrol.sh
+bash lastcontrol.sh --localhost
 ```
 ---
