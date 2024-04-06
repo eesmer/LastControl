@@ -22,11 +22,11 @@ https://www.cisecurity.org/
 
 bash lastcontrol.sh [OPTION] <br>
 
-| Option          | Description                                               |
-| --------------- | --------------------------------------------------------- |
-| --help          | show this help message                                    |
-| --localhost     | It controls the server (local machine) you are running on |
-| --server-config | It installs the LastControl as a server                   |
+| Option           | Description                                                |
+| :--------------- | :--------------------------------------------------------- |
+| --help           | show this help message                                     |
+| --localhost      | It controls the server (local machine) you are running on  |
+| --server-config  | It installs the LastControl as a server                    |
 
 ---
 
