@@ -21,8 +21,6 @@ https://www.cisecurity.org/
 ---
 
 bash lastcontrol.sh [OPTION] <br>
-<br>
-**Optional arguments:**<br>
 
 | Option          | Description                                               |
 | --------------- | --------------------------------------------------------- |
