@@ -20,7 +20,9 @@ bash lastcontrol.sh --localhost
   --localhost&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;It controls the server (local machine) you are running on. <br>
 
 ----
-| Option          | Description                             |
-| --------------- | --------------------------------------- |
-| --help          | show this help message and exit         |
-| --server-config | It installs the LastControl as a server |
+| Option          | Description                                               |
+| --------------- | --------------------------------------------------------- |
+| --help          | show this help message and exit                           |
+| --localhost     | It controls the server (local machine) you are running on |
+| --server-config | It installs the LastControl as a server                   |
+
