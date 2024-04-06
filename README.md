@@ -9,6 +9,7 @@ LastControl performs health and hardening checks on the system. <br>
 - Applies these controls to remote machines as a central server
 
 <br>
+
 **Compatible distros;** <br>
 Debian, Ubuntu, Centos, RedHat, Fedora, Oracle Linux, Rocky Linux<br>
 
