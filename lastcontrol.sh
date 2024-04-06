@@ -397,7 +397,7 @@ if [ "$1" = "--localhost" ]; then
 	$BOLD
 	printf "%10s %s\n" "- The Full Report System"
 	$NOCOL
-	printf "%10s %s\n" "$RDIR/$HOST_NAME/$HOST_NAME-allreports.txt"
+	printf "%10s %s\n" "$RDIR/$HOST_NAME-allreports.txt"
 	$NORMAL
 	printf "%30s %s\n" "------------------------------------------------------"
 	echo -e
