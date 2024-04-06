@@ -16,7 +16,7 @@ bash lastcontrol.sh --localhost
 <br>
 **Optional arguments:**<br>
   --help, -h&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;show this help message and exit <br>
-  --server-config&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;It installs the LastControl as a server. <br>
+  --server-config&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;It installs the LastControl as a server. <br>
   --localhost            It controls the server (local machine) you are running on. <br>
 
 ----
