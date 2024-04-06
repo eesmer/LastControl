@@ -1,11 +1,15 @@
 ![alt text](doc/images/lastcontrol_logo.png "LastControl")
 <br>
 
+LastControl performs health and hardening checks on the system. <br>
 
-LastControl performs health and hardening checks on the system.<br>
-It outputs machine-specific reports to the screen and publishes them from the Web Page in bulk, and saves them as PDFs.<br>
+- Shows summary report on screen
+- Saves as .txt
+- Saves as .pdf
+- Applies these controls to remote machines as a central server
+
 <br>
-**Compatible servers and clients;** <br>
+**Compatible distros;** <br>
 Debian, Ubuntu, Centos, RedHat, Fedora, Oracle Linux, Rocky Linux<br>
 
 <br>
