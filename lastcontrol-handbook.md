@@ -6,6 +6,9 @@ You can download lastcontrol script from the link below.<br>
 
 ```bash
 wget https://raw.githubusercontent.com/eesmer/LastControl/master/lastcontrol.sh
+
+---
+
 ```
 **Usage:** lastcontrol.sh [OPTION] <br>
 <br>
