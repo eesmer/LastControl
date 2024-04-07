@@ -402,7 +402,6 @@ if [ "$1" = "--localhost" ]; then
 	printf "%30s %s\n" "------------------------------------------------------"
 	echo -e
 	
-	#rm -f /tmp/{lastlogin30d,localuserlist,userstatus,activeusers,lockedusers,passchange,lastlogininfo}
 	rm -f "$RDIR"/{lastlogin30d,lastlogininfo,passchange,passexpireinfo.txt,userstatus}
 	rm -f "$RDIR"/lastlogininfo
 	rm -f "$RDIR"/passexpireinfo.txt
