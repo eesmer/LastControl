@@ -340,6 +340,15 @@ MOST_COMMANDS() {
 	fi
 }
 
+SSH_AUTH_LOGS() {
+        find /var/log -name 'auth*.gz' -type f -exec sh -c "zcat {} | egrep -i 'ssh'" \; \
+                |grep -v "Connection closed" \
+                |grep -v "Disconnected" \
+                |grep -v "Received disconnect" \
+                |grep -v "pam_unix" \
+                |grep -v "Server listening" | tail -n 10
+}
+
 if [ "$1" = "--localhost" ]; then
         SYSTEM_REPORT
 	CHECK_QUOTA
@@ -407,7 +416,9 @@ if [ "$1" = "--localhost" ]; then
 	printf "%30s %s\n" "- Audit                                               "
 	$NOCOL
 	printf "%30s %s\n" "------------------------------------------------------"
-	printf "%30s %s\n" "Most Usage Commands :" "$MOST_COMMANDS"
+	printf "%10s %s\n" "Most Usage Commands :" "$MOST_COMMANDS"
+	printf "%30s %s\n" "Last 10 SSH Auth. Log Records:"
+	SSH_AUTH_LOGS
 	printf "%30s %s\n" "------------------------------------------------------"
 	$CYAN
 	$BOLD
