@@ -331,6 +331,15 @@ SERVICE_PROCESS(){
 	ZO_PROCESS=$(ps -A -ostat,ppid,pid,cmd | grep -e '^[Zz]' | wc -l)
 }
 
+MOST_COMMANDS() {
+	HISTORY_FILE=~/.bash_history
+	if [ -f "$HISTORY_FILE" ]; then
+		MOST_COMMANDS=$(cat ~/.bash_history | awk '{cmd[$2]++} END {for(elem in cmd) {print cmd[elem] " " elem}}' | sort -n -r | head -20 | cut -d " " -f2 | paste -sd ",")
+	else
+		MOST_COMMANDS="bash_history file not found in ~/ directory"
+	fi
+}
+
 if [ "$1" = "--localhost" ]; then
         SYSTEM_REPORT
 	CHECK_QUOTA
@@ -346,6 +355,7 @@ if [ "$1" = "--localhost" ]; then
 	CHECK_KERNEL_MODULES
 	GRUB_CONTROL
 	SERVICE_PROCESS
+	MOST_COMMANDS
 	
 	clear
 	printf "%30s %s\n" "------------------------------------------------------"
@@ -392,6 +402,12 @@ if [ "$1" = "--localhost" ]; then
 	printf "%30s %s\n" "Established Conn.   :" "$ESTAB_CONN"
 	printf "%30s %s\n" "Load Average        :" "$LOAD_AVG"
 	printf "%30s %s\n" "Zombie Process      :" "$ZO_PROCESS"
+	printf "%30s %s\n" "------------------------------------------------------"
+	$CYAN
+	printf "%30s %s\n" "- Most Usage Commands                                 "
+	$NOCOL
+	printf "%30s %s\n" "------------------------------------------------------"
+	printf "%30s %s\n" "Most Usage Commands :" "$MOST_COMMANDS"
 	printf "%30s %s\n" "------------------------------------------------------"
 	$CYAN
 	$BOLD
