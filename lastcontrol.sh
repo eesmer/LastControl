@@ -447,74 +447,76 @@ $HOST_NAME LastControl All Controls Report $DATE
 --------------------------------------------------------------------------------------------------------------------------
 | SYSTEM INFORMATION
 --------------------------------------------------------------------------------------------------------------------------
-|Operation System:  |$DISTRO
-|Kernel Version:    |$KERNEL
-|Uptime             |$UPTIME | $UPTIME_MIN
-|Last Boot:         |$LAST_BOOT
-|Virtualization:    |$VIRT_CONTROL
-|Date/Time Sync:    |Date:$LOCAL_DATE - System clock synchronized:$TIME_SYNC
-|Timezone:          |$TIME_ZONE
-|Proxy Usage:       |HTTP: $HTTP_PROXY_USAGE
-|SYSLOG Usage:      |$SYSLOG_INSTALL | $SYSLOG_SERVICE | Socket: $SYSLOG_SOCKET | Send: $SYSLOG_SEND
+|Operation System:   |$DISTRO
+|Kernel Version:     |$KERNEL
+|Uptime              |$UPTIME | $UPTIME_MIN
+|Last Boot:          |$LAST_BOOT
+|Virtualization:     |$VIRT_CONTROL
+|Date/Time Sync:     |Date:$LOCAL_DATE - System clock synchronized:$TIME_SYNC
+|Timezone:           |$TIME_ZONE
+|Proxy Usage:        |HTTP: $HTTP_PROXY_USAGE
+|SYSLOG Usage:       |$SYSLOG_INSTALL | $SYSLOG_SERVICE | Socket: $SYSLOG_SOCKET | Send: $SYSLOG_SEND
 --------------------------------------------------------------------------------------------------------------------------
-|Ram  Usage:        |$RAM_USAGE_PERCENTAGE%
-|Swap Usage:        |$SWAP_USAGE_PERCENTAGE%
-|Disk Usage:        |$DISK_USAGE
-|Out of Memory Logs |$OOM_LOGS
+|Ram  Usage:         |$RAM_USAGE_PERCENTAGE%
+|Swap Usage:         |$SWAP_USAGE_PERCENTAGE%
+|Disk Usage:         |$DISK_USAGE
+|Out of Memory Logs  |$OOM_LOGS
 --------------------------------------------------------------------------------------------------------------------------
-|Disk Quota Usage:  |Install: $QUOTA_INSTALL | Usr_Quota: $USR_QUOTA | Grp_Quota: $GRP_QUOTA | Mount: $MNT_QUOTA
-|Disk Encrypt Usage:|Install: $CRYPT_INSTALL | Usage: $CRYPT_USAGE
-|LVM Usage:         |$LVM_USAGE
+|Disk Quota Usage:   |Install: $QUOTA_INSTALL | Usr_Quota: $USR_QUOTA | Grp_Quota: $GRP_QUOTA | Mount: $MNT_QUOTA
+|Disk Encrypt Usage: |Install: $CRYPT_INSTALL | Usage: $CRYPT_USAGE
+|LVM Usage:          |$LVM_USAGE
 --------------------------------------------------------------------------------------------------------------------------
 | Kernel Modules
 --------------------------------------------------------------------------------------------------------------------------
-|CRAMFS             |$CRAMFS
-|FREEVXFS           |$FREEVXFS
-|JFFS2              |$JFFS2
-|HFS                |$HFS
-|HFSPLUS            |$HFSPLUS
-|SQUASHFS           |$SQUASHFS
-|UDF                |$UDF
+|CRAMFS              |$CRAMFS
+|FREEVXFS            |$FREEVXFS
+|JFFS2               |$JFFS2
+|HFS                 |$HFS
+|HFSPLUS             |$HFSPLUS
+|SQUASHFS            |$SQUASHFS
+|UDF                 |$UDF
 --------------------------------------------------------------------------------------------------------------------------
-|GRUB               |$GRUB_PACKAGE
-|GRUB Security      |$GRUB_SEC
+|GRUB                |$GRUB_PACKAGE
+|GRUB Security       |$GRUB_SEC
 --------------------------------------------------------------------------------------------------------------------------
 | SERVICES & PROCESSES
 --------------------------------------------------------------------------------------------------------------------------
-|Service Management:|$SERVICE_MANAGER
-|Running Service:   |$RUNNING_SERVICE
-|Loaded Service:    |$LOADED_SERVICE
+|Service Management: |$SERVICE_MANAGER
+|Running Service:    |$RUNNING_SERVICE
+|Loaded Service:     |$LOADED_SERVICE
 --------------------------------------------------------------------------------------------------------------------------
-|Active Connection: |$ACTIVE_CONN
-|Passive Connection:|$PASSIVE_CONN
-|Failed Connection: |$FAILED_CONN
-|Established Conn.: |$ESTAB_CONN
+|Active Connection:  |$ACTIVE_CONN
+|Passive Connection: |$PASSIVE_CONN
+|Failed Connection:  |$FAILED_CONN
+|Established Conn.:  |$ESTAB_CONN
 ---------------------------------------------------------------------------------------------------------------------------
-|Number of CPU:     |$NOC
-|Load Avarage       |$LOAD_AVG
-|Zombie Process:    |$ZO_PROCESS
+|Number of CPU:      |$NOC
+|Load Avarage        |$LOAD_AVG
+|Zombie Process:     |$ZO_PROCESS
+-------------------------------------------------------------------------------------------------------------------------
+|Most Usage Commands |$MOST_USAGE_COMMANDS
 -------------------------------------------------------------------------------------------------------------------------
 | USERS
 --------------------------------------------------------------------------------------------------------------------------
-|Local User Count:  |$LOCAL_USER_COUNT
-|Local User List:   |$USER_LIST
-|SUDO Users:        |$SUDO_USER_LIST
-|Blank Pass. Users  |$BLANK_PASS_USER_LIST
-|Locked Users       |$LOCKED_USERS
+|Local User Count:   |$LOCAL_USER_COUNT
+|Local User List:    |$USER_LIST
+|SUDO Users:         |$SUDO_USER_LIST
+|Blank Pass. Users   |$BLANK_PASS_USER_LIST
+|Locked Users        |$LOCKED_USERS
 --------------------------------------------------------------------------------------------------------------------------
-|Last Login Today   |$LAST_LOGIN_00D
-|Last Login 7 Days  |$LAST_LOGIN_07D
-|Last Login 30 Days |$LAST_LOGIN_30D
-|Not Logged(30 Days)|$NOT_LOGIN_30D
-|Last Login Info    |$LAST_LOGIN_INFO
-|Never Logged Users |$NOT_LOGGED_USER
-|Login Auth. Users  |$LOGIN_AUTH_USER
-|NoLogin User Count |$NO_LOGIN_USER
+|Last Login Today    |$LAST_LOGIN_00D
+|Last Login 7 Days   |$LAST_LOGIN_07D
+|Last Login 30 Days  |$LAST_LOGIN_30D
+|Not Logged(30 Days) |$NOT_LOGIN_30D
+|Last Login Info     |$LAST_LOGIN_INFO
+|Never Logged Users  |$NOT_LOGGED_USER
+|Login Auth. Users   |$LOGIN_AUTH_USER
+|NoLogin User Count  |$NO_LOGIN_USER
 --------------------------------------------------------------------------------------------------------------------------
-|Pass. Expire Info  |$PASSEXINFO
-|Pass. Update Info  |$PASS_UPDATE_INFO
+|Pass. Expire Info   |$PASSEXINFO
+|Pass. Update Info   |$PASS_UPDATE_INFO
 --------------------------------------------------------------------------------------------------------------------------
-|Service Users:     |$SERVICE_USER_LIST
+|Service Users:      |$SERVICE_USER_LIST
 --------------------------------------------------------------------------------------------------------------------------
 EOF
 
