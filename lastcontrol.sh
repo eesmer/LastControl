@@ -404,7 +404,7 @@ if [ "$1" = "--localhost" ]; then
 	printf "%30s %s\n" "Zombie Process      :" "$ZO_PROCESS"
 	printf "%30s %s\n" "------------------------------------------------------"
 	$CYAN
-	printf "%30s %s\n" "- Most Usage Commands                                 "
+	printf "%30s %s\n" "- Audit                                               "
 	$NOCOL
 	printf "%30s %s\n" "------------------------------------------------------"
 	printf "%30s %s\n" "Most Usage Commands :" "$MOST_COMMANDS"
@@ -494,6 +494,7 @@ $HOST_NAME LastControl All Controls Report $DATE
 |Load Avarage        |$LOAD_AVG
 |Zombie Process:     |$ZO_PROCESS
 -------------------------------------------------------------------------------------------------------------------------
+| AUDIT INFO
 |Most Usage Commands |$MOST_COMMANDS
 -------------------------------------------------------------------------------------------------------------------------
 | USERS
