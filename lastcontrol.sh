@@ -416,8 +416,13 @@ if [ "$1" = "--localhost" ]; then
 	printf "%30s %s\n" "- Audit                                               "
 	$NOCOL
 	printf "%30s %s\n" "------------------------------------------------------"
-	printf "%10s %s\n" "Most Usage Commands :" "$MOST_COMMANDS"
+	$RED
+	printf "%10s %s\n" "Most Usage Commands :"
+	$NOCOL
+	"$MOST_COMMANDS"
+	$RED
 	printf "%30s %s\n" "Last 10 SSH Auth. Log Records:"
+	$NOCOL
 	SSH_AUTH_LOGS
 	printf "%30s %s\n" "------------------------------------------------------"
 	$CYAN
