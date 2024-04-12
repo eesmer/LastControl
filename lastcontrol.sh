@@ -314,17 +314,17 @@ GRUB_CONTROL() {
 }
 
 DIRECTORY_CHECK() {
-        mount | grep -E '\s/tmp\s' > /tmp/tmp_mount.txt
+        mount | grep -E '\s/tmp\s' > $RDIR/tmpmount.txt
         if [ "$?" = 0 ]; then
                 TMPMOUNT=Pass
-                egrep "size=" /tmp/tmp_mount.txt >> /dev/null && TMPSZIE=Pass
-                egrep "noexec" /tmp/tmp_mount.txt >> /dev/null && TMPNOEXEC=Pass
+                egrep "size=" $RDIR/tmpmount.txt >> /dev/null && TMPSZIE=Pass
+                egrep "noexec" $RDIR/tmpmount.txt >> /dev/null && TMPNOEXEC=Pass
         else
                 TMPMOUNT=Fail
                 TMPSIZE=Fail
                 TMPNOEXEC=Fail
         fi
-        rm -f /tmp/tmp_mount.txt
+        rm -f $RDIR/tmpmount.txt
 }
 
 
