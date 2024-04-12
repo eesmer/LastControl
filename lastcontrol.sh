@@ -313,6 +313,21 @@ GRUB_CONTROL() {
         fi
 }
 
+DIRECTORY_CHECK() {
+        mount | grep -E '\s/tmp\s' > /tmp/tmp_mount.txt
+        if [ "$?" = 0 ]; then
+                TMPMOUNT=Pass
+                egrep "size=" /tmp/tmp_mount.txt >> /dev/null && TMPSZIE=Pass
+                egrep "noexec" /tmp/tmp_mount.txt >> /dev/null && TMPNOEXEC=Pass
+        else
+                TMPMOUNT=Fail
+                TMPSIZE=Fail
+                TMPNOEXEC=Fail
+        fi
+        rm -f /tmp/tmp_mount.txt
+}
+
+
 SERVICE_PROCESS(){
 	SERVICE_MANAGER="$(ps --no-headers -o comm 1)"
 	if [ "$SERVICE_MANAGER" = systemd ]; then
@@ -365,6 +380,7 @@ if [ "$1" = "--localhost" ]; then
 	GRUB_CONTROL
 	SERVICE_PROCESS
 	MOST_COMMANDS
+	DIRECTORY_CHECK
 	
 	clear
 	printf "%30s %s\n" "------------------------------------------------------"
@@ -494,6 +510,12 @@ $HOST_NAME LastControl All Controls Report $DATE
 --------------------------------------------------------------------------------------------------------------------------
 |GRUB                |$GRUB_PACKAGE
 |GRUB Security       |$GRUB_SEC
+--------------------------------------------------------------------------------------------------------------------------
+| DIRECTORY CONFIG
+--------------------------------------------------------------------------------------------------------------------------
+|TMPMOUNT            |$TMPMOUNT
+|TMPSIZE             |$TMPSIZE
+|TMPEXEC             |$TMPNOEXEC
 --------------------------------------------------------------------------------------------------------------------------
 | SERVICES & PROCESSES
 --------------------------------------------------------------------------------------------------------------------------
