@@ -461,6 +461,11 @@ if [ "$1" = "--localhost" ]; then
 	printf "%30s %s\n" "Zombie Process      :" "$ZO_PROCESS"
 	printf "%30s %s\n" "------------------------------------------------------"
 	$CYAN
+	printf "%30s %s\n" "- Repository List                                     "
+	$NOCOL
+	cat $RDIR/repositorylist.txt	
+	printf "%30s %s\n" "------------------------------------------------------"
+	$CYAN
 	printf "%30s %s\n" "- Audit                                               "
 	$NOCOL
 	printf "%30s %s\n" "------------------------------------------------------"
