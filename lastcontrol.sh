@@ -314,6 +314,7 @@ GRUB_CONTROL() {
 }
 
 DIRECTORY_CHECK() {
+	# /tmp directory
         mount | grep -E '\s/tmp\s' > $RDIR/tmpmount.txt
         if [ "$?" = 0 ]; then
                 TMPMOUNT=Pass
