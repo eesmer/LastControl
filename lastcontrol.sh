@@ -325,6 +325,28 @@ DIRECTORY_CHECK() {
                 TMPNOEXEC=Fail
         fi
         rm -f $RDIR/tmpmount.txt
+	
+	# /var directory
+	mount | grep -E '\s/var\s' >> /dev/null
+	if [ "$?" = 0 ]; then
+		VARMOUNT=Pass
+	else
+		VARMOUNT=Fail
+	fi
+	
+	mount | grep -E '\s/var/tmp\s' >> /dev/null
+	if [ "$?" = 0 ]; then
+		VARTMPMOUNT=Pass
+	else
+		VARTMPMOUNT=Fail
+	fi
+	
+	mount | grep -E '\s\/var\/log\s' >> /dev/null
+	if [ "$?" = 0 ]; then
+		VARLOGMOUNT=Pass
+	else
+		VARLOGMOUNT=Fail
+	fi
 }
 
 
@@ -513,9 +535,12 @@ $HOST_NAME LastControl All Controls Report $DATE
 --------------------------------------------------------------------------------------------------------------------------
 | DIRECTORY CONFIG
 --------------------------------------------------------------------------------------------------------------------------
-|TMPMOUNT            |$TMPMOUNT
-|TMPSIZE             |$TMPSIZE
-|TMPEXEC             |$TMPNOEXEC
+|/tmp Dir Mount       |$TMPMOUNT
+|/tmp Size Config     |$TMPSIZE
+|/tmp Exec Config     |$TMPNOEXEC
+|/var Dir Mount       |$VARMOUNT
+|/var/tmp Dir Mount   |$VARTMPMOUNT
+|/var/log Dir Mount   |$VARLOGMOUNT
 --------------------------------------------------------------------------------------------------------------------------
 | SERVICES & PROCESSES
 --------------------------------------------------------------------------------------------------------------------------
