@@ -350,6 +350,14 @@ DIRECTORY_CHECK() {
 	fi
 }
 
+REPOSITORY_CHECK() {
+        if [ "$REP" = "APT" ]; then
+                grep -hE '^\s*deb\s' /etc/apt/sources.list | grep -v '^#' | awk '{print $2}' > $RDIR/repositorylist.txt
+                grep -hE '^\s*deb\s' /etc/apt/sources.list.d/* | grep -v '^#' | awk '{print $2}' >> $RDIR/repositorylist.txt
+        elif [ "$REP" = "YUM" ]; then
+                yum repolist all | grep enabled | awk '{print $1}' > $RDIR/repositorylist.txt
+        fi
+}
 
 SERVICE_PROCESS(){
 	SERVICE_MANAGER="$(ps --no-headers -o comm 1)"
@@ -404,6 +412,7 @@ if [ "$1" = "--localhost" ]; then
 	SERVICE_PROCESS
 	MOST_COMMANDS
 	DIRECTORY_CHECK
+	REPOSITORY_CHECK
 	
 	clear
 	printf "%30s %s\n" "------------------------------------------------------"
@@ -599,6 +608,11 @@ EOF
 	echo "|SSH Auth. Logs (Last 10 Record) |" >> $RDIR/$HOST_NAME-allreports.txt
 	SSH_AUTH_LOGS >> $RDIR/$HOST_NAME-allreports.txt
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "| REPOSITORY CHECK" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	cat $RDIR/repositorylist.txt >> $RDIR/$HOST_NAME-allreports.txt
+	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	rm $RDIR/repositorylist.txt
 
 exit 0
 fi
