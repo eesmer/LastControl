@@ -537,6 +537,7 @@ if [ "$1" = "--localhost" ]; then
 	DIRECTORY_CHECK
 	REPOSITORY_CHECK
 	NW_CONFIG_CHECK
+	SSH_CONFIG_CHECK
 	
 	clear
 	printf "%30s %s\n" "------------------------------------------------------"
