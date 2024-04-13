@@ -395,6 +395,28 @@ SSH_AUTH_LOGS() {
                 |grep -v "Server listening" | tail -n 10
 }
 
+NW_CONFIG_CHECK() {
+	NWCHECK1=$(sysctl net.ipv4.ip_forward |cut -d "=" -f2 |cut -d " " -f2)
+	IPV4_FORWARD_CHECK="Fail"
+	if [ "$NWCHECK1" = 0 ]; then IPV4_FORWARD_CHECK="Pass"; fi
+	
+	NWCHECK2=$(sysctl net.ipv4.conf.all.send_redirects |cut -d "=" -f2 |cut -d " " -f2)
+	IPV4_ALL_SEND_REDIRECTS="Fail"
+	if [ "$NWCHECK2" = 0 ]; then IPV4_ALL_SEND_REDIRECTS="Pass"; fi
+	
+	NWCHECK3=$(sysctl net.ipv4.conf.all.accept_source_route |cut -d "=" -f2 |cut -d " " -f2)
+	IPV4_ALL_ACCEPT_SOURCE_ROUTE="Fail"
+	if [ "$NWCHECK3" = 0 ]; then IPV4_ALL_ACCEPT_SOURCE_ROUTE="Pass"; fi
+	
+	NWCHECK4=$(sysctl net.ipv4.conf.default.accept_source_route |cut -d "=" -f2 |cut -d " " -f2)
+	IPV4_DEFAULT_ACCEPT_SOURCE_ROUTE="Fail"
+	if [ "$NWCHECK4" = 0 ]; then IPV4_DEFAULT_ACCEPT_SOURCE_ROUTE="Pass"; fi
+	
+	NWCHECK5=$(sysctl net.ipv4.conf.all.accept_redirects |cut -d "=" -f2 |cut -d " " -f2)
+	IPV4_ALL_ACCEPT_REDIRECTS="Fail"
+	if [ "$NWCHECK5" = 0 ]; then IPV4_ALL_ACCEPT_REDIRECTS="Pass"; fi
+}
+
 if [ "$1" = "--localhost" ]; then
         SYSTEM_REPORT
 	CHECK_QUOTA
@@ -413,6 +435,7 @@ if [ "$1" = "--localhost" ]; then
 	MOST_COMMANDS
 	DIRECTORY_CHECK
 	REPOSITORY_CHECK
+	NW_CONFIG_CHECK
 	
 	clear
 	printf "%30s %s\n" "------------------------------------------------------"
