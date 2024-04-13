@@ -592,6 +592,7 @@ if [ "$1" = "--localhost" ]; then
 	$CYAN
 	printf "%30s %s\n" "- Repository List                                     "
 	$NOCOL
+	printf "%30s %s\n" "------------------------------------------------------"
 	cat $RDIR/repositorylist.txt	
 	printf "%30s %s\n" "------------------------------------------------------"
 	$CYAN
