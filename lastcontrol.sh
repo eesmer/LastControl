@@ -458,65 +458,66 @@ SSH_CONFIG_CHECK() {
 	SSHCHECK1=$(stat /etc/ssh/sshd_config |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
 	SSHD_ACL="Fail"
 	if [ "$SSHCHECK1" = 0600 ]; then SSHD_ACL="Pass"; fi
-	
 	SSHCHECK2=$(stat /etc/ssh/ssh_host_rsa_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
 	RSAKEY_ACL="Fail"
 	if [ "$SSHCHECK2" = 0600 ]; then RSAKEY_ACL="Pass"; fi
-	
 	SSHCHECK3=$(stat /etc/ssh/ssh_host_ecdsa_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
 	ECDSAKEY_ACL="Fail"
 	if [ "$SSHCHECK3" = 0600 ]; then ECDSAKEY_ACL="Pass"; fi
-	
 	SSHCHECK4=$(stat /etc/ssh/ssh_host_ed25519_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
 	ED25519KEY_ACL="Fail"
 	if [ "$SSHCHECK4" = 0600 ]; then ED25519KEY_ACL="Pass"; fi
-	
 	# PUBLIC HOST KEY
 	SSHCHECK5=$(stat /etc/ssh/ssh_host_rsa_key.pub |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
 	RSAKEYPUB_ACL="Fail"
 	if [ "$SSHCHECK5" = 0644 ]; then RSAKEYPUB_ACL="Pass"; fi
-
 	SSHCHECK6=$(stat /etc/ssh/ssh_host_ed25519_key.pub |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
 	ED25519PUB_ACL="Fail"
 	if [ "$SSHCHECK6" = 0644 ]; then ED25519PUB_ACL="Pass"; fi
-
 	grep ^Protocol /etc/ssh/sshd_config >> /dev/null
 	PROTOCOL2="Fail"
 	if [ "$?" = 0 ]; then PROTOCOL2="Pass"; fi
-	
 	SSHCHECK7=$(sshd -T | grep loglevel |cut -d " " -f2)
 	LOGLEVEL="Fail"
 	if [ "$SSHCHECK7" = INFO ]; then LOGLEVEL="Pass"; fi
-
 	SSHCHECK8=$(sshd -T | grep x11forwarding |cut -d " " -f2)
 	X11FORWARD="Fail"
 	if [ "$SSHCHECK8" = no ]; then X11FORWARD="Pass"; fi
-	
 	SSHCHECK9=$(sshd -T | grep maxauthtries |cut -d " " -f2)
 	MAXAUTHTRIES="Fail"
 	if [ "$SSHCHECK9" -lt 4 ]; then MAXAUTHTRIES="Pass"; fi
-
 	SSHCHECK10=$(sshd -T | grep ignorerhosts |cut -d " " -f2)
 	IGNORERHOST="Fail"
 	if [ "$SSHCHECK10" = yes ]; then IGNORERHOST="Pass"; fi
-	
 	SSHCHECK11=$(sshd -T | grep hostbasedauthentication |cut -d " " -f2)
 	HOSTBASEDAUTH="Fail"
 	if [ "$SSHCHECK11" = no ]; then HOSTBASEDAUTH="Pass"; fi
-	
 	SSHCHECK12=$(sshd -T | grep permitrootlogin |cut -d " " -f2)
 	ROOTLOGIN="Fail"
 	if [ "$SSHCHECK12" = no ]; then ROOTLOGIN="Pass"; fi
-	
 	SSHCHECK13=$(sshd -T | grep permitemptypasswords |cut -d " " -f2)
 	EMPTYPASS="Fail"
 	if [ "$SSHCHECK13" = no ]; then EMPTYPASS="Pass"; fi
-	
 	SSHCHECK14=$(sshd -T | grep permituserenvironment |cut -d " " -f2)
 	PERMITUSERENV="Fail"
 	if [ "$SSHCHECK14" = no ]; then PERMITUSERENV="Pass"; fi
 }
 
+SUIDGUID_FILE_CHECK() {
+	echo "---------------------------------------------------" > $RDIR/suidguidfilelist.txt
+	echo "SUID Permissions Files                             " >> $RDIR/suidguidfilelist.txt
+	echo "---------------------------------------------------" >> $RDIR/suidguidfilelist.txt
+	find / -perm /2000  >> $RDIR/suidguidfilelist.txt
+	echo "---------------------------------------------------" >> $RDIR/suidguidfilelist.txt
+	echo "GUID Permissions Files                             " >> $RDIR/suidguidfilelist.txt
+	echo "---------------------------------------------------" >> $RDIR/suidguidfilelist.txt
+	find / -perm /4000 >> $RDIR/suidguidfilelist.txt
+	echo "---------------------------------------------------" >> $RDIR/suidguidfilelist.txt
+	echo "SUID and GUID Permissions Files                    " >> $RDIR/suidguidfilelist.txt
+	echo "---------------------------------------------------" >> $RDIR/suidguidfilelist.txt
+	find / -perm /6000 >> $RDIR/suidguidfilelist.txt
+	echo "---------------------------------------------------" >> $RDIR/suidguidfilelist.txt
+}
 
 if [ "$1" = "--localhost" ]; then
         SYSTEM_REPORT
@@ -778,6 +779,10 @@ EOF
 	cat $RDIR/repositorylist.txt >> $RDIR/$HOST_NAME-allreports.txt
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	rm $RDIR/repositorylist.txt
+
+
+
+
 
 exit 0
 fi
