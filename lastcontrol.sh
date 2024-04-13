@@ -778,5 +778,6 @@ EOF
 	cat $RDIR/repositorylist.txt >> $RDIR/$HOST_NAME-allreports.txt
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	rm $RDIR/repositorylist.txt
+	SUIDGUID_FILE_CHECK
 exit 0
 fi
