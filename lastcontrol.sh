@@ -556,14 +556,14 @@ $HOST_NAME LastControl All Controls Report $DATE
 --------------------------------------------------------------------------------------------------------------------------
 | HARDWARE INVENTORY
 --------------------------------------------------------------------------------------------------------------------------
-|Hostname:          |$HOST_NAME
-|IP Address:        |$INTERNAL_IP | $EXTERNAL_IP
-|Internet Conn.     |$INTERNET
-|CPU:               |$CPU_INFO
-|RAM:               |Total:$RAM_TOTAL | Ram Usage: $RAM_USAGE
-|GPU / VGA:         |VGA: $GPU_INFO   | VGA Ram: $GPU_RAM 
-|DISK LIST:         |$DISK_LIST
-|DISK INFO:         |$DISK_INFO
+|Hostname:           |$HOST_NAME
+|IP Address:         |$INTERNAL_IP | $EXTERNAL_IP
+|Internet Conn.      |$INTERNET
+|CPU:                |$CPU_INFO
+|RAM:                |Total:$RAM_TOTAL | Ram Usage: $RAM_USAGE
+|GPU / VGA:          |VGA: $GPU_INFO   | VGA Ram: $GPU_RAM 
+|DISK LIST:          |$DISK_LIST
+|DISK INFO:          |$DISK_INFO
 --------------------------------------------------------------------------------------------------------------------------
 | SYSTEM INFORMATION
 --------------------------------------------------------------------------------------------------------------------------
@@ -601,12 +601,12 @@ $HOST_NAME LastControl All Controls Report $DATE
 --------------------------------------------------------------------------------------------------------------------------
 | DIRECTORY CONFIG
 --------------------------------------------------------------------------------------------------------------------------
-|/tmp Dir Mount       |$TMPMOUNT
-|/tmp Size Config     |$TMPSIZE
-|/tmp Exec Config     |$TMPNOEXEC
-|/var Dir Mount       |$VARMOUNT
-|/var/tmp Dir Mount   |$VARTMPMOUNT
-|/var/log Dir Mount   |$VARLOGMOUNT
+|/tmp Dir Mount      |$TMPMOUNT
+|/tmp Size Config    |$TMPSIZE
+|/tmp Exec Config    |$TMPNOEXEC
+|/var Dir Mount      |$VARMOUNT
+|/var/tmp Dir Mount  |$VARTMPMOUNT
+|/var/log Dir Mount  |$VARLOGMOUNT
 --------------------------------------------------------------------------------------------------------------------------
 | SERVICES & PROCESSES
 --------------------------------------------------------------------------------------------------------------------------
