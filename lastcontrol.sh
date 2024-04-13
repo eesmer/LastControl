@@ -495,6 +495,26 @@ SSH_CONFIG_CHECK() {
 	SSHCHECK9=$(sshd -T | grep maxauthtries |cut -d " " -f2)
 	MAXAUTHTRIES="Fail"
 	if [ "$SSHCHECK9" -lt 4 ]; then MAXAUTHTRIES="Pass"; fi
+
+	SSHCHECK10=$(sshd -T | grep ignorerhosts |cut -d " " -f2)
+	IGNORERHOST="Fail"
+	if [ "$SSHCHECK10" = yes ]; then IGNORERHOST="Pass"; fi
+	
+	SSHCHECK11=$(sshd -T | grep hostbasedauthentication |cut -d " " -f2)
+	HOSTBASEDAUTH="Fail"
+	if [ "$SSHCHECK11" = no ]; then HOSTBASEDAUTH="Pass"; fi
+	
+	SSHCHECK12=$(sshd -T | grep permitrootlogin |cut -d " " -f2)
+	ROOTLOGIN="Fail"
+	if [ "$SSHCHECK12" = no ]; then ROOTLOGIN="Pass"; fi
+	
+	SSHCHECK13=$(sshd -T | grep permitemptypasswords |cut -d " " -f2)
+	EMPTYPASS="Fail"
+	if [ "$SSHCHECK13" = no ]; then EMPTYPASS="Pass"; fi
+	
+	SSHCHECK14=$(sshd -T | grep permituserenvironment |cut -d " " -f2)
+	PERMITUSERENV="Fail"
+	if [ "$SSHCHECK14" = no ]; then PERMITUSERENV="Pass"; fi
 }
 
 
