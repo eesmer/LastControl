@@ -504,6 +504,10 @@ SSH_CONFIG_CHECK() {
 }
 
 SUIDGUID_FILE_CHECK() {
+	echo "Sticky Bit (T Bit) Permissions Files               " > $RDIR/$HOST_NAME-allreports.txt
+	echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	find / -perm /1000 &> /dev/null >> $RDIR/$HOST_NAME-allreports.txt
+	echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "SUID Permissions Files                             " >> $RDIR/$HOST_NAME-allreports.txt
 	echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	find / -perm /2000 &> /dev/null >> $RDIR/$HOST_NAME-allreports.txt
