@@ -504,7 +504,7 @@ SSH_CONFIG_CHECK() {
 }
 
 SUIDGUID_FILE_CHECK() {
-	echo "Sticky Bit (T Bit) Permissions Files               " > $RDIR/$HOST_NAME-allreports.txt
+	echo "Sticky Bit (T Bit) Permissions Files               " >> $RDIR/$HOST_NAME-allreports.txt
 	echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	find / -perm /1000 &> /dev/null >> $RDIR/$HOST_NAME-allreports.txt
 	echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
@@ -778,7 +778,7 @@ EOF
 	echo "|SSH Auth. Logs (Last 10 Record) |" >> $RDIR/$HOST_NAME-allreports.txt
 	SSH_AUTH_LOGS >> $RDIR/$HOST_NAME-allreports.txt
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	echo "| REPOSITORY CHECK" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "| REPOSITORY LIST" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	cat $RDIR/repositorylist.txt >> $RDIR/$HOST_NAME-allreports.txt
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
