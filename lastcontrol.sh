@@ -443,6 +443,14 @@ NW_CONFIG_CHECK() {
 	NWCHECK12=$(sysctl net.ipv4.tcp_syncookies |cut -d "=" -f2 |cut -d " " -f2)
 	TCP_SYNCOOKIES="Fail"
 	if [ "$NWCHECK12" = 1 ]; then TCP_SYNCOOKIES="Pass"; fi
+
+	NWCHECK13=$(sysctl net.ipv6.conf.all.disable_ipv6 |cut -d "=" -f2 |cut -d " " -f2)
+	DISABLE_IPV6="Fail"
+	if [ "$NWCHECK13" = 1 ]; then DISABLE_IPV6="Pass"; fi
+
+	NWCHECK14=$(sysctl net.ipv6.conf.all.accept_ra |cut -d "=" -f2 |cut -d " " -f2)
+	IPV6_ALL_ACCEPT_RA="Fail"
+	if [ "$NWCHECK14" = 1 ]; then IPV6_ALL_ACCEPT_RA="Pass"; fi
 }
 
 if [ "$1" = "--localhost" ]; then
