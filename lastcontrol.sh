@@ -729,6 +729,8 @@ $HOST_NAME LastControl All Controls Report $DATE
 |Ignorer Host Check                       |$IGNORERHOST"
 |Host Based Authentication                |$HOSTBASEDAUTH"
 |Permit Root Login                        |$ROOTLOGIN"
+|Permit Empty Password                    |$EMPTYPASS"
+|Permit User Environment                  |$PERMITUSERENV"
 --------------------------------------------------------------------------------------------------------------------------
 | USERS
 --------------------------------------------------------------------------------------------------------------------------
