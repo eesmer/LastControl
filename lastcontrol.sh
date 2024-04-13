@@ -506,15 +506,15 @@ SSH_CONFIG_CHECK() {
 SUIDGUID_FILE_CHECK() {
 	echo "SUID Permissions Files                             " >> $RDIR/$HOST_NAME-allreports.txt
 	echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	find / -perm /2000 >> $RDIR/$HOST_NAME-allreports.txt
+	find / -perm /2000 &> /dev/null >> $RDIR/$HOST_NAME-allreports.txt
 	echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "GUID Permissions Files                             " >> $RDIR/$HOST_NAME-allreports.txt
 	echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	find / -perm /4000 >> $RDIR/$HOST_NAME-allreports.txt
+	find / -perm /4000 &> /dev/null >> $RDIR/$HOST_NAME-allreports.txt
 	echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "SUID and GUID Permissions Files                    " >> $RDIR/$HOST_NAME-allreports.txt
 	echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	find / -perm /6000 >> $RDIR/$HOST_NAME-allreports.txt
+	find / -perm /6000 &> /dev/null >> $RDIR/$HOST_NAME-allreports.txt
 	echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 }
 
