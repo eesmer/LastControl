@@ -479,6 +479,22 @@ SSH_CONFIG_CHECK() {
 	SSHCHECK6=$(stat /etc/ssh/ssh_host_ed25519_key.pub |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
 	ED25519PUB_ACL="Fail"
 	if [ "$SSHCHECK6" = 0644 ]; then ED25519PUB_ACL="Pass"; fi
+
+	grep ^Protocol /etc/ssh/sshd_config >> /dev/null
+	PROTOCOL2="Fail"
+	if [ "$?" = 0 ]; then PROTOCOL2="Pass"; fi
+	
+	SSHCHECK7=$(sshd -T | grep loglevel |cut -d " " -f2)
+	LOGLEVEL="Fail"
+	if [ "$SSHCHECK7" = INFO ]; then LOGLEVEL="Pass"; fi
+
+	SSHCHECK8=$(sshd -T | grep x11forwarding |cut -d " " -f2)
+	X11FORWARD="Fail"
+	if [ "$SSHCHECK8" = no ]; then X11FORWARD="Pass"; fi
+	
+	SSHCHECK9=$(sshd -T | grep maxauthtries |cut -d " " -f2)
+	MAXAUTHTRIES="Fail"
+	if [ "$SSHCHECK9" -lt 4 ]; then MAXAUTHTRIES="Pass"; fi
 }
 
 
