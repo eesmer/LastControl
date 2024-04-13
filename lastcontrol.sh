@@ -504,19 +504,18 @@ SSH_CONFIG_CHECK() {
 }
 
 SUIDGUID_FILE_CHECK() {
-	echo "---------------------------------------------------" > $RDIR/suidguidfilelist.txt
-	echo "SUID Permissions Files                             " >> $RDIR/suidguidfilelist.txt
-	echo "---------------------------------------------------" >> $RDIR/suidguidfilelist.txt
-	find / -perm /2000  >> $RDIR/suidguidfilelist.txt
-	echo "---------------------------------------------------" >> $RDIR/suidguidfilelist.txt
-	echo "GUID Permissions Files                             " >> $RDIR/suidguidfilelist.txt
-	echo "---------------------------------------------------" >> $RDIR/suidguidfilelist.txt
-	find / -perm /4000 >> $RDIR/suidguidfilelist.txt
-	echo "---------------------------------------------------" >> $RDIR/suidguidfilelist.txt
-	echo "SUID and GUID Permissions Files                    " >> $RDIR/suidguidfilelist.txt
-	echo "---------------------------------------------------" >> $RDIR/suidguidfilelist.txt
-	find / -perm /6000 >> $RDIR/suidguidfilelist.txt
-	echo "---------------------------------------------------" >> $RDIR/suidguidfilelist.txt
+	echo "SUID Permissions Files                             " >> $RDIR/$HOST_NAME-allreports.txt
+	echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	find / -perm /2000 >> $RDIR/$HOST_NAME-allreports.txt
+	echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "GUID Permissions Files                             " >> $RDIR/$HOST_NAME-allreports.txt
+	echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	find / -perm /4000 >> $RDIR/$HOST_NAME-allreports.txt
+	echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "SUID and GUID Permissions Files                    " >> $RDIR/$HOST_NAME-allreports.txt
+	echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	find / -perm /6000 >> $RDIR/$HOST_NAME-allreports.txt
+	echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 }
 
 if [ "$1" = "--localhost" ]; then
@@ -779,10 +778,5 @@ EOF
 	cat $RDIR/repositorylist.txt >> $RDIR/$HOST_NAME-allreports.txt
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	rm $RDIR/repositorylist.txt
-
-
-
-
-
 exit 0
 fi
