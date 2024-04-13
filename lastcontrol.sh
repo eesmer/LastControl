@@ -714,6 +714,17 @@ $HOST_NAME LastControl All Controls Report $DATE
 |IPv6 Disable IPv6 Check                  | $DISABLE_IPV6"
 |IPv6 All Accept Ra Check                 | $IPV6_ALL_ACCEPT_RA"
 -------------------------------------------------------------------------------------------------------------------------
+| SSH Config
+-------------------------------------------------------------------------------------------------------------------------
+|SSHD Config File ACL Check               |$SSHD_ACL"
+|ECDSA Public Key ACL Check               |$ECDSAKEY_ACL"
+|RSA Public Key ACL Check                 |$RSAKEYPUB_ACL"
+|RSA Private Key ACL Check                |$RSAKEY_ACL"
+|ED25519 Public Key ACL Check             |$ED25519PUB_ACL"
+|ED25519 Private Key ACL Check            |$ED25519KEY_ACL"
+|Protocol2 Usage Check                    |$PROTOCOL2"
+|Log Level (info) Check                   |$LOGLEVEL"
+--------------------------------------------------------------------------------------------------------------------------
 | USERS
 --------------------------------------------------------------------------------------------------------------------------
 |Local User Count:   |$LOCAL_USER_COUNT
