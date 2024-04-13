@@ -726,6 +726,9 @@ $HOST_NAME LastControl All Controls Report $DATE
 |Log Level (info) Check                   |$LOGLEVEL"
 |X11 Forwarding Check                     |$X11FORWARD"
 |Max. Auth Tries Check                    |$MAXAUTHTRIES"
+|Ignorer Host Check                       |$IGNORERHOST"
+|Host Based Authentication                |$HOSTBASEDAUTH"
+|Permit Root Login                        |$ROOTLOGIN"
 --------------------------------------------------------------------------------------------------------------------------
 | USERS
 --------------------------------------------------------------------------------------------------------------------------
