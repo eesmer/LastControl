@@ -453,6 +453,35 @@ NW_CONFIG_CHECK() {
 	if [ "$NWCHECK14" = 1 ]; then IPV6_ALL_ACCEPT_RA="Pass"; fi
 }
 
+SSH_CONFIG_CHECK() {
+	# PRIVATE HOST KEY
+	SSHCHECK1=$(stat /etc/ssh/sshd_config |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
+	SSHD_ACL="Fail"
+	if [ "$SSHCHECK1" = 0600 ]; then SSHD_ACL="Pass"; fi
+	
+	SSHCHECK2=$(stat /etc/ssh/ssh_host_rsa_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
+	RSAKEY_ACL="Fail"
+	if [ "$SSHCHECK2" = 0600 ]; then RSAKEY_ACL="Pass"; fi
+	
+	SSHCHECK3=$(stat /etc/ssh/ssh_host_ecdsa_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
+	ECDSAKEY_ACL="Fail"
+	if [ "$SSHCHECK3" = 0600 ]; then ECDSAKEY_ACL="Pass"; fi
+	
+	SSHCHECK4=$(stat /etc/ssh/ssh_host_ed25519_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
+	ED25519KEY_ACL="Fail"
+	if [ "$SSHCHECK4" = 0600 ]; then ED25519KEY_ACL="Pass"; fi
+	
+	# PUBLIC HOST KEY
+	SSHCHECK5=$(stat /etc/ssh/ssh_host_rsa_key.pub |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
+	RSAKEYPUB_ACL="Fail"
+	if [ "$SSHCHECK5" = 0644 ]; then RSAKEYPUB_ACL="Pass"; fi
+
+	SSHCHECK6=$(stat /etc/ssh/ssh_host_ed25519_key.pub |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
+	ED25519PUB_ACL="Fail"
+	if [ "$SSHCHECK6" = 0644 ]; then ED25519PUB_ACL="Pass"; fi
+}
+
+
 if [ "$1" = "--localhost" ]; then
         SYSTEM_REPORT
 	CHECK_QUOTA
