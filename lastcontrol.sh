@@ -724,6 +724,8 @@ $HOST_NAME LastControl All Controls Report $DATE
 |ED25519 Private Key ACL Check            |$ED25519KEY_ACL"
 |Protocol2 Usage Check                    |$PROTOCOL2"
 |Log Level (info) Check                   |$LOGLEVEL"
+|X11 Forwarding Check                     |$X11FORWARD"
+|Max. Auth Tries Check                    |$MAXAUTHTRIES"
 --------------------------------------------------------------------------------------------------------------------------
 | USERS
 --------------------------------------------------------------------------------------------------------------------------
