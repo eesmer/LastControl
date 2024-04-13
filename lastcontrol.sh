@@ -415,6 +415,34 @@ NW_CONFIG_CHECK() {
 	NWCHECK5=$(sysctl net.ipv4.conf.all.accept_redirects |cut -d "=" -f2 |cut -d " " -f2)
 	IPV4_ALL_ACCEPT_REDIRECTS="Fail"
 	if [ "$NWCHECK5" = 0 ]; then IPV4_ALL_ACCEPT_REDIRECTS="Pass"; fi
+	
+	NWCHECK6=$(sysctl net.ipv4.conf.default.accept_redirects |cut -d "=" -f2 |cut -d " " -f2)
+	IPV4_DEFAULT_ACCEPT_REDIRECTS="Fail"
+	if [ "$NWCHECK6" = 0 ]; then IPV4_DEFAULT_ACCEPT_REDIRECTS="Pass"; fi
+
+	NWCHECK7=$(sysctl net.ipv4.conf.all.secure_redirects |cut -d "=" -f2 |cut -d " " -f2)
+	IPV4_ALL_SECURE_REDIRECTS="Fail"
+	if [ "$NWCHECK7" = 0 ]; then IPV4_ALL_SECURE_REDIRECTS="Pass"; fi
+
+	NWCHECK8=$(sysctl net.ipv4.conf.default.secure_redirects |cut -d "=" -f2 |cut -d " " -f2)
+	IPV4_DEFAULT_SECURE_REDIRECTS="Fail"
+	if [ "$NWCHECK8" = 0 ]; then IPV4_DEFAULT_SECURE_REDIRECTS="Pass"; fi
+
+	NWCHECK9=$(sysctl net.ipv4.icmp_echo_ignore_broadcasts |cut -d "=" -f2 |cut -d " " -f2)
+	ICMP_IGNORE_BROADCASTS="Fail"
+	if [ "$NWCHECK9" = 1 ]; then ICMP_IGNORE_BROADCASTS="Pass"; fi
+
+	NWCHECK10=$(sysctl net.ipv4.icmp_ignore_bogus_error_responses |cut -d "=" -f2 |cut -d " " -f2)
+	ICMP_IGNORE_BOGUS_ERROR="Fail"
+	if [ "$NWCHECK10" = 1 ]; then ICMP_IGNORE_BOGUS_ERROR="Pass"; fi
+
+	NWCHECK11=$(sysctl net.ipv4.conf.all.rp_filter |cut -d "=" -f2 |cut -d " " -f2)
+	ALL_RP_FILTER="Fail"
+	if [ "$NWCHECK11" = 1 ]; then ALL_RP_FILTER="Pass"; fi
+
+	NWCHECK12=$(sysctl net.ipv4.tcp_syncookies |cut -d "=" -f2 |cut -d " " -f2)
+	TCP_SYNCOOKIES="Fail"
+	if [ "$NWCHECK12" = 1 ]; then TCP_SYNCOOKIES="Pass"; fi
 }
 
 if [ "$1" = "--localhost" ]; then
