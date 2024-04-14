@@ -525,7 +525,7 @@ SUIDGUID_FILE_CHECK() {
 if [ "$1" = "--server-install" ]; then
 	#OS=$(hostnamectl | grep "Operating System" | cut -d ":" -f2 | cut -d " " -f2 | xargs)
 	OS=$(cat /etc/os-release | grep "ID" | grep -v "VERSION_ID" | grep -v "ID_LIKE" | cut -d "=" -f2)
-	if [ "$OS" = "debian" ] || [ !"$OS" = "ubuntu" ]; then
+	if [ ! "$OS" = "debian" ] || [ !"$OS" = "ubuntu" ]; then
 		${RED}
 		echo "ERROR: This installation script does not support this distro"
 		echo "Please run it with;"
