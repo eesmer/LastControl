@@ -10,10 +10,14 @@ You can use the LastControl application in 2 ways;<br>
 
 <br>
 
+Another purpose of the LastControl application is to assist system administrators by creating guiding and useful documents.<br>
+
+<br>
+
 **It is compatible with the following distributions and can generate reports** <br>
 Debian, Ubuntu, Centos, RedHat, Fedora, Oracle Linux, Rocky Linux<br>
 
-<br>
+---
 
 All checks are made according to CIS Benchmark bulletins.<br>
 https://www.cisecurity.org/
