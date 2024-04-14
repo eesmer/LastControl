@@ -18,6 +18,12 @@ Debian, Ubuntu, Centos, RedHat, Fedora, Oracle Linux, Rocky Linux<br>
 All checks are made according to CIS Benchmark bulletins.<br>
 https://www.cisecurity.org/
 
+**Key Features**<br>
+- Generates inventory report
+- Reports system information
+- Controls access and network settings
+- Generates detailed user accounts report
+
 ---
 
 bash lastcontrol.sh [OPTION] <br>
