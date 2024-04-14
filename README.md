@@ -1,16 +1,16 @@
 ![alt text](doc/images/lastcontrol_logo.png "LastControl")
 <br>
 
-LastControl performs health and hardening checks on the system. <br>
-
-- Shows summary report on screen
-- Saves as .txt
-- Saves as .pdf
-- Applies these controls to remote machines as a central server
+LastControl performs hardening and health checks on Linux systems.<br>
+After the check, it prints a summary report on the screen and creates a detailed machine report.<br>
+<br>
+You can use the LastControl application in 2 ways;<br>
+- Performing checks on the local machine
+- Control of remote machines and collection of reports with server mode
 
 <br>
 
-**Compatible distros;** <br>
+**It is compatible with the following distributions and can generate reports** <br>
 Debian, Ubuntu, Centos, RedHat, Fedora, Oracle Linux, Rocky Linux<br>
 
 <br>
