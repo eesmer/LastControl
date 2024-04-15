@@ -13,8 +13,8 @@ Usage: $(basename "$0") [OPTION]
 
 Options:
   --help, -h		show this help message and exit
-  --report-localhost	It controls the server (local machine) you are running on.
-  --report-remotehost	It installs the LastControl as a server.
+  --report-localhost	It checks the server (local machine) you are running on
+  --report-remotehost	It checks the remote server
   --report-all-servers  Retrieves reports from all remote servers     
   --server-install      install apache, create /usr/local/lastcontrol, create ssh-key
   --add-machine         check conn. remote machine, add ssh-key remote machine
