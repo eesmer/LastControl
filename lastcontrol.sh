@@ -40,7 +40,6 @@ NORMAL="tput sgr0"
 	
 HOST_NAME=$(cat /etc/hostname)
 RDIR=/usr/local/lastcontrol/reports
-#$HOST_NAME
 LOGO=/usr/local/lastcontrol/images/lastcontrol_logo.png
 DATE=$(date)
 
