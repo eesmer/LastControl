@@ -15,8 +15,8 @@ Options:
   --help, -h		show this help message and exit
   --report-localhost	It checks the server (local machine) you are running on
   --report-remotehost	It checks the remote server
-  --report-all-servers  Retrieves reports from all remote servers     
   --server-install      install apache, create /usr/local/lastcontrol, create ssh-key
+  --report-all-servers  Retrieves reports from all remote servers     
   --add-machine         check conn. remote machine, add ssh-key remote machine
   --remove-machine      remove ssh-key remote machine
 EOF
@@ -580,21 +580,21 @@ if [ "$1" = "--manager" ]; then
 	done
 fi
 
-if [ "$1" = "--remote-host" ]; then
-	#OS=$(hostnamectl | grep "Operating System" | cut -d ":" -f2 | cut -d " " -f2 | xargs)
-	OS=$(cat /etc/os-release | grep "ID" | grep -v "VERSION_ID" | grep -v "ID_LIKE" | cut -d "=" -f2)
-	if [ ! "$OS" = "debian" ] || [ !"$OS" = "ubuntu" ]; then
-		${RED}
-		echo "ERROR: This installation script does not support this distro"
-		echo "Please run it with;"
-		${WHITE}
-		echo "[+] Ubuntu"
-		echo "[+] Debian"
-		${NOCOL}
-		echo -e
-		exit 1
-	fi
-fi
+#if [ "$1" = "--report-remotehost" ]; then
+	##OS=$(hostnamectl | grep "Operating System" | cut -d ":" -f2 | cut -d " " -f2 | xargs)
+	#OS=$(cat /etc/os-release | grep "ID" | grep -v "VERSION_ID" | grep -v "ID_LIKE" | cut -d "=" -f2)
+	#if [ ! "$OS" = "debian" ] || [ !"$OS" = "ubuntu" ]; then
+#		${RED}
+#		echo "ERROR: This installation script does not support this distro"
+#		echo "Please run it with;"
+#		${WHITE}
+#		echo "[+] Ubuntu"
+#		echo "[+] Debian"
+#		${NOCOL}
+#		echo -e
+#		exit 1
+#	fi
+#fi
 
 if [ "$1" = "--server-install" ]; then
 	# Install WebServer
@@ -616,7 +616,7 @@ if [ "$1" = "--server-install" ]; then
 	systemctl reload apache2.service
 fi
 
-if [ "$1" = "--localhost" ]; then
+if [ "$1" = "--report-localhost" ]; then
         SYSTEM_REPORT
 	CHECK_QUOTA
 	LVM_CRYPT
