@@ -7,14 +7,20 @@
 #---------------------------------------------------------------------
 
 SHOW_HELP() {
-    cat << EOF
+	clear
+cat << EOF
 Usage: $(basename "$0") [OPTION]
 
-Optional arguments:
+Options:
   --help, -h		show this help message and exit
-  --server-install	It installs the LastControl as a server.
-  --localhost		It controls the server (local machine) you are running on.
+  --report-localhost	It controls the server (local machine) you are running on.
+  --report-remotehost	It installs the LastControl as a server.
+  --report-all-servers  Retrieves reports from all remote servers     
+  --server-install      install apache, create /usr/local/lastcontrol, create ssh-key
+  --add-machine         check conn. remote machine, add ssh-key remote machine
+  --remove-machine      remove ssh-key remote machine
 EOF
+echo -e
 }
 
 #------------------
@@ -33,7 +39,8 @@ BOLD="tput bold"
 NORMAL="tput sgr0"
 	
 HOST_NAME=$(cat /etc/hostname)
-RDIR=/usr/local/lastcontrol/reports/$HOST_NAME
+RDIR=/usr/local/lastcontrol/reports
+#$HOST_NAME
 LOGO=/usr/local/lastcontrol/images/lastcontrol_logo.png
 DATE=$(date)
 
@@ -522,7 +529,59 @@ SUIDGUID_FILE_CHECK() {
 	echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 }
 
-if [ "$1" = "--server-install" ]; then
+if [ "$1" = "--manager" ]; then
+	function pause(){
+		local message="$@"
+		[ -z $message ] && message="Press Enter to continue"
+		read -p "$message" readEnterKey
+	}
+	function show_menu(){
+		$MAGENTA
+		echo "    LastControl Server Manager"
+		$NOCOL
+		echo "   |-------------------------------------|"
+		echo "   | 1.Add Machine    | 3.Add SSH-Key    |"
+		echo "   | 2.Remove Machine | 4.Remove SSH-Key |"
+		echo "   |-------------------------------------|"
+		echo "   | 10.Machine List                     |"
+		echo "   |-------------------------------------|"
+		$WHITE
+		echo "     20.Take a Report from All Machine"
+		$NOCOL
+		echo "   |-------------------------------------|"
+		echo "   | WebPage:http://localhost            |"
+		echo "   |-------------------------------------|"
+		$RED
+		echo "     99.Exit"
+		$NOCOL
+		echo -e
+
+	}
+	function read_input(){
+		$WHITE
+		local c
+		read -p "You can choose from the menu numbers " c
+		$NOCOL
+		case $c in
+			1) create_system_report ;;
+			2) create_service_report ;;
+			99) exit 0 ;;
+			*)
+		pause
+		esac
+	}
+
+	# CTRL+C, CTRL+Z
+	trap '' SIGINT SIGQUIT SIGTSTP
+	while true
+	do
+	clear
+	show_menu
+	read_input
+	done
+fi
+
+if [ "$1" = "--remote-host" ]; then
 	#OS=$(hostnamectl | grep "Operating System" | cut -d ":" -f2 | cut -d " " -f2 | xargs)
 	OS=$(cat /etc/os-release | grep "ID" | grep -v "VERSION_ID" | grep -v "ID_LIKE" | cut -d "=" -f2)
 	if [ ! "$OS" = "debian" ] || [ !"$OS" = "ubuntu" ]; then
