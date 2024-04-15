@@ -15,7 +15,7 @@ Options:
   --help, -h		show this help message and exit
   --report-localhost	It checks the server (local machine) you are running on
   --report-remotehost	It checks the remote server
-  --server-install      install apache, create /usr/local/lastcontrol, create ssh-key
+  --server-install      Installs LastControl Server to perform remote server control
   --report-all-servers  Retrieves reports from all remote servers     
   --add-machine         check conn. remote machine, add ssh-key remote machine
   --remove-machine      remove ssh-key remote machine
