@@ -596,6 +596,11 @@ if [ "$1" = "--remote-host" ]; then
 	fi
 fi
 
+if [ "$1" = "--server-install" ]; then
+	# Install WebServer
+	apt-get -y install apache2
+fi
+
 if [ "$1" = "--localhost" ]; then
         SYSTEM_REPORT
 	CHECK_QUOTA
