@@ -611,6 +611,9 @@ if [ "$1" = "--server-install" ]; then
 	rm -r /var/www/html/lastcontrol
 	mkdir -p /var/www/html/lastcontrol
 	mkdir -p /var/www/html/reports
+	#Configure Access
+	cp /root/.ssh/lastcontrol.pub /var/www/html/lastcontrol/
+	systemctl reload apache2.service
 fi
 
 if [ "$1" = "--localhost" ]; then
