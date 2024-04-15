@@ -599,6 +599,8 @@ fi
 if [ "$1" = "--server-install" ]; then
 	# Install WebServer
 	apt-get -y install apache2
+	# Create WorkDir
+	mkdir -p /usr/local/lastcontrol
 fi
 
 if [ "$1" = "--localhost" ]; then
