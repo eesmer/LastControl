@@ -601,6 +601,16 @@ if [ "$1" = "--server-install" ]; then
 	apt-get -y install apache2
 	# Create WorkDir
 	mkdir -p /usr/local/lastcontrol
+	# Generate SSH Key
+	mkdir -p /root/.ssh
+	chmod 700 /root/.ssh
+	rm /root/.ssh/lastcontrol
+	ssh-keygen -t rsa -f /root/.ssh/lastcontrol -q -P ""
+	# Create Web
+	rm -r /var/www/html/reports
+	rm -r /var/www/html/lastcontrol
+	mkdir -p /var/www/html/lastcontrol
+	mkdir -p /var/www/html/reports
 fi
 
 if [ "$1" = "--localhost" ]; then
