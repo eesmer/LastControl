@@ -40,6 +40,7 @@ NORMAL="tput sgr0"
 	
 HOST_NAME=$(cat /etc/hostname)
 RDIR=/usr/local/lastcontrol/reports
+WEB=/var/www/html
 LOGO=/usr/local/lastcontrol/images/lastcontrol_logo.png
 DATE=$(date)
 
@@ -61,7 +62,7 @@ SYSTEM_REPORT() {
 	LOCAL_USER_LIST_FILE=$RDIR/localusers
 	
 	# HARDWARE INVENTORY
-	INTERNAL_IP=$(hostname -I)
+	INTERNAL_IP=$(hostname -I | cut -d " " -f1)
 	EXTERNAL_IP=$(curl -4 icanhazip.com 2>/dev/null)
 	CPU_INFO=$(awk -F ':' '/model name/ {print $2}' /proc/cpuinfo | head -n 1 | xargs)
 	RAM_TOTAL=$(free -m | awk 'NR==2{print $2 " MB"}')
@@ -707,6 +708,7 @@ if [ "$1" = "--report-localhost" ]; then
 	printf "%10s %s\n" "- The Full Report System"
 	$NOCOL
 	printf "%10s %s\n" "$RDIR/$HOST_NAME-allreports.txt"
+	printf "%10s %s\n" "Web Page: http://$INTERNAL_IP"
 	$NORMAL
 	printf "%30s %s\n" "------------------------------------------------------"
 	echo -e
@@ -878,5 +880,7 @@ EOF
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	rm $RDIR/repositorylist.txt
 	SUIDGUID_FILE_CHECK
+
+	cp $RDIR/$HOST_NAME-allreports.txt $WEB/reports
 exit 0
 fi
