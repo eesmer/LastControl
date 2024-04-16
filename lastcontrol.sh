@@ -618,6 +618,20 @@ if [ "$1" = "--server-install" ]; then
 	systemctl reload apache2.service
 fi
 
+if [ "$1" = "--add-machine" ]; then
+	read -p "Enter the Machine Hostname : " TARGETMACHINE
+	LISTED=FALSE
+	ack "$TARGETMACHINE" $WDIR/linuxmachine >> /dev/null && LISTED=TRUE
+	if [ "$LISTED" = FALSE ]; then
+		echo "$TARGETMACHINE" >> $WDIR/linuxmachine
+		echo "Info: $TARGETMACHINE added to Machine List"
+	else
+		$RED
+		echo "$TARGETMACHINE already exist"
+		$NOCOL
+	fi
+fi
+
 if [ "$1" = "--report-localhost" ]; then
         SYSTEM_REPORT
 	CHECK_QUOTA
