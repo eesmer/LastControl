@@ -679,6 +679,19 @@ if [ "$1" = "--remove-machine" ]; then
 	echo -e
 fi
 
+if [ "$1" = "--machine-list" ]; then
+	echo ""
+	$CYAN
+	echo "::. Machine List ::."
+	echo "--------------------"
+	$NOCOL
+	cat $WDIR/linuxmachine
+	$CYAN
+	echo "--------------------"
+	$NOCOL
+	echo ""
+fi
+
 if [ "$1" = "--report-localhost" ]; then
 	clear
         SYSTEM_REPORT
