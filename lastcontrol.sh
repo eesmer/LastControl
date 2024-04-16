@@ -659,6 +659,24 @@ if [ "$1" = "--add-machine" ]; then
 fi
 fi
 
+if [ "$1" = "--remove-machine" ]; then
+	read -p "Enter the Machine Hostname : " TARGETMACHINE
+	sed -i "/$TARGETMACHINE/d" $WDIR/linuxmachine
+	echo ""
+	$CYAN
+	echo "::. Machine List ::."
+	echo "--------------------"
+	$NOCOL
+	cat $WDIR/linuxmachine
+	$CYAN
+	echo "--------------------"
+	$NOCOL
+	echo ""
+	$GREEN
+	echo "Info: Removed $TARGETMACHINE from Machine List"
+	$NOCOL
+fi
+
 if [ "$1" = "--report-localhost" ]; then
 	clear
         SYSTEM_REPORT
