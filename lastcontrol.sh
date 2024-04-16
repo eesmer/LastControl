@@ -388,7 +388,8 @@ SERVICE_PROCESS(){
 MOST_COMMANDS() {
 	HISTORY_FILE=~/.bash_history
 	if [ -f "$HISTORY_FILE" ]; then
-		MOST_COMMANDS=$(cat ~/.bash_history | awk '{cmd[$2]++} END {for(elem in cmd) {print cmd[elem] " " elem}}' | sort -n -r | head -20 | cut -d " " -f2 | paste -sd ",")
+		#MOST_COMMANDS=$(cat ~/.bash_history | awk '{cmd[$2]++} END {for(elem in cmd) {print cmd[elem] " " elem}}' | sort -n -r | head -20 | cut -d " " -f2 | paste -sd ",")
+		MOST_COMMANDS=$(cat $HISTORY_FILE | head -10 | paste -sd ",")
 	else
 		MOST_COMMANDS="bash_history file not found in ~/ directory"
 	fi
@@ -599,6 +600,7 @@ fi
 #fi
 
 if [ "$1" = "--server-install" ]; then
+	clear
 	# Install WebServer
 	apt-get -y install apache2
 	# Create WorkDir
@@ -633,6 +635,7 @@ if [ "$1" = "--add-machine" ]; then
 fi
 
 if [ "$1" = "--report-localhost" ]; then
+	clear
         SYSTEM_REPORT
 	CHECK_QUOTA
 	LVM_CRYPT
@@ -712,7 +715,7 @@ if [ "$1" = "--report-localhost" ]; then
 	$RED
 	printf "%10s %s\n" "Most Usage Commands :"
 	$NOCOL
-	"$MOST_COMMANDS"
+	echo "$MOST_COMMANDS"
 	$RED
 	printf "%30s %s\n" "Last 10 SSH Auth. Log Records:"
 	$NOCOL
