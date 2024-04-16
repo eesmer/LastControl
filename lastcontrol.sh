@@ -39,6 +39,7 @@ BOLD="tput bold"
 NORMAL="tput sgr0"
 	
 HOST_NAME=$(cat /etc/hostname)
+WDIR=/usr/local/lastcontrol
 RDIR=/usr/local/lastcontrol/reports
 WEB=/var/www/html
 LOGO=/usr/local/lastcontrol/images/lastcontrol_logo.png
@@ -601,19 +602,19 @@ if [ "$1" = "--server-install" ]; then
 	# Install WebServer
 	apt-get -y install apache2
 	# Create WorkDir
-	mkdir -p /usr/local/lastcontrol
+	mkdir -p $WDIR
 	# Generate SSH Key
 	mkdir -p /root/.ssh
 	chmod 700 /root/.ssh
 	rm /root/.ssh/lastcontrol
 	ssh-keygen -t rsa -f /root/.ssh/lastcontrol -q -P ""
 	# Create Web
-	rm -r /var/www/html/reports
-	rm -r /var/www/html/lastcontrol
-	mkdir -p /var/www/html/lastcontrol
-	mkdir -p /var/www/html/reports
+	rm -r $WEB/reports
+	rm -r $WEB/lastcontrol
+	mkdir -p $WEB/lastcontrol
+	mkdir -p $WEB/reports
 	#Configure Access
-	cp /root/.ssh/lastcontrol.pub /var/www/html/lastcontrol/
+	cp /root/.ssh/lastcontrol.pub $WEB/lastcontrol/
 	systemctl reload apache2.service
 fi
 
