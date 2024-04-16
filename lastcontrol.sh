@@ -624,7 +624,6 @@ if [ "$1" = "--server-install" ]; then
 fi
 
 if [ "$1" = "--add-machine" ]; then
-	#read -p "Enter the Machine Hostname : " TARGETMACHINE
 	read -p "Enter the Machine Hostname and SSH Port (Example:ServerName 22): " TARGETMACHINE PORTNUMBER
 	if [ -z "$PORTNUMBER" ]; then 
 		$RED
