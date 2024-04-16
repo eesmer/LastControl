@@ -42,6 +42,7 @@ HOST_NAME=$(cat /etc/hostname)
 WDIR=/usr/local/lastcontrol
 RDIR=/usr/local/lastcontrol/reports
 WEB=/var/www/html
+LCKEY=/root/.ssh/lastcontrol
 LOGO=/usr/local/lastcontrol/images/lastcontrol_logo.png
 DATE=$(date)
 
@@ -623,17 +624,40 @@ if [ "$1" = "--server-install" ]; then
 fi
 
 if [ "$1" = "--add-machine" ]; then
-	read -p "Enter the Machine Hostname : " TARGETMACHINE
+	#read -p "Enter the Machine Hostname : " TARGETMACHINE
+	read -p "Enter the Machine Hostname and SSH Port (Example:ServerName 22): " TARGETMACHINE PORTNUMBER
+	if [ -z "$PORTNUMBER" ]; then 
+		$RED
+		echo "Port number is missing - Example:ServerName 22"
+		$NOCOL
+		exit 1
+	fi
 	LISTED=FALSE
 	ack "$TARGETMACHINE" $WDIR/linuxmachine >> /dev/null && LISTED=TRUE
 	if [ "$LISTED" = FALSE ]; then
 		echo "$TARGETMACHINE" >> $WDIR/linuxmachine
+		$GREEN
 		echo "Info: $TARGETMACHINE added to Machine List"
+		$NOCOL
 	else
 		$RED
 		echo "$TARGETMACHINE already exist"
 		$NOCOL
 	fi
+	
+	nc -z -w 2 $TARGETMACHINE $PORTNUMBER 2>/dev/null
+	
+	if [ "$?" = "0" ]; then
+		ssh-copy-id -fi $LCKEY.pub root@$TARGETMACHINE
+		$GREEN
+		echo "Info: SSH-Key added to $TARGETMACHINE"
+		$NOCOL
+	else
+		$RED
+		echo "Could not reach $TARGETMACHINE from Port $PORTNUMBER"
+		$NOCOL
+		echo -e
+fi
 fi
 
 if [ "$1" = "--report-localhost" ]; then
