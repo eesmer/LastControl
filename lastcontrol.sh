@@ -601,6 +601,8 @@ fi
 
 if [ "$1" = "--server-install" ]; then
 	clear
+	# Install Required Packages
+	apt-get -y install netcat nmap ack curl wget
 	# Install WebServer
 	apt-get -y install apache2
 	# Create WorkDir
