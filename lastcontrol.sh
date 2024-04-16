@@ -17,8 +17,9 @@ Options:
   --report-remotehost	It checks the remote server
   --server-install      Installs LastControl Server to perform remote server control
   --report-all-servers  Retrieves reports from all remote servers     
-  --add-machine         check conn. remote machine, add ssh-key remote machine
+  --add-machine         Access is controlled. LastControl SSH Key is added to the server and included in the machine list.
   --remove-machine      remove ssh-key remote machine
+  --machine-list	List of Added Machines
 EOF
 echo -e
 }
@@ -675,6 +676,7 @@ if [ "$1" = "--remove-machine" ]; then
 	$GREEN
 	echo "Info: Removed $TARGETMACHINE from Machine List"
 	$NOCOL
+	echo -e
 fi
 
 if [ "$1" = "--report-localhost" ]; then
