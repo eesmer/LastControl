@@ -587,18 +587,24 @@ if [ "$1" = "--manager" ]; then
 fi
 
 if [ "$1" = "--report-remotehost" ]; then
-	
-	read -p "Enter the Machine Hostname and SSH Port (Example:ServerName 22): " TARGETMACHINE PORTNUMBER
-	
+	if [ -z "$2" ] || [ -z "$3" ]; then
+		read -p "Enter the Machine Hostname and SSH Port (Example:ServerName 22): " TARGETMACHINE PORTNUMBER
+	else
+		TARGETMACHINE="$2"
+		PORTNUMBER="$3"
+	fi
 	LISTED=FALSE
 	ack "$TARGETMACHINE" $WDIR/linuxmachine >> /dev/null && LISTED=TRUE
 	if [ "$LISTED" = "TRUE" ]; then
 		nc -z -w 2 $TARGETMACHINE $PORTNUMBER 2>/dev/null
 		if [ "$?" = "0" ]; then
 			TARGETHOSTNAME=$(ssh -p$PORTNUMBER -i $LCKEY root@$TARGETMACHINE -- hostname -f)
-			scp -P$PORTNUMBER -i $LCKEY $CDIR/lastcontrol.sh root@$TARGETMACHINE:/usr/local/ &> /dev/null && $GREEN echo "LastControl Script was transferred to the $TARGETMACHINE"
+			$GREEN
+			scp -P$PORTNUMBER -i $LCKEY $CDIR/lastcontrol.sh root@$TARGETMACHINE:/usr/local/ &> /dev/null && echo "LastControl Script was transferred to the $TARGETMACHINE"
 			ssh -p$PORTNUMBER -i $LCKEY root@$TARGETMACHINE -- bash /usr/local/lastcontrol.sh --report-localhost &> /dev/null
-			scp -P$PORTNUMBER -i $LCKEY root@$TARGETMACHINE:/usr/local/lastcontrol/reports/$TARGETHOSTNAME-allreports.txt $WEB/reports/ && $GREEN echo "Report Created" 
+			$CYAN
+			scp -P$PORTNUMBER -i $LCKEY root@$TARGETMACHINE:/usr/local/lastcontrol/reports/$TARGETHOSTNAME-allreports.txt $WEB/reports/ &> /dev/null && echo "Report Created" 
+			$NOCOL
 		else
 			$RED
 			echo "Could not reach $TARGETMACHINE from Port $PORTNUMBER"
