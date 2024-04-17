@@ -20,6 +20,9 @@ Options:
   --add-machine         Access is controlled. LastControl SSH Key is added to the server and included in the machine list.
   --remove-machine      remove ssh-key remote machine
   --machine-list	List of Added Machines
+
+Example:
+bash lastcontrol.sh --report-remotehost [TARGETHOST] [PORTNUMBER]
 EOF
 echo -e
 }
