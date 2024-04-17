@@ -596,7 +596,7 @@ if [ "$1" = "--report-remotehost" ]; then
 		nc -z -w 2 $TARGETMACHINE $PORTNUMBER 2>/dev/null
 		if [ "$?" = "0" ]; then
 			scp -P$PORTNUMBER -i $LCKEY $CDIR/lastcontrol.sh root@$TARGETMACHINE:/usr/local/ &> /dev/null && $GREEN echo "Script Transfer OK"
-			ssh -p$PORTNUMBER -i $LCKEY root@$TARGETMACHINE -- bash /usr/local/lastcontrol.sh &> /dev/null
+			ssh -p$PORTNUMBER -i $LCKEY root@$TARGETMACHINE -- bash /usr/local/lastcontrol.sh --report-localhost &> /dev/null
 			scp -P$PORTNUMBER -i $LCKEY root@$TARGETMACHINE:/usr/local/lastcontrol/reports/$TARGETMACHINE-allreports.txt /usr/local/lastcontrol/reports/ && $GREEN echo "Report Download OK" 
 		else
 			$RED
