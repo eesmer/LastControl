@@ -22,6 +22,7 @@ Options:
   --machine-list	List of Added Machines
 
 Example:
+bash lastcontrol.sh --report-localhost
 bash lastcontrol.sh --report-remotehost [TARGETHOST] [PORTNUMBER]
 EOF
 echo -e
