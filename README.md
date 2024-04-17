@@ -1,4 +1,4 @@
-![alt text](doc/images/lastcontrol_logo.png "LastControl")
+![alt text](doc/images/lastcontrol_logo-r1.png "LastControl")
 <br>
 
 LastControl performs hardening and health checks on Linux systems.<br>
