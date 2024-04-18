@@ -691,8 +691,8 @@ fi
 
 if [ "$1" = "--remove-machine" ]; then
 	read -p "Enter the Machine Hostname : " TARGETMACHINE
+	CONTINUE=FALSE
 	ssh -p22 -i $LCKEY -o "StrictHostKeyChecking no" root@$TARGETMACHINE -- sed -i "/$LCKEYPUB/d" /root/.ssh/authorized_keys && CONTINUE=TRUE
-	#ssh -p22 -i $LCKEY -o "StrictHostKeyChecking no" root@$1 -- sed -i "/$2/d" /root/.ssh/authorized_keys
 	if [ "$CONTINUE" = "TRUE" ]; then
 		$GREEN
 		echo "LastControl SSH Key has been removed on $TARGETMACHINE"
@@ -712,12 +712,12 @@ if [ "$1" = "--remove-machine" ]; then
 		echo "Info: Removed $TARGETMACHINE from Machine List"
 		$NOCOL
 		echo -e
-	elif [ "$CONTINUE" = "FALSE" ]; then
-		$RED
-		echo "Failed removed to $TARGETMACHINE"
-		echo "$?"
-		$NOCOL
-		echo -e
+	#elif [ "$CONTINUE" = "FALSE" ]; then
+	#	$RED
+	#	echo "Failed removed to $TARGETMACHINE"
+	#	echo "$?"
+	#	$NOCOL
+	#	echo -e
 	fi
 fi
 
