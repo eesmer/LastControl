@@ -50,6 +50,7 @@ RDIR=/usr/local/lastcontrol/reports
 CDIR=$(pwd)
 WEB=/var/www/html
 LCKEY=/root/.ssh/lastcontrol
+LCKEYPUB=$(cat /root/.ssh/lastcontrol.pub | cut -d "=" -f2 | xargs)
 LOGO=/usr/local/lastcontrol/images/lastcontrol_logo.png
 DATE=$(date)
 
@@ -690,21 +691,34 @@ fi
 
 if [ "$1" = "--remove-machine" ]; then
 	read -p "Enter the Machine Hostname : " TARGETMACHINE
-	sed -i "/$TARGETMACHINE/d" $WDIR/linuxmachine
-	echo ""
-	$CYAN
-	echo "::. Machine List ::."
-	echo "--------------------"
-	$NOCOL
-	cat $WDIR/linuxmachine
-	$CYAN
-	echo "--------------------"
-	$NOCOL
-	echo ""
-	$GREEN
-	echo "Info: Removed $TARGETMACHINE from Machine List"
-	$NOCOL
-	echo -e
+	ssh -p22 -i $LCKEY -o "StrictHostKeyChecking no" root@$TARGETMACHINE -- sed -i "/$LCKEYPUB/d" /root/.ssh/authorized_keys && CONTINUE=TRUE
+	#ssh -p22 -i $LCKEY -o "StrictHostKeyChecking no" root@$1 -- sed -i "/$2/d" /root/.ssh/authorized_keys
+	if [ "$CONTINUE" = "TRUE" ]; then
+		$GREEN
+		echo "LastControl SSH Key has been removed on $TARGETMACHINE"
+		$NOCOL
+		sed -i "/$TARGETMACHINE/d" $WDIR/linuxmachine
+		echo ""
+		$CYAN
+		echo "::. Machine List ::."
+		echo "--------------------"
+		$NOCOL
+		cat $WDIR/linuxmachine
+		$CYAN
+		echo "--------------------"
+		$NOCOL
+		echo ""
+		$GREEN
+		echo "Info: Removed $TARGETMACHINE from Machine List"
+		$NOCOL
+		echo -e
+	elif [ "$CONTINUE" = "FALSE" ]; then
+		$RED
+		echo "Failed removed to $TARGETMACHINE"
+		echo "$?"
+		$NOCOL
+		echo -e
+	fi
 fi
 
 if [ "$1" = "--machine-list" ]; then
