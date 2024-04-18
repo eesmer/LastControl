@@ -626,23 +626,6 @@ if [ "$1" = "--report-remotehost" ]; then
 		$NOCOL
 		exit 1
 	fi
-
-	#scp -r -P22 -i $LCKEY $SCRIPTS/$TUISCRIPTS root@$2:/usr/local/ &> /dev/null
-	#ssh -p22 -i $LCKEY root@$2 -- bash /usr/local/$TUISCRIPTS/$1.sh &> /dev/null
-
-	##OS=$(hostnamectl | grep "Operating System" | cut -d ":" -f2 | cut -d " " -f2 | xargs)
-	#OS=$(cat /etc/os-release | grep "ID" | grep -v "VERSION_ID" | grep -v "ID_LIKE" | cut -d "=" -f2)
-	#if [ ! "$OS" = "debian" ] || [ !"$OS" = "ubuntu" ]; then
-#		${RED}
-#		echo "ERROR: This installation script does not support this distro"
-#		echo "Please run it with;"
-#		${WHITE}
-#		echo "[+] Ubuntu"
-#		echo "[+] Debian"
-#		${NOCOL}
-#		echo -e
-#		exit 1
-#	fi
 fi
 
 if [ "$1" = "--server-install" ]; then
