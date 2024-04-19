@@ -12,14 +12,14 @@ cat << EOF
 Usage: $(basename "$0") [OPTION]
 
 Options:
-  --help, -h		show this help message and exit
+  --help, -h		Show this help message
   --report-localhost	It checks the server (local machine) you are running on
   --report-remotehost	It checks the remote server
   --server-install      Installs LastControl Server to perform remote server control
-  --report-all-servers  Generates reports from all remote servers
-  --add-host            LastControl SSH Key is added to the server and included in the machine list
-  --remove-host		LastContol SSH Key is deleted and removed from the Machine list
-  --host-list		List of Added Machines
+  --report-all-host	Generates reports from all remote servers in Host List
+  --add-host            LastControl SSH Key is added to the server and included in the Host List
+  --remove-host		LastContol SSH Key is deleted and removed from the Host list
+  --host-list		List of Added Hosts
 
 Example:
 bash lastcontrol.sh --report-localhost
