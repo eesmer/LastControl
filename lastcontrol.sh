@@ -727,7 +727,7 @@ if [ "$1" = "--remove-host" ]; then
 				sed -i "/$TARGETMACHINE/d" $WDIR/linuxmachine
 				echo -e
 				$CYAN
-				echo "::. Machine List ::."
+				echo "::. Host List ::."
 				echo "--------------------"
 				$NOCOL
 				cat $WDIR/linuxmachine
