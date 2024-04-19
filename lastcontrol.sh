@@ -654,7 +654,9 @@ if [ "$1" = "--server-install" ]; then
 fi
 
 if [ "$1" = "--add-machine" ]; then
+	
 	read -p "Enter the Machine Hostname and SSH Port (Example:ServerName 22): " TARGETMACHINE PORTNUMBER
+	
 	if [ -z "$TARGETMACHINE" ] || [ -z "$PORTNUMBER" ]; then 
 		$RED
 		printf "    %s\n" "Server Name or Port Number is missing - Example:ServerName 22"
@@ -662,8 +664,9 @@ if [ "$1" = "--add-machine" ]; then
 		exit 1
 	fi
 	
-	nc -z -w 2 $TARGETMACHINE $PORTNUMBER 2>/dev/null
-	if [ "$?" = "0" ]; then
+	#nc -z -w 2 $TARGETMACHINE $PORTNUMBER 2>/dev/null
+	CONN=FALSE && nc -z -w 2 $TARGETMACHINE $PORTNUMBER 2>/dev/null && CONN=TRUE
+	if [ "$CONN" = "TRUE" ]; then
 		LISTED=FALSE
 		ack "$TARGETMACHINE" $WDIR/linuxmachine >> /dev/null && LISTED=TRUE
 		if [ "$LISTED" = "FALSE" ]; then
@@ -682,11 +685,13 @@ if [ "$1" = "--add-machine" ]; then
 			$NOCOL
 			echo -e
 		fi
-	else
+	elif [ "$CONN" = "FALSE" ]; then
 		$RED
 		printf "    %s\n" "Could not reach $TARGETMACHINE from Port $PORTNUMBER"
 		$NOCOL
 		echo -e
+	else
+		printf "    %s\n" "$TARGETMACHINE could not be controlled from Port $PORTNUMBER"
 	fi
 fi
 
