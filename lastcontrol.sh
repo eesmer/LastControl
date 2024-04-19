@@ -593,6 +593,7 @@ SUIDGUID_FILE_CHECK() {
 #fi
 
 if [ "$1" = "--report-allhost" ]; then
+	clear
 	HOSTLIST=$(cat $WDIR/linuxmachine | wc -l)
 	i=1
 	while [ "$i" -le $HOSTLIST ]; do
@@ -602,11 +603,13 @@ if [ "$1" = "--report-allhost" ]; then
 		
 		$BOLD
 		$YELLOW
+		echo -e
 		printf "    %s\n" "Hostname : $HNAME - $PNAME"
 		$NOCOL
 		bash $CDIR/lastcontrol.sh --report-remotehost $HNAME $PNAME
 		$NOCOL
 		i=$(( i + 1 ))
+		echo -e
 	done
 fi
 
