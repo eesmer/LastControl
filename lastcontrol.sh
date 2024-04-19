@@ -697,10 +697,10 @@ if [ "$1" = "--remove-machine" ]; then
 	if [ "$CONTINUE" = "TRUE" ]; then
 		$GREEN
 		#echo "LastControl SSH Key has been removed on $TARGETMACHINE"
-		printf "%30s %s\n" "LastControl SSH Key has been removed on $TARGETMACHINE"
+		printf "    %s\n" "LastControl SSH Key has been removed on $TARGETMACHINE"
 		$NOCOL
 		sed -i "/$TARGETMACHINE/d" $WDIR/linuxmachine
-		echo ""
+		echo -e
 		$CYAN
 		echo "::. Machine List ::."
 		echo "--------------------"
@@ -709,10 +709,10 @@ if [ "$1" = "--remove-machine" ]; then
 		$CYAN
 		echo "--------------------"
 		$NOCOL
-		echo ""
+		echo -e
 		$GREEN
 		#echo "Info: Removed $TARGETMACHINE from Machine List"
-		printf "%30s %s\n" "Info: $TARGETMACHINE removed from Machine List"
+		printf "    %s\n" "Info: $TARGETMACHINE removed from Machine List"
 		$NOCOL
 		echo -e
 	#elif [ "$CONTINUE" = "FALSE" ]; then
