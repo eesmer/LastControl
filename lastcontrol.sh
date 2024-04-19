@@ -17,8 +17,8 @@ Options:
   --report-remotehost	It checks the remote server
   --server-install      Installs LastControl Server to perform remote server control
   --report-all-servers  Generates reports from all remote servers
-  --add-machine         LastControl SSH Key is added to the server and included in the machine list
-  --remove-machine      LastContol SSH Key is deleted and removed from the Machine list
+  --add-host            LastControl SSH Key is added to the server and included in the machine list
+  --remove-host      LastContol SSH Key is deleted and removed from the Machine list
   --machine-list	List of Added Machines
 
 Example:
@@ -645,15 +645,15 @@ if [ "$1" = "--report-remotehost" ]; then
 		$RED
 		echo "$TARGETMACHINE Machine was not found in the Machine List"
 		$GREEN
-		echo "Please add the $TARGETMACHINE machine first with --add-machine"
+		echo "Please add the $TARGETMACHINE machine first with --add-host"
 		$MAGENTA
-		echo "Usage: bash lastcontrol.sh --add-machine"
+		echo "Usage: bash lastcontrol.sh --add-host"
 		$NOCOL
 		exit 1
 	fi
 fi
 
-if [ "$1" = "--add-machine" ]; then
+if [ "$1" = "--add-host" ]; then
 	if [ -z "$2" ] || [ -z "$3" ]; then
 		read -p "Enter the Machine Hostname and SSH Port (Example:ServerName 22): " TARGETMACHINE PORTNUMBER
         else
@@ -698,8 +698,14 @@ if [ "$1" = "--add-machine" ]; then
 	fi
 fi
 
-if [ "$1" = "--remove-machine" ]; then
-	read -p "Enter the Machine Hostname : " TARGETMACHINE
+if [ "$1" = "--remove-host" ]; then
+	if [ -z "$1" ]; then
+		#read -p "Enter the Machine Hostname and SSH Port (Example:ServerName 22): " TARGETMACHINE PORTNUMBER
+		read -p "Enter the Machine Hostname : " TARGETMACHINE
+	else
+		TARGETMACHINE="$1"
+	fi
+
 	if [ -z "$TARGETMACHINE" ]; then
 		$RED
 		printf "    %s\n" "Server Name is missing"
