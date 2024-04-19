@@ -627,12 +627,12 @@ if [ "$1" = "--report-remotehost" ]; then
 	if [ "$LISTED" = "TRUE" ]; then
 		nc -z -w 2 $TARGETMACHINE $PORTNUMBER 2>/dev/null
 		if [ "$?" = "0" ]; then
-			TARGETHOSTNAME=$(ssh -p$PORTNUMBER -i $LCKEY root@$TARGETMACHINE -- hostname -f)
+			TARGETHOSTNAME=$(ssh -p$PORTNUMBER -i $LCKEY -o "StrictHostKeyChecking no" root@$TARGETMACHINE -- hostname -f)
 			$GREEN
-			scp -P$PORTNUMBER -i $LCKEY $CDIR/lastcontrol.sh root@$TARGETMACHINE:/usr/local/ &> /dev/null && echo "LastControl Script was transferred to the $TARGETMACHINE"
-			ssh -p$PORTNUMBER -i $LCKEY root@$TARGETMACHINE -- bash /usr/local/lastcontrol.sh --report-localhost &> /dev/null
+			scp -P$PORTNUMBER -i $LCKEY $CDIR/lastcontrol.sh -o "StrictHostKeyChecking no" root@$TARGETMACHINE:/usr/local/ &> /dev/null && echo "LastControl Script was transferred to the $TARGETMACHINE"
+			ssh -p$PORTNUMBER -i $LCKEY -o "StrictHostKeyChecking no" root@$TARGETMACHINE -- bash /usr/local/lastcontrol.sh --report-localhost &> /dev/null
 			$CYAN
-			scp -P$PORTNUMBER -i $LCKEY root@$TARGETMACHINE:/usr/local/lastcontrol/reports/$TARGETHOSTNAME-allreports.txt $WEB/reports/ &> /dev/null && echo "Report Created" 
+			scp -P$PORTNUMBER -i $LCKEY -o "StrictHostKeyChecking no" root@$TARGETMACHINE:/usr/local/lastcontrol/reports/$TARGETHOSTNAME-allreports.txt $WEB/reports/ &> /dev/null && echo "Report Created" 
 			$NOCOL
 		else
 			$RED
