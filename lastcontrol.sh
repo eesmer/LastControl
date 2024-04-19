@@ -677,7 +677,7 @@ if [ "$1" = "--add-host" ]; then
 			$GREEN
 			printf "    %s\n" "LastControl SSH Key added to $TARGETMACHINE"
 			$NOCOL
-			echo "$TARGETMACHINE" >> $WDIR/linuxmachine
+			echo "$TARGETMACHINE $PORTNUMBER" >> $WDIR/linuxmachine
 			$GREEN
 			printf "    %s\n" "$TARGETMACHINE added to Machine List"
 			$NOCOL
