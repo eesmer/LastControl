@@ -668,13 +668,12 @@ if [ "$1" = "--add-machine" ]; then
 		exit 1
 	fi
 	
-	#nc -z -w 2 $TARGETMACHINE $PORTNUMBER 2>/dev/null
 	CONN=FALSE && nc -z -w 2 $TARGETMACHINE $PORTNUMBER 2>/dev/null && CONN=TRUE
 	if [ "$CONN" = "TRUE" ]; then
 		LISTED=FALSE
 		ack "$TARGETMACHINE" $WDIR/linuxmachine >> /dev/null && LISTED=TRUE
 		if [ "$LISTED" = "FALSE" ]; then
-			ssh-copy-id -fi $LCKEY.pub root@$TARGETMACHINE
+			ssh-copy-id -fi $LCKEY.pub -o "StrictHostKeyChecking no" root@$TARGETMACHINE
 			$GREEN
 			printf "    %s\n" "LastControl SSH Key added to $TARGETMACHINE"
 			$NOCOL
