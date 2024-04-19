@@ -714,6 +714,7 @@ if [ "$1" = "--remove-host" ]; then
 	LISTED=FALSE
 	ack "$TARGETMACHINE" $WDIR/linuxmachine >> /dev/null && LISTED=TRUE
 	if [ "$LISTED" = "TRUE" ]; then
+		PORTNUMBER=$(ack "$TARGETMACHINE" $WDIR/linuxmachine | cut -d " " -f2)
 		CONN=FALSE && nc -z -w 2 $TARGETMACHINE $PORTNUMBER 2>/dev/null && CONN=TRUE
 		if [ "$CONN" = "TRUE" ]; then
 			CONTINUE=FALSE
