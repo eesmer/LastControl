@@ -592,6 +592,24 @@ SUIDGUID_FILE_CHECK() {
 #	done
 #fi
 
+if [ "$1" = "--report-allhost" ]; then
+	HOSTLIST=$(cat $WDIR/linuxmachine | wc -l)
+	i=1
+	while [ "$i" -le $HOSTLIST ]; do
+		HOST=$(ls -l | sed -n $i{p} $WDIR/linuxmachine)
+		HNAME=$(echo $HOST | cut -d " " -f1)
+		PNAME=$(echo $HOST | cut -d " " -f2)
+		
+		$BOLD
+		$YELLOW
+		printf "    %s\n" "Hostname : $HNAME - $PNAME"
+		$NOCOL
+		bash $CDIR/lastcontrol.sh --report-remotehost $HNAME $PNAME
+		$NOCOL
+		i=$(( i + 1 ))
+	done
+fi
+
 if [ "$1" = "--server-install" ]; then
 	clear
 	# Install Required Packages
