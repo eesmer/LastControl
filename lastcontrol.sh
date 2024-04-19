@@ -657,7 +657,8 @@ if [ "$1" = "--add-machine" ]; then
 	read -p "Enter the Machine Hostname and SSH Port (Example:ServerName 22): " TARGETMACHINE PORTNUMBER
 	if [ -z "$TARGETMACHINE" ] || [ -z "$PORTNUMBER" ]; then 
 		$RED
-		echo "Server Name or Port number is missing - Example:ServerName 22"
+		#echo "Server Name or Port number is missing - Example:ServerName 22"
+		printf "    %s\n" "Server Name or Port Number is missing - Excample:ServerName 22"
 		$NOCOL
 		exit 1
 	fi
@@ -669,50 +670,29 @@ if [ "$1" = "--add-machine" ]; then
 		if [ "$LISTED" = "FALSE" ]; then
 			ssh-copy-id -fi $LCKEY.pub root@$TARGETMACHINE
 			$GREEN
-			echo "Info: SSH-Key added to $TARGETMACHINE"
+			#echo "Info: SSH-Key added to $TARGETMACHINE"
+			printf "    %s\n" "LastControl SSH Key added to $TARGETMACHINE"
 			$NOCOL
 			echo "$TARGETMACHINE" >> $WDIR/linuxmachine
 			$GREEN
-			echo "Info: $TARGETMACHINE added to Machine List"
+			printf "    %s\n" "$TARGETMACHINE added to Machine List"
 			$NOCOL
+			echo -e
 		elif [ "$LISTED" = "TRUE" ]; then
 			$RED
-			echo "$TARGETMACHINE already exist"
+			#echo "$TARGETMACHINE already exist"
+			printf "    %s\n" "$TARGETMACHINE already exist"
 			$NOCOL
+			echo -e
 		fi
 	else
 		$RED
-		echo "Could not reach $TARGETMACHINE from Port $PORTNUMBER"
+		#echo "Could not reach $TARGETMACHINE from Port $PORTNUMBER"
+		printf "    %s\n" "Could not reach $TARGETMACHINE from Port $PORTNUMBER"
 		$NOCOL
 		echo -e
 	fi
 fi
-
-	#LISTED=FALSE
-	#ack "$TARGETMACHINE" $WDIR/linuxmachine >> /dev/null && LISTED=TRUE
-	#if [ "$LISTED" = FALSE ]; then
-#		echo "$TARGETMACHINE" >> $WDIR/linuxmachine
-#		$GREEN
-#		echo "Info: $TARGETMACHINE added to Machine List"
-#		$NOCOL
-#	else
-#		$RED
-#		echo "$TARGETMACHINE already exist"
-#		$NOCOL
-#	fi
-#	
-#	
-#	if [ "$?" = "0" ]; then
-#		ssh-copy-id -fi $LCKEY.pub root@$TARGETMACHINE
-#		$GREEN
-#		echo "Info: SSH-Key added to $TARGETMACHINE"
-#		$NOCOL
-#	else
-#		$RED
-#		echo "Could not reach $TARGETMACHINE from Port $PORTNUMBER"
-#		$NOCOL
-#		echo -e
-#	fi
 
 if [ "$1" = "--remove-machine" ]; then
 	read -p "Enter the Machine Hostname : " TARGETMACHINE
