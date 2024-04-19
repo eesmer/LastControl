@@ -655,32 +655,31 @@ fi
 
 if [ "$1" = "--add-machine" ]; then
 	read -p "Enter the Machine Hostname and SSH Port (Example:ServerName 22): " TARGETMACHINE PORTNUMBER
-	if [ -z "$PORTNUMBER" ]; then 
+	if [ -z "$TARGETMACHINE" ] || [ -z "$PORTNUMBER" ]; then 
 		$RED
-		echo "Port number is missing - Example:ServerName 22"
+		echo "Server Name or Port number is missing - Example:ServerName 22"
 		$NOCOL
 		exit 1
 	fi
-	LISTED=FALSE
-	ack "$TARGETMACHINE" $WDIR/linuxmachine >> /dev/null && LISTED=TRUE
-	if [ "$LISTED" = FALSE ]; then
-		echo "$TARGETMACHINE" >> $WDIR/linuxmachine
-		$GREEN
-		echo "Info: $TARGETMACHINE added to Machine List"
-		$NOCOL
-	else
-		$RED
-		echo "$TARGETMACHINE already exist"
-		$NOCOL
-	fi
 	
 	nc -z -w 2 $TARGETMACHINE $PORTNUMBER 2>/dev/null
-	
 	if [ "$?" = "0" ]; then
-		ssh-copy-id -fi $LCKEY.pub root@$TARGETMACHINE
-		$GREEN
-		echo "Info: SSH-Key added to $TARGETMACHINE"
-		$NOCOL
+		LISTED=FALSE
+		ack "$TARGETMACHINE" $WDIR/linuxmachine >> /dev/null && LISTED=TRUE
+		if [ "$LISTED" = "FALSE" ]; then
+			ssh-copy-id -fi $LCKEY.pub root@$TARGETMACHINE
+			$GREEN
+			echo "Info: SSH-Key added to $TARGETMACHINE"
+			$NOCOL
+			echo "$TARGETMACHINE" >> $WDIR/linuxmachine
+			$GREEN
+			echo "Info: $TARGETMACHINE added to Machine List"
+			$NOCOL
+		elif [ "$LISTED" = "TRUE" ]; then
+			$RED
+			echo "$TARGETMACHINE already exist"
+			$NOCOL
+		fi
 	else
 		$RED
 		echo "Could not reach $TARGETMACHINE from Port $PORTNUMBER"
@@ -689,13 +688,40 @@ if [ "$1" = "--add-machine" ]; then
 	fi
 fi
 
+	#LISTED=FALSE
+	#ack "$TARGETMACHINE" $WDIR/linuxmachine >> /dev/null && LISTED=TRUE
+	#if [ "$LISTED" = FALSE ]; then
+#		echo "$TARGETMACHINE" >> $WDIR/linuxmachine
+#		$GREEN
+#		echo "Info: $TARGETMACHINE added to Machine List"
+#		$NOCOL
+#	else
+#		$RED
+#		echo "$TARGETMACHINE already exist"
+#		$NOCOL
+#	fi
+#	
+#	
+#	if [ "$?" = "0" ]; then
+#		ssh-copy-id -fi $LCKEY.pub root@$TARGETMACHINE
+#		$GREEN
+#		echo "Info: SSH-Key added to $TARGETMACHINE"
+#		$NOCOL
+#	else
+#		$RED
+#		echo "Could not reach $TARGETMACHINE from Port $PORTNUMBER"
+#		$NOCOL
+#		echo -e
+#	fi
+
 if [ "$1" = "--remove-machine" ]; then
 	read -p "Enter the Machine Hostname : " TARGETMACHINE
 	CONTINUE=FALSE
 	ssh -p22 -i $LCKEY -o "StrictHostKeyChecking no" root@$TARGETMACHINE -- sed -i "/$LCKEYPUB/d" /root/.ssh/authorized_keys && CONTINUE=TRUE
 	if [ "$CONTINUE" = "TRUE" ]; then
 		$GREEN
-		echo "LastControl SSH Key has been removed on $TARGETMACHINE"
+		#echo "LastControl SSH Key has been removed on $TARGETMACHINE"
+		printf "%30s %s\n" "LastControl SSH Key has been removed on $TARGETMACHINE"
 		$NOCOL
 		sed -i "/$TARGETMACHINE/d" $WDIR/linuxmachine
 		echo ""
@@ -709,7 +735,8 @@ if [ "$1" = "--remove-machine" ]; then
 		$NOCOL
 		echo ""
 		$GREEN
-		echo "Info: Removed $TARGETMACHINE from Machine List"
+		#echo "Info: Removed $TARGETMACHINE from Machine List"
+		printf "%30s %s\n" "Info: $TARGETMACHINE removed from Machine List"
 		$NOCOL
 		echo -e
 	#elif [ "$CONTINUE" = "FALSE" ]; then
