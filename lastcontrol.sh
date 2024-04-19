@@ -18,8 +18,8 @@ Options:
   --server-install      Installs LastControl Server to perform remote server control
   --report-all-servers  Generates reports from all remote servers
   --add-host            LastControl SSH Key is added to the server and included in the machine list
-  --remove-host      LastContol SSH Key is deleted and removed from the Machine list
-  --machine-list	List of Added Machines
+  --remove-host		LastContol SSH Key is deleted and removed from the Machine list
+  --host-list		List of Added Machines
 
 Example:
 bash lastcontrol.sh --report-localhost
@@ -766,10 +766,10 @@ if [ "$1" = "--remove-host" ]; then
 	fi
 fi
 
-if [ "$1" = "--machine-list" ]; then
+if [ "$1" = "--host-list" ]; then
 	echo ""
 	$CYAN
-	echo "::. Machine List ::."
+	echo "::. Host List ::."
 	echo "--------------------"
 	$NOCOL
 	cat $WDIR/linuxmachine
