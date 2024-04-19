@@ -699,11 +699,11 @@ if [ "$1" = "--add-host" ]; then
 fi
 
 if [ "$1" = "--remove-host" ]; then
-	if [ -z "$1" ]; then
+	if [ -z "$2" ]; then
 		#read -p "Enter the Machine Hostname and SSH Port (Example:ServerName 22): " TARGETMACHINE PORTNUMBER
 		read -p "Enter the Machine Hostname : " TARGETMACHINE
 	else
-		TARGETMACHINE="$1"
+		TARGETMACHINE="$2"
 	fi
 
 	if [ -z "$TARGETMACHINE" ]; then
