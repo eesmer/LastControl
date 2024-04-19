@@ -700,7 +700,6 @@ fi
 
 if [ "$1" = "--remove-host" ]; then
 	if [ -z "$2" ]; then
-		#read -p "Enter the Machine Hostname and SSH Port (Example:ServerName 22): " TARGETMACHINE PORTNUMBER
 		read -p "Enter the Machine Hostname : " TARGETMACHINE
 	else
 		TARGETMACHINE="$2"
@@ -715,7 +714,6 @@ if [ "$1" = "--remove-host" ]; then
 	LISTED=FALSE
 	ack "$TARGETMACHINE" $WDIR/linuxmachine >> /dev/null && LISTED=TRUE
 	if [ "$LISTED" = "TRUE" ]; then
-		#nc -z -w 2 $TARGETMACHINE $PORTNUMBER 2>/dev/null
 		CONN=FALSE && nc -z -w 2 $TARGETMACHINE $PORTNUMBER 2>/dev/null && CONN=TRUE
 		if [ "$CONN" = "TRUE" ]; then
 			CONTINUE=FALSE
