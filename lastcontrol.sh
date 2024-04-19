@@ -592,6 +592,29 @@ if [ "$1" = "--manager" ]; then
 	done
 fi
 
+if [ "$1" = "--server-install" ]; then
+	clear
+	# Install Required Packages
+	apt-get -y install netcat nmap ack curl wget
+	# Install WebServer
+	apt-get -y install apache2
+	# Create WorkDir
+	mkdir -p $WDIR
+	# Generate SSH Key
+	mkdir -p /root/.ssh
+	chmod 700 /root/.ssh
+	rm /root/.ssh/lastcontrol
+	ssh-keygen -t rsa -f /root/.ssh/lastcontrol -q -P ""
+	# Create Web
+	rm -r $WEB/reports
+	rm -r $WEB/lastcontrol
+	mkdir -p $WEB/lastcontrol
+	mkdir -p $WEB/reports
+	#Configure Access
+	cp /root/.ssh/lastcontrol.pub $WEB/lastcontrol/
+	systemctl reload apache2.service
+fi
+
 if [ "$1" = "--report-remotehost" ]; then
 	if [ -z "$2" ] || [ -z "$3" ]; then
 		read -p "Enter the Machine Hostname and SSH Port (Example:ServerName 22): " TARGETMACHINE PORTNUMBER
@@ -630,32 +653,13 @@ if [ "$1" = "--report-remotehost" ]; then
 	fi
 fi
 
-if [ "$1" = "--server-install" ]; then
-	clear
-	# Install Required Packages
-	apt-get -y install netcat nmap ack curl wget
-	# Install WebServer
-	apt-get -y install apache2
-	# Create WorkDir
-	mkdir -p $WDIR
-	# Generate SSH Key
-	mkdir -p /root/.ssh
-	chmod 700 /root/.ssh
-	rm /root/.ssh/lastcontrol
-	ssh-keygen -t rsa -f /root/.ssh/lastcontrol -q -P ""
-	# Create Web
-	rm -r $WEB/reports
-	rm -r $WEB/lastcontrol
-	mkdir -p $WEB/lastcontrol
-	mkdir -p $WEB/reports
-	#Configure Access
-	cp /root/.ssh/lastcontrol.pub $WEB/lastcontrol/
-	systemctl reload apache2.service
-fi
-
 if [ "$1" = "--add-machine" ]; then
-	
-	read -p "Enter the Machine Hostname and SSH Port (Example:ServerName 22): " TARGETMACHINE PORTNUMBER
+	if [ -z "$2" ] || [ -z "$3" ]; then
+		read -p "Enter the Machine Hostname and SSH Port (Example:ServerName 22): " TARGETMACHINE PORTNUMBER
+        else
+                TARGETMACHINE="$2"
+                PORTNUMBER="$3"
+        fi
 	
 	if [ -z "$TARGETMACHINE" ] || [ -z "$PORTNUMBER" ]; then 
 		$RED
