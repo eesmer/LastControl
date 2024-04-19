@@ -603,7 +603,7 @@ if [ "$1" = "--report-allhost" ]; then
 		$BOLD
 		$YELLOW
 		echo -e
-		printf "    %s\n" "Hostname : $HNAME - $PNAME"
+		printf "    %s\n" "Hostname : ::::: $HNAME :::::"
 		$NOCOL
 		bash $CDIR/lastcontrol.sh --report-remotehost $HNAME $PNAME
 		$NOCOL
