@@ -657,7 +657,6 @@ if [ "$1" = "--add-machine" ]; then
 	read -p "Enter the Machine Hostname and SSH Port (Example:ServerName 22): " TARGETMACHINE PORTNUMBER
 	if [ -z "$TARGETMACHINE" ] || [ -z "$PORTNUMBER" ]; then 
 		$RED
-		#echo "Server Name or Port number is missing - Example:ServerName 22"
 		printf "    %s\n" "Server Name or Port Number is missing - Excample:ServerName 22"
 		$NOCOL
 		exit 1
@@ -670,7 +669,6 @@ if [ "$1" = "--add-machine" ]; then
 		if [ "$LISTED" = "FALSE" ]; then
 			ssh-copy-id -fi $LCKEY.pub root@$TARGETMACHINE
 			$GREEN
-			#echo "Info: SSH-Key added to $TARGETMACHINE"
 			printf "    %s\n" "LastControl SSH Key added to $TARGETMACHINE"
 			$NOCOL
 			echo "$TARGETMACHINE" >> $WDIR/linuxmachine
@@ -680,14 +678,12 @@ if [ "$1" = "--add-machine" ]; then
 			echo -e
 		elif [ "$LISTED" = "TRUE" ]; then
 			$RED
-			#echo "$TARGETMACHINE already exist"
 			printf "    %s\n" "$TARGETMACHINE already exist"
 			$NOCOL
 			echo -e
 		fi
 	else
 		$RED
-		#echo "Could not reach $TARGETMACHINE from Port $PORTNUMBER"
 		printf "    %s\n" "Could not reach $TARGETMACHINE from Port $PORTNUMBER"
 		$NOCOL
 		echo -e
