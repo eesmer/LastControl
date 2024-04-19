@@ -540,57 +540,57 @@ SUIDGUID_FILE_CHECK() {
 	echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 }
 
-if [ "$1" = "--manager" ]; then
-	function pause(){
-		local message="$@"
-		[ -z $message ] && message="Press Enter to continue"
-		read -p "$message" readEnterKey
-	}
-	function show_menu(){
-		$MAGENTA
-		echo "    LastControl Server Manager"
-		$NOCOL
-		echo "   |-------------------------------------|"
-		echo "   | 1.Add Machine    | 3.Add SSH-Key    |"
-		echo "   | 2.Remove Machine | 4.Remove SSH-Key |"
-		echo "   |-------------------------------------|"
-		echo "   | 10.Machine List                     |"
-		echo "   |-------------------------------------|"
-		$WHITE
-		echo "     20.Take a Report from All Machine"
-		$NOCOL
-		echo "   |-------------------------------------|"
-		echo "   | WebPage:http://localhost            |"
-		echo "   |-------------------------------------|"
-		$RED
-		echo "     99.Exit"
-		$NOCOL
-		echo -e
-
-	}
-	function read_input(){
-		$WHITE
-		local c
-		read -p "You can choose from the menu numbers " c
-		$NOCOL
-		case $c in
-			1) create_system_report ;;
-			2) create_service_report ;;
-			99) exit 0 ;;
-			*)
-		pause
-		esac
-	}
-
-	# CTRL+C, CTRL+Z
-	trap '' SIGINT SIGQUIT SIGTSTP
-	while true
-	do
-	clear
-	show_menu
-	read_input
-	done
-fi
+#if [ "$1" = "--manager" ]; then
+#	function pause(){
+#		local message="$@"
+#		[ -z $message ] && message="Press Enter to continue"
+#		read -p "$message" readEnterKey
+#	}
+#	function show_menu(){
+#		$MAGENTA
+#		echo "    LastControl Server Manager"
+#		$NOCOL
+#		echo "   |-------------------------------------|"
+#		echo "   | 1.Add Machine    | 3.Add SSH-Key    |"
+#		echo "   | 2.Remove Machine | 4.Remove SSH-Key |"
+#		echo "   |-------------------------------------|"
+#		echo "   | 10.Machine List                     |"
+#		echo "   |-------------------------------------|"
+#		$WHITE
+#		echo "     20.Take a Report from All Machine"
+#		$NOCOL
+#		echo "   |-------------------------------------|"
+#		echo "   | WebPage:http://localhost            |"
+#		echo "   |-------------------------------------|"
+#		$RED
+#		echo "     99.Exit"
+#		$NOCOL
+#		echo -e
+#
+#	}
+#	function read_input(){
+#		$WHITE
+#		local c
+#		read -p "You can choose from the menu numbers " c
+#		$NOCOL
+#		case $c in
+#			1) create_system_report ;;
+#			2) create_service_report ;;
+#			99) exit 0 ;;
+#			*)
+#		pause
+#		esac
+#	}
+#
+#	# CTRL+C, CTRL+Z
+#	trap '' SIGINT SIGQUIT SIGTSTP
+#	while true
+#	do
+#	clear
+#	show_menu
+#	read_input
+#	done
+#fi
 
 if [ "$1" = "--server-install" ]; then
 	clear
