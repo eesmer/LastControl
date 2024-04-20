@@ -1,18 +1,15 @@
 ![alt text](doc/images/lastcontrol_logo-r1.png "LastControl")
 <br>
 
-LastControl performs hardening and health checks on Linux systems.<br>
-After the check, it prints a summary report on the screen and creates a detailed machine report.<br>
-<br>
-You can use the LastControl application in 2 ways;<br>
-- Performing checks on the local machine
-- Control of remote machines and collection of reports with server mode
+LastControl performs hardening and health checks on Linux systems. It generates summary and detailed reports.
 
-<br>
+With LastControl
+- You can perform an audit on your local machine.
+- You can also centrally report remote servers with server setup.
 
-Another purpose of the LastControl application is to assist system administrators by creating guiding and useful documents.<br>
-
-<br>
+The purpose of LastControl;
+To report results with automated checks and 
+to provide useful guidance and documentation to system administrators.
 
 **It is compatible with the following distributions and can generate reports** <br>
 Debian, Ubuntu, Centos, RedHat, Fedora, Oracle Linux, Rocky Linux<br>
