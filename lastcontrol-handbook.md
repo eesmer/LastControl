@@ -27,7 +27,6 @@ bash lastcontrol.sh --help
 | --add-host          | LastControl SSH Key is added to the server and included in the Host List |
 | --remove-host       | LastContol SSH Key is deleted and removed from the Host list             |
 | --host-list		      | List of Added Hosts                                                      |
-| ------------------- | -------------------------------------------------------------------------|
 
 <br>
 
