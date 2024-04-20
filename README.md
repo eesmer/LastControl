@@ -1,11 +1,12 @@
 ![alt text](doc/images/lastcontrol_logo-r1.png "LastControl")
 <br>
 
-LastControl performs hardening and health checks on Linux systems. It generates summary and detailed reports.
+LastControl performs hardening and health checks on Linux systems. <br>
+It generates summary and detailed reports. <br>
 
 With LastControl
-- You can perform an audit on your local machine.
-- You can also centrally report remote servers with server setup.
+- You can perform an audit on your local machine
+- You can also centrally report remote servers with server setup
 
 The purpose of LastControl; <br>
 To report results with automated checks and to provide useful guidance and documentation to system administrators.
