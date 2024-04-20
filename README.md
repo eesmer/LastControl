@@ -13,6 +13,9 @@ To report results with automated checks and to provide useful guidance and docum
 **LastControl is compatible with the following distros and can generate reports** <br>
 Ubuntu, RHEL, Centos, Debian <br>
 
+For server installation you need to use Debian. <br>
+You can read the help files for this. <br>
+
 ---
 
 **Key Features**<br>
