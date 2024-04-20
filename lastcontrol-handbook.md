@@ -25,6 +25,9 @@ bash lastcontrol.sh --help
 | --report-allhost	  | Generates reports from all remote servers in Host List                   |
 | --server-install    | Installs LastControl Server to perform remote server control             |
 | --add-host          | LastControl SSH Key is added to the server and included in the Host List |
+| --remove-host       | LastContol SSH Key is deleted and removed from the Host list             |
+| --host-list		      | List of Added Hosts                                                      |
+| ------------------- | -------------------------------------------------------------------------|
 
 <br>
 
