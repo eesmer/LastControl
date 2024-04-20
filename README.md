@@ -18,11 +18,12 @@ You can read the help files for this. <br>
 
 ---
 
-**Key Features**<br>
-- Generates inventory report
-- Reports system information
+**Key Features** <br>
+
+- Inventory report
+- System information report
 - Controls access and network settings
-- Generates detailed user accounts report
+- Detailed user accounts report
 
 ---
 
