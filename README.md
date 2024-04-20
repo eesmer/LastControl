@@ -10,7 +10,7 @@ With LastControl
 The purpose of LastControl; <br>
 To report results with automated checks and to provide useful guidance and documentation to system administrators.
 
-**LastControl is compatible with the following deployments and can generate reports** <br>
+**LastControl is compatible with the following distros and can generate reports** <br>
 Ubuntu, RHEL, Centos, Debian <br>
 
 ---
