@@ -7,9 +7,8 @@ With LastControl
 - You can perform an audit on your local machine.
 - You can also centrally report remote servers with server setup.
 
-The purpose of LastControl;
-To report results with automated checks and 
-to provide useful guidance and documentation to system administrators.
+The purpose of LastControl; <br>
+To report results with automated checks and to provide useful guidance and documentation to system administrators.
 
 **It is compatible with the following distributions and can generate reports** <br>
 Debian, Ubuntu, Centos, RedHat, Fedora, Oracle Linux, Rocky Linux<br>
