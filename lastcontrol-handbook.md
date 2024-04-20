@@ -8,16 +8,28 @@ You can download lastcontrol script from the link below.<br>
 wget https://raw.githubusercontent.com/eesmer/LastControl/master/lastcontrol.sh
 
 ```
+```bash
+bash lastcontrol.sh --help
+```
+
 ---
 **Usage:** lastcontrol.sh [OPTION] <br>
 <br>
 **Optional arguments:**<br>
 
-| Option          | Description                                               |
-| --------------- | --------------------------------------------------------- |
-| --help          | show this help message                                    |
-| --localhost     | It controls the server (local machine) you are running on |
-| --server-config | It installs the LastControl as a server                   |
+| Option              | Description                                                              |
+| ------------------- | -------------------------------------------------------------------------|
+| --help, -h          | Show this help message                                                   |
+| --report-localhost  | It checks the server (local machine) you are running on                  |
+| --report-remotehost | It checks the remote server                                              |
+| --report-allhost	  | Generates reports from all remote servers in Host List                   |
+| --server-install    | Installs LastControl Server to perform remote server control             |
+| --add-host          | LastControl SSH Key is added to the server and included in the Host List |
+
+Example:
+bash lastcontrol.sh --report-localhost
+bash lastcontrol.sh --server-install
+bash lastcontrol.sh --report-remotehost [TARGETHOST] [PORTNUMBER]
 
 ---
 
