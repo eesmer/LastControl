@@ -776,6 +776,7 @@ if [ "$1" = "--report-localhost" ]; then
 	printf "%30s %s\n" "------------------------------------------------------"
 	$MAGENTA
 	printf "%30s %s\n" "               LastControl Check Result               " 
+	printf "%30s %s\n" "                    Summary Report                    " 
 	$NOCOL
 	printf "%30s %s\n" "------------------------------------------------------"
 	if [ "$NWRESULT" -gt 0 ]; then
