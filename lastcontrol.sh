@@ -775,7 +775,7 @@ if [ "$1" = "--report-localhost" ]; then
 	clear
 	printf "%30s %s\n" "------------------------------------------------------"
 	$MAGENTA
-	printf "%30s %s\n" "               LastControl Check Result               " 
+	printf "%30s %s\n" "                  LastControl Result                  " 
 	printf "%30s %s\n" "                    Summary Report                    " 
 	$NOCOL
 	printf "%30s %s\n" "------------------------------------------------------"
