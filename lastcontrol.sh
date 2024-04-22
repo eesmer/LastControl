@@ -59,6 +59,17 @@ if [ "$1" = "--help" ] || [ "$1" = "-h" ] || [ -z "$1" ]; then
     exit 0
 fi
 
+#----------------------------
+# determine distro
+#----------------------------
+cat /etc/*-release /etc/issue > "$RDIR/distrocheck"
+if grep -qi "debian\|ubuntu" "$RDIR/distrocheck"; then
+	REP=APT
+elif grep -qi "centos\|rocky\|red hat" "$RDIR/distrocheck"; then
+	REP=YUM
+fi
+rm $RDIR/distrocheck
+
 SYSTEM_REPORT() {
 	if [ -d "$RDIR" ]; then
 		rm -r $RDIR
@@ -96,31 +107,6 @@ SYSTEM_REPORT() {
 	TIME_SYNC=$(timedatectl status | awk '/synchronized:/ {print $4}')
 	HTTP_PROXY_USAGE=FALSE
 	{ env | grep -q "http_proxy"; } || { grep -q -e "export http" /etc/profile /etc/profile.d/*; } && HTTP_PROXY_USAGE=TRUE
-		
-	#----------------------------
-	# determine distro
-	#----------------------------
-	cat /etc/*-release /etc/issue > "$RDIR/distrocheck"
-	if grep -qi "debian\|ubuntu" "$RDIR/distrocheck"; then
-		REP=APT
-	elif grep -qi "centos\|rocky\|red hat" "$RDIR/distrocheck"; then
-		REP=YUM
-	fi
-	rm $RDIR/distrocheck
-	
-	#----------------------------
-	# Not support message
-	#----------------------------
-	if [ -z "$REP" ]; then
-		$RED
-		echo -e
-		echo "--------------------------------------------------------------"
-		echo -e "Repository could not be detected.\nThis distro is not supported"
-		echo "--------------------------------------------------------------"
-		echo -e
-		$NOCOL
-		exit 1
-	fi
 }
 
 CHECK_QUOTA() {
@@ -538,6 +524,10 @@ SUIDGUID_FILE_CHECK() {
 	echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	find / -perm /6000 &> /dev/null >> $RDIR/$HOST_NAME-allreports.txt
 	echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+}
+
+LAST_INSTALL() {
+	LAST_INSTALL=$(tail -n 100 /var/log/dpkg.log | grep "installed" | grep -v "half-installed" | cut -d " " -f5)
 }
 
 #if [ "$1" = "--manager" ]; then
