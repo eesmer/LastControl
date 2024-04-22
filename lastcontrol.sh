@@ -70,6 +70,18 @@ elif grep -qi "centos\|rocky\|red hat" "$RDIR/distrocheck"; then
 fi
 rm $RDIR/distrocheck
 
+# Not support message
+if [ -z "$REP" ]; then
+        $RED
+        echo -e
+        echo "--------------------------------------------------------------"
+        echo -e "Repository could not be detected.\nThis distro is not supported",
+        echo "--------------------------------------------------------------"
+        echo -e
+        $NOCOL
+        exit 1
+fi
+
 SYSTEM_REPORT() {
 	if [ -d "$RDIR" ]; then
 		rm -r $RDIR
