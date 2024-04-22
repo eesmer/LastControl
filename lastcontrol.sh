@@ -59,28 +59,26 @@ if [ "$1" = "--help" ] || [ "$1" = "-h" ] || [ -z "$1" ]; then
     exit 0
 fi
 
-#----------------------------
-# determine distro
-#----------------------------
-cat /etc/*-release /etc/issue > "$RDIR/distrocheck"
-if grep -qi "debian\|ubuntu" "$RDIR/distrocheck"; then
-	REP=APT
-elif grep -qi "centos\|rocky\|red hat" "$RDIR/distrocheck"; then
-	REP=YUM
-fi
-rm $RDIR/distrocheck
-
-# Not support message
-if [ -z "$REP" ]; then
-        $RED
-        echo -e
-        echo "--------------------------------------------------------------"
-        echo -e "Repository could not be detected.\nThis distro is not supported",
-        echo "--------------------------------------------------------------"
-        echo -e
-        $NOCOL
-        exit 1
-fi
+CHECK_DISTRO() {
+	cat /etc/*-release /etc/issue > "$RDIR/distrocheck"
+	if grep -qi "debian\|ubuntu" "$RDIR/distrocheck"; then
+		REP=APT
+	elif grep -qi "centos\|rocky\|red hat" "$RDIR/distrocheck"; then
+		REP=YUM
+	fi
+	rm $RDIR/distrocheck
+	# Not support message
+	if [ -z "$REP" ]; then
+		$RED
+		echo -e
+		echo "--------------------------------------------------------------"
+		echo -e "Repository could not be detected.\nThis distro is not supported",
+		echo "--------------------------------------------------------------"
+		echo -e
+		$NOCOL
+		exit 1
+	fi
+}
 
 SYSTEM_REPORT() {
 	if [ -d "$RDIR" ]; then
@@ -539,60 +537,10 @@ SUIDGUID_FILE_CHECK() {
 }
 
 LAST_INSTALL() {
-	LAST_INSTALL=$(tail -n 100 /var/log/dpkg.log | grep "installed" | grep -v "half-installed" | cut -d " " -f5)
+	if [ "$REP" = "APT" ]; then
+		LAST_INSTALL=$(tail -n 100 /var/log/dpkg.log | grep "installed" | grep -v "half-installed" | cut -d " " -f5)
+	fi
 }
-
-#if [ "$1" = "--manager" ]; then
-#	function pause(){
-#		local message="$@"
-#		[ -z $message ] && message="Press Enter to continue"
-#		read -p "$message" readEnterKey
-#	}
-#	function show_menu(){
-#		$MAGENTA
-#		echo "    LastControl Server Manager"
-#		$NOCOL
-#		echo "   |-------------------------------------|"
-#		echo "   | 1.Add Machine    | 3.Add SSH-Key    |"
-#		echo "   | 2.Remove Machine | 4.Remove SSH-Key |"
-#		echo "   |-------------------------------------|"
-#		echo "   | 10.Machine List                     |"
-#		echo "   |-------------------------------------|"
-#		$WHITE
-#		echo "     20.Take a Report from All Machine"
-#		$NOCOL
-#		echo "   |-------------------------------------|"
-#		echo "   | WebPage:http://localhost            |"
-#		echo "   |-------------------------------------|"
-#		$RED
-#		echo "     99.Exit"
-#		$NOCOL
-#		echo -e
-#
-#	}
-#	function read_input(){
-#		$WHITE
-#		local c
-#		read -p "You can choose from the menu numbers " c
-#		$NOCOL
-#		case $c in
-#			1) create_system_report ;;
-#			2) create_service_report ;;
-#			99) exit 0 ;;
-#			*)
-#		pause
-#		esac
-#	}
-#
-#	# CTRL+C, CTRL+Z
-#	trap '' SIGINT SIGQUIT SIGTSTP
-#	while true
-#	do
-#	clear
-#	show_menu
-#	read_input
-#	done
-#fi
 
 if [ "$1" = "--report-allhost" ]; then
 	clear
@@ -802,6 +750,7 @@ fi
 
 if [ "$1" = "--report-localhost" ]; then
 	clear
+	CHECK_DISTRO
         SYSTEM_REPORT
 	CHECK_QUOTA
 	LVM_CRYPT
@@ -821,6 +770,7 @@ if [ "$1" = "--report-localhost" ]; then
 	REPOSITORY_CHECK
 	NW_CONFIG_CHECK
 	SSH_CONFIG_CHECK
+	LAST_INSTALL
 	
 	clear
 	printf "%30s %s\n" "------------------------------------------------------"
@@ -966,6 +916,10 @@ $HOST_NAME LastControl All Controls Report $DATE
 |/var Dir Mount      |$VARMOUNT
 |/var/tmp Dir Mount  |$VARTMPMOUNT
 |/var/log Dir Mount  |$VARLOGMOUNT
+--------------------------------------------------------------------------------------------------------------------------
+| PACKAGES
+--------------------------------------------------------------------------------------------------------------------------
+| Installed Packages |$LAST_INSTALL
 --------------------------------------------------------------------------------------------------------------------------
 | SERVICES & PROCESSES
 --------------------------------------------------------------------------------------------------------------------------
