@@ -411,60 +411,60 @@ SSH_AUTH_LOGS() {
 
 NW_CONFIG_CHECK() {
 	NWCHECK1=$(sysctl net.ipv4.ip_forward |cut -d "=" -f2 |cut -d " " -f2)
-	IPV4_FORWARD_CHECK="Fail"
-	if [ "$NWCHECK1" = 0 ]; then IPV4_FORWARD_CHECK="Pass"; fi
+	IPV4_FORWARD_CHECK="Fail" && ((NWRESULT++))
+	if [ "$NWCHECK1" = 0 ]; then IPV4_FORWARD_CHECK="Pass" && ((NWRESULT--)); fi
 	
 	NWCHECK2=$(sysctl net.ipv4.conf.all.send_redirects |cut -d "=" -f2 |cut -d " " -f2)
-	IPV4_ALL_SEND_REDIRECTS="Fail"
-	if [ "$NWCHECK2" = 0 ]; then IPV4_ALL_SEND_REDIRECTS="Pass"; fi
+	IPV4_ALL_SEND_REDIRECTS="Fail" && ((NWRESULT++)) 
+	if [ "$NWCHECK2" = 0 ]; then IPV4_ALL_SEND_REDIRECTS="Pass" && ((NWRESULT--)); fi
 	
 	NWCHECK3=$(sysctl net.ipv4.conf.all.accept_source_route |cut -d "=" -f2 |cut -d " " -f2)
-	IPV4_ALL_ACCEPT_SOURCE_ROUTE="Fail"
-	if [ "$NWCHECK3" = 0 ]; then IPV4_ALL_ACCEPT_SOURCE_ROUTE="Pass"; fi
+	IPV4_ALL_ACCEPT_SOURCE_ROUTE="Fail" && ((NWRESULT++))
+	if [ "$NWCHECK3" = 0 ]; then IPV4_ALL_ACCEPT_SOURCE_ROUTE="Pass" && ((NWRESULT--)); fi
 	
 	NWCHECK4=$(sysctl net.ipv4.conf.default.accept_source_route |cut -d "=" -f2 |cut -d " " -f2)
-	IPV4_DEFAULT_ACCEPT_SOURCE_ROUTE="Fail"
-	if [ "$NWCHECK4" = 0 ]; then IPV4_DEFAULT_ACCEPT_SOURCE_ROUTE="Pass"; fi
+	IPV4_DEFAULT_ACCEPT_SOURCE_ROUTE="Fail" && ((NWRESULT++))
+	if [ "$NWCHECK4" = 0 ]; then IPV4_DEFAULT_ACCEPT_SOURCE_ROUTE="Pass" && ((NWRESULT--)); fi
 	
 	NWCHECK5=$(sysctl net.ipv4.conf.all.accept_redirects |cut -d "=" -f2 |cut -d " " -f2)
-	IPV4_ALL_ACCEPT_REDIRECTS="Fail"
-	if [ "$NWCHECK5" = 0 ]; then IPV4_ALL_ACCEPT_REDIRECTS="Pass"; fi
+	IPV4_ALL_ACCEPT_REDIRECTS="Fail" && ((NWRESULT++))
+	if [ "$NWCHECK5" = 0 ]; then IPV4_ALL_ACCEPT_REDIRECTS="Pass" && ((NWRESULT--)); fi
 	
 	NWCHECK6=$(sysctl net.ipv4.conf.default.accept_redirects |cut -d "=" -f2 |cut -d " " -f2)
-	IPV4_DEFAULT_ACCEPT_REDIRECTS="Fail"
-	if [ "$NWCHECK6" = 0 ]; then IPV4_DEFAULT_ACCEPT_REDIRECTS="Pass"; fi
+	IPV4_DEFAULT_ACCEPT_REDIRECTS="Fail" && ((NWRESULT++))
+	if [ "$NWCHECK6" = 0 ]; then IPV4_DEFAULT_ACCEPT_REDIRECTS="Pass" && ((NWRESULT--)); fi
 
 	NWCHECK7=$(sysctl net.ipv4.conf.all.secure_redirects |cut -d "=" -f2 |cut -d " " -f2)
-	IPV4_ALL_SECURE_REDIRECTS="Fail"
-	if [ "$NWCHECK7" = 0 ]; then IPV4_ALL_SECURE_REDIRECTS="Pass"; fi
+	IPV4_ALL_SECURE_REDIRECTS="Fail" && ((NWRESULT++))
+	if [ "$NWCHECK7" = 0 ]; then IPV4_ALL_SECURE_REDIRECTS="Pass" && ((NWRESULT--)); fi
 
 	NWCHECK8=$(sysctl net.ipv4.conf.default.secure_redirects |cut -d "=" -f2 |cut -d " " -f2)
-	IPV4_DEFAULT_SECURE_REDIRECTS="Fail"
-	if [ "$NWCHECK8" = 0 ]; then IPV4_DEFAULT_SECURE_REDIRECTS="Pass"; fi
+	IPV4_DEFAULT_SECURE_REDIRECTS="Fail" && ((NWRESULT++))
+	if [ "$NWCHECK8" = 0 ]; then IPV4_DEFAULT_SECURE_REDIRECTS="Pass" && ((NWRESULT--)); fi
 
 	NWCHECK9=$(sysctl net.ipv4.icmp_echo_ignore_broadcasts |cut -d "=" -f2 |cut -d " " -f2)
-	ICMP_IGNORE_BROADCASTS="Fail"
-	if [ "$NWCHECK9" = 1 ]; then ICMP_IGNORE_BROADCASTS="Pass"; fi
+	ICMP_IGNORE_BROADCASTS="Fail" && ((NWRESULT++))
+	if [ "$NWCHECK9" = 1 ]; then ICMP_IGNORE_BROADCASTS="Pass" && ((NWRESULT--)); fi
 
 	NWCHECK10=$(sysctl net.ipv4.icmp_ignore_bogus_error_responses |cut -d "=" -f2 |cut -d " " -f2)
-	ICMP_IGNORE_BOGUS_ERROR="Fail"
-	if [ "$NWCHECK10" = 1 ]; then ICMP_IGNORE_BOGUS_ERROR="Pass"; fi
+	ICMP_IGNORE_BOGUS_ERROR="Fail" && ((NWRESULT++))
+	if [ "$NWCHECK10" = 1 ]; then ICMP_IGNORE_BOGUS_ERROR="Pass" && ((NWRESULT--)); fi
 
 	NWCHECK11=$(sysctl net.ipv4.conf.all.rp_filter |cut -d "=" -f2 |cut -d " " -f2)
-	ALL_RP_FILTER="Fail"
-	if [ "$NWCHECK11" = 1 ]; then ALL_RP_FILTER="Pass"; fi
+	ALL_RP_FILTER="Fail" && ((NWRESULT++))
+	if [ "$NWCHECK11" = 1 ]; then ALL_RP_FILTER="Pass" && ((NWRESULT--)); fi
 
 	NWCHECK12=$(sysctl net.ipv4.tcp_syncookies |cut -d "=" -f2 |cut -d " " -f2)
-	TCP_SYNCOOKIES="Fail"
-	if [ "$NWCHECK12" = 1 ]; then TCP_SYNCOOKIES="Pass"; fi
+	TCP_SYNCOOKIES="Fail" && ((NWRESULT++))
+	if [ "$NWCHECK12" = 1 ]; then TCP_SYNCOOKIES="Pass" && ((NWRESULT--)); fi
 
 	NWCHECK13=$(sysctl net.ipv6.conf.all.disable_ipv6 |cut -d "=" -f2 |cut -d " " -f2)
-	DISABLE_IPV6="Fail"
-	if [ "$NWCHECK13" = 1 ]; then DISABLE_IPV6="Pass"; fi
+	DISABLE_IPV6="Fail" && ((NWRESULT++))
+	if [ "$NWCHECK13" = 1 ]; then DISABLE_IPV6="Pass" && ((NWRESULT--)); fi
 
 	NWCHECK14=$(sysctl net.ipv6.conf.all.accept_ra |cut -d "=" -f2 |cut -d " " -f2)
-	IPV6_ALL_ACCEPT_RA="Fail"
-	if [ "$NWCHECK14" = 1 ]; then IPV6_ALL_ACCEPT_RA="Pass"; fi
+	IPV6_ALL_ACCEPT_RA="Fail" && ((NWRESULT++))
+	if [ "$NWCHECK14" = 1 ]; then IPV6_ALL_ACCEPT_RA="Pass" && ((NWRESULT--)); fi
 }
 
 SSH_CONFIG_CHECK() {
@@ -774,25 +774,31 @@ if [ "$1" = "--report-localhost" ]; then
 	
 	clear
 	printf "%30s %s\n" "------------------------------------------------------"
-	$RED
-	printf "%30s %s\n" "               LastControl Summary Report             " 
+	$MAGENTA
+	printf "%30s %s\n" "               LastControl Check Result               " 
 	$NOCOL
 	printf "%30s %s\n" "------------------------------------------------------"
-	$CYAN
-	printf "%30s %s\n" "- Hardware                                              " 
+	if [ "$NWRESULT" -gt 0 ]; then
+	       $RED
+	       printf "%30s %s\n" "Network Configuration [X]"
+	       $NOCOL
+       else
+	       $GREEN
+	       printf "%30s %s\n" "Network Configuration [V]"
+	       $NOCOL
+	fi
+	if [ "$NWRESULT" -gt 0 ]; then
+	       $GREEN
+	       printf "%30s %s\n" "SSH Configuration [V]"
+	       $NOCOL
+       else
+	       $RED
+	       printf "%30s %s\n" "SSH Configuration [V]"
+	       $NOCOL
+	fi
 	$NOCOL
-	printf "%30s %s\n" "------------------------------------------------------"
-	printf "%30s %s\n" "Hostname            :" "$HOST_NAME"
-	printf "%30s %s\n" "Internal IP Address :" "$INTERNAL_IP"
-	printf "%30s %s\n" "External IP Address :" "$EXTERNAL_IP"
-	printf "%30s %s\n" "Internet Connection :" "$INTERNET"
-	printf "%30s %s\n" "CPU Info            :" "$CPU_INFO - Number of CPU: $NOC"
-	printf "%30s %s\n" "Ram Info            :" "Total Ram: $RAM_TOTAL - Ram Usage: $RAM_USAGE"
-	printf "%30s %s\n" "VGA Info            :" "VGA: $GPU_INFO - VGA Ram: $GPU_RAM"
-	printf "%30s %s\n" "------------------------------------------------------"
 	$CYAN
 	printf "%50s %s\n" "- System                                              " 
-	$NOCOL
 	printf "%30s %s\n" "------------------------------------------------------"
 	printf "%30s %s\n" "Distro              :" "$DISTRO"
 	printf "%30s %s\n" "Kernel Version      :" "$KERNEL"
@@ -939,6 +945,7 @@ $LAST_INSTALL
 -------------------------------------------------------------------------------------------------------------------------
 | Network Config
 -------------------------------------------------------------------------------------------------------------------------
+|NW RESULT = $NWRESULT
 |IPv4 IP Forward Check                    | $IPV4_FORWARD_CHECK"
 |IPv4 All Send Redirects Check            | $IPV4_ALL_SEND_REDIRECTS"
 |IPv4 All Accept Source Route Check       | $IPV4_ALL_ACCEPT_SOURCE_ROUTE"
