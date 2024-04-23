@@ -470,51 +470,51 @@ NW_CONFIG_CHECK() {
 SSH_CONFIG_CHECK() {
 	# PRIVATE HOST KEY
 	SSHCHECK1=$(stat /etc/ssh/sshd_config |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
-	SSHD_ACL="Fail"
-	if [ "$SSHCHECK1" = 0600 ]; then SSHD_ACL="Pass"; fi
+	SSHD_ACL="Fail" && ((SSHRESULT++))
+	if [ "$SSHCHECK1" = 0600 ]; then SSHD_ACL="Pass" && ((SSHRESULT--)); fi
 	SSHCHECK2=$(stat /etc/ssh/ssh_host_rsa_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
-	RSAKEY_ACL="Fail"
-	if [ "$SSHCHECK2" = 0600 ]; then RSAKEY_ACL="Pass"; fi
+	RSAKEY_ACL="Fail" && ((SSHRESULT++))
+	if [ "$SSHCHECK2" = 0600 ]; then RSAKEY_ACL="Pass" && ((SSHRESULT--)); fi
 	SSHCHECK3=$(stat /etc/ssh/ssh_host_ecdsa_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
-	ECDSAKEY_ACL="Fail"
-	if [ "$SSHCHECK3" = 0600 ]; then ECDSAKEY_ACL="Pass"; fi
+	ECDSAKEY_ACL="Fail" && ((SSHRESULT++))
+	if [ "$SSHCHECK3" = 0600 ]; then ECDSAKEY_ACL="Pass" && ((SSHRESULT--)); fi
 	SSHCHECK4=$(stat /etc/ssh/ssh_host_ed25519_key |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
-	ED25519KEY_ACL="Fail"
-	if [ "$SSHCHECK4" = 0600 ]; then ED25519KEY_ACL="Pass"; fi
+	ED25519KEY_ACL="Fail" && ((SSHRESULT++))
+	if [ "$SSHCHECK4" = 0600 ]; then ED25519KEY_ACL="Pass" && ((SSHRESULT--)); fi
 	# PUBLIC HOST KEY
 	SSHCHECK5=$(stat /etc/ssh/ssh_host_rsa_key.pub |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
-	RSAKEYPUB_ACL="Fail"
-	if [ "$SSHCHECK5" = 0644 ]; then RSAKEYPUB_ACL="Pass"; fi
+	RSAKEYPUB_ACL="Fail" && ((SSHRESULT++))
+	if [ "$SSHCHECK5" = 0644 ]; then RSAKEYPUB_ACL="Pass" && ((SSHRESULT--)); fi
 	SSHCHECK6=$(stat /etc/ssh/ssh_host_ed25519_key.pub |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
-	ED25519PUB_ACL="Fail"
-	if [ "$SSHCHECK6" = 0644 ]; then ED25519PUB_ACL="Pass"; fi
+	ED25519PUB_ACL="Fail" && ((SSHRESULT++))
+	if [ "$SSHCHECK6" = 0644 ]; then ED25519PUB_ACL="Pass" && ((SSHRESULT--)); fi
 	grep ^Protocol /etc/ssh/sshd_config >> /dev/null
-	PROTOCOL2="Fail"
-	if [ "$?" = 0 ]; then PROTOCOL2="Pass"; fi
+	PROTOCOL2="Fail" && ((SSHRESULT++))
+	if [ "$?" = 0 ]; then PROTOCOL2="Pass" && ((SSHRESULT--)); fi
 	SSHCHECK7=$(sshd -T | grep loglevel |cut -d " " -f2)
-	LOGLEVEL="Fail"
-	if [ "$SSHCHECK7" = INFO ]; then LOGLEVEL="Pass"; fi
+	LOGLEVEL="Fail" && ((SSHRESULT++))
+	if [ "$SSHCHECK7" = INFO ]; then LOGLEVEL="Pass" && ((SSHRESULT--)); fi
 	SSHCHECK8=$(sshd -T | grep x11forwarding |cut -d " " -f2)
-	X11FORWARD="Fail"
-	if [ "$SSHCHECK8" = no ]; then X11FORWARD="Pass"; fi
+	X11FORWARD="Fail" && ((SSHRESULT++))
+	if [ "$SSHCHECK8" = no ]; then X11FORWARD="Pass" && ((SSHRESULT--)); fi
 	SSHCHECK9=$(sshd -T | grep maxauthtries |cut -d " " -f2)
-	MAXAUTHTRIES="Fail"
-	if [ "$SSHCHECK9" -lt 4 ]; then MAXAUTHTRIES="Pass"; fi
+	MAXAUTHTRIES="Fail" && ((SSHRESULT++))
+	if [ "$SSHCHECK9" -lt 4 ]; then MAXAUTHTRIES="Pass" && ((SSHRESULT--)); fi
 	SSHCHECK10=$(sshd -T | grep ignorerhosts |cut -d " " -f2)
-	IGNORERHOST="Fail"
-	if [ "$SSHCHECK10" = yes ]; then IGNORERHOST="Pass"; fi
+	IGNORERHOST="Fail" && ((SSHRESULT++))
+	if [ "$SSHCHECK10" = yes ]; then IGNORERHOST="Pass" && ((SSHRESULT--)); fi
 	SSHCHECK11=$(sshd -T | grep hostbasedauthentication |cut -d " " -f2)
-	HOSTBASEDAUTH="Fail"
-	if [ "$SSHCHECK11" = no ]; then HOSTBASEDAUTH="Pass"; fi
+	HOSTBASEDAUTH="Fail" && ((SSHRESULT++))
+	if [ "$SSHCHECK11" = no ]; then HOSTBASEDAUTH="Pass" && ((SSHRESULT--)); fi
 	SSHCHECK12=$(sshd -T | grep permitrootlogin |cut -d " " -f2)
-	ROOTLOGIN="Fail"
-	if [ "$SSHCHECK12" = no ]; then ROOTLOGIN="Pass"; fi
+	ROOTLOGIN="Fail" && ((SSHRESULT++))
+	if [ "$SSHCHECK12" = no ]; then ROOTLOGIN="Pass" && ((SSHRESULT--)); fi
 	SSHCHECK13=$(sshd -T | grep permitemptypasswords |cut -d " " -f2)
-	EMPTYPASS="Fail"
-	if [ "$SSHCHECK13" = no ]; then EMPTYPASS="Pass"; fi
+	EMPTYPASS="Fail" && ((SSHRESULT++))
+	if [ "$SSHCHECK13" = no ]; then EMPTYPASS="Pass" && ((SSHRESULT--)); fi
 	SSHCHECK14=$(sshd -T | grep permituserenvironment |cut -d " " -f2)
-	PERMITUSERENV="Fail"
-	if [ "$SSHCHECK14" = no ]; then PERMITUSERENV="Pass"; fi
+	PERMITUSERENV="Fail" && ((SSHRESULT++))
+	if [ "$SSHCHECK14" = no ]; then PERMITUSERENV="Pass" && ((SSHRESULT--)); fi
 }
 
 SUIDGUID_FILE_CHECK() {
@@ -788,12 +788,12 @@ if [ "$1" = "--report-localhost" ]; then
 	       printf "%30s %s\n" "Network Configuration [V]"
 	       $NOCOL
 	fi
-	if [ "$NWRESULT" -gt 0 ]; then
-	       $GREEN
-	       printf "%30s %s\n" "SSH Configuration [V]"
+	if [ "$SSHRESULT" -gt 0 ]; then
+	       $RED
+	       printf "%30s %s\n" "SSH Configuration [X]"
 	       $NOCOL
        else
-	       $RED
+	       $GREEN
 	       printf "%30s %s\n" "SSH Configuration [V]"
 	       $NOCOL
 	fi
