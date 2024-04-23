@@ -40,6 +40,7 @@ CYAN="tput setaf 6"
 WHITE="tput setaf 7"
 GRAY="tput setaf 8"
 RED="tput setaf 9"
+BLUE="tput setaf 12"
 NOCOL="tput sgr0"
 BOLD="tput bold"
 NORMAL="tput sgr0"
@@ -193,7 +194,9 @@ SUDO_USER_LIST(){
     getent group sudo | awk -F: '{print $4}' | tr ',' "\n" >> "$tmpfile"
     cat /etc/sudoers | grep "ALL" | grep -v "%" | awk '{print $1}' >> "$tmpfile"
     grep 'ALL' /etc/sudoers.d/* | cut -d":" -f2 | cut -d" " -f1 >> "$tmpfile"
+    sed -i '/root/d' $tmpfile
     SUDO_USER_LIST=$(sort -u "$tmpfile" | paste -sd ",")
+    SUDO_USER_COUNT=$(wc -l $tmpfile | cut -d " " -f1)
     rm -f "$tmpfile"
 }
 
