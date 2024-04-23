@@ -787,7 +787,7 @@ if [ "$1" = "--report-localhost" ]; then
 	       $RED
 	       printf "%30s %s\n" "Network Configuration [X]"
 	       $NOCOL
-       else
+        else
 	       $GREEN
 	       printf "%30s %s\n" "Network Configuration [V]"
 	       $NOCOL
@@ -796,10 +796,19 @@ if [ "$1" = "--report-localhost" ]; then
 	       $RED
 	       printf "%30s %s\n" "SSH Configuration [X]"
 	       $NOCOL
-       else
+        else
 	       $GREEN
 	       printf "%30s %s\n" "SSH Configuration [V]"
 	       $NOCOL
+	fi
+	if [ "$SUDO_USER_COUNT" -gt 0 ]; then
+                $BLUE
+                printf "%30s %s\n" "SUDO authorized user accounts found [I]"
+                $NOCOL                                               
+        else                                                         
+                $BLUE                                                
+                printf "%30s %s\n" "The system's only authorized user is the root account [I]"
+                $NOCOL                                               
 	fi
 	$NOCOL
 	$CYAN
