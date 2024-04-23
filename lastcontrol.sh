@@ -195,6 +195,7 @@ SUDO_USER_LIST(){
     cat /etc/sudoers | grep "ALL" | grep -v "%" | awk '{print $1}' >> "$tmpfile"
     grep 'ALL' /etc/sudoers.d/* | cut -d":" -f2 | cut -d" " -f1 >> "$tmpfile"
     sed -i '/root/d' $tmpfile
+    sed -i '/^$/d' $tmpfile
     SUDO_USER_LIST=$(sort -u "$tmpfile" | paste -sd ",")
     SUDO_USER_COUNT=$(wc -l $tmpfile | cut -d " " -f1)
     rm -f "$tmpfile"
