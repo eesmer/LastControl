@@ -807,7 +807,7 @@ if [ "$1" = "--report-localhost" ]; then
                 $NOCOL                                               
         else                                                         
                 $BLUE                                                
-                printf "%30s %s\n" "The system's only authorized user is the root account [I]"
+                printf "%30s %s\n" "Only authorized user is the root account [I]"
                 $NOCOL                                               
 	fi
 	$NOCOL
