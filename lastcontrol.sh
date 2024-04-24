@@ -780,47 +780,46 @@ if [ "$1" = "--report-localhost" ]; then
 	printf "%30s %s\n" "------------------------------------------------------"
 	$MAGENTA
 	printf "%30s %s\n" "                  About of $HOST_NAME                 " 
-	printf "%30s %s\n" "                      LastControl                     " 
 	$NOCOL
 	printf "%30s %s\n" "------------------------------------------------------"
 	if [ "$NWRESULT" -gt 0 ]; then
-	       $RED
-	       printf "%30s %s\n" "Network Configuration [X]"
-	       $NOCOL
+	$RED
+	printf "%10s %s\n" "Network Configuration [X]"
+	$NOCOL
         else
 	       $GREEN
-	       printf "%30s %s\n" "Network Configuration [V]"
+	       printf "%10s %s\n" "Network Configuration [V]"
 	       $NOCOL
 	fi
 	if [ "$SSHRESULT" -gt 0 ]; then
 	       $RED
-	       printf "%30s %s\n" "SSH Configuration [X]"
+	       printf "%10s %s\n" "SSH Configuration [X]"
 	       $NOCOL
         else
 	       $GREEN
-	       printf "%30s %s\n" "SSH Configuration [V]"
+	       printf "%10s %s\n" "SSH Configuration [V]"
 	       $NOCOL
 	fi
 	if [ "$SUDO_USER_COUNT" -gt 0 ]; then
                 $BLUE
-                printf "%30s %s\n" "SUDO authorized user accounts found [I]"
+                printf "%10s %s\n" "SUDO authorized user accounts found [I]"
                 $NOCOL                                               
         else                                                         
-                $BLUE                                                
-                printf "%30s %s\n" "Only authorized user is the root account [I]"
-                $NOCOL                                               
+		$BLUE                                                
+		printf "%10s %s\n" "Only authorized user is the root account [I]"
+		$NOCOL                                               
 	fi
 	$NOCOL
 	$CYAN
-	printf "%30s %s\n" "------------------------------------------------------"
+	printf "%10s %s\n" "------------------------------------------------------"
 	$CYAN
 	$BOLD
-	printf "%10s %s\n" "- The Full Report System"
+	printf "%10s %s\n" "- For Detailed Report"
 	$NOCOL
 	printf "%10s %s\n" "$RDIR/$HOST_NAME-allreports.txt"
 	printf "%10s %s\n" "Web Page: http://$INTERNAL_IP"
 	$NORMAL
-	printf "%30s %s\n" "------------------------------------------------------"
+	printf "%10s %s\n" "------------------------------------------------------"
 	echo -e
 	
 	rm -f "$RDIR"/{lastlogin30d,lastlogininfo,passchange,passexpireinfo.txt,userstatus}
