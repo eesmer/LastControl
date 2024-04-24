@@ -779,34 +779,34 @@ if [ "$1" = "--report-localhost" ]; then
 	clear
 	printf "%30s %s\n" "------------------------------------------------------"
 	$MAGENTA
-	printf "%30s %s\n" "                  About of $HOST_NAME                 " 
+	printf "%30s %s\n" "              About of $HOST_NAME                     "  
 	$NOCOL
 	printf "%30s %s\n" "------------------------------------------------------"
 	if [ "$NWRESULT" -gt 0 ]; then
 	$RED
-	printf "%10s %s\n" "Network Configuration [X]"
+	printf "%10s %s\n" "	Network Configuration [X]"
 	$NOCOL
         else
 	       $GREEN
-	       printf "%10s %s\n" "Network Configuration [V]"
+	       printf "%10s %s\n" "	Network Configuration [V]"
 	       $NOCOL
 	fi
 	if [ "$SSHRESULT" -gt 0 ]; then
 	       $RED
-	       printf "%10s %s\n" "SSH Configuration [X]"
+	       printf "%10s %s\n" "	SSH Configuration [X]"
 	       $NOCOL
         else
 	       $GREEN
-	       printf "%10s %s\n" "SSH Configuration [V]"
+	       printf "%10s %s\n" "	SSH Configuration [V]"
 	       $NOCOL
 	fi
 	if [ "$SUDO_USER_COUNT" -gt 0 ]; then
                 $BLUE
-                printf "%10s %s\n" "SUDO authorized user accounts found [I]"
+                printf "%10s %s\n" "	SUDO authorized user accounts found [I]"
                 $NOCOL                                               
         else                                                         
 		$BLUE                                                
-		printf "%10s %s\n" "Only authorized user is the root account [I]"
+		printf "%10s %s\n" "	Only authorized user is the root account [I]"
 		$NOCOL                                               
 	fi
 	$NOCOL
