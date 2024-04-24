@@ -60,6 +60,7 @@ if [ "$1" = "--help" ] || [ "$1" = "-h" ] || [ -z "$1" ]; then
     exit 0
 fi
 
+
 CHECK_DISTRO() {
 	cat /etc/*-release /etc/issue > "$RDIR/distrocheck"
 	if grep -qi "debian\|ubuntu" "$RDIR/distrocheck"; then
@@ -556,13 +557,12 @@ if [ "$1" = "--report-allhost" ]; then
 		PNAME=$(echo $HOST | cut -d " " -f2)
 		$BOLD
 		$YELLOW
-		echo -e
-		printf "    %s\n" "Hostname : ::::: $HNAME :::::"
+		printf "	%s\n" "Hostname : ::::: $HNAME :::::"
 		$NOCOL
 		bash $CDIR/lastcontrol.sh --report-remotehost $HNAME $PNAME
 		$NOCOL
 		i=$(( i + 1 ))
-		echo -e
+		echo "---------------------------------------------------"
 	done
 fi
 
@@ -606,13 +606,13 @@ if [ "$1" = "--report-remotehost" ]; then
 			scp -P$PORTNUMBER -i $LCKEY $CDIR/lastcontrol.sh -o "StrictHostKeyChecking no" root@$TARGETMACHINE:/usr/local/ &> /dev/null && echo "LastControl Script was transferred to the $TARGETMACHINE"
 			ssh -p$PORTNUMBER -i $LCKEY -o "StrictHostKeyChecking no" root@$TARGETMACHINE -- bash /usr/local/lastcontrol.sh --report-localhost &> /dev/null
 			$CYAN
-			scp -P$PORTNUMBER -i $LCKEY -o "StrictHostKeyChecking no" root@$TARGETMACHINE:/usr/local/lastcontrol/reports/$TARGETHOSTNAME-allreports.txt $WEB/reports/ &> /dev/null && echo "Report Created" 
+			scp -P$PORTNUMBER -i $LCKEY -o "StrictHostKeyChecking no" root@$TARGETMACHINE:/usr/local/lastcontrol/reports/$TARGETHOSTNAME-allreports.txt $WEB/reports/ &> /dev/null && echo "	Report Created" 
 			$NOCOL
 		else
 			$RED
-			echo "Could not reach $TARGETMACHINE from Port $PORTNUMBER"
+			echo "	Could not reach $TARGETMACHINE from Port $PORTNUMBER"
 			$NOCOL
-			echo -e
+			#echo -e
 		fi
 
 	elif [ "$LISTED" = "FALSE" ]; then
@@ -754,6 +754,10 @@ fi
 
 if [ "$1" = "--report-localhost" ]; then
 	clear
+	if [ -d "$RDIR" ]; then
+		rm -r $RDIR
+	fi
+	mkdir -p $RDIR
 	CHECK_DISTRO
         SYSTEM_REPORT
 	CHECK_QUOTA
