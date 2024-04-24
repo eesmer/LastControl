@@ -814,11 +814,14 @@ if [ "$1" = "--report-localhost" ]; then
 	printf "%10s %s\n" "------------------------------------------------------"
 	$CYAN
 	$BOLD
-	printf "%10s %s\n" "- For Detailed Report"
+	printf "%10s %s\n" "For Detailed Report:"
 	$NOCOL
 	printf "%10s %s\n" "$RDIR/$HOST_NAME-allreports.txt"
-	printf "%10s %s\n" "Web Page: http://$INTERNAL_IP"
+	$CYAN
+	$BOLD
+	printf "%0s %s\n" "Web:"
 	$NORMAL
+	printf "%10s %s\n" "http://$INTERNAL_IP"
 	printf "%10s %s\n" "------------------------------------------------------"
 	echo -e
 	
