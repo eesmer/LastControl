@@ -812,50 +812,6 @@ if [ "$1" = "--report-localhost" ]; then
 	fi
 	$NOCOL
 	$CYAN
-	printf "%50s %s\n" "- System                                              " 
-	printf "%30s %s\n" "------------------------------------------------------"
-	printf "%30s %s\n" "Distro              :" "$DISTRO"
-	printf "%30s %s\n" "Kernel Version      :" "$KERNEL"
-	printf "%30s %s\n" "Uptime              :" "$UPTIME - $UPTIME_MIN"
-	printf "%30s %s\n" "Last Boot           :" "$LAST_BOOT"
-	printf "%30s %s\n" "Virtualization      :" "$VIRT_CONTROL"
-	printf "%30s %s\n" "Date                :" "Date:$LOCAL_DATE"
-	printf "%30s %s\n" "Timezone            :" "$TIME_ZONE"
-	printf "%30s %s\n" "------------------------------------------------------"
-	$CYAN
-	printf "%30s %s\n" "- Current Status                                      "
-	$NOCOL
-	printf "%30s %s\n" "------------------------------------------------------"
-	printf "%30s %s\n" "Ram Usage           :" "$RAM_USAGE_PERCENTAGE%"
-	printf "%30s %s\n" "Swap Usage          :" "$SWAP_USAGE_PERCENTAGE%"
-	printf "%30s %s\n" "Service Manager     :" "$SERVICE_MANAGER"
-	printf "%30s %s\n" "Running Service     :" "$RUNNING_SERVICE"
-	printf "%30s %s\n" "Loaded Service      :" "$LOADED_SERVICE"
-	printf "%30s %s\n" "Active Connections  :" "$ACTIVE_CONN"
-	printf "%30s %s\n" "Passive Connections :" "$PASSIVE_CONN"
-	printf "%30s %s\n" "Failed Connections  :" "$FAILED_CONN"
-	printf "%30s %s\n" "Established Conn.   :" "$ESTAB_CONN"
-	printf "%30s %s\n" "Load Average        :" "$LOAD_AVG"
-	printf "%30s %s\n" "Zombie Process      :" "$ZO_PROCESS"
-	printf "%30s %s\n" "------------------------------------------------------"
-	$CYAN
-	printf "%30s %s\n" "- Repository List                                     "
-	$NOCOL
-	printf "%30s %s\n" "------------------------------------------------------"
-	cat $RDIR/repositorylist.txt	
-	printf "%30s %s\n" "------------------------------------------------------"
-	$CYAN
-	printf "%30s %s\n" "- Audit                                               "
-	$NOCOL
-	printf "%30s %s\n" "------------------------------------------------------"
-	$RED
-	printf "%10s %s\n" "Most Usage Commands :"
-	$NOCOL
-	echo "$MOST_COMMANDS"
-	$RED
-	printf "%30s %s\n" "Last 10 SSH Auth. Log Records:"
-	$NOCOL
-	SSH_AUTH_LOGS
 	printf "%30s %s\n" "------------------------------------------------------"
 	$CYAN
 	$BOLD
