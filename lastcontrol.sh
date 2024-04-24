@@ -779,9 +779,10 @@ if [ "$1" = "--report-localhost" ]; then
 	clear
 	printf "%30s %s\n" "------------------------------------------------------"
 	$MAGENTA
-	printf "%30s %s\n" "              About of $HOST_NAME                     "  
+	printf "%30s %s\n" "About of $HOST_NAME                                   "  
 	$NOCOL
 	printf "%30s %s\n" "------------------------------------------------------"
+	echo -e
 	if [ "$NWRESULT" -gt 0 ]; then
 	$RED
 	printf "%10s %s\n" "	Network Configuration [X]"
@@ -810,10 +811,11 @@ if [ "$1" = "--report-localhost" ]; then
 		$NOCOL                                               
 	fi
 	$NOCOL
-	$CYAN
+	echo -e
 	printf "%10s %s\n" "------------------------------------------------------"
 	$CYAN
 	$BOLD
+	echo -e
 	printf "%10s %s\n" "For Detailed Report:"
 	$NOCOL
 	printf "%10s %s\n" "$RDIR/$HOST_NAME-allreports.txt"
