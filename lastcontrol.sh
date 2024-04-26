@@ -938,7 +938,6 @@ $LAST_INSTALL
 -------------------------------------------------------------------------------------------------------------------------
 | Network Config
 -------------------------------------------------------------------------------------------------------------------------
-|NW RESULT = $NWRESULT
 |IPv4 IP Forward Check                    | $IPV4_FORWARD_CHECK"
 |IPv4 All Send Redirects Check            | $IPV4_ALL_SEND_REDIRECTS"
 |IPv4 All Accept Source Route Check       | $IPV4_ALL_ACCEPT_SOURCE_ROUTE"
