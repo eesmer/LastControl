@@ -619,7 +619,7 @@ if [ "$1" = "--report-remotehost" ]; then
 	if [ "$LISTED" = "TRUE" ]; then
 		nc -z -w 2 $TARGETMACHINE $PORTNUMBER 2>/dev/null
 		if [ "$?" = "0" ]; then
-			TARGETHOSTNAME=$(ssh -p$PORTNUMBER -i $LCKEY -o "StrictHostKeyChecking no" root@$TARGETMACHINE -- hostname -f)
+			TARGETHOSTNAME=$(ssh -p$PORTNUMBER -i $LCKEY -o "StrictHostKeyChecking no" root@$TARGETMACHINE -- cat /etc/hostname)
 			$GREEN
 			scp -P$PORTNUMBER -i $LCKEY $CDIR/lastcontrol.sh -o "StrictHostKeyChecking no" root@$TARGETMACHINE:/usr/local/ &> /dev/null && echo "LastControl Script was transferred to the $TARGETMACHINE"
 			ssh -p$PORTNUMBER -i $LCKEY -o "StrictHostKeyChecking no" root@$TARGETMACHINE -- bash /usr/local/lastcontrol.sh --report-localhost &> /dev/null
