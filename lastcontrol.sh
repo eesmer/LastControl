@@ -187,6 +187,17 @@ MEMORY_INFO() {
         if [ "$OOM" = "1" ]; then OOM_LOGS="Out of Memory Log Found !!"; fi
 }
 
+
+#default configuration information for several user account parameters.
+
+USER_ACCOUNTS_SETTINGS(){
+	USR_SETTINGS=$(mktemp)
+	cat /etc/login.defs | grep "PASS_MAX_DAYS" | grep -v "Maximum number of days a password may be used." > $USR_SETTINGS
+	cat /etc/login.defs | grep "PASS_MIN_DAYS" | grep -v "Minimum number of days allowed between password changes." >> $USR_SETTINGS
+	cat /etc/login.defs | grep "PASS_MIN_LEN" | grep -v "Minimum acceptable password length." >> $USR_SETTINGS
+	cat /etc/login.defs | grep "PASS_WARN_AGE" | grep -v "Number of days warning given before a password expires." >> $USR_SETTINGS
+}
+
 USER_LIST(){
     USER_LIST=$(paste -sd "," "$LOCAL_USER_LIST_FILE")
 }
@@ -782,6 +793,7 @@ if [ "$1" = "--report-localhost" ]; then
 	NW_CONFIG_CHECK
 	SSH_CONFIG_CHECK
 	LAST_INSTALL
+	USER_ACCOUNTS_SETTINGS
 	
 	clear
 	printf "%30s %s\n" "------------------------------------------------------"
@@ -982,12 +994,25 @@ $LAST_INSTALL
 --------------------------------------------------------------------------------------------------------------------------
 |Service Users:      |$SERVICE_USER_LIST
 --------------------------------------------------------------------------------------------------------------------------
+| DEFAULT USER ACCOUNTS SETTINGS
+$USR_SETTINGS
+
+
 EOF
+
+	echo "| DEFAULT USER ACCOUNTS SETTINGS" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	cat $USR_SETTINGS >> $RDIR/$HOST_NAME-allreports.txt
+	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "" >> $RDIR/$HOST_NAME-allreports.txt
+	
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "| REPOSITORY LIST" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	cat $RDIR/repositorylist.txt >> $RDIR/$HOST_NAME-allreports.txt
-	rm $RDIR/repositorylist.txt
+	cat $RDIR/repositorylist.txt >> $RDIR/$HOST_NAME-allreports.txt && rm $RDIR/repositorylist.txt
+	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "" >> $RDIR/$HOST_NAME-allreports.txt
+	
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "| LAST INSTALLED PACKAGES" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
