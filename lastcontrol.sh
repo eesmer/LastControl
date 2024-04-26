@@ -994,10 +994,6 @@ $LAST_INSTALL
 --------------------------------------------------------------------------------------------------------------------------
 |Service Users:      |$SERVICE_USER_LIST
 --------------------------------------------------------------------------------------------------------------------------
-| DEFAULT USER ACCOUNTS SETTINGS
-$USR_SETTINGS
-
-
 EOF
 
 	echo "| DEFAULT USER ACCOUNTS SETTINGS" >> $RDIR/$HOST_NAME-allreports.txt
@@ -1018,23 +1014,37 @@ EOF
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	cat $LAST_INSTALL >> $RDIR/$HOST_NAME-allreports.txt
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "" >> $RDIR/$HOST_NAME-allreports.txt
+	
+	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "|LISTENING SERVICE and PORT LIST" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "|--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	#netstat -tl |grep -v "Active Internet connections (servers and established)" |grep -v "Active Internet connections (only servers)" >> $RDIR/$HOST_NAME-allreports.txt
 	lsof -nP -iTCP -sTCP:LISTEN | grep -v "IPv6" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "---------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "" >> $RDIR/$HOST_NAME-allreports.txt
+	
 	echo "|--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "|ESTABLISHED SERVICE LIST" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "|--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	netstat -tn |grep -v "Active Internet connections (servers and established)" |grep -v "Active Internet connections (only servers)" |grep "ESTABLISHED" >> $RDIR/$HOST_NAME-allreports.txt
-	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	echo "| AUDIT INFO" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "---------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "" >> $RDIR/$HOST_NAME-allreports.txt
+	
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "|MOST USAGE COMMANDS|" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	echo $MOST_COMMANDS >> $RDIR/$HOST_NAME-allreports.txt
+	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "" >> $RDIR/$HOST_NAME-allreports.txt
+
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "|SSH Auth. Logs (Last 10 Record) |" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	SSH_AUTH_LOGS >> $RDIR/$HOST_NAME-allreports.txt
+	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "" >> $RDIR/$HOST_NAME-allreports.txt
+	
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	SUIDGUID_FILE_CHECK
 
