@@ -544,7 +544,9 @@ SUIDGUID_FILE_CHECK() {
 
 LAST_INSTALL() {
 	if [ "$REP" = "APT" ]; then
-		LAST_INSTALL=$(tail -n 100 /var/log/dpkg.log | grep "installed" | grep -v "half-installed")
+		#LAST_INSTALL=$(tail -n 100 /var/log/dpkg.log | grep "installed" | grep -v "half-installed")
+		LAST_INSTALL=$(mktemp)
+		tail -n 100 /var/log/dpkg.log | grep "installed" | grep -v "half-installed" > $LAST_INSTALL
 	fi
 }
 
@@ -1005,6 +1007,11 @@ EOF
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	rm $RDIR/repositorylist.txt
 	SUIDGUID_FILE_CHECK
+	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "| LAST INSTALLED PACKAGES" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	cat $LAST_INSTALL >> $RDIR/$HOST_NAME-allreports.txt
+	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 
 	cp $RDIR/$HOST_NAME-allreports.txt $WEB/reports
 exit 0
