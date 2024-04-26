@@ -559,6 +559,10 @@ LAST_INSTALL() {
 		LAST_INSTALL=$(mktemp)
 		tail -n 100 /var/log/dpkg.log | grep "installed" | grep -v "half-installed" > $LAST_INSTALL
 	fi
+	if [ "$REP" = "YUM" ]; then
+		LAST_INSTALL=$(mktemp)
+		yum history > $LAST_INSTALL
+	fi
 }
 
 if [ "$1" = "--report-allhost" ]; then
