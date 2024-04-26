@@ -544,7 +544,7 @@ SUIDGUID_FILE_CHECK() {
 
 LAST_INSTALL() {
 	if [ "$REP" = "APT" ]; then
-		LAST_INSTALL=$(tail -n 100 /var/log/dpkg.log | grep "installed" | grep -v "half-installed" | cut -d " " -f5)
+		LAST_INSTALL=$(tail -n 100 /var/log/dpkg.log | grep "installed" | grep -v "half-installed")
 	fi
 }
 
