@@ -25,6 +25,7 @@ Example:
 bash lastcontrol.sh --report-localhost
 bash lastcontrol.sh --server-install
 bash lastcontrol.sh --report-remotehost [TARGETHOST] [PORTNUMBER]
+bash lastcontrol.sh --report-allhost
 EOF
 echo -e
 }
