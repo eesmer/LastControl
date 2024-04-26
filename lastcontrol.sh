@@ -781,6 +781,7 @@ if [ "$1" = "--report-localhost" ]; then
 	USER_LIST
 	SUDO_USER_LIST
 	USER_LOGINS
+	USER_ACCOUNTS_SETTINGS
 	PASSWORD_EXPIRE_INFO
 	NEVER_LOGGED_USERS
 	LOGIN_INFO
@@ -793,7 +794,6 @@ if [ "$1" = "--report-localhost" ]; then
 	NW_CONFIG_CHECK
 	SSH_CONFIG_CHECK
 	LAST_INSTALL
-	USER_ACCOUNTS_SETTINGS
 	
 	clear
 	printf "%30s %s\n" "------------------------------------------------------"
