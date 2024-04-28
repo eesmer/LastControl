@@ -224,9 +224,10 @@ USER_LOGINS() {
 	LOGIN_AUTH_USER=$(awk -F: '$NF ~ "/bin/(ba)?sh$"{print $1}' /etc/passwd)
 	
 	# NOTLOGIN USERLIST last 30 Day
-	lastlog --time 30 | grep -v "Username" | cut -d " " -f1 > $RDIR/lastlogin30d
+	LASTLOGIN30D=$(mktemp)
+	lastlog --time 30 | grep -v "Username" | cut -d " " -f1 > /tmp/$LASTLOGIN30D
 	getent passwd {0..0} {1000..2000} |cut -d ":" -f1 > $LOCAL_USER_LIST_FILE
-	NOT_LOGIN_30D=$(diff $RDIR/lastlogin30d $LOCAL_USER_LIST_FILE -n | grep -v "d1" | grep -v "a0" | grep -v "a1" | grep -v "a2" | grep -v "a3" | grep -v "a4" | paste -sd ",")
+	NOT_LOGIN_30D=$(diff /tmp/$LASTLOGIN30D $LOCAL_USER_LIST_FILE -n | grep -v "d1" | grep -v "a0" | grep -v "a1" | grep -v "a2" | grep -v "a3" | grep -v "a4" | paste -sd ",")
 	
 	rm -f $RDIR/passchange
 	rm -f $RDIR/userstatus
@@ -1072,7 +1073,7 @@ if [ "$1" = "--report-localhost" ]; then
 	CREATE_REPORT_TXT
 	SHOW_ABOUT_HOST
 	
-	rm -f "$RDIR"/{lastlogin30d,lastlogininfo,passchange,passexpireinfo.txt,userstatus}
+	rm -f "$RDIR"/{lastlogininfo,passchange,passexpireinfo.txt,userstatus}
 	rm -f "$RDIR"/lastlogininfo
 	rm -f "$RDIR"/passexpireinfo.txt
 	rm -f "$RDIR"/localusers
