@@ -262,16 +262,16 @@ PASSWORD_EXPIRE_INFO() {
 
 NEVER_LOGGED_USERS() {
         #cat /etc/shadow | grep -v "*" | grep -v "!" | cut -d ":" -f1 > $LOCAL_USER_LIST_FILE
-        rm -f $RDIR/notloggeduserlist
+        #rm -f $RDIR/notloggeduserlist
+	NOTLOGGEDUSERLIST=$(mktemp)
         NL=1
         while [ $NL -le $LOCAL_USER_COUNT ]; do
                 USER_ACCOUNT_NAME=$(awk "NR==$NL" $LOCAL_USER_LIST_FILE)
-                lastlog | grep "Never logged in" | grep "$USER_ACCOUNT_NAME" >> $RDIR/notloggeduserlist
+                lastlog | grep "Never logged in" | grep "$USER_ACCOUNT_NAME" >> /tmp/$NOTLOGGEDUSERLIST
                 NL=$(( NL + 1 ))
         done
-
-        NOT_LOGGED_USER=$(cat $RDIR/notloggeduserlist | cut -d " " -f1 | paste -sd "@")
-        rm $RDIR/notloggeduserlist
+        NOT_LOGGED_USER=$(cat /tmp/$NOTLOGGEDUSERLIST | cut -d " " -f1 | paste -sd "@")
+        rm /tmp/$NOTLOGGEDUSERLIST
 }
 
 LOGIN_INFO() {
