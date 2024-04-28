@@ -590,6 +590,199 @@ ABOUT_HOST() {
 	echo -e
 }
 
+CREATE_REPORT_TXT() {
+	if [ -f "$RDIR/$HOST_NAME-allreports.txt" ]; then
+		rm $RDIR/$HOST_NAME-allreports.txt
+	fi
+
+cat > $RDIR/$HOST_NAME-allreports.txt << EOF
+$HOST_NAME LastControl All Controls Report $DATE
+=======================================================================================================================================================================
+--------------------------------------------------------------------------------------------------------------------------
+| HARDWARE INVENTORY
+--------------------------------------------------------------------------------------------------------------------------
+|Hostname:           |$HOST_NAME
+|IP Address:         |$INTERNAL_IP | $EXTERNAL_IP
+|Internet Conn.      |$INTERNET
+|CPU:                |$CPU_INFO
+|RAM:                |Total:$RAM_TOTAL | Ram Usage: $RAM_USAGE
+|GPU / VGA:          |VGA: $GPU_INFO   | VGA Ram: $GPU_RAM 
+|DISK LIST:          |$DISK_LIST
+|DISK INFO:          |$DISK_INFO
+--------------------------------------------------------------------------------------------------------------------------
+| SYSTEM INFORMATION
+--------------------------------------------------------------------------------------------------------------------------
+|Operation System:   |$DISTRO
+|Kernel Version:     |$KERNEL
+|Uptime              |$UPTIME | $UPTIME_MIN
+|Last Boot:          |$LAST_BOOT
+|Virtualization:     |$VIRT_CONTROL
+|Date/Time Sync:     |Date:$LOCAL_DATE - System clock synchronized:$TIME_SYNC
+|Timezone:           |$TIME_ZONE
+|Proxy Usage:        |HTTP: $HTTP_PROXY_USAGE
+|SYSLOG Usage:       |$SYSLOG_INSTALL | $SYSLOG_SERVICE | Socket: $SYSLOG_SOCKET | Send: $SYSLOG_SEND
+--------------------------------------------------------------------------------------------------------------------------
+|Ram  Usage:         |$RAM_USAGE_PERCENTAGE%
+|Swap Usage:         |$SWAP_USAGE_PERCENTAGE%
+|Disk Usage:         |$DISK_USAGE
+|Out of Memory Logs  |$OOM_LOGS
+--------------------------------------------------------------------------------------------------------------------------
+|Disk Quota Usage:   |Install: $QUOTA_INSTALL | Usr_Quota: $USR_QUOTA | Grp_Quota: $GRP_QUOTA | Mount: $MNT_QUOTA
+|Disk Encrypt Usage: |Install: $CRYPT_INSTALL | Usage: $CRYPT_USAGE
+|LVM Usage:          |$LVM_USAGE
+--------------------------------------------------------------------------------------------------------------------------
+| Kernel Modules
+--------------------------------------------------------------------------------------------------------------------------
+|CRAMFS              |$CRAMFS
+|FREEVXFS            |$FREEVXFS
+|JFFS2               |$JFFS2
+|HFS                 |$HFS
+|HFSPLUS             |$HFSPLUS
+|SQUASHFS            |$SQUASHFS
+|UDF                 |$UDF
+--------------------------------------------------------------------------------------------------------------------------
+|GRUB                |$GRUB_PACKAGE
+|GRUB Security       |$GRUB_SEC
+--------------------------------------------------------------------------------------------------------------------------
+| DIRECTORY CONFIG
+--------------------------------------------------------------------------------------------------------------------------
+|/tmp Dir Mount      |$TMPMOUNT
+|/tmp Size Config    |$TMPSIZE
+|/tmp Exec Config    |$TMPNOEXEC
+|/var Dir Mount      |$VARMOUNT
+|/var/tmp Dir Mount  |$VARTMPMOUNT
+|/var/log Dir Mount  |$VARLOGMOUNT
+--------------------------------------------------------------------------------------------------------------------------
+| SERVICES & PROCESSES
+--------------------------------------------------------------------------------------------------------------------------
+|Service Management: |$SERVICE_MANAGER
+|Running Service:    |$RUNNING_SERVICE
+|Loaded Service:     |$LOADED_SERVICE
+--------------------------------------------------------------------------------------------------------------------------
+|Active Connection:  |$ACTIVE_CONN
+|Passive Connection: |$PASSIVE_CONN
+|Failed Connection:  |$FAILED_CONN
+|Established Conn.:  |$ESTAB_CONN
+---------------------------------------------------------------------------------------------------------------------------
+|Number of CPU:      |$NOC
+|Load Avarage        |$LOAD_AVG
+|Zombie Process:     |$ZO_PROCESS
+-------------------------------------------------------------------------------------------------------------------------
+| Network Config
+-------------------------------------------------------------------------------------------------------------------------
+|IPv4 IP Forward Check                    |$IPV4_FORWARD_CHECK"
+|IPv4 All Send Redirects Check            |$IPV4_ALL_SEND_REDIRECTS"
+|IPv4 All Accept Source Route Check       |$IPV4_ALL_ACCEPT_SOURCE_ROUTE"
+|IPv4 Default Accept Source Route Check   |$IPV4_DEFAULT_ACCEPT_SOURCE_ROUTE"
+|IPv4 All Accept Redirects Check          |$IPV4_ALL_ACCEPT_REDIRECTS"
+|IPv4 Default Accept Redirects Check      |$IPV4_DEFAULT_ACCEPT_REDIRECTS"
+|IPv4 All Secure Redirects Check          |$IPV4_ALL_SECURE_REDIRECTS"
+|IPv4 Default Secure Redirects Check      |$IPV4_DEFAULT_SECURE_REDIRECTS"
+|IPv4 ICMP Echo Ignore Broadcasts Check   |$ICMP_IGNORE_BROADCASTS"
+|IPv4 ICMP Ignore Bogus Error Resp. Check |$ICMP_IGNORE_BOGUS_ERROR"
+|IPv4 ALL RP Filter Check                 |$ALL_RP_FILTER"
+|IPV4 TCP SynCookies Check                |$TCP_SYNCOOKIES"
+|IPv6 Disable IPv6 Check                  |$DISABLE_IPV6"
+|IPv6 All Accept Ra Check                 |$IPV6_ALL_ACCEPT_RA"
+-------------------------------------------------------------------------------------------------------------------------
+| SSH Config
+-------------------------------------------------------------------------------------------------------------------------
+|SSHD Config File ACL Check               |$SSHD_ACL"
+|ECDSA Public Key ACL Check               |$ECDSAKEY_ACL"
+|RSA Public Key ACL Check                 |$RSAKEYPUB_ACL"
+|RSA Private Key ACL Check                |$RSAKEY_ACL"
+|ED25519 Public Key ACL Check             |$ED25519PUB_ACL"
+|ED25519 Private Key ACL Check            |$ED25519KEY_ACL"
+|Protocol2 Usage Check                    |$PROTOCOL2"
+|Log Level (info) Check                   |$LOGLEVEL"
+|X11 Forwarding Check                     |$X11FORWARD"
+|Max. Auth Tries Check                    |$MAXAUTHTRIES"
+|Ignorer Host Check                       |$IGNORERHOST"
+|Host Based Authentication                |$HOSTBASEDAUTH"
+|Permit Root Login                        |$ROOTLOGIN"
+|Permit Empty Password                    |$EMPTYPASS"
+|Permit User Environment                  |$PERMITUSERENV"
+--------------------------------------------------------------------------------------------------------------------------
+| USERS
+--------------------------------------------------------------------------------------------------------------------------
+|Local User Count:   |$LOCAL_USER_COUNT
+|Local User List:    |$USER_LIST
+|SUDO Users:         |$SUDO_USER_LIST
+|Blank Pass. Users   |$BLANK_PASS_USER_LIST
+|Locked Users        |$LOCKED_USERS
+--------------------------------------------------------------------------------------------------------------------------
+|Last Login Today    |$LAST_LOGIN_00D
+|Last Login 7 Days   |$LAST_LOGIN_07D
+|Last Login 30 Days  |$LAST_LOGIN_30D
+|Not Logged(30 Days) |$NOT_LOGIN_30D
+|Last Login Info     |$LAST_LOGIN_INFO
+|Never Logged Users  |$NOT_LOGGED_USER
+|Login Auth. Users   |$LOGIN_AUTH_USER
+|NoLogin User Count  |$NO_LOGIN_USER
+--------------------------------------------------------------------------------------------------------------------------
+|Pass. Expire Info   |$PASSEXINFO
+|Pass. Update Info   |$PASS_UPDATE_INFO
+--------------------------------------------------------------------------------------------------------------------------
+|Service Users:      |$SERVICE_USER_LIST
+--------------------------------------------------------------------------------------------------------------------------
+EOF
+
+	echo "| DEFAULT USER ACCOUNTS SETTINGS" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	cat $USR_SETTINGS >> $RDIR/$HOST_NAME-allreports.txt
+	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "" >> $RDIR/$HOST_NAME-allreports.txt
+	
+	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "| REPOSITORY LIST" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	cat $RDIR/repositorylist.txt >> $RDIR/$HOST_NAME-allreports.txt && rm $RDIR/repositorylist.txt
+	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "" >> $RDIR/$HOST_NAME-allreports.txt
+	
+	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "| LAST INSTALLED PACKAGES" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	cat $LAST_INSTALL >> $RDIR/$HOST_NAME-allreports.txt
+	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "" >> $RDIR/$HOST_NAME-allreports.txt
+	
+	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "|LISTENING SERVICE and PORT LIST" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "|--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	#netstat -tl |grep -v "Active Internet connections (servers and established)" |grep -v "Active Internet connections (only servers)" >> $RDIR/$HOST_NAME-allreports.txt
+	lsof -nP -iTCP -sTCP:LISTEN | grep -v "IPv6" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "---------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "" >> $RDIR/$HOST_NAME-allreports.txt
+	
+	echo "|--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "|ESTABLISHED SERVICE LIST" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "|--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	netstat -tn |grep -v "Active Internet connections (servers and established)" |grep -v "Active Internet connections (only servers)" |grep "ESTABLISHED" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "---------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "" >> $RDIR/$HOST_NAME-allreports.txt
+	
+	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "|MOST USAGE COMMANDS|" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	echo $MOST_COMMANDS >> $RDIR/$HOST_NAME-allreports.txt
+	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "" >> $RDIR/$HOST_NAME-allreports.txt
+
+	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "|SSH Auth. Logs (Last 10 Record) |" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	SSH_AUTH_LOGS >> $RDIR/$HOST_NAME-allreports.txt
+	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "" >> $RDIR/$HOST_NAME-allreports.txt
+	
+	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	SUIDGUID_FILE_CHECK
+	
+	cp $RDIR/$HOST_NAME-allreports.txt $WEB/reports
+	exit 0
+}
+
 if [ "$1" = "--report-allhost" ]; then
 	clear
 	HOSTLIST=$(cat $WDIR/linuxmachine | wc -l)
@@ -824,6 +1017,7 @@ if [ "$1" = "--report-localhost" ]; then
 	SSH_CONFIG_CHECK
 	LAST_INSTALL
 	ABOUT_HOST
+	CREATE_REPORT_TXT
 	
 	#clear
 	#printf "%30s %s\n" "------------------------------------------------------"
@@ -880,198 +1074,4 @@ if [ "$1" = "--report-localhost" ]; then
 	rm -f "$RDIR"/lastlogininfo
 	rm -f "$RDIR"/passexpireinfo.txt
 	rm -f "$RDIR"/localusers
-	
-	#-------------------------
-	# Create TXT Report File
-	#-------------------------
-	if [ -f "$RDIR/$HOST_NAME-allreports.txt" ]; then
-		rm $RDIR/$HOST_NAME-allreports.txt
-	fi
-
-cat > $RDIR/$HOST_NAME-allreports.txt << EOF
-$HOST_NAME LastControl All Controls Report $DATE
-=======================================================================================================================================================================
---------------------------------------------------------------------------------------------------------------------------
-| HARDWARE INVENTORY
---------------------------------------------------------------------------------------------------------------------------
-|Hostname:           |$HOST_NAME
-|IP Address:         |$INTERNAL_IP | $EXTERNAL_IP
-|Internet Conn.      |$INTERNET
-|CPU:                |$CPU_INFO
-|RAM:                |Total:$RAM_TOTAL | Ram Usage: $RAM_USAGE
-|GPU / VGA:          |VGA: $GPU_INFO   | VGA Ram: $GPU_RAM 
-|DISK LIST:          |$DISK_LIST
-|DISK INFO:          |$DISK_INFO
---------------------------------------------------------------------------------------------------------------------------
-| SYSTEM INFORMATION
---------------------------------------------------------------------------------------------------------------------------
-|Operation System:   |$DISTRO
-|Kernel Version:     |$KERNEL
-|Uptime              |$UPTIME | $UPTIME_MIN
-|Last Boot:          |$LAST_BOOT
-|Virtualization:     |$VIRT_CONTROL
-|Date/Time Sync:     |Date:$LOCAL_DATE - System clock synchronized:$TIME_SYNC
-|Timezone:           |$TIME_ZONE
-|Proxy Usage:        |HTTP: $HTTP_PROXY_USAGE
-|SYSLOG Usage:       |$SYSLOG_INSTALL | $SYSLOG_SERVICE | Socket: $SYSLOG_SOCKET | Send: $SYSLOG_SEND
---------------------------------------------------------------------------------------------------------------------------
-|Ram  Usage:         |$RAM_USAGE_PERCENTAGE%
-|Swap Usage:         |$SWAP_USAGE_PERCENTAGE%
-|Disk Usage:         |$DISK_USAGE
-|Out of Memory Logs  |$OOM_LOGS
---------------------------------------------------------------------------------------------------------------------------
-|Disk Quota Usage:   |Install: $QUOTA_INSTALL | Usr_Quota: $USR_QUOTA | Grp_Quota: $GRP_QUOTA | Mount: $MNT_QUOTA
-|Disk Encrypt Usage: |Install: $CRYPT_INSTALL | Usage: $CRYPT_USAGE
-|LVM Usage:          |$LVM_USAGE
---------------------------------------------------------------------------------------------------------------------------
-| Kernel Modules
---------------------------------------------------------------------------------------------------------------------------
-|CRAMFS              |$CRAMFS
-|FREEVXFS            |$FREEVXFS
-|JFFS2               |$JFFS2
-|HFS                 |$HFS
-|HFSPLUS             |$HFSPLUS
-|SQUASHFS            |$SQUASHFS
-|UDF                 |$UDF
---------------------------------------------------------------------------------------------------------------------------
-|GRUB                |$GRUB_PACKAGE
-|GRUB Security       |$GRUB_SEC
---------------------------------------------------------------------------------------------------------------------------
-| DIRECTORY CONFIG
---------------------------------------------------------------------------------------------------------------------------
-|/tmp Dir Mount      |$TMPMOUNT
-|/tmp Size Config    |$TMPSIZE
-|/tmp Exec Config    |$TMPNOEXEC
-|/var Dir Mount      |$VARMOUNT
-|/var/tmp Dir Mount  |$VARTMPMOUNT
-|/var/log Dir Mount  |$VARLOGMOUNT
---------------------------------------------------------------------------------------------------------------------------
-| SERVICES & PROCESSES
---------------------------------------------------------------------------------------------------------------------------
-|Service Management: |$SERVICE_MANAGER
-|Running Service:    |$RUNNING_SERVICE
-|Loaded Service:     |$LOADED_SERVICE
---------------------------------------------------------------------------------------------------------------------------
-|Active Connection:  |$ACTIVE_CONN
-|Passive Connection: |$PASSIVE_CONN
-|Failed Connection:  |$FAILED_CONN
-|Established Conn.:  |$ESTAB_CONN
----------------------------------------------------------------------------------------------------------------------------
-|Number of CPU:      |$NOC
-|Load Avarage        |$LOAD_AVG
-|Zombie Process:     |$ZO_PROCESS
--------------------------------------------------------------------------------------------------------------------------
-| Network Config
--------------------------------------------------------------------------------------------------------------------------
-|IPv4 IP Forward Check                    |$IPV4_FORWARD_CHECK"
-|IPv4 All Send Redirects Check            |$IPV4_ALL_SEND_REDIRECTS"
-|IPv4 All Accept Source Route Check       |$IPV4_ALL_ACCEPT_SOURCE_ROUTE"
-|IPv4 Default Accept Source Route Check   |$IPV4_DEFAULT_ACCEPT_SOURCE_ROUTE"
-|IPv4 All Accept Redirects Check          |$IPV4_ALL_ACCEPT_REDIRECTS"
-|IPv4 Default Accept Redirects Check      |$IPV4_DEFAULT_ACCEPT_REDIRECTS"
-|IPv4 All Secure Redirects Check          |$IPV4_ALL_SECURE_REDIRECTS"
-|IPv4 Default Secure Redirects Check      |$IPV4_DEFAULT_SECURE_REDIRECTS"
-|IPv4 ICMP Echo Ignore Broadcasts Check   |$ICMP_IGNORE_BROADCASTS"
-|IPv4 ICMP Ignore Bogus Error Resp. Check |$ICMP_IGNORE_BOGUS_ERROR"
-|IPv4 ALL RP Filter Check                 |$ALL_RP_FILTER"
-|IPV4 TCP SynCookies Check                |$TCP_SYNCOOKIES"
-|IPv6 Disable IPv6 Check                  |$DISABLE_IPV6"
-|IPv6 All Accept Ra Check                 |$IPV6_ALL_ACCEPT_RA"
--------------------------------------------------------------------------------------------------------------------------
-| SSH Config
--------------------------------------------------------------------------------------------------------------------------
-|SSHD Config File ACL Check               |$SSHD_ACL"
-|ECDSA Public Key ACL Check               |$ECDSAKEY_ACL"
-|RSA Public Key ACL Check                 |$RSAKEYPUB_ACL"
-|RSA Private Key ACL Check                |$RSAKEY_ACL"
-|ED25519 Public Key ACL Check             |$ED25519PUB_ACL"
-|ED25519 Private Key ACL Check            |$ED25519KEY_ACL"
-|Protocol2 Usage Check                    |$PROTOCOL2"
-|Log Level (info) Check                   |$LOGLEVEL"
-|X11 Forwarding Check                     |$X11FORWARD"
-|Max. Auth Tries Check                    |$MAXAUTHTRIES"
-|Ignorer Host Check                       |$IGNORERHOST"
-|Host Based Authentication                |$HOSTBASEDAUTH"
-|Permit Root Login                        |$ROOTLOGIN"
-|Permit Empty Password                    |$EMPTYPASS"
-|Permit User Environment                  |$PERMITUSERENV"
---------------------------------------------------------------------------------------------------------------------------
-| USERS
---------------------------------------------------------------------------------------------------------------------------
-|Local User Count:   |$LOCAL_USER_COUNT
-|Local User List:    |$USER_LIST
-|SUDO Users:         |$SUDO_USER_LIST
-|Blank Pass. Users   |$BLANK_PASS_USER_LIST
-|Locked Users        |$LOCKED_USERS
---------------------------------------------------------------------------------------------------------------------------
-|Last Login Today    |$LAST_LOGIN_00D
-|Last Login 7 Days   |$LAST_LOGIN_07D
-|Last Login 30 Days  |$LAST_LOGIN_30D
-|Not Logged(30 Days) |$NOT_LOGIN_30D
-|Last Login Info     |$LAST_LOGIN_INFO
-|Never Logged Users  |$NOT_LOGGED_USER
-|Login Auth. Users   |$LOGIN_AUTH_USER
-|NoLogin User Count  |$NO_LOGIN_USER
---------------------------------------------------------------------------------------------------------------------------
-|Pass. Expire Info   |$PASSEXINFO
-|Pass. Update Info   |$PASS_UPDATE_INFO
---------------------------------------------------------------------------------------------------------------------------
-|Service Users:      |$SERVICE_USER_LIST
---------------------------------------------------------------------------------------------------------------------------
-EOF
-
-	echo "| DEFAULT USER ACCOUNTS SETTINGS" >> $RDIR/$HOST_NAME-allreports.txt
-	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	cat $USR_SETTINGS >> $RDIR/$HOST_NAME-allreports.txt
-	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	echo "" >> $RDIR/$HOST_NAME-allreports.txt
-	
-	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	echo "| REPOSITORY LIST" >> $RDIR/$HOST_NAME-allreports.txt
-	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	cat $RDIR/repositorylist.txt >> $RDIR/$HOST_NAME-allreports.txt && rm $RDIR/repositorylist.txt
-	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	echo "" >> $RDIR/$HOST_NAME-allreports.txt
-	
-	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	echo "| LAST INSTALLED PACKAGES" >> $RDIR/$HOST_NAME-allreports.txt
-	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	cat $LAST_INSTALL >> $RDIR/$HOST_NAME-allreports.txt
-	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	echo "" >> $RDIR/$HOST_NAME-allreports.txt
-	
-	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	echo "|LISTENING SERVICE and PORT LIST" >> $RDIR/$HOST_NAME-allreports.txt
-	echo "|--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	#netstat -tl |grep -v "Active Internet connections (servers and established)" |grep -v "Active Internet connections (only servers)" >> $RDIR/$HOST_NAME-allreports.txt
-	lsof -nP -iTCP -sTCP:LISTEN | grep -v "IPv6" >> $RDIR/$HOST_NAME-allreports.txt
-	echo "---------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	echo "" >> $RDIR/$HOST_NAME-allreports.txt
-	
-	echo "|--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	echo "|ESTABLISHED SERVICE LIST" >> $RDIR/$HOST_NAME-allreports.txt
-	echo "|--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	netstat -tn |grep -v "Active Internet connections (servers and established)" |grep -v "Active Internet connections (only servers)" |grep "ESTABLISHED" >> $RDIR/$HOST_NAME-allreports.txt
-	echo "---------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	echo "" >> $RDIR/$HOST_NAME-allreports.txt
-	
-	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	echo "|MOST USAGE COMMANDS|" >> $RDIR/$HOST_NAME-allreports.txt
-	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	echo $MOST_COMMANDS >> $RDIR/$HOST_NAME-allreports.txt
-	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	echo "" >> $RDIR/$HOST_NAME-allreports.txt
-
-	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	echo "|SSH Auth. Logs (Last 10 Record) |" >> $RDIR/$HOST_NAME-allreports.txt
-	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	SSH_AUTH_LOGS >> $RDIR/$HOST_NAME-allreports.txt
-	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	echo "" >> $RDIR/$HOST_NAME-allreports.txt
-	
-	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	SUIDGUID_FILE_CHECK
-
-	cp $RDIR/$HOST_NAME-allreports.txt $WEB/reports
-exit 0
-fi
+fi	
