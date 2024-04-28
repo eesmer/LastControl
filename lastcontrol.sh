@@ -780,7 +780,6 @@ EOF
 	SUIDGUID_FILE_CHECK
 	
 	cp $RDIR/$HOST_NAME-allreports.txt $WEB/reports
-	exit 0
 }
 
 if [ "$1" = "--report-allhost" ]; then
@@ -1019,59 +1018,61 @@ if [ "$1" = "--report-localhost" ]; then
 	ABOUT_HOST
 	CREATE_REPORT_TXT
 	
-	#clear
-	#printf "%30s %s\n" "------------------------------------------------------"
-	#$MAGENTA
-	#printf "%30s %s\n" "About of $HOST_NAME                                   "  
-	#$NOCOL
-	#printf "%30s %s\n" "------------------------------------------------------"
-	#echo -e
-	#if [ "$NWRESULT" -gt 0 ]; then
-	#$RED
-	#printf "%10s %s\n" "	Network Configuration [X]"
-	#$NOCOL
-        #else
-	#       $GREEN
-	#       printf "%10s %s\n" "	Network Configuration [V]"
-	#       $NOCOL
-	#fi
-	#if [ "$SSHRESULT" -gt 0 ]; then
-	#       $RED
-	#       printf "%10s %s\n" "	SSH Configuration [X]"
-	#       $NOCOL
-        #else
-	#       $GREEN
-	#       printf "%10s %s\n" "	SSH Configuration [V]"
-	#       $NOCOL
-	#fi
-	#if [ "$SUDO_USER_COUNT" -gt 0 ]; then
-        #        $BLUE
-        #        printf "%10s %s\n" "	SUDO authorized user accounts found [I]"
-        #        $NOCOL                                               
-        #else                                                         
-#		$BLUE                                                
-#		printf "%10s %s\n" "	Only authorized user is the root account [I]"
-#		$NOCOL                                               
-#	fi
-#	$NOCOL
-#	echo -e
-#	printf "%10s %s\n" "------------------------------------------------------"
-#	$CYAN
-#	$BOLD
-#	echo -e
-#	printf "%10s %s\n" "For Detailed Report:"
-#	$NOCOL
-#	printf "%10s %s\n" "$RDIR/$HOST_NAME-allreports.txt"
-#	$CYAN
-#	$BOLD
-#	printf "%0s %s\n" "Web:"
-#	$NORMAL
-#	printf "%10s %s\n" "http://$INTERNAL_IP"
-#	printf "%10s %s\n" "------------------------------------------------------"
-#	echo -e
-	
 	rm -f "$RDIR"/{lastlogin30d,lastlogininfo,passchange,passexpireinfo.txt,userstatus}
 	rm -f "$RDIR"/lastlogininfo
 	rm -f "$RDIR"/passexpireinfo.txt
 	rm -f "$RDIR"/localusers
-fi	
+	
+	clear
+	printf "%30s %s\n" "------------------------------------------------------"
+	$MAGENTA
+	printf "%30s %s\n" "About of $HOST_NAME                                   "  
+	$NOCOL
+	printf "%30s %s\n" "------------------------------------------------------"
+	echo -e
+	if [ "$NWRESULT" -gt 0 ]; then
+	$RED
+	printf "%10s %s\n" "	Network Configuration [X]"
+	$NOCOL
+        else
+	       $GREEN
+	       printf "%10s %s\n" "	Network Configuration [V]"
+	       $NOCOL
+	fi
+	if [ "$SSHRESULT" -gt 0 ]; then
+	       $RED
+	       printf "%10s %s\n" "	SSH Configuration [X]"
+	       $NOCOL
+        else
+	       $GREEN
+	       printf "%10s %s\n" "	SSH Configuration [V]"
+	       $NOCOL
+	fi
+	if [ "$SUDO_USER_COUNT" -gt 0 ]; then
+                $BLUE
+                printf "%10s %s\n" "	SUDO authorized user accounts found [I]"
+                $NOCOL                                               
+        else                                                         
+		$BLUE                                                
+		printf "%10s %s\n" "	Only authorized user is the root account [I]"
+		$NOCOL                                               
+	fi
+	$NOCOL
+	echo -e
+	printf "%10s %s\n" "------------------------------------------------------"
+	$CYAN
+	$BOLD
+	echo -e
+	printf "%10s %s\n" "For Detailed Report:"
+	$NOCOL
+	printf "%10s %s\n" "$RDIR/$HOST_NAME-allreports.txt"
+	$CYAN
+	$BOLD
+	printf "%0s %s\n" "Web:"
+	$NORMAL
+	printf "%10s %s\n" "http://$INTERNAL_IP"
+	printf "%10s %s\n" "------------------------------------------------------"
+	echo -e
+	
+	exit 0
+fi
