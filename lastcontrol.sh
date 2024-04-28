@@ -262,7 +262,6 @@ PASSWORD_EXPIRE_INFO() {
 
 NEVER_LOGGED_USERS() {
         #cat /etc/shadow | grep -v "*" | grep -v "!" | cut -d ":" -f1 > $LOCAL_USER_LIST_FILE
-        #rm -f $RDIR/notloggeduserlist
 	NOTLOGGEDUSERLIST=$(mktemp)
         NL=1
         while [ $NL -le $LOCAL_USER_COUNT ]; do
