@@ -565,6 +565,31 @@ LAST_INSTALL() {
 	fi
 }
 
+ABOUT_HOST() {
+	echo "------------------------------------------------------" > $RDIR/$HOST_NAME-abouthost.txt 
+	echo "About of $HOST_NAME" >> $RDIR/$HOST_NAME-abouthost.txt
+	echo "------------------------------------------------------" >> $RDIR/$HOST_NAME-abouthost.txt 
+	echo -e
+	if [ "$NWRESULT" -gt 0 ]; then
+		echo "	Network Configuration [X]" >> $RDIR/$HOST_NAME-abouthost.txt
+        else
+		echo "	Network Configuration [V]" >> $RDIR/$HOST_NAME-abouthost.txt
+	fi
+	if [ "$SSHRESULT" -gt 0 ]; then
+		echo "	SSH Configuration [X]" >> $RDIR/$HOST_NAME-abouthost.txt
+        else
+		echo "	SSH Configuration [V]" >> $RDIR/$HOST_NAME-abouthost.txt
+	fi
+	if [ "$SUDO_USER_COUNT" -gt 0 ]; then
+		echo "	SUDO authorized user accounts found [I]" >> $RDIR/$HOST_NAME-abouthost.txt
+        else                                                         
+		echo "	Only authorized user is the root account [I]" >> $RDIR/$HOST_NAME-abouthost.txt
+	fi
+	echo -e
+	echo "------------------------------------------------------" >> $RDIR/$HOST_NAME-abouthost.txt
+	echo -e
+}
+
 if [ "$1" = "--report-allhost" ]; then
 	clear
 	HOSTLIST=$(cat $WDIR/linuxmachine | wc -l)
