@@ -1076,8 +1076,7 @@ if [ "$1" = "--report-localhost" ]; then
 	SHOW_ABOUT_HOST
 
 	rm -f /tmp/$LOCALUSERS
-	rm -f "$RDIR"/{passchange,passexpireinfo.txt,userstatus}
-	rm -f "$RDIR"/passexpireinfo.txt
+	rm -f "$RDIR"/{passchange,userstatus}
 	
 	exit 0
 fi
