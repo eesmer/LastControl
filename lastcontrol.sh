@@ -230,21 +230,23 @@ USER_LOGINS() {
 	getent passwd {0..0} {1000..2000} |cut -d ":" -f1 > $LOCAL_USER_LIST_FILE
 	NOT_LOGIN_30D=$(diff /tmp/$LASTLOGIN30D $LOCAL_USER_LIST_FILE -n | grep -v "d1" | grep -v "a0" | grep -v "a1" | grep -v "a2" | grep -v "a3" | grep -v "a4" | paste -sd ",")
 	
-	rm -f $RDIR/passchange
-	rm -f $RDIR/userstatus
+	###rm -f $RDIR/passchange
+	###rm -f $RDIR/userstatus
+	PASSCHANGE=$(mktemp)
 	PC=1
 	while [ $PC -le $LOCAL_USER_COUNT ]; do
 		USER_ACCOUNT_NAME=$(awk "NR==$PC" $LOCAL_USER_LIST_FILE)
 		PASS_CHANGE=$(lslogins "$USER_ACCOUNT_NAME" | grep "Password changed:" | awk ' { print $3 }')    # Password update date
 		USERSTATUS=$(passwd -S "$USER_ACCOUNT_NAME" >> $RDIR/userstatus)                                 # user status information
-		echo "$USER_ACCOUNT_NAME:$PASS_CHANGE" >> $RDIR/passchange
+		echo "$USER_ACCOUNT_NAME:$PASS_CHANGE" >> /tmp/$PASSCHANGE
 		PC=$(( PC + 1 ))
 	done
 	
-	cat $RDIR/userstatus | grep "L" | cut -d " " -f1 > $RDIR/lockedusers
-	LOCKED_USERS=$(cat $RDIR/lockedusers | paste -sd ",")                                            # locked users
-	PASS_UPDATE_INFO=$(cat $RDIR/passchange | paste -sd ",")
-	rm $RDIR/lockedusers
+	LOCKEDUSERS=$(mktemp)
+	cat $RDIR/userstatus | grep "L" | cut -d " " -f1 > /tmp/$LOCKEDUSERS
+	LOCKED_USERS=$(cat /tmp/$LOCKEDUSERS | paste -sd ",")                                            # locked users
+	PASS_UPDATE_INFO=$(cat /tmp/$PASSCHANGE | paste -sd ",")
+	rm /tmp/$LOCKEDUSERS
 }
 
 PASSWORD_EXPIRE_INFO() {
