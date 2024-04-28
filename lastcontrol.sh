@@ -204,15 +204,15 @@ USER_LIST(){
 }
 
 SUDO_USER_LIST(){
-    tmpfile=$(mktemp)
-    getent group sudo | awk -F: '{print $4}' | tr ',' "\n" >> "$tmpfile"
-    cat /etc/sudoers | grep "ALL" | grep -v "%" | awk '{print $1}' >> "$tmpfile"
-    grep 'ALL' /etc/sudoers.d/* | cut -d":" -f2 | cut -d" " -f1 >> "$tmpfile"
-    sed -i '/root/d' $tmpfile
-    sed -i '/^$/d' $tmpfile
-    SUDO_USER_LIST=$(sort -u "$tmpfile" | paste -sd ",")
-    SUDO_USER_COUNT=$(wc -l $tmpfile | cut -d " " -f1)
-    rm -f "$tmpfile"
+    SUDOUSERLIST=$(mktemp)
+    getent group sudo | awk -F: '{print $4}' | tr ',' "\n" >> "$SUDOUSERLIST"
+    cat /etc/sudoers | grep "ALL" | grep -v "%" | awk '{print $1}' >> "$SUDOUSERLIST"
+    grep 'ALL' /etc/sudoers.d/* | cut -d":" -f2 | cut -d" " -f1 >> "$SUDOUSERLIST"
+    sed -i '/root/d' $SUDOUSERLIST
+    sed -i '/^$/d' $SUDOUSERLIST
+    SUDO_USER_LIST=$(sort -u "$SUDOUSERLIST" | paste -sd ",")
+    SUDO_USER_COUNT=$(wc -l $SUDOUSERLIST | cut -d " " -f1)
+    rm -f "$SUDOUSERLIST"
 }
 
 USER_LOGINS() {
@@ -559,13 +559,13 @@ SUIDGUID_FILE_CHECK() {
 
 LAST_INSTALL() {
 	if [ "$REP" = "APT" ]; then
-		#LAST_INSTALL=$(tail -n 100 /var/log/dpkg.log | grep "installed" | grep -v "half-installed")
-		LAST_INSTALL=$(mktemp)
-		tail -n 100 /var/log/dpkg.log | grep "installed" | grep -v "half-installed" > $LAST_INSTALL
+		#LASTINSTALL=$(tail -n 100 /var/log/dpkg.log | grep "installed" | grep -v "half-installed")
+		LASTINSTALL=$(mktemp)
+		tail -n 100 /var/log/dpkg.log | grep "installed" | grep -v "half-installed" > $LASTINSTALL
 	fi
 	if [ "$REP" = "YUM" ]; then
-		LAST_INSTALL=$(mktemp)
-		yum history > $LAST_INSTALL
+		LASTINSTALL=$(mktemp)
+		yum history > $LASTINSTALL
 	fi
 }
 
@@ -800,7 +800,7 @@ EOF
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "| LAST INSTALLED PACKAGES" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	cat $LAST_INSTALL >> $RDIR/$HOST_NAME-allreports.txt
+	cat $LASTINSTALL >> $RDIR/$HOST_NAME-allreports.txt
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "" >> $RDIR/$HOST_NAME-allreports.txt
 	
