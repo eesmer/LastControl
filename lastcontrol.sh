@@ -248,15 +248,16 @@ USER_LOGINS() {
 }
 
 PASSWORD_EXPIRE_INFO() {
-        rm -f $RDIR/passexpireinfo.txt
+        #rm -f $RDIR/passexpireinfo.txt
+	PASSEXPIREINFO=$(mktemp)
         PX=1
         while [ $PX -le $LOCAL_USER_COUNT ]; do
                 USER_ACCOUNT_NAME=$(awk "NR==$PX" $LOCAL_USER_LIST_FILE)
                 PASSEX=$(chage -l $USER_ACCOUNT_NAME |grep "Password expires" | awk '{print $4}')
-                echo "$USER_ACCOUNT_NAME:$PASSEX" >> $RDIR/passexpireinfo.txt
+                echo "$USER_ACCOUNT_NAME:$PASSEX" >> /tmp/$PASSEXPIREINFO
                 PX=$(( PX + 1 ))
         done
-        PASSEXINFO=$(cat $RDIR/passexpireinfo.txt | paste -sd ",")
+        PASSEXINFO=$(cat /tmp/$PASSEXPIREINFO | paste -sd ",")
 }
 
 NEVER_LOGGED_USERS() {
