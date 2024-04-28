@@ -273,16 +273,17 @@ NEVER_LOGGED_USERS() {
 }
 
 LOGIN_INFO() {
-        rm -f $RDIR/lastlogininfo
+	LASTLOGININFO=$(mktemp)
         LL=1
         while [ "$LL" -le "$LOCAL_USER_COUNT" ]; do
                 USER_ACCOUNT_NAME=$(ls -l |sed -n $LL{p} $LOCAL_USER_LIST_FILE)
                 LOGIN_DATE=$(lslogins | grep "$USER_ACCOUNT_NAME" | xargs | cut -d " " -f6)
                 LOGIN_DATE=$(lastlog | grep "$USER_ACCOUNT_NAME" | awk '{ print $4,$5,$6,$7 }')
-                echo "$USER_ACCOUNT_NAME:$LOGIN_DATE" >> $RDIR/lastlogininfo
+                echo "$USER_ACCOUNT_NAME:$LOGIN_DATE" >> /tmp/$LASTLOGININFO
                 LL=$(( LL + 1 ))
         done
-        LAST_LOGIN_INFO=$(cat $RDIR/lastlogininfo | paste -sd ",")
+        LAST_LOGIN_INFO=$(cat /tmp/$LASTLOGININFO | paste -sd ",")
+	rm /tmp/$LASTLOGININFO
 }
 
 CHECK_KERNEL_MODULES() {
@@ -1073,8 +1074,7 @@ if [ "$1" = "--report-localhost" ]; then
 	CREATE_REPORT_TXT
 	SHOW_ABOUT_HOST
 	
-	rm -f "$RDIR"/{lastlogininfo,passchange,passexpireinfo.txt,userstatus}
-	rm -f "$RDIR"/lastlogininfo
+	rm -f "$RDIR"/{passchange,passexpireinfo.txt,userstatus}
 	rm -f "$RDIR"/passexpireinfo.txt
 	rm -f "$RDIR"/localusers
 	
