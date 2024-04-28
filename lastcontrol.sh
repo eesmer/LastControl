@@ -91,10 +91,10 @@ SYSTEM_REPORT() {
 	
 	# LOCAL USERS
 	LOCALUSERS=$(mktemp)
-	#grep -E "/bin/bash|/bin/zsh|/bin/sh" /etc/passwd | grep -v "/sbin/nologin" | grep -v "/bin/false" | cut -d":" -f1 > /tmp/$LOCALUSERS
-	cat /etc/shadow | grep -v "*" | grep -v "!" | cut -d ":" -f1 > /tmp/$LOCALUSERS
-	LOCAL_USER_COUNT=$(cat /tmp/$LOCALUSERS | wc -l)
-	LOCAL_USER_LIST_FILE=/tmp/$LOCALUSERS
+	#grep -E "/bin/bash|/bin/zsh|/bin/sh" /etc/passwd | grep -v "/sbin/nologin" | grep -v "/bin/false" | cut -d":" -f1 > $LOCALUSERS
+	cat /etc/shadow | grep -v "*" | grep -v "!" | cut -d ":" -f1 > $LOCALUSERS
+	LOCAL_USER_COUNT=$(cat $LOCALUSERS | wc -l)
+	LOCAL_USER_LIST_FILE=$LOCALUSERS
 	
 	# HARDWARE INVENTORY
 	INTERNAL_IP=$(hostname -I | cut -d " " -f1)
@@ -192,11 +192,11 @@ MEMORY_INFO() {
 #default configuration information for several user account parameters.
 
 USER_ACCOUNTS_SETTINGS(){
-	USR_SETTINGS=$(mktemp)
-	cat /etc/login.defs | grep "PASS_MAX_DAYS" | grep -v "Maximum number of days a password may be used." > $USR_SETTINGS
-	cat /etc/login.defs | grep "PASS_MIN_DAYS" | grep -v "Minimum number of days allowed between password changes." >> $USR_SETTINGS
-	cat /etc/login.defs | grep "PASS_MIN_LEN" | grep -v "Minimum acceptable password length." >> $USR_SETTINGS
-	cat /etc/login.defs | grep "PASS_WARN_AGE" | grep -v "Number of days warning given before a password expires." >> $USR_SETTINGS
+	USRSETTINGS=$(mktemp)
+	cat /etc/login.defs | grep "PASS_MAX_DAYS" | grep -v "Maximum number of days a password may be used." > $USRSETTINGS
+	cat /etc/login.defs | grep "PASS_MIN_DAYS" | grep -v "Minimum number of days allowed between password changes." >> $USRSETTINGS
+	cat /etc/login.defs | grep "PASS_MIN_LEN" | grep -v "Minimum acceptable password length." >> $USRSETTINGS
+	cat /etc/login.defs | grep "PASS_WARN_AGE" | grep -v "Number of days warning given before a password expires." >> $USRSETTINGS
 }
 
 USER_LIST(){
@@ -226,9 +226,9 @@ USER_LOGINS() {
 	
 	# NOTLOGIN USERLIST last 30 Day
 	LASTLOGIN30D=$(mktemp)
-	lastlog --time 30 | grep -v "Username" | cut -d " " -f1 > /tmp/$LASTLOGIN30D
+	lastlog --time 30 | grep -v "Username" | cut -d " " -f1 > $LASTLOGIN30D
 	getent passwd {0..0} {1000..2000} |cut -d ":" -f1 > $LOCAL_USER_LIST_FILE
-	NOT_LOGIN_30D=$(diff /tmp/$LASTLOGIN30D $LOCAL_USER_LIST_FILE -n | grep -v "d1" | grep -v "a0" | grep -v "a1" | grep -v "a2" | grep -v "a3" | grep -v "a4" | paste -sd ",")
+	NOT_LOGIN_30D=$(diff $LASTLOGIN30D $LOCAL_USER_LIST_FILE -n | grep -v "d1" | grep -v "a0" | grep -v "a1" | grep -v "a2" | grep -v "a3" | grep -v "a4" | paste -sd ",")
 	
 	###rm -f $RDIR/passchange
 	###rm -f $RDIR/userstatus
@@ -238,15 +238,15 @@ USER_LOGINS() {
 		USER_ACCOUNT_NAME=$(awk "NR==$PC" $LOCAL_USER_LIST_FILE)
 		PASS_CHANGE=$(lslogins "$USER_ACCOUNT_NAME" | grep "Password changed:" | awk ' { print $3 }')    # Password update date
 		USERSTATUS=$(passwd -S "$USER_ACCOUNT_NAME" >> $RDIR/userstatus)                                 # user status information
-		echo "$USER_ACCOUNT_NAME:$PASS_CHANGE" >> /tmp/$PASSCHANGE
+		echo "$USER_ACCOUNT_NAME:$PASS_CHANGE" >> $PASSCHANGE
 		PC=$(( PC + 1 ))
 	done
 	
 	LOCKEDUSERS=$(mktemp)
-	cat $RDIR/userstatus | grep "L" | cut -d " " -f1 > /tmp/$LOCKEDUSERS
-	LOCKED_USERS=$(cat /tmp/$LOCKEDUSERS | paste -sd ",")                                            # locked users
-	PASS_UPDATE_INFO=$(cat /tmp/$PASSCHANGE | paste -sd ",")
-	rm /tmp/$LOCKEDUSERS
+	cat $RDIR/userstatus | grep "L" | cut -d " " -f1 > $LOCKEDUSERS
+	LOCKED_USERS=$(cat $LOCKEDUSERS | paste -sd ",")                                            # locked users
+	PASS_UPDATE_INFO=$(cat $PASSCHANGE | paste -sd ",")
+	rm $LOCKEDUSERS
 }
 
 PASSWORD_EXPIRE_INFO() {
@@ -256,10 +256,10 @@ PASSWORD_EXPIRE_INFO() {
         while [ $PX -le $LOCAL_USER_COUNT ]; do
                 USER_ACCOUNT_NAME=$(awk "NR==$PX" $LOCAL_USER_LIST_FILE)
                 PASSEX=$(chage -l $USER_ACCOUNT_NAME |grep "Password expires" | awk '{print $4}')
-                echo "$USER_ACCOUNT_NAME:$PASSEX" >> /tmp/$PASSEXPIREINFO
+                echo "$USER_ACCOUNT_NAME:$PASSEX" >> $PASSEXPIREINFO
                 PX=$(( PX + 1 ))
         done
-        PASSEXINFO=$(cat /tmp/$PASSEXPIREINFO | paste -sd ",")
+        PASSEXINFO=$(cat $PASSEXPIREINFO | paste -sd ",")
 }
 
 NEVER_LOGGED_USERS() {
@@ -268,11 +268,11 @@ NEVER_LOGGED_USERS() {
         NL=1
         while [ $NL -le $LOCAL_USER_COUNT ]; do
                 USER_ACCOUNT_NAME=$(awk "NR==$NL" $LOCAL_USER_LIST_FILE)
-                lastlog | grep "Never logged in" | grep "$USER_ACCOUNT_NAME" >> /tmp/$NOTLOGGEDUSERLIST
+                lastlog | grep "Never logged in" | grep "$USER_ACCOUNT_NAME" >> $NOTLOGGEDUSERLIST
                 NL=$(( NL + 1 ))
         done
-        NOT_LOGGED_USER=$(cat /tmp/$NOTLOGGEDUSERLIST | cut -d " " -f1 | paste -sd "@")
-        rm /tmp/$NOTLOGGEDUSERLIST
+        NOT_LOGGED_USER=$(cat $NOTLOGGEDUSERLIST | cut -d " " -f1 | paste -sd "@")
+        rm $NOTLOGGEDUSERLIST
 }
 
 LOGIN_INFO() {
@@ -282,11 +282,11 @@ LOGIN_INFO() {
                 USER_ACCOUNT_NAME=$(ls -l |sed -n $LL{p} $LOCAL_USER_LIST_FILE)
                 LOGIN_DATE=$(lslogins | grep "$USER_ACCOUNT_NAME" | xargs | cut -d " " -f6)
                 LOGIN_DATE=$(lastlog | grep "$USER_ACCOUNT_NAME" | awk '{ print $4,$5,$6,$7 }')
-                echo "$USER_ACCOUNT_NAME:$LOGIN_DATE" >> /tmp/$LASTLOGININFO
+                echo "$USER_ACCOUNT_NAME:$LOGIN_DATE" >> $LASTLOGININFO
                 LL=$(( LL + 1 ))
         done
-        LAST_LOGIN_INFO=$(cat /tmp/$LASTLOGININFO | paste -sd ",")
-	rm /tmp/$LASTLOGININFO
+        LAST_LOGIN_INFO=$(cat $LASTLOGININFO | paste -sd ",")
+	rm $LASTLOGININFO
 }
 
 CHECK_KERNEL_MODULES() {
@@ -596,7 +596,7 @@ ABOUT_HOST() {
 }
 
 SHOW_ABOUT_HOST() {
-	clear
+	#clear
 	printf "%30s %s\n" "------------------------------------------------------"
 	$MAGENTA
 	printf "%30s %s\n" "About of $HOST_NAME                                   "  
@@ -787,7 +787,7 @@ EOF
 
 	echo "| DEFAULT USER ACCOUNTS SETTINGS" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	cat $USR_SETTINGS >> $RDIR/$HOST_NAME-allreports.txt
+	cat $USRSETTINGS >> $RDIR/$HOST_NAME-allreports.txt
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "" >> $RDIR/$HOST_NAME-allreports.txt
 	
@@ -1077,7 +1077,7 @@ if [ "$1" = "--report-localhost" ]; then
 	CREATE_REPORT_TXT
 	SHOW_ABOUT_HOST
 
-	rm -f /tmp/$LOCALUSERS
+	rm -f $LOCALUSERS
 	rm -f "$RDIR"/{passchange,userstatus}
 	
 	exit 0
