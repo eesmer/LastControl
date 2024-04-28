@@ -90,10 +90,11 @@ SYSTEM_REPORT() {
 	mkdir -p $RDIR
 	
 	# LOCAL USERS
-	#grep -E "/bin/bash|/bin/zsh|/bin/sh" /etc/passwd | grep -v "/sbin/nologin" | grep -v "/bin/false" | cut -d":" -f1 > $RDIR/localusers
-	cat /etc/shadow | grep -v "*" | grep -v "!" | cut -d ":" -f1 > "$RDIR"/localusers
-	LOCAL_USER_COUNT=$(cat $RDIR/localusers | wc -l)
-	LOCAL_USER_LIST_FILE=$RDIR/localusers
+	LOCALUSERS=$(mktemp)
+	#grep -E "/bin/bash|/bin/zsh|/bin/sh" /etc/passwd | grep -v "/sbin/nologin" | grep -v "/bin/false" | cut -d":" -f1 > /tmp/$LOCALUSERS
+	cat /etc/shadow | grep -v "*" | grep -v "!" | cut -d ":" -f1 > /tmp/$LOCALUSERS
+	LOCAL_USER_COUNT=$(cat /tmp/$LOCALUSERS | wc -l)
+	LOCAL_USER_LIST_FILE=/tmp/$LOCALUSERS
 	
 	# HARDWARE INVENTORY
 	INTERNAL_IP=$(hostname -I | cut -d " " -f1)
@@ -1073,10 +1074,10 @@ if [ "$1" = "--report-localhost" ]; then
 	ABOUT_HOST
 	CREATE_REPORT_TXT
 	SHOW_ABOUT_HOST
-	
+
+	rm -f /tmp/$LOCALUSERS
 	rm -f "$RDIR"/{passchange,passexpireinfo.txt,userstatus}
 	rm -f "$RDIR"/passexpireinfo.txt
-	rm -f "$RDIR"/localusers
 	
 	exit 0
 fi
