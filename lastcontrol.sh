@@ -209,6 +209,7 @@ SUDO_USER_LIST(){
     cat /etc/sudoers | grep "ALL" | grep -v "%" | awk '{print $1}' >> "$SUDOUSERLIST"
     grep 'ALL' /etc/sudoers.d/* | cut -d":" -f2 | cut -d" " -f1 >> "$SUDOUSERLIST"
     sed -i '/root/d' $SUDOUSERLIST
+    sed -i '/Defaults/d' $SUDOUSERLIST #for Centos,RHEL
     sed -i '/^$/d' $SUDOUSERLIST
     SUDO_USER_LIST=$(sort -u "$SUDOUSERLIST" | paste -sd ",")
     SUDO_USER_COUNT=$(wc -l $SUDOUSERLIST | cut -d " " -f1)
@@ -904,6 +905,7 @@ if [ "$1" = "--report-remotehost" ]; then
 			echo -e
 			$WHITE
 			cat $ABOUTHOST && rm $ABOUTHOST
+			echo -e
 			$NOCOL
 		else
 			$RED
