@@ -241,11 +241,11 @@ USER_LOGINS() {
 		PC=$(( PC + 1 ))
 	done
 	
-	LOCKEDUSERS=$(mktemp)
-	cat $USERSTATUS | grep "L" | cut -d " " -f1 > $LOCKEDUSERS
-	LOCKED_USERS=$(cat $LOCKEDUSERS | paste -sd ",")                                            # locked users
-	PASS_UPDATE_INFO=$(cat $PASSCHANGE | paste -sd ",")
-	rm $LOCKEDUSERS
+	#LOCKEDUSERS=$(mktemp)
+	#cat $USERSTATUS | grep "L" | cut -d " " -f1 > $LOCKEDUSERS
+	#LOCKED_USERS=$(cat $LOCKEDUSERS | paste -sd ",")                                            # locked users
+	#PASS_UPDATE_INFO=$(cat $PASSCHANGE | paste -sd ",")
+	#rm $LOCKEDUSERS
 }
 
 PASSWORD_EXPIRE_INFO() {
