@@ -575,22 +575,22 @@ ABOUT_HOST() {
 	echo "------------------------------------------------------" >> $RDIR/$HOST_NAME-abouthost.txt 
 	echo -e
 	if [ "$NWRESULT" -gt 0 ]; then
-		echo "	Network Configuration [X]" >> $RDIR/$HOST_NAME-abouthost.txt
+		echo "	- Network Configuration [X]" >> $RDIR/$HOST_NAME-abouthost.txt
         else
-		echo "	Network Configuration [V]" >> $RDIR/$HOST_NAME-abouthost.txt
+		echo "	- Network Configuration [V]" >> $RDIR/$HOST_NAME-abouthost.txt
 	fi
 	if [ "$SSHRESULT" -gt 0 ]; then
-		echo "	SSH Configuration [X]" >> $RDIR/$HOST_NAME-abouthost.txt
+		echo "	- SSH Configuration [X]" >> $RDIR/$HOST_NAME-abouthost.txt
         else
-		echo "	SSH Configuration [V]" >> $RDIR/$HOST_NAME-abouthost.txt
+		echo "	- SSH Configuration [V]" >> $RDIR/$HOST_NAME-abouthost.txt
 	fi
 	if [ "$SUDO_USER_COUNT" -gt 0 ]; then
-		echo "	SUDO authorized user accounts found [I]" >> $RDIR/$HOST_NAME-abouthost.txt
+		echo "	- SUDO authorized user accounts found [I]" >> $RDIR/$HOST_NAME-abouthost.txt
         else                                                         
-		echo "	Only authorized user is the root account [I]" >> $RDIR/$HOST_NAME-abouthost.txt
+		echo "	- Only authorized user is the root account [I]" >> $RDIR/$HOST_NAME-abouthost.txt
 	fi
-	if [ "$OOM" = "1" ]; then
-		echo "	Out of Memory Log Found !!" >> $RDIR/$HOST_NAME-abouthost.txt
+	if [ "$OOM" = "0" ]; then
+		echo "	- Out of Memory Log Found [!]" >> $RDIR/$HOST_NAME-abouthost.txt
 	fi
 	echo -e
 	echo "------------------------------------------------------" >> $RDIR/$HOST_NAME-abouthost.txt
@@ -632,7 +632,7 @@ SHOW_ABOUT_HOST() {
 		echo "	Only authorized user is the root account [I]"
 		$NOCOL                                               
 	fi
-	if [ "$OOM" = "0" ]; then
+	if [ "$OOM" = "1" ]; then
 		$YELLOW
 		echo "	Out of Memory Log Found [!]"
 		$NOCOL
