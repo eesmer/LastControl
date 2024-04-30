@@ -431,12 +431,7 @@ MOST_COMMANDS() {
 
 SSH_AUTH_LOGS() {
 	find /var/log -type f -exec sh -c "cat {} | egrep -i 'ssh'" \; | grep "Accepted" | tail -n 10
-#        find /var/log -name 'auth*.gz' -type f -exec sh -c "zcat {} | egrep -i 'ssh'" \; \
-#                |grep -v "Connection closed" \
-#                |grep -v "Disconnected" \
-#                |grep -v "Received disconnect" \
-#                |grep -v "pam_unix" \
-#                |grep -v "Server listening" | tail -n 10
+	find /var/log/ -type f -exec sh -c "cat {} | egrep -i 'ssh'" \; | grep "Failed" | tail -n 10
 }
 
 NW_CONFIG_CHECK() {
