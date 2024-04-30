@@ -430,8 +430,12 @@ MOST_COMMANDS() {
 }
 
 SSH_AUTH_LOGS() {
-	find /var/log -type f -exec sh -c "cat {} | egrep -i 'ssh'" \; | grep "Accepted" | tail -n 10
-	find /var/log/ -type f -exec sh -c "cat {} | egrep -i 'ssh'" \; | grep "Failed" | tail -n 10
+	echo "Accepted" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	find /var/log -type f -exec sh -c "cat {} | egrep -i 'ssh'" \; | grep "Accepted" | tail -n 10 >> $RDIR/$HOST_NAME-allreports.txt
+	echo "Failed" >> $RDIR/$HOST_NAME-allreports.txt >> $RDIR/$HOST_NAME-allreports.txt
+	echo "------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	find /var/log/ -type f -exec sh -c "cat {} | egrep -i 'ssh'" \; | grep "Failed" | tail -n 10 >> $RDIR/$HOST_NAME-allreports.txt
 }
 
 NW_CONFIG_CHECK() {
