@@ -104,8 +104,11 @@ SYSTEM_REPORT() {
 	GPU_INFO=$(lspci | grep -i vga | cut -d ':' -f3)
 	GPU_RAM=$(lspci -v | awk '/ prefetchable/{print $6}' | head -n 1)
 	DISK_LIST=$(lsblk -o NAME,SIZE -d -e 11,2 | tail -n +2 | grep -v "loop")
-	DISK_INFO=$(df -h --total | awk 'END{print}')
-	DISK_USAGE=$(fdisk -lu | grep "Disk" | grep -v "Disklabel" | grep -v "dev/loop" | grep -v "Disk identifier")
+	###DISK_INFO=$(df -h --total | awk 'END{print}')
+	###DISK_USAGE=$(fdisk -lu | grep "Disk" | grep -v "Disklabel" | grep -v "dev/loop" | grep -v "Disk identifier")
+	DISK=$(lsblk | grep "disk" | awk {'print $1'})
+	DISK_USAGE=$(df -lh | grep "$DISK" | awk {'print $5'})
+
 	ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNECTED"
 	
 	# SYSTEM INFO
@@ -180,7 +183,12 @@ SYSLOG_INFO() {
 
 MEMORY_INFO() {
         RAM_USAGE_PERCENTAGE=$(free -m | grep Mem | awk '{ print $3/$2 * 100 }' | cut -d "." -f1)
-        SWAP_USAGE_PERCENTAGE=$(free -m | grep Swap | awk '{ print $3/$2 * 100 }' | cut -d "." -f1)
+	SWAP=$(free -m | grep Swap | awk '{ print $2 }')
+	if [ "$SWAP" = 0 ]; then
+		SWAP_USAGE_PERCENTAGE="Swap Not Configured"
+	else
+		SWAP_USAGE_PERCENTAGE=$(free -m | grep Swap | awk '{ print $3/$2 * 100 }' | cut -d "." -f1)
+	fi
         OOM=0
         grep -i -r 'out of memory' /var/log/ &>/dev/null && OOM=1
         OOM_LOGS="None"
@@ -589,7 +597,7 @@ ABOUT_HOST() {
         else                                                         
 		echo "	- Only authorized user is the root account [I]" >> $RDIR/$HOST_NAME-abouthost.txt
 	fi
-	if [ "$OOM" = "0" ]; then
+	if [ "$OOM" = "1" ]; then
 		echo "	- Out of Memory Log Found [!]" >> $RDIR/$HOST_NAME-abouthost.txt
 	fi
 	echo -e
@@ -660,6 +668,8 @@ CREATE_REPORT_TXT() {
 		rm $RDIR/$HOST_NAME-allreports.txt
 	fi
 
+###|DISK INFO:          |$DISK_INFO
+
 cat > $RDIR/$HOST_NAME-allreports.txt << EOF
 $HOST_NAME LastControl All Controls Report $DATE
 =======================================================================================================================================================================
@@ -673,7 +683,6 @@ $HOST_NAME LastControl All Controls Report $DATE
 |RAM:                |Total:$RAM_TOTAL | Ram Usage: $RAM_USAGE
 |GPU / VGA:          |VGA: $GPU_INFO   | VGA Ram: $GPU_RAM 
 |DISK LIST:          |$DISK_LIST
-|DISK INFO:          |$DISK_INFO
 --------------------------------------------------------------------------------------------------------------------------
 | SYSTEM INFORMATION
 --------------------------------------------------------------------------------------------------------------------------
