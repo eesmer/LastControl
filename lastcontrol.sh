@@ -668,8 +668,6 @@ CREATE_REPORT_TXT() {
 		rm $RDIR/$HOST_NAME-allreports.txt
 	fi
 
-###|DISK INFO:          |$DISK_INFO
-
 cat > $RDIR/$HOST_NAME-allreports.txt << EOF
 $HOST_NAME LastControl All Controls Report $DATE
 =======================================================================================================================================================================
