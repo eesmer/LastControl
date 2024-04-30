@@ -237,14 +237,15 @@ USER_LOGINS() {
 	lastlog --time 30 | grep -v "Username" | cut -d " " -f1 > $LASTLOGIN30D
 	getent passwd {0..0} {1000..2000} |cut -d ":" -f1 > $LOCAL_USER_LIST_FILE
 	NOT_LOGIN_30D=$(diff $LASTLOGIN30D $LOCAL_USER_LIST_FILE -n | grep -v "d1" | grep -v "a0" | grep -v "a1" | grep -v "a2" | grep -v "a3" | grep -v "a4" | paste -sd ",")
+	rm $LASTLOGIN30D
 	
 	PASSCHANGE=$(mktemp)
-	USERSTATUS=$(mktemp)
+	#USERSTATUS=$(mktemp)
 	PC=1
 	while [ $PC -le $LOCAL_USER_COUNT ]; do
 		USER_ACCOUNT_NAME=$(awk "NR==$PC" $LOCAL_USER_LIST_FILE)
 		PASS_CHANGE=$(lslogins "$USER_ACCOUNT_NAME" | grep "Password changed:" | awk ' { print $3 }')    # Password update date
-		USERSTATUS=$(passwd -S "$USER_ACCOUNT_NAME" >> $USERSTATUS)                                 # user status information
+		###USERSTATUS=$(passwd -S "$USER_ACCOUNT_NAME" >> $USERSTATUS)                                 # user status information
 		echo "$USER_ACCOUNT_NAME:$PASS_CHANGE" >> $PASSCHANGE
 		PC=$(( PC + 1 ))
 	done
@@ -254,6 +255,9 @@ USER_LOGINS() {
 	#LOCKED_USERS=$(cat $LOCKEDUSERS | paste -sd ",")                                            # locked users
 	#PASS_UPDATE_INFO=$(cat $PASSCHANGE | paste -sd ",")
 	#rm $LOCKEDUSERS
+
+	rm $PASSCHANGE
+	#rm $USERSTATUS
 }
 
 PASSWORD_EXPIRE_INFO() {
@@ -267,6 +271,7 @@ PASSWORD_EXPIRE_INFO() {
                 PX=$(( PX + 1 ))
         done
         PASSEXINFO=$(cat $PASSEXPIREINFO | paste -sd ",")
+	rm $PASSEXPIREINFO
 }
 
 NEVER_LOGGED_USERS() {
@@ -1101,6 +1106,10 @@ if [ "$1" = "--report-localhost" ]; then
 	SHOW_ABOUT_HOST
 
 	rm -f $LOCALUSERS
+	rm -f $LASTINSTALL
+	rm -f $USRSETTINGS
+        rm -f $NOTLOGGEDUSERLIST
+	rm -f $LASTLOGININFO
 	
 	exit 0
 fi
