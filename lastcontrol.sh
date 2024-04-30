@@ -44,7 +44,6 @@ RED="tput setaf 9"
 BLUE="tput setaf 12"
 NOCOL="tput sgr0"
 BOLD="tput bold"
-NORMAL="tput sgr0"
 	
 HOST_NAME=$(cat /etc/hostname)
 WDIR=/usr/local/lastcontrol
@@ -590,6 +589,9 @@ ABOUT_HOST() {
         else                                                         
 		echo "	Only authorized user is the root account [I]" >> $RDIR/$HOST_NAME-abouthost.txt
 	fi
+	if [ "$OOM" = "1" ]; then
+		echo "	Out of Memory Log Found !!" >> $RDIR/$HOST_NAME-abouthost.txt
+	fi
 	echo -e
 	echo "------------------------------------------------------" >> $RDIR/$HOST_NAME-abouthost.txt
 	echo -e
@@ -597,42 +599,47 @@ ABOUT_HOST() {
 
 SHOW_ABOUT_HOST() {
 	#clear
-	printf "%30s %s\n" "------------------------------------------------------"
+	echo "------------------------------------------------------"
 	$MAGENTA
-	printf "%30s %s\n" "About of $HOST_NAME                                   "  
+	echo "About of $HOST_NAME                                   "  
 	$NOCOL
-	printf "%30s %s\n" "------------------------------------------------------"
+	echo "------------------------------------------------------"
 	echo -e
 	if [ "$NWRESULT" -gt 0 ]; then
 	$RED
-	printf "%10s %s\n" "	Network Configuration [X]"
+	echo "	Network Configuration [X]"
 	$NOCOL
         else
 	       $GREEN
-	       printf "%10s %s\n" "	Network Configuration [V]"
+	       echo "	Network Configuration [V]"
 	       $NOCOL
 	fi
 	if [ "$SSHRESULT" -gt 0 ]; then
 	       $RED
-	       printf "%10s %s\n" "	SSH Configuration [X]"
+	       echo "	SSH Configuration [X]"
 	       $NOCOL
         else
 	       $GREEN
-	       printf "%10s %s\n" "	SSH Configuration [V]"
+	       echo "	SSH Configuration [V]"
 	       $NOCOL
 	fi
 	if [ "$SUDO_USER_COUNT" -gt 0 ]; then
                 $BLUE
-                printf "%10s %s\n" "	SUDO authorized user accounts found [I]"
+                echo "	SUDO authorized user accounts found [I]"
                 $NOCOL                                               
         else                                                         
 		$BLUE                                                
-		printf "%10s %s\n" "	Only authorized user is the root account [I]"
+		echo "	Only authorized user is the root account [I]"
 		$NOCOL                                               
+	fi
+	if [ "$OOM" = "0" ]; then
+		$YELLOW
+		echo "	Out of Memory Log Found [!]"
+		$NOCOL
 	fi
 	$NOCOL
 	echo -e
-	printf "%10s %s\n" "------------------------------------------------------"
+	echo "------------------------------------------------------"
 	$CYAN
 	$BOLD
 	echo -e
@@ -642,7 +649,7 @@ SHOW_ABOUT_HOST() {
 	$CYAN
 	$BOLD
 	printf "%0s %s\n" "Web:"
-	$NORMAL
+	$NOCOL
 	printf "%10s %s\n" "http://$INTERNAL_IP"
 	printf "%10s %s\n" "------------------------------------------------------"
 	echo -e
