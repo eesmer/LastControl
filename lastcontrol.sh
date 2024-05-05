@@ -438,6 +438,7 @@ FILE_CHANGED_CHECK() {
 	#file changed in /etc directory last 24 hour
 	FILECHANGEDETC=$(mktemp)
 	find /etc/ -type f -mtime -1 > $FILECHANGEDETC
+	FILECHANGECHK=$(cat $FILECHANGEDTC | wc -l)
 }
 
 SSH_AUTH_LOGS() {
@@ -657,6 +658,11 @@ SHOW_ABOUT_HOST() {
 	if [ "$OOM" = "1" ]; then
 		$YELLOW
 		echo "	Out of Memory Log Found [!]"
+		$NOCOL
+	fi
+	if [ "$FILECHANGECHK" -gt "0" ]; then
+		$YELLOW
+		echo "	There are file modified in the /etc directory in the last 24 Hours [!]"
 		$NOCOL
 	fi
 	$NOCOL
