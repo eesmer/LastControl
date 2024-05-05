@@ -580,7 +580,7 @@ SUIDGUID_FILE_CHECK() {
 	#echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	SUIDGUID_FILE=$(mktemp)
 	find / -perm /6000 &>/dev/null > $SUIDGUID_FILE
-	SUIDGUIDCOUNT=$(wc -l $SUIDGUID_FILE)
+	SUIDGUIDCOUNT=$(wc -l $SUIDGUID_FILE | awk {'print $1'})
 }
 
 LAST_INSTALL() {
@@ -826,7 +826,7 @@ $HOST_NAME LastControl All Controls Report $DATE
 --------------------------------------------------------------------------------------------------------------------------
 SUID - GUID - STICKY BIT
 --------------------------------------------------------------------------------------------------------------------------
-SUID-GUID           |$SUIDGUIDCOUNT
+SUID-GUID            |$SUIDGUIDCOUNT
 --------------------------------------------------------------------------------------------------------------------------
 
 EOF
