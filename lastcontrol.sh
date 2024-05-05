@@ -562,22 +562,25 @@ SSH_CONFIG_CHECK() {
 }
 
 SUIDGUID_FILE_CHECK() {
-	echo "Sticky Bit (T Bit) Permissions Files               " >> $RDIR/$HOST_NAME-allreports.txt
-	echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	find / -perm /1000 &> /dev/null >> $RDIR/$HOST_NAME-allreports.txt
-	echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	echo "SUID Permissions Files                             " >> $RDIR/$HOST_NAME-allreports.txt
-	echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	find / -perm /2000 &> /dev/null >> $RDIR/$HOST_NAME-allreports.txt
-	echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	echo "GUID Permissions Files                             " >> $RDIR/$HOST_NAME-allreports.txt
-	echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	find / -perm /4000 &> /dev/null >> $RDIR/$HOST_NAME-allreports.txt
-	echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	echo "SUID and GUID Permissions Files                    " >> $RDIR/$HOST_NAME-allreports.txt
-	echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	find / -perm /6000 &> /dev/null >> $RDIR/$HOST_NAME-allreports.txt
-	echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	#echo "Sticky Bit (T Bit) Permissions Files               " >> $RDIR/$HOST_NAME-allreports.txt
+	#echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	#find / -perm /1000 &> /dev/null >> $RDIR/$HOST_NAME-allreports.txt
+	#echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	#echo "SUID Permissions Files                             " >> $RDIR/$HOST_NAME-allreports.txt
+	#echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	#find / -perm /2000 &> /dev/null >> $RDIR/$HOST_NAME-allreports.txt
+	#echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	#echo "GUID Permissions Files                             " >> $RDIR/$HOST_NAME-allreports.txt
+	#echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	#find / -perm /4000 &> /dev/null >> $RDIR/$HOST_NAME-allreports.txt
+	#echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	#echo "SUID and GUID Permissions Files                    " >> $RDIR/$HOST_NAME-allreports.txt
+	#echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	#find / -perm /6000 &> /dev/null >> $RDIR/$HOST_NAME-allreports.txt
+	#echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	SUIDGUID_FILE=$(mktemp)
+	find / -perm /6000 &>/dev/null > $SUIDGUID_FILE
+	SUIDGUIDCOUNT=$(wc -l $SUIDGUID_FILE)
 }
 
 LAST_INSTALL() {
@@ -821,6 +824,11 @@ $HOST_NAME LastControl All Controls Report $DATE
 --------------------------------------------------------------------------------------------------------------------------
 |Service Users:      |$SERVICE_USER_LIST
 --------------------------------------------------------------------------------------------------------------------------
+SUID - GUID - STICKY BIT
+--------------------------------------------------------------------------------------------------------------------------
+SUID-GUID           |$SUIDGUIDCOUNT
+--------------------------------------------------------------------------------------------------------------------------
+
 EOF
 
 	echo "| DEFAULT USER ACCOUNTS SETTINGS" >> $RDIR/$HOST_NAME-allreports.txt
@@ -881,7 +889,7 @@ EOF
 	echo "" >> $RDIR/$HOST_NAME-allreports.txt
 	
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	SUIDGUID_FILE_CHECK
+	#SUIDGUID_FILE_CHECK
 	
 	cp $RDIR/$HOST_NAME-allreports.txt $WEB/reports
 }
@@ -1126,6 +1134,7 @@ if [ "$1" = "--report-localhost" ]; then
 	SSH_CONFIG_CHECK
 	LAST_INSTALL
 	FILE_CHANGED_CHECK
+	SUIDGUID_FILE_CHECK
 	ABOUT_HOST
 	CREATE_REPORT_TXT
 	SHOW_ABOUT_HOST
