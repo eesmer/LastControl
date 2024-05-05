@@ -438,7 +438,7 @@ FILE_CHANGED_CHECK() {
 	#file changed in /etc directory last 24 hour
 	FILECHANGEDETC=$(mktemp)
 	find /etc/ -type f -mtime -1 > $FILECHANGEDETC
-	FILECHANGECHK=$(cat $FILECHANGEDTC | wc -l)
+	FILECHANGECHK=$(wc -l $FILECHANGEDETC | awk {'print $1'})
 }
 
 SSH_AUTH_LOGS() {
