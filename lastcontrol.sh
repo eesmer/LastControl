@@ -616,9 +616,7 @@ ABOUT_HOST() {
 		echo "	- Out of Memory Log Found [!]" >> $RDIR/$HOST_NAME-abouthost.txt
 	fi
 	if [ "$FILECHANGECHK" -gt 0 ] || [ "$FILECHANGECHK" = 0 ]; then
-		$YELLOW
 		echo "	- Found file changed in the /etc directory in last 24 hours [I]" >> $RDIR/$HOST_NAME-abouthost.txt
-		$NOCOL
 	fi
 	echo -e
 	echo "------------------------------------------------------" >> $RDIR/$HOST_NAME-abouthost.txt
@@ -662,12 +660,12 @@ SHOW_ABOUT_HOST() {
 		$NOCOL                                               
 	fi
 	if [ "$OOM" = "1" ]; then
-		$YELLOW
-		echo "	Out of Memory Log Found [!]"
+		$BLUE
+		echo "	Out of Memory Log Found [I]"
 		$NOCOL
 	fi
 	if [ "$FILECHANGECHK" -gt "0" ] || [ "$FILECHANGECHK" = "0" ]; then
-		$YELLOW
+		$BLUE
 		echo "	Found file changed in the /etc directory in last 24 hours [I]"
 		$NOCOL
 	fi
