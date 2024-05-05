@@ -829,7 +829,7 @@ $HOST_NAME LastControl All Controls Report $DATE
 --------------------------------------------------------------------------------------------------------------------------
 SUID - GUID - STICKY BIT
 --------------------------------------------------------------------------------------------------------------------------
-STICKYBIT            |$STICKYBITCOUNT
+STICKY BT            |$STICKYBITCOUNT
 SUID-GUID            |$SUIDGUIDCOUNT
 --------------------------------------------------------------------------------------------------------------------------
 
@@ -957,7 +957,7 @@ if [ "$1" = "--report-remotehost" ]; then
 			scp -P$PORTNUMBER -i $LCKEY $CDIR/lastcontrol.sh -o "StrictHostKeyChecking no" root@$TARGETMACHINE:/usr/local/ &> /dev/null && echo "LastControl Script was transferred to the $TARGETMACHINE"
 			ssh -p$PORTNUMBER -i $LCKEY -o "StrictHostKeyChecking no" root@$TARGETMACHINE -- bash /usr/local/lastcontrol.sh --report-localhost &> /dev/null
 			$CYAN
-			scp -P$PORTNUMBER -i $LCKEY -o "StrictHostKeyChecking no" root@$TARGETMACHINE:/usr/local/lastcontrol/reports/$TARGETHOSTNAME-allreports.txt $WEB/reports/ &> /dev/null && clear && echo "" && echo "	Report Created"
+			scp -P$PORTNUMBER -i $LCKEY -o "StrictHostKeyChecking no" root@$TARGETMACHINE:/usr/local/lastcontrol/reports/$TARGETHOSTNAME-allreports.txt $WEB/reports/ &> /dev/null && echo "" && echo "	Report Created"
 			ABOUTHOST=$(mktemp)
 			scp -P$PORTNUMBER -i $LCKEY -o "StrictHostKeyChecking no" root@$TARGETMACHINE:/usr/local/lastcontrol/reports/$TARGETHOSTNAME-abouthost.txt $ABOUTHOST &> /dev/null
 			echo -e
