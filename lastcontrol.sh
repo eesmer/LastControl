@@ -617,7 +617,7 @@ ABOUT_HOST() {
 	fi
 	if [ "$FILECHANGECHK" -gt 0 ] || [ "$FILECHANGECHK" = 0 ]; then
 		$YELLOW
-		echo "	- There are file modified in the /etc directory in the last 24 Hours [I]" >> $RDIR/$HOST_NAME-abouthost.txt
+		echo "	- Found file changed in the /etc directory in last 24 hours [I]" >> $RDIR/$HOST_NAME-abouthost.txt
 		$NOCOL
 	fi
 	echo -e
@@ -668,7 +668,7 @@ SHOW_ABOUT_HOST() {
 	fi
 	if [ "$FILECHANGECHK" -gt "0" ] || [ "$FILECHANGECHK" = "0" ]; then
 		$YELLOW
-		echo "	There are file modified in the /etc directory in the last 24 Hours [!]"
+		echo "	Found file changed in the /etc directory in last 24 hours [I]"
 		$NOCOL
 	fi
 	$NOCOL
