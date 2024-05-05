@@ -615,72 +615,78 @@ ABOUT_HOST() {
 	if [ "$OOM" = "1" ]; then
 		echo "	- Out of Memory Log Found [!]" >> $RDIR/$HOST_NAME-abouthost.txt
 	fi
+	if [ "$FILECHANGECHK" -gt 0 ] || [ "$FILECHANGECHK" = 0 ]; then
+		$YELLOW
+		echo "	- There are file modified in the /etc directory in the last 24 Hours [!]" >> $RDIR/$HOST_NAME-abouthost.txt
+		$NOCOL
+	fi
 	echo -e
 	echo "------------------------------------------------------" >> $RDIR/$HOST_NAME-abouthost.txt
 	echo -e
 }
 
 SHOW_ABOUT_HOST() {
-	#clear
-	echo "------------------------------------------------------"
-	$MAGENTA
-	echo "About of $HOST_NAME                                   "  
-	$NOCOL
-	echo "------------------------------------------------------"
-	echo -e
-	if [ "$NWRESULT" -gt 0 ]; then
-	$RED
-	echo "	Network Configuration [X]"
-	$NOCOL
-        else
-	       $GREEN
-	       echo "	Network Configuration [V]"
-	       $NOCOL
-	fi
-	if [ "$SSHRESULT" -gt 0 ]; then
-	       $RED
-	       echo "	SSH Configuration [X]"
-	       $NOCOL
-        else
-	       $GREEN
-	       echo "	SSH Configuration [V]"
-	       $NOCOL
-	fi
-	if [ "$SUDO_USER_COUNT" -gt 0 ]; then
-                $BLUE
-                echo "	SUDO authorized user accounts found [I]"
-                $NOCOL                                               
-        else                                                         
-		$BLUE                                                
-		echo "	Only authorized user is the root account [I]"
-		$NOCOL                                               
-	fi
-	if [ "$OOM" = "1" ]; then
-		$YELLOW
-		echo "	Out of Memory Log Found [!]"
-		$NOCOL
-	fi
-	if [ "$FILECHANGECHK" -gt "0" ]; then
-		$YELLOW
-		echo "	There are file modified in the /etc directory in the last 24 Hours [!]"
-		$NOCOL
-	fi
-	$NOCOL
-	echo -e
-	echo "------------------------------------------------------"
-	$CYAN
-	$BOLD
-	echo -e
-	printf "%10s %s\n" "For Detailed Report:"
-	$NOCOL
-	printf "%10s %s\n" "$RDIR/$HOST_NAME-allreports.txt"
-	$CYAN
-	$BOLD
-	printf "%0s %s\n" "Web:"
-	$NOCOL
-	printf "%10s %s\n" "http://$INTERNAL_IP"
-	printf "%10s %s\n" "------------------------------------------------------"
-	echo -e
+	cat $RDIR/$HOST_NAME-abouthost.txt
+#	#clear
+#	echo "------------------------------------------------------"
+#	$MAGENTA
+#	echo "About of $HOST_NAME                                   "  
+#	$NOCOL
+#	echo "------------------------------------------------------"
+#	echo -e
+#	if [ "$NWRESULT" -gt 0 ]; then
+#	$RED
+#	echo "	Network Configuration [X]"
+#	$NOCOL
+#        else
+#	       $GREEN
+#	       echo "	Network Configuration [V]"
+#	       $NOCOL
+#	fi
+#	if [ "$SSHRESULT" -gt 0 ]; then
+#	       $RED
+#	       echo "	SSH Configuration [X]"
+#	       $NOCOL
+#        else
+#	       $GREEN
+#	       echo "	SSH Configuration [V]"
+#	       $NOCOL
+#	fi
+#	if [ "$SUDO_USER_COUNT" -gt 0 ]; then
+#                $BLUE
+#                echo "	SUDO authorized user accounts found [I]"
+#                $NOCOL                                               
+#        else                                                         
+#		$BLUE                                                
+#		echo "	Only authorized user is the root account [I]"
+#		$NOCOL                                               
+#	fi
+#	if [ "$OOM" = "1" ]; then
+#		$YELLOW
+#		echo "	Out of Memory Log Found [!]"
+#		$NOCOL
+#	fi
+#	if [ "$FILECHANGECHK" -gt "0" ] || [ "$FILECHANGECHK" = "0" ]; then
+#		$YELLOW
+#		echo "	There are file modified in the /etc directory in the last 24 Hours [!]"
+#		$NOCOL
+#	fi
+#	$NOCOL
+#	echo -e
+#	echo "------------------------------------------------------"
+#	$CYAN
+#	$BOLD
+#	echo -e
+#	printf "%10s %s\n" "For Detailed Report:"
+#	$NOCOL
+#	printf "%10s %s\n" "$RDIR/$HOST_NAME-allreports.txt"
+#	$CYAN
+#	$BOLD
+#	printf "%0s %s\n" "Web:"
+#	$NOCOL
+#	printf "%10s %s\n" "http://$INTERNAL_IP"
+#	printf "%10s %s\n" "------------------------------------------------------"
+#	echo -e
 }
 
 CREATE_REPORT_TXT() {
