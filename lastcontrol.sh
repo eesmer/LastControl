@@ -578,6 +578,9 @@ SUIDGUID_FILE_CHECK() {
 	#echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	#find / -perm /6000 &> /dev/null >> $RDIR/$HOST_NAME-allreports.txt
 	#echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	STICKYBIT_FILE=$(mktemp)
+        find / -perm /1000 &> /dev/null > $STICKYBIT_FILE
+        STICKYBITCOUNT=$(wc -l $STICKYBIT_FILE | awk {'print $1'})
 	SUIDGUID_FILE=$(mktemp)
 	find / -perm /6000 &>/dev/null > $SUIDGUID_FILE
 	SUIDGUIDCOUNT=$(wc -l $SUIDGUID_FILE | awk {'print $1'})
@@ -826,6 +829,7 @@ $HOST_NAME LastControl All Controls Report $DATE
 --------------------------------------------------------------------------------------------------------------------------
 SUID - GUID - STICKY BIT
 --------------------------------------------------------------------------------------------------------------------------
+STICKYBIT            |$STICKYBITCOUNT
 SUID-GUID            |$SUIDGUIDCOUNT
 --------------------------------------------------------------------------------------------------------------------------
 
