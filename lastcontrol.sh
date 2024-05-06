@@ -899,8 +899,6 @@ EOF
         cat $APPLIST >> $RDIR/$HOST_NAME-allreports.txt
         echo ""
         echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	#SUIDGUID_FILE_CHECK
 	
 	cp $RDIR/$HOST_NAME-allreports.txt $WEB/reports
 }
