@@ -629,6 +629,16 @@ ABOUT_HOST() {
 	echo -e
 }
 
+APP_LIST() {
+        APPLIST=$(mktemp)
+        for appslist in /usr/share/applications/*.desktop; do
+                sed -ns '/^\[Desktop Entry\]/,/^\[/{/^Name=/p;/^Exec=/h};${z;x;G;p}' "$appslist" | \
+                grep -v "/usr/share/applications/" | \
+                sed '/^Name=/ s/./- &/' | \
+                sed '/^\s*$/d' >> "$APPLIST"
+        done
+}
+
 SHOW_ABOUT_HOST() {
 #	cat $RDIR/$HOST_NAME-abouthost.txt
 	#clear
