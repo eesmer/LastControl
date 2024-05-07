@@ -425,7 +425,7 @@ SERVICE_PROCESS(){
 }
 
 AUDIT() {
-	#MOST COMMANDS
+	#most used commands
 	HISTORY_FILE=~/.bash_history
 	if [ -f "$HISTORY_FILE" ]; then
 		#MOST_COMMANDS=$(cat ~/.bash_history | awk '{cmd[$2]++} END {for(elem in cmd) {print cmd[elem] " " elem}}' | sort -n -r | head -20 | cut -d " " -f2 | paste -sd ",")
@@ -433,24 +433,28 @@ AUDIT() {
 	else
 		MOST_COMMANDS="bash_history file not found in ~/ directory"
 	fi
-}
-
-MOST_COMMANDS() {
-	HISTORY_FILE=~/.bash_history
-	if [ -f "$HISTORY_FILE" ]; then
-		#MOST_COMMANDS=$(cat ~/.bash_history | awk '{cmd[$2]++} END {for(elem in cmd) {print cmd[elem] " " elem}}' | sort -n -r | head -20 | cut -d " " -f2 | paste -sd ",")
-		MOST_COMMANDS=$(cat $HISTORY_FILE | head -10 | paste -sd ",")
-	else
-		MOST_COMMANDS="bash_history file not found in ~/ directory"
-	fi
-}
-
-FILE_CHANGED_CHECK() {
-	#file changed in /etc directory last 24 hour
+	# /etc directory change check
 	FILECHANGEDETC=$(mktemp)
 	find /etc/ -type f -mtime -1 > $FILECHANGEDETC
 	FILECHANGECHK=$(wc -l $FILECHANGEDETC | awk {'print $1'})
 }
+
+#MOST_COMMANDS() {
+#	HISTORY_FILE=~/.bash_history
+#	if [ -f "$HISTORY_FILE" ]; then
+#		#MOST_COMMANDS=$(cat ~/.bash_history | awk '{cmd[$2]++} END {for(elem in cmd) {print cmd[elem] " " elem}}' | sort -n -r | head -20 | cut -d " " -f2 | paste -sd ",")
+#		MOST_COMMANDS=$(cat $HISTORY_FILE | head -10 | paste -sd ",")
+#	else
+#		MOST_COMMANDS="bash_history file not found in ~/ directory"
+#	fi
+#}
+#
+#FILE_CHANGED_CHECK() {
+#	#file changed in /etc directory last 24 hour
+#	FILECHANGEDETC=$(mktemp)
+#	find /etc/ -type f -mtime -1 > $FILECHANGEDETC
+#	FILECHANGECHK=$(wc -l $FILECHANGEDETC | awk {'print $1'})
+#}
 
 SSH_AUTH_LOGS() {
 	echo "Accepted" >> $RDIR/$HOST_NAME-allreports.txt
@@ -1157,14 +1161,15 @@ if [ "$1" = "--report-localhost" ]; then
 	CHECK_KERNEL_MODULES
 	GRUB_CONTROL
 	SERVICE_PROCESS
-	MOST_COMMANDS
+	AUDIT
+	#MOST_COMMANDS
 	DIRECTORY_CHECK
 	REPOSITORY_CHECK
 	NW_CONFIG_CHECK
 	SSH_CONFIG_CHECK
 	LAST_INSTALL
 	APP_LIST
-	FILE_CHANGED_CHECK
+	#FILE_CHANGED_CHECK
 	SUIDGUID_FILE_CHECK
 	ABOUT_HOST
 	CREATE_REPORT_TXT
