@@ -443,13 +443,6 @@ AUDIT() {
 	FILECHANGECHK=$(wc -l $FILECHANGEDETC | awk {'print $1'})
 }
 
-#FILE_CHANGED_CHECK() {
-#	#file changed in /etc directory last 24 hour
-#	FILECHANGEDETC=$(mktemp)
-#	find /etc/ -type f -mtime -1 > $FILECHANGEDETC
-#	FILECHANGECHK=$(wc -l $FILECHANGEDETC | awk {'print $1'})
-#}
-
 SSH_AUTH_LOGS() {
 	echo "Accepted" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
