@@ -443,16 +443,6 @@ AUDIT() {
 	FILECHANGECHK=$(wc -l $FILECHANGEDETC | awk {'print $1'})
 }
 
-#MOST_COMMANDS() {
-#	HISTORY_FILE=~/.bash_history
-#	if [ -f "$HISTORY_FILE" ]; then
-#		#MOST_COMMANDS=$(cat ~/.bash_history | awk '{cmd[$2]++} END {for(elem in cmd) {print cmd[elem] " " elem}}' | sort -n -r | head -20 | cut -d " " -f2 | paste -sd ",")
-#		MOST_COMMANDS=$(cat $HISTORY_FILE | head -10 | paste -sd ",")
-#	else
-#		MOST_COMMANDS="bash_history file not found in ~/ directory"
-#	fi
-#}
-#
 #FILE_CHANGED_CHECK() {
 #	#file changed in /etc directory last 24 hour
 #	FILECHANGEDETC=$(mktemp)
