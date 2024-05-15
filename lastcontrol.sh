@@ -959,7 +959,9 @@ fi
 
 if [ "$1" = "--report-remotehost" ]; then
 	if [ -z "$2" ] || [ -z "$3" ]; then
+    $RED  
 		read -p "Enter the Machine Hostname and SSH Port (Example:ServerName 22): " TARGETMACHINE PORTNUMBER
+    $NOCOL
 	else
 		TARGETMACHINE="$2"
 		PORTNUMBER="$3"
@@ -1003,7 +1005,9 @@ fi
 
 if [ "$1" = "--add-host" ]; then
 	if [ -z "$2" ] || [ -z "$3" ]; then
+    $RED
 		read -p "Enter the Machine Hostname and SSH Port (Example:ServerName 22): " TARGETMACHINE PORTNUMBER
+    $NOCOL
         else
                 TARGETMACHINE="$2"
                 PORTNUMBER="$3"
