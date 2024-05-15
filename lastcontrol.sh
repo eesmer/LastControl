@@ -1052,7 +1052,9 @@ fi
 
 if [ "$1" = "--remove-host" ]; then
 	if [ -z "$2" ]; then
+    $RED
 		read -p "Enter the Machine Hostname : " TARGETMACHINE
+    $NOCOL
 	else
 		TARGETMACHINE="$2"
 	fi
