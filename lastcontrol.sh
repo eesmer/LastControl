@@ -583,9 +583,11 @@ SUIDGUID_FILE_CHECK() {
 	STICKYBIT_FILE=$(mktemp)
         find / -perm /1000 &> /dev/null > $STICKYBIT_FILE
         STICKYBITCOUNT=$(wc -l $STICKYBIT_FILE | awk {'print $1'})
+	rm $STICKYBIT_FILE
 	SUIDGUID_FILE=$(mktemp)
 	find / -perm /6000 &>/dev/null > $SUIDGUID_FILE
 	SUIDGUIDCOUNT=$(wc -l $SUIDGUID_FILE | awk {'print $1'})
+	rm $ SUIDGUID_FILE
 }
 
 LAST_INSTALL() {
@@ -909,7 +911,7 @@ EOF
         echo "|Application List |" >> $RDIR/$HOST_NAME-allreports.txt
         echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
         cat $APPLIST >> $RDIR/$HOST_NAME-allreports.txt
-        rm $APPLIST
+	rm $APPLIST
         echo ""
         echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	
