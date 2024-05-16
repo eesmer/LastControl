@@ -909,6 +909,7 @@ EOF
         echo "|Application List |" >> $RDIR/$HOST_NAME-allreports.txt
         echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
         cat $APPLIST >> $RDIR/$HOST_NAME-allreports.txt
+        rm $APPLIST
         echo ""
         echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	
@@ -959,9 +960,7 @@ fi
 
 if [ "$1" = "--report-remotehost" ]; then
 	if [ -z "$2" ] || [ -z "$3" ]; then
-    $RED  
 		read -p "Enter the Machine Hostname and SSH Port (Example:ServerName 22): " TARGETMACHINE PORTNUMBER
-    $NOCOL
 	else
 		TARGETMACHINE="$2"
 		PORTNUMBER="$3"
@@ -1005,9 +1004,7 @@ fi
 
 if [ "$1" = "--add-host" ]; then
 	if [ -z "$2" ] || [ -z "$3" ]; then
-    $RED
 		read -p "Enter the Machine Hostname and SSH Port (Example:ServerName 22): " TARGETMACHINE PORTNUMBER
-    $NOCOL
         else
                 TARGETMACHINE="$2"
                 PORTNUMBER="$3"
@@ -1052,9 +1049,7 @@ fi
 
 if [ "$1" = "--remove-host" ]; then
 	if [ -z "$2" ]; then
-    $RED
 		read -p "Enter the Machine Hostname : " TARGETMACHINE
-    $NOCOL
 	else
 		TARGETMACHINE="$2"
 	fi
