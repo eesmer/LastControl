@@ -584,10 +584,13 @@ SUIDGUID_FILE_CHECK() {
         find / -perm /1000 &> /dev/null > $STICKYBIT_FILE
         STICKYBITCOUNT=$(wc -l $STICKYBIT_FILE | awk {'print $1'})
 	rm $STICKYBIT_FILE
+	GUID_FILE=$(mktemp)
+	find / -perm /4000 &> /dev/null > $GUID_FILE
+	GUIDCOUNT=$(wc -l $GUID_FILE | awk {'print $1'})
 	SUIDGUID_FILE=$(mktemp)
 	find / -perm /6000 &>/dev/null > $SUIDGUID_FILE
 	SUIDGUIDCOUNT=$(wc -l $SUIDGUID_FILE | awk {'print $1'})
-	rm $ SUIDGUID_FILE
+	rm $SUIDGUID_FILE
 }
 
 LAST_INSTALL() {
