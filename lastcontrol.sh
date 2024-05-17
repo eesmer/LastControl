@@ -447,20 +447,7 @@ AUDIT() {
 		ETC_CHANGE="There has been no change in the /etc directory in the last 24 hours"
 	fi
 
- #if [ ! -d "$WDIR/etc" ]; then
- #               cp -r /etc $WDIR
- #               SYSCONFIG_CHECK="INITIAL"
- #       else
- #               DIFF_FILE=$(mktemp)
- #               diff -qr "$WDIR/etc" /etc > $DIFF_FILE
- #               DIFF_LINE=$(wc -l $DIFF_FILE | awk {'print $1'})
- #               if [ "$DIFF_LINE" -gt 0 ]; then
- #                       SYSCONFIG_CHECK="Change Detected"
- #               else
- #                       SYSCONFIG_CHECK="No changes found"
- #               fi
- #       fi
-
+ 	#diff -qr "$WDIR/etc" /etc > $DIFF_FILE
 }
 
 SSH_AUTH_LOGS() {
