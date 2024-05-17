@@ -447,7 +447,36 @@ AUDIT() {
 		ETC_CHANGE="There has been no change in the /etc directory in the last 24 hours"
 	fi
 
- 	#diff -qr "$WDIR/etc" /etc > $DIFF_FILE
+	# Host Inventory change check
+	if [ ! -f "$WDIR/hostinventory" ]; then
+cat > $WDIR/hostinventory  << EOF
+Host Name   :$HOST_NAME
+Internel IP :$INTERNAL_IP
+External IP :$EXTERNAL_IP
+Disk List   :$DISK_LIST
+Disk        :$DISK
+EOF
+		INVENTORY="CREATED"
+	else
+		HOST_INVENTORY=$(mktemp)
+cat > $HOST_INVENTORY << EOF
+Host Name   :$HOST_NAME
+Internel IP :$INTERNAL_IP
+External IP :$EXTERNAL_IP
+Disk List   :$DISK_LIST
+Disk        :$DISK
+EOF
+	fi
+
+	INVENTORY_DIFF_FILE=$(mktemp)
+diff -qr "$WDIR/hostinventory" "$HOST_INVENTORY" > $INVENTORY_DIFF_FILE
+INVENTORY_DIFF_COUNT=$(wc -l $INVENTORY_DIFF_FILE | awk {'print $1'})
+
+if [ "$INVENTORY_DIFF_COUNT" -gt 0 ]; then
+	INVENTORY_CHANGE="Host Hardware inventory has changed !!"
+else
+	INVENTORY_CHANGE="Host Hardware inventory host not change"
+fi
 }
 
 SSH_AUTH_LOGS() {
@@ -874,6 +903,7 @@ GUID	             |$GUIDCOUNT
 SUID-GUID            |$SUIDGUIDCOUNT
 --------------------------------------------------------------------------------------------------------------------------
 /etc Change Check    |$ETC_CHANGE - Number of changed files: $ETC_CHANGE_COUNT
+Host Inventory Check |$INVENTORY_CHANGE - Number of changed inventory info: $INVENTORY_DIFF_COUNT
 --------------------------------------------------------------------------------------------------------------------------
 
 EOF
