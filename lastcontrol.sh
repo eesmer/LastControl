@@ -866,8 +866,7 @@ STICKY BIT           |$STICKYBITCOUNT
 GUID	             |$GUIDCOUNT		
 SUID-GUID            |$SUIDGUIDCOUNT
 --------------------------------------------------------------------------------------------------------------------------
-SYSTEM CONFIG CHECK  |$SYSCONFIG_CHECK - Number of changed files: $DIFF_LINE
-LINE                 |$DIFF_LINE
+/etc Change Check    |$SYSCONFIG_CHECK - Number of changed files: $DIFF_LINE
 --------------------------------------------------------------------------------------------------------------------------
 
 EOF
