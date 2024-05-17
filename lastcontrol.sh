@@ -468,7 +468,7 @@ Disk        :$DISK
 EOF
 	fi
 
-	INVENTORY_DIFF_FILE=$(mktemp)
+INVENTORY_DIFF_FILE=$(mktemp)
 diff -qr "$WDIR/hostinventory" "$HOST_INVENTORY" > $INVENTORY_DIFF_FILE
 INVENTORY_DIFF_COUNT=$(wc -l $INVENTORY_DIFF_FILE | awk {'print $1'})
 
@@ -477,6 +477,10 @@ if [ "$INVENTORY_DIFF_COUNT" -gt 0 ]; then
 else
 	INVENTORY_CHANGE="Host Hardware inventory host not change"
 fi
+
+rm $HOST_INVENTORY
+rm $INVENTORY_DIFF_FILE 
+rm $ETC_CHANGE_FILE
 }
 
 SSH_AUTH_LOGS() {
