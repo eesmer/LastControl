@@ -646,18 +646,18 @@ APP_LIST() {
         done
 }
 
-CONFIG_CHANGE_CHECK() {
+SYSCONFIG_CHANGE_CHECK() {
 	if [ ! -d "$WDIR/etc" ]; then
 		cp -r /etc $WDIR
-		CONFIG_CHECK="INITIAL"
+		SYSCONFIG_CHECK="INITIAL"
 	else
 		DIFF_FILE=$(mktemp)
 		diff -qr "$WDIR/etc" /etc > $DIFF_FILE
 		DIFF_LINE=$(wc -l $DIFF_FILE | awk {'print $1'})
 		if [ "$DIFF_LINE" -gt 0 ]; then
-			CONFIG_CHECK="Change Detected"
+			SYSCONFIG_CHECK="Change Detected"
 		else
-			CONFIG_CHECK="No changes found"
+			SYSCONFIG_CHECK="No changes found"
 		fi
 	fi
 }
@@ -866,7 +866,7 @@ STICKY BIT           |$STICKYBITCOUNT
 GUID	             |$GUIDCOUNT		
 SUID-GUID            |$SUIDGUIDCOUNT
 --------------------------------------------------------------------------------------------------------------------------
-CONFIG_CHECK         |$CONFIG_CHECK
+SYSTEM CONFIG CHECK  |$SYSCONFIG_CHECK - Number of changed files: $DIFF_LINE
 LINE                 |$DIFF_LINE
 --------------------------------------------------------------------------------------------------------------------------
 
