@@ -456,7 +456,7 @@ External IP :$EXTERNAL_IP
 Disk List   :$DISK_LIST
 Disk        :$DISK
 EOF
-		INVENTORY="CREATED"
+		INVENTORY_CHANGE="CREATED"
 	else
 		HOST_INVENTORY=$(mktemp)
 cat > $HOST_INVENTORY << EOF
