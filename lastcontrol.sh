@@ -912,7 +912,7 @@ SUID - GUID - STICKY BIT
 --------------------------------------------------------------------------------------------------------------------------
 STICKY BIT           |$STICKYBITCOUNT
 SUID		     |$SUIDCOUNT
-GUID	             |$GUIDCOUNT		
+GUID	             |$GUIDCOUNT
 SUID-GUID            |$SUIDGUIDCOUNT
 --------------------------------------------------------------------------------------------------------------------------
 /etc Change Check    |$ETC_CHANGE - Number of changed files: $ETC_CHANGE_COUNT
