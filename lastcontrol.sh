@@ -624,6 +624,11 @@ SUIDGUID_FILE_CHECK() {
         find / -perm /1000 &> /dev/null > $STICKYBIT_FILE
         STICKYBITCOUNT=$(wc -l $STICKYBIT_FILE | awk {'print $1'})
 	rm $STICKYBIT_FILE
+
+	SUID_FILE=$(mktemp)
+	find / -perm /1000 &> /dev/null $SUID_FILE
+	SUIDCOUNT=$(wc -l $SUID_FILE | awk {'print $1'})
+	rm $SUID_FILE
 	
 	GUID_FILE=$(mktemp)
 	find / -perm /4000 &> /dev/null > $GUID_FILE
