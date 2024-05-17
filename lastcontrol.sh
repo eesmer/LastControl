@@ -438,9 +438,29 @@ AUDIT() {
 		MOST_COMMANDS="bash_history file not found in ~/ directory"
 	fi
 	# /etc directory change check
-	FILECHANGEDETC=$(mktemp)
-	find /etc/ -type f -mtime -1 > $FILECHANGEDETC
-	FILECHANGECHK=$(wc -l $FILECHANGEDETC | awk {'print $1'})
+	ETC_CHANGE_FILE=$(mktemp)
+	find /etc/ -type f -mtime -1 > $ETC_CHANGE_FILE
+	ETC_CHANGE_COUNT=$(wc -l $ETC_CHANGE_FILE | awk {'print $1'})
+	if [ "$ETC_CHANGE_COUNT" -gt 0 ]; then
+		ETC_CHANGE="Found file changed in the /etc directory in last 24 hours"
+	else
+		ETC_CHANGE="There has been no change in the /etc directory in the last 24 hours"
+	fi
+
+ #if [ ! -d "$WDIR/etc" ]; then
+ #               cp -r /etc $WDIR
+ #               SYSCONFIG_CHECK="INITIAL"
+ #       else
+ #               DIFF_FILE=$(mktemp)
+ #               diff -qr "$WDIR/etc" /etc > $DIFF_FILE
+ #               DIFF_LINE=$(wc -l $DIFF_FILE | awk {'print $1'})
+ #               if [ "$DIFF_LINE" -gt 0 ]; then
+ #                       SYSCONFIG_CHECK="Change Detected"
+ #               else
+ #                       SYSCONFIG_CHECK="No changes found"
+ #               fi
+ #       fi
+
 }
 
 SSH_AUTH_LOGS() {
@@ -628,7 +648,7 @@ ABOUT_HOST() {
 	if [ "$OOM" = "1" ]; then
 		echo "	- Out of Memory Log Found [!]" >> $RDIR/$HOST_NAME-abouthost.txt
 	fi
-	if [ "$FILECHANGECHK" -gt 0 ]; then
+	if [ "$ETC_CHANGE_COUNT" -gt 0 ]; then
 		echo "	- Found file changed in the /etc directory in last 24 hours [I]" >> $RDIR/$HOST_NAME-abouthost.txt
 	fi
 	echo -e
@@ -646,21 +666,21 @@ APP_LIST() {
         done
 }
 
-SYSCONFIG_CHANGE_CHECK() {
-	if [ ! -d "$WDIR/etc" ]; then
-		cp -r /etc $WDIR
-		SYSCONFIG_CHECK="INITIAL"
-	else
-		DIFF_FILE=$(mktemp)
-		diff -qr "$WDIR/etc" /etc > $DIFF_FILE
-		DIFF_LINE=$(wc -l $DIFF_FILE | awk {'print $1'})
-		if [ "$DIFF_LINE" -gt 0 ]; then
-			SYSCONFIG_CHECK="Change Detected"
-		else
-			SYSCONFIG_CHECK="No changes found"
-		fi
-	fi
-}
+#SYSCONFIG_CHANGE_CHECK() {
+#	if [ ! -d "$WDIR/etc" ]; then
+#		cp -r /etc $WDIR
+#		SYSCONFIG_CHECK="INITIAL"
+#	else
+#		DIFF_FILE=$(mktemp)
+#		diff -qr "$WDIR/etc" /etc > $DIFF_FILE
+#		DIFF_LINE=$(wc -l $DIFF_FILE | awk {'print $1'})
+#		if [ "$DIFF_LINE" -gt 0 ]; then
+#			SYSCONFIG_CHECK="Change Detected"
+#		else
+#			SYSCONFIG_CHECK="No changes found"
+#		fi
+#	fi
+#}
 
 SHOW_ABOUT_HOST() {
 #	cat $RDIR/$HOST_NAME-abouthost.txt
@@ -703,7 +723,7 @@ SHOW_ABOUT_HOST() {
 		echo "	Out of Memory Log Found [I]"
 		$NOCOL
 	fi
-	if [ "$FILECHANGECHK" -gt "0" ]; then
+	if [ "$ETC_CHANGE_COUNT" -gt 0 ]; then
 		$BLUE
 		echo "	Found file changed in the /etc directory in last 24 hours [I]"
 		$NOCOL
@@ -866,7 +886,7 @@ STICKY BIT           |$STICKYBITCOUNT
 GUID	             |$GUIDCOUNT		
 SUID-GUID            |$SUIDGUIDCOUNT
 --------------------------------------------------------------------------------------------------------------------------
-/etc Change Check    |$SYSCONFIG_CHECK - Number of changed files: $DIFF_LINE
+/etc Change Check    |$ETC_CHANGE - Number of changed files: $ETC_CHANGE_COUNT
 --------------------------------------------------------------------------------------------------------------------------
 
 EOF
@@ -913,13 +933,13 @@ EOF
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "" >> $RDIR/$HOST_NAME-allreports.txt
 	
-	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	echo "|FILE CHANGED in /etc Last 24 Hour|" >> $RDIR/$HOST_NAME-allreports.txt
-	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	cat $FILECHANGEDETC >> $RDIR/$HOST_NAME-allreports.txt
-	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	echo "" >> $RDIR/$HOST_NAME-allreports.txt
-	rm $FILECHANGEDETC
+	#echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	#echo "|FILE CHANGED in /etc Last 24 Hour|" >> $RDIR/$HOST_NAME-allreports.txt
+	#echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	#cat $FILECHANGEDETC >> $RDIR/$HOST_NAME-allreports.txt
+	#echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	#echo "" >> $RDIR/$HOST_NAME-allreports.txt
+	#rm $FILECHANGEDETC
 
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "|SSH Auth. Logs (Last 10 Record) |" >> $RDIR/$HOST_NAME-allreports.txt
@@ -1181,7 +1201,7 @@ if [ "$1" = "--report-localhost" ]; then
 	LAST_INSTALL
 	APP_LIST
 	SUIDGUID_FILE_CHECK
-	SYSCONFIG_CHANGE_CHECK
+	#SYSCONFIG_CHANGE_CHECK
 	ABOUT_HOST
 	CREATE_REPORT_TXT
 	SHOW_ABOUT_HOST
