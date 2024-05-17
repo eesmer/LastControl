@@ -919,14 +919,6 @@ EOF
 	echo $MOST_COMMANDS >> $RDIR/$HOST_NAME-allreports.txt
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "" >> $RDIR/$HOST_NAME-allreports.txt
-	
-	#echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	#echo "|FILE CHANGED in /etc Last 24 Hour|" >> $RDIR/$HOST_NAME-allreports.txt
-	#echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	#cat $FILECHANGEDETC >> $RDIR/$HOST_NAME-allreports.txt
-	#echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	#echo "" >> $RDIR/$HOST_NAME-allreports.txt
-	#rm $FILECHANGEDETC
 
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "|SSH Auth. Logs (Last 10 Record) |" >> $RDIR/$HOST_NAME-allreports.txt
