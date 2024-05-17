@@ -626,7 +626,7 @@ SUIDGUID_FILE_CHECK() {
 	rm $STICKYBIT_FILE
 
 	SUID_FILE=$(mktemp)
-	find / -perm /1000 &> /dev/null $SUID_FILE
+	find / -perm /2000 &> /dev/null $SUID_FILE
 	SUIDCOUNT=$(wc -l $SUID_FILE | awk {'print $1'})
 	rm $SUID_FILE
 	
@@ -911,6 +911,7 @@ $HOST_NAME LastControl All Controls Report $DATE
 SUID - GUID - STICKY BIT
 --------------------------------------------------------------------------------------------------------------------------
 STICKY BIT           |$STICKYBITCOUNT
+SUID		     |$SUIDCOUNT
 GUID	             |$GUIDCOUNT		
 SUID-GUID            |$SUIDGUIDCOUNT
 --------------------------------------------------------------------------------------------------------------------------
