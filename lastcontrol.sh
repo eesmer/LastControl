@@ -684,6 +684,9 @@ ABOUT_HOST() {
 	if [ "$ETC_CHANGE_COUNT" -gt 0 ]; then
 		echo "	- Found file changed in the /etc directory in last 24 hours [I]" >> $RDIR/$HOST_NAME-abouthost.txt
 	fi
+	if [ "$UPDATE_COUNT" -gt 0 ]; then
+		echo "	- Update Found [I]" >> $RDIR/$HOST_NAME-abouthost.txt
+	fi
 	echo -e
 	echo "------------------------------------------------------" >> $RDIR/$HOST_NAME-abouthost.txt
 	echo -e
@@ -751,6 +754,11 @@ SHOW_ABOUT_HOST() {
 		echo "	Only authorized user is the root account [I]"
 		$NOCOL                                               
 	fi
+	if [ "$UPDATE_COUNT" -gt 0 ]; then
+		$YELLOW
+                echo "	Update Found [I]"
+		$NOCOL
+        fi
 	if [ "$OOM" = "1" ]; then
 		$BLUE
 		echo "	Out of Memory Log Found [I]"
@@ -823,8 +831,6 @@ $HOST_NAME LastControl All Controls Report $DATE
 |Disk Quota Usage:   |Install: $QUOTA_INSTALL | Usr_Quota: $USR_QUOTA | Grp_Quota: $GRP_QUOTA | Mount: $MNT_QUOTA
 |Disk Encrypt Usage: |Install: $CRYPT_INSTALL | Usage: $CRYPT_USAGE
 |LVM Usage:          |$LVM_USAGE
---------------------------------------------------------------------------------------------------------------------------
-| Update Information
 --------------------------------------------------------------------------------------------------------------------------
 | Update Count       |$UPDATE_COUNT
 --------------------------------------------------------------------------------------------------------------------------
@@ -1214,6 +1220,7 @@ if [ "$1" = "--report-localhost" ]; then
 	fi
 	mkdir -p $RDIR
 	CHECK_DISTRO
+	CHECK_UPDATE
         SYSTEM_REPORT
 	CHECK_QUOTA
 	LVM_CRYPT
