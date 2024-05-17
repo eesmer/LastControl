@@ -60,7 +60,6 @@ if [ "$1" = "--help" ] || [ "$1" = "-h" ] || [ -z "$1" ]; then
     exit 0
 fi
 
-
 CHECK_DISTRO() {
 	cat /etc/*-release /etc/issue > "$RDIR/distrocheck"
 	if grep -qi "debian\|ubuntu" "$RDIR/distrocheck"; then
@@ -79,6 +78,12 @@ CHECK_DISTRO() {
 		echo -e
 		$NOCOL
 		exit 1
+	fi
+}
+
+CHECK_UPDATE() {
+	if [ "$REP" = "APT" ]; then
+		UPDATE_COUNT=$(apt list --upgradable | grep -v "Listing" | wc -l)
 	fi
 }
 
@@ -818,6 +823,10 @@ $HOST_NAME LastControl All Controls Report $DATE
 |Disk Quota Usage:   |Install: $QUOTA_INSTALL | Usr_Quota: $USR_QUOTA | Grp_Quota: $GRP_QUOTA | Mount: $MNT_QUOTA
 |Disk Encrypt Usage: |Install: $CRYPT_INSTALL | Usage: $CRYPT_USAGE
 |LVM Usage:          |$LVM_USAGE
+--------------------------------------------------------------------------------------------------------------------------
+| Update Information
+--------------------------------------------------------------------------------------------------------------------------
+| Update Count       |$UPDATE_COUNT
 --------------------------------------------------------------------------------------------------------------------------
 | Kernel Modules
 --------------------------------------------------------------------------------------------------------------------------
