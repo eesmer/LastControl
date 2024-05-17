@@ -756,6 +756,11 @@ SHOW_ABOUT_HOST() {
 		echo "	Found file changed in the /etc directory in last 24 hours [I]"
 		$NOCOL
 	fi
+	if [ "$INVENTORY_DIFF_COUNT" -gt 0 ]; then
+		$BLUE
+		echo "	Host Hardware inventory has changed [I]"
+		$NOCOL
+	fi
 	$NOCOL
 	echo -e
 	echo "------------------------------------------------------"
