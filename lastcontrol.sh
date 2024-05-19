@@ -85,6 +85,9 @@ CHECK_UPDATE() {
 	if [ "$REP" = "APT" ]; then
 		UPDATE_COUNT=$(apt list --upgradable | grep -v "Listing" | wc -l)
 	fi
+	if [ "$REP" = "YUM" ]; then
+		UPGRADE_COUNT=$(echo N | yum update | grep "Upgrade" | awk '{print $2}')
+	fi	
 }
 
 SYSTEM_REPORT() {
