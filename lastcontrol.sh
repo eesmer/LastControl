@@ -87,6 +87,7 @@ CHECK_UPDATE() {
 	fi
 	if [ "$REP" = "YUM" ]; then
 		UPDATE_COUNT=$(echo N | yum update | grep "Upgrade" | awk '{print $2}')
+		INSTALL_COUNT=$(echo N | yum update | grep "Install" | grep -v "Installing"| awk '{print $2}')
 	fi	
 }
 
