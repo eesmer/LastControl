@@ -432,6 +432,7 @@ SERVICE_PROCESS(){
 	NOC=$(nproc --all)
 	LOAD_AVG=$(uptime | grep "load average:" | awk -F: '{print $5}' | xargs)
 	ZO_PROCESS=$(ps -A -ostat,ppid,pid,cmd | grep -e '^[Zz]' | wc -l)
+	#ps aux | awk '$8 ~ /^[Zz]/' | wc -l
 }
 
 AUDIT() {
