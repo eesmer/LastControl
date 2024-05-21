@@ -431,7 +431,7 @@ SERVICE_PROCESS(){
 	ESTAB_CONN=$(netstat -s | awk '/connections established/ {print $1}')
 	NOC=$(nproc --all)
 	#LOAD_AVG=$(uptime | grep "load average:" | awk -F: '{print $4}' | xargs)
-	LOAD_AVG=$(uptime | grep "load average:")
+	LOAD_AVG=$(uptime | grep "load average:"| xargs)
 	ZO_PROCESS=$(ps -A -ostat,ppid,pid,cmd | grep -e '^[Zz]' | wc -l) #ps aux | awk '$8 ~ /^[Zz]/' | wc -l
 	ST_PROCESS=$(ps aux | awk '$8 ~ /^[T]/' | wc -l)
 	SL_PROCESS=$(ps aux | awk '$8 ~ /^[S]/' | wc -l)
