@@ -885,8 +885,12 @@ $HOST_NAME LastControl All Controls Report $DATE
 ---------------------------------------------------------------------------------------------------------------------------
 |Number of CPU:      |$NOC
 |Load Avarage        |$LOAD_AVG
-|Zombie Process:     |$ZO_PROCESS
-|Stopped Process:    |$ST_PROCESS
+---------------------------------------------------------------------------------------------------------------------------
+|Running  Process    |$RUNNING_PROCESS
+|Stopped  Process:   |$STOPPED_PROCESS
+|Sleeping Process    |$SLEEPING_PROCESS
+|Zombie   Process:   |$ZOMBIE_PROCESS
+|Idle     Process    |$IDLE_PROCESS
 -------------------------------------------------------------------------------------------------------------------------
 | Network Config
 -------------------------------------------------------------------------------------------------------------------------
