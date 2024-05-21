@@ -433,7 +433,7 @@ SERVICE_PROCESS(){
 	LOAD_AVG=$(uptime | grep "load average:" | awk -F: '{print $5}' | xargs)
 	ZO_PROCESS=$(ps -A -ostat,ppid,pid,cmd | grep -e '^[Zz]' | wc -l)
 	#ps aux | awk '$8 ~ /^[Zz]/' | wc -l
-	ST_PROCESS=$(ps aux | awk '$8 ~ /^[T]/')
+	ST_PROCESS=$(ps aux | awk '$8 ~ /^[T]/' | wc -l)
 }
 
 AUDIT() {
