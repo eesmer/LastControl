@@ -433,6 +433,7 @@ SERVICE_PROCESS(){
 	LOAD_AVG=$(uptime | grep "load average:" | awk -F: '{print $5}' | xargs)
 	ZO_PROCESS=$(ps -A -ostat,ppid,pid,cmd | grep -e '^[Zz]' | wc -l)
 	#ps aux | awk '$8 ~ /^[Zz]/' | wc -l
+	ST_PROCESS=$(ps aux | awk '$8 ~ /^[T]/')
 }
 
 AUDIT() {
@@ -876,6 +877,7 @@ $HOST_NAME LastControl All Controls Report $DATE
 |Number of CPU:      |$NOC
 |Load Avarage        |$LOAD_AVG
 |Zombie Process:     |$ZO_PROCESS
+|Stopped Process:    |$ST_PROCESS
 -------------------------------------------------------------------------------------------------------------------------
 | Network Config
 -------------------------------------------------------------------------------------------------------------------------
