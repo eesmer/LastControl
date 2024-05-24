@@ -776,6 +776,16 @@ SHOW_ABOUT_HOST() {
 		echo "	Only authorized user is the root account [I]"
 		$NOCOL                                               
 	fi
+	if [ "$ZOMBIE_PROCESS" -gt 0 ]; then
+		$BLUE
+                echo "  Zombie process found [!]"
+		$NOCOL
+        fi
+        if [ "$STOPPED_PROCESS" -gt 0 ]; then
+		$BLUE
+                echo "  - Stopped process found [!]"
+		$NOCOL
+        fi
 	if [ "$UPDATE_COUNT" -gt 0 ]; then
 		$YELLOW
                 echo "	Update Found [I]"
