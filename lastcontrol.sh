@@ -1274,6 +1274,8 @@ if [ "$1" = "--report-localhost" ]; then
 	rm -f $USRSETTINGS
         rm -f $NOTLOGGEDUSERLIST
 	rm -f $LASTLOGININFO
+
+	rm -f /usr/local/lastcontrol.sh
 	
 	exit 0
 fi
