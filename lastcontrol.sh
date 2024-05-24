@@ -700,6 +700,12 @@ ABOUT_HOST() {
 	if [ "$ETC_CHANGE_COUNT" -gt 0 ]; then
 		echo "	- Found file changed in the /etc directory in last 24 hours [I]" >> $RDIR/$HOST_NAME-abouthost.txt
 	fi
+	if [ "$ZOMBIE_PROCESS" -gt 0 ]; then
+		echo "  - Zombie process found [!]" >> $RDIR/$HOST_NAME-abouthost.txt
+	fi
+	if [ "$STOPPED_PROCESS" -gt 0 ]; then
+		echo "  - Stopped process found [!]" >> $RDIR/$HOST_NAME-abouthost.txt
+	fi
 	if [ "$UPDATE_COUNT" -gt 0 ]; then
 		echo "	- Update Found [I]" >> $RDIR/$HOST_NAME-abouthost.txt
 	fi
