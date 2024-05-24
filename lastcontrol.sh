@@ -694,6 +694,9 @@ ABOUT_HOST() {
         else                                                         
 		echo "	- Only authorized user is the root account [I]" >> $RDIR/$HOST_NAME-abouthost.txt
 	fi
+	if [ "$UPDATE_COUNT" -gt 0 ]; then
+		echo "	- Update Found [I]" >> $RDIR/$HOST_NAME-abouthost.txt
+	fi
 	if [ "$OOM" = "1" ]; then
 		echo "	- Out of Memory Log Found [!]" >> $RDIR/$HOST_NAME-abouthost.txt
 	fi
@@ -705,9 +708,6 @@ ABOUT_HOST() {
 	fi
 	if [ "$STOPPED_PROCESS" -gt 0 ]; then
 		echo "  - Stopped process found [!]" >> $RDIR/$HOST_NAME-abouthost.txt
-	fi
-	if [ "$UPDATE_COUNT" -gt 0 ]; then
-		echo "	- Update Found [I]" >> $RDIR/$HOST_NAME-abouthost.txt
 	fi
 	echo -e
 	echo "------------------------------------------------------" >> $RDIR/$HOST_NAME-abouthost.txt
@@ -776,6 +776,11 @@ SHOW_ABOUT_HOST() {
 		echo "	Only authorized user is the root account [I]"
 		$NOCOL                                               
 	fi
+	if [ "$UPDATE_COUNT" -gt 0 ]; then
+		$YELLOW
+                echo "	Update Found [I]"
+		$NOCOL
+        fi
 	if [ "$ZOMBIE_PROCESS" -gt 0 ]; then
 		$BLUE
                 echo "  Zombie process found [!]"
@@ -784,11 +789,6 @@ SHOW_ABOUT_HOST() {
         if [ "$STOPPED_PROCESS" -gt 0 ]; then
 		$BLUE
                 echo "  - Stopped process found [!]"
-		$NOCOL
-        fi
-	if [ "$UPDATE_COUNT" -gt 0 ]; then
-		$YELLOW
-                echo "	Update Found [I]"
 		$NOCOL
         fi
 	if [ "$OOM" = "1" ]; then
