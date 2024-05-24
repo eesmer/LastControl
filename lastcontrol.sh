@@ -700,14 +700,26 @@ ABOUT_HOST() {
 	if [ "$OOM" = "1" ]; then
 		echo "	- Out of Memory Log Found [!]" >> $RDIR/$HOST_NAME-abouthost.txt
 	fi
-	if [ "$ETC_CHANGE_COUNT" -gt 0 ]; then
-		echo "	- Found file changed in the /etc directory in last 24 hours [I]" >> $RDIR/$HOST_NAME-abouthost.txt
-	fi
 	if [ "$ZOMBIE_PROCESS" -gt 0 ]; then
 		echo "  - Zombie process found [!]" >> $RDIR/$HOST_NAME-abouthost.txt
 	fi
 	if [ "$STOPPED_PROCESS" -gt 0 ]; then
 		echo "  - Stopped process found [!]" >> $RDIR/$HOST_NAME-abouthost.txt
+	fi
+	if [ "$OOM" = "1" ]; then
+		$BLUE
+		echo "	Out of Memory Log Found [I]"
+		$NOCOL
+	fi
+	if [ "$ETC_CHANGE_COUNT" -gt 0 ]; then
+		$BLUE
+		echo "	Found file changed in the /etc directory in last 24 hours [I]"
+		$NOCOL
+	fi
+	if [ "$INVENTORY_DIFF_COUNT" -gt 0 ]; then
+		$BLUE
+		echo "	Host Hardware inventory has changed [I]"
+		$NOCOL
 	fi
 	echo -e
 	echo "------------------------------------------------------" >> $RDIR/$HOST_NAME-abouthost.txt
