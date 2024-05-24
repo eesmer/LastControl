@@ -697,9 +697,6 @@ ABOUT_HOST() {
 	if [ "$UPDATE_COUNT" -gt 0 ]; then
 		echo "	- Update Found [I]" >> $RDIR/$HOST_NAME-abouthost.txt
 	fi
-	if [ "$OOM" = "1" ]; then
-		echo "	- Out of Memory Log Found [!]" >> $RDIR/$HOST_NAME-abouthost.txt
-	fi
 	if [ "$ZOMBIE_PROCESS" -gt 0 ]; then
 		echo "  - Zombie process found [!]" >> $RDIR/$HOST_NAME-abouthost.txt
 	fi
