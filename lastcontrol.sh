@@ -104,6 +104,7 @@ SYSTEM_REPORT() {
 	cat /etc/shadow | grep -v "*" | grep -v "!" | cut -d ":" -f1 > $LOCALUSERS
 	LOCAL_USER_COUNT=$(cat $LOCALUSERS | wc -l)
 	LOCAL_USER_LIST_FILE=$LOCALUSERS
+	LOGGED_USERS=$(w -hi)
 	
 	# HARDWARE INVENTORY
 	INTERNAL_IP=$(hostname -I | cut -d " " -f1)
@@ -959,6 +960,8 @@ $HOST_NAME LastControl All Controls Report $DATE
 |SUDO Users:         |$SUDO_USER_LIST
 |Blank Pass. Users   |$BLANK_PASS_USER_LIST
 |Locked Users        |$LOCKED_USERS
+--------------------------------------------------------------------------------------------------------------------------
+|Logged Users        |$LOGGED_USERS
 --------------------------------------------------------------------------------------------------------------------------
 |Last Login Today    |$LAST_LOGIN_00D
 |Last Login 7 Days   |$LAST_LOGIN_07D
