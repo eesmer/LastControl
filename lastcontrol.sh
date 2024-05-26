@@ -845,34 +845,34 @@ $HOST_NAME LastControl All Controls Report $DATE
 --------------------------------------------------------------------------------------------------------------------------
 | HARDWARE INVENTORY
 --------------------------------------------------------------------------------------------------------------------------
-|Hostname:           |$HOST_NAME
-|IP Address:         |$INTERNAL_IP | $EXTERNAL_IP
+|Hostname            |$HOST_NAME
+|IP Address          |$INTERNAL_IP | $EXTERNAL_IP
 |Internet Conn.      |$INTERNET
-|CPU:                |$CPU_INFO
-|RAM:                |Total:$RAM_TOTAL | Ram Usage: $RAM_USAGE
-|GPU / VGA:          |VGA: $GPU_INFO   | VGA Ram: $GPU_RAM 
-|DISK LIST:          |$DISK_LIST
+|CPU                 |$CPU_INFO
+|RAM                 |Total:$RAM_TOTAL | Ram Usage: $RAM_USAGE
+|GPU / VGA           |VGA: $GPU_INFO   | VGA Ram: $GPU_RAM 
+|DISK LIST           |$DISK_LIST
 --------------------------------------------------------------------------------------------------------------------------
 | SYSTEM INFORMATION
 --------------------------------------------------------------------------------------------------------------------------
-|Operation System:   |$DISTRO
-|Kernel Version:     |$KERNEL
+|Operation System    |$DISTRO
+|Kernel Version      |$KERNEL
 |Uptime              |$UPTIME | $UPTIME_MIN
-|Last Boot:          |$LAST_BOOT
-|Virtualization:     |$VIRT_CONTROL
-|Date/Time Sync:     |Date:$LOCAL_DATE - System clock synchronized:$TIME_SYNC
-|Timezone:           |$TIME_ZONE
-|Proxy Usage:        |HTTP: $HTTP_PROXY_USAGE
-|SYSLOG Usage:       |$SYSLOG_INSTALL | $SYSLOG_SERVICE | Socket: $SYSLOG_SOCKET | Send: $SYSLOG_SEND
+|Last Boot           |$LAST_BOOT
+|Virtualization      |$VIRT_CONTROL
+|Date/Time Sync      |Date:$LOCAL_DATE - System clock synchronized:$TIME_SYNC
+|Timezone            |$TIME_ZONE
+|Proxy Usage         |HTTP: $HTTP_PROXY_USAGE
+|SYSLOG Usage        |$SYSLOG_INSTALL | $SYSLOG_SERVICE | Socket: $SYSLOG_SOCKET | Send: $SYSLOG_SEND
 --------------------------------------------------------------------------------------------------------------------------
-|Ram  Usage:         |$RAM_USAGE_PERCENTAGE%
-|Swap Usage:         |$SWAP_USAGE_PERCENTAGE%
-|Disk Usage:         |$DISK_USAGE
+|Ram  Usage          |$RAM_USAGE_PERCENTAGE%
+|Swap Usage          |$SWAP_USAGE_PERCENTAGE%
+|Disk Usage          |$DISK_USAGE
 |Out of Memory Logs  |$OOM_LOGS
 --------------------------------------------------------------------------------------------------------------------------
-|Disk Quota Usage:   |Install: $QUOTA_INSTALL | Usr_Quota: $USR_QUOTA | Grp_Quota: $GRP_QUOTA | Mount: $MNT_QUOTA
-|Disk Encrypt Usage: |Install: $CRYPT_INSTALL | Usage: $CRYPT_USAGE
-|LVM Usage:          |$LVM_USAGE
+|Disk Quota Usage    |Install: $QUOTA_INSTALL | Usr_Quota: $USR_QUOTA | Grp_Quota: $GRP_QUOTA | Mount: $MNT_QUOTA
+|Disk Encrypt Usage  |Install: $CRYPT_INSTALL | Usage: $CRYPT_USAGE
+|LVM Usage           |$LVM_USAGE
 --------------------------------------------------------------------------------------------------------------------------
 | Update Count       |$UPDATE_COUNT
 --------------------------------------------------------------------------------------------------------------------------
@@ -900,22 +900,22 @@ $HOST_NAME LastControl All Controls Report $DATE
 --------------------------------------------------------------------------------------------------------------------------
 | SERVICES & PROCESSES
 --------------------------------------------------------------------------------------------------------------------------
-|Service Management: |$SERVICE_MANAGER
-|Running Service:    |$RUNNING_SERVICE
-|Loaded Service:     |$LOADED_SERVICE
+|Service Management  |$SERVICE_MANAGER
+|Running Service     |$RUNNING_SERVICE
+|Loaded Service      |$LOADED_SERVICE
 --------------------------------------------------------------------------------------------------------------------------
-|Active Connection:  |$ACTIVE_CONN
-|Passive Connection: |$PASSIVE_CONN
-|Failed Connection:  |$FAILED_CONN
-|Established Conn.:  |$ESTAB_CONN
+|Active Connection   |$ACTIVE_CONN
+|Passive Connection  |$PASSIVE_CONN
+|Failed Connection   |$FAILED_CONN
+|Established Conn.   |$ESTAB_CONN
 ---------------------------------------------------------------------------------------------------------------------------
-|Number of CPU:      |$NOC
+|Number of CPU       |$NOC
 |Load Avarage        |$LOAD_AVG
 ---------------------------------------------------------------------------------------------------------------------------
 |Running  Process    |$RUNNING_PROCESS
-|Stopped  Process:   |$STOPPED_PROCESS
+|Stopped  Process    |$STOPPED_PROCESS
 |Sleeping Process    |$SLEEPING_PROCESS
-|Zombie   Process:   |$ZOMBIE_PROCESS
+|Zombie   Process    |$ZOMBIE_PROCESS
 |Idle     Process    |$IDLE_PROCESS
 -------------------------------------------------------------------------------------------------------------------------
 | Network Config
@@ -955,9 +955,9 @@ $HOST_NAME LastControl All Controls Report $DATE
 --------------------------------------------------------------------------------------------------------------------------
 | USERS
 --------------------------------------------------------------------------------------------------------------------------
-|Local User Count:   |$LOCAL_USER_COUNT
-|Local User List:    |$USER_LIST
-|SUDO Users:         |$SUDO_USER_LIST
+|Local User Count    |$LOCAL_USER_COUNT
+|Local User List     |$USER_LIST
+|SUDO Users          |$SUDO_USER_LIST
 |Blank Pass. Users   |$BLANK_PASS_USER_LIST
 |Locked Users        |$LOCKED_USERS
 --------------------------------------------------------------------------------------------------------------------------
@@ -975,7 +975,7 @@ $HOST_NAME LastControl All Controls Report $DATE
 |Pass. Expire Info   |$PASSEXINFO
 |Pass. Update Info   |$PASS_UPDATE_INFO
 --------------------------------------------------------------------------------------------------------------------------
-|Service Users:      |$SERVICE_USER_LIST
+|Service Users       |$SERVICE_USER_LIST
 --------------------------------------------------------------------------------------------------------------------------
 SUID - GUID - STICKY BIT
 --------------------------------------------------------------------------------------------------------------------------
