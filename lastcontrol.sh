@@ -626,22 +626,6 @@ SSH_CONFIG_CHECK() {
 }
 
 SUIDGUID_FILE_CHECK() {
-	#echo "Sticky Bit (T Bit) Permissions Files               " >> $RDIR/$HOST_NAME-allreports.txt
-	#echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	#find / -perm /1000 &> /dev/null >> $RDIR/$HOST_NAME-allreports.txt
-	#echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	#echo "SUID Permissions Files                             " >> $RDIR/$HOST_NAME-allreports.txt
-	#echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	#find / -perm /2000 &> /dev/null >> $RDIR/$HOST_NAME-allreports.txt
-	#echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	#echo "GUID Permissions Files                             " >> $RDIR/$HOST_NAME-allreports.txt
-	#echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	#find / -perm /4000 &> /dev/null >> $RDIR/$HOST_NAME-allreports.txt
-	#echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	#echo "SUID and GUID Permissions Files                    " >> $RDIR/$HOST_NAME-allreports.txt
-	#echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	#find / -perm /6000 &> /dev/null >> $RDIR/$HOST_NAME-allreports.txt
-	#echo "---------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	STICKYBIT_FILE=$(mktemp)
         find / -perm /1000 &> /dev/null > $STICKYBIT_FILE
         STICKYBITCOUNT=$(wc -l $STICKYBIT_FILE | awk {'print $1'})
