@@ -206,9 +206,6 @@ MEMORY_INFO() {
         if [ "$OOM" = "1" ]; then OOM_LOGS="Out of Memory Log Found !!"; fi
 }
 
-
-#default configuration information for several user account parameters.
-
 USER_ACCOUNTS_SETTINGS(){
 	USRSETTINGS=$(mktemp)
 	cat /etc/login.defs | grep "PASS_MAX_DAYS" | grep -v "Maximum number of days a password may be used." > $USRSETTINGS
