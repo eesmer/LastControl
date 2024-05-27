@@ -433,12 +433,6 @@ SERVICE_PROCESS(){
 	NOC=$(nproc --all)
 	#LOAD_AVG=$(uptime | grep "load average:" | awk -F: '{print $4}' | xargs)
 	LOAD_AVG=$(uptime | grep "load average:"| xargs)
-	#RUNNING_PROCESS=$(ps aux | awk '$8 ~ /^[R]/')
-	#STOPPED_PROCESS=$(ps aux | awk '$8 ~ /^[T]/' | wc -l)
-	#SLEEPING_PROCESS=$(ps aux | awk '$8 ~ /^[S]/' | wc -l)
-	#ZOMBIE_PROCESS=$(ps -A -ostat,ppid,pid,cmd | grep -e '^[Zz]' | wc -l) #ps aux | awk '$8 ~ /^[Zz]/' | wc -l
-	#IDLE_PROCESS=$(ps aux | awk '$8 ~ /^[I]/' | wc -l)
-
 	RUNNING_PROCESS=$(ps -A -ostat,ppid,pid,cmd | grep -e '^[R]' | wc -l)
 	STOPPED_PROCESS=$(ps -A -ostat,ppid,pid,cmd | grep -e '^[T]' | wc -l)
 	SLEEPING_PROCESS=$(ps -A -ostat,ppid,pid,cmd | grep -e '^[Ss]' | wc -l)
