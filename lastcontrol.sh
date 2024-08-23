@@ -83,7 +83,12 @@ CHECK_DISTRO() {
 
 CHECK_UPDATE() {
 	if [ "$REP" = "APT" ]; then
-		UPDATE_COUNT=$(apt list --upgradable | grep -v "Listing" | wc -l)
+      UPDATE_OUTPUT=$(apt update 2>&1)
+      if echo "$UPDATE_OUTPUT" | grep -qE "(Failed to fetch|Temporary failure resolving|Could not resolve|Some index files failed to download)"; then
+          UPDATE_COUNT="Some errors occurred during apt update. Please check internet or repository access."
+      else
+          UPDATE_COUNT=$(apt list --upgradable | grep -v "Listing" | wc -l)
+      fi
 	fi
 	if [ "$REP" = "YUM" ]; then
 		UPDATE_COUNT=$(echo N | yum update | grep "Upgrade" | awk '{print $2}')
