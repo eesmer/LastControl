@@ -58,7 +58,19 @@ DATE=$(date)
 if [ "$1" = "--help" ] || [ "$1" = "-h" ] || [ -z "$1" ]; then
     SHOW_HELP
     exit 0
-fi
+f
+
+CHECKRUN_ROOT() {
+    $GREEN
+    echo "Checking root user session"
+    $NOCOL
+    if ! [[ $EUID -eq 0 ]]; then
+        $RED
+        echo "This script must be run with root user"
+        $NOCOL
+        exit 1
+    fi
+}
 
 CHECK_DISTRO() {
 	cat /etc/*-release /etc/issue > "$RDIR/distrocheck"
