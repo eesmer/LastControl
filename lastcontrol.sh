@@ -1249,9 +1249,10 @@ if [ "$1" = "--report-localhost" ]; then
 		rm -r $RDIR
 	fi
 	mkdir -p $RDIR
+  CHECKRUN_ROOT
 	CHECK_DISTRO
 	CHECK_UPDATE
-        SYSTEM_REPORT
+  SYSTEM_REPORT
 	CHECK_QUOTA
 	LVM_CRYPT
 	SYSLOG_INFO
