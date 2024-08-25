@@ -70,12 +70,16 @@ Options:
   --add-host            LastControl SSH Key is added to the server and included in the Host List
   --remove-host		LastControl SSH Key is deleted and removed from the Host list
   --host-list		List of Added Hosts
+ --------------------------------------------
+  --tui                 Text User Interface
 
 Example:
 bash lastcontrol.sh --report-localhost
 bash lastcontrol.sh --server-install
 bash lastcontrol.sh --report-remotehost [TARGETHOST] [PORTNUMBER]
 bash lastcontrol.sh --report-allhost
+
+bash lastcontrol.sh --tui
 EOF
 echo -e
 }
