@@ -30,6 +30,17 @@ echo -e
 $NOCOL
 }
 
+SHOW_MENU(){
+date
+echo " ----------------------------"
+echo $SERVERTIME
+echo "   |--------------------------------------------|"
+echo "   | LastControl TUI                            |"
+echo "   |--------------------------------------------|"
+echo "   | 99.Exit | 0.About                          |"
+echo "   |--------------------------------------------|"
+}
+
 SHOW_HELP() {
 	clear
 cat << EOF
