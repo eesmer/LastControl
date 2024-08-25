@@ -835,6 +835,50 @@ SHOW_ABOUT_HOST() {
 	echo -e
 }
 
+ADD_HOST() {
+	if [ -z "$2" ] || [ -z "$3" ]; then
+		read -p "Enter the Machine Hostname and SSH Port (Example:ServerName 22): " TARGETMACHINE PORTNUMBER
+	else
+		TARGETMACHINE="$2"
+		PORTNUMBER="$3"
+	fi
+	if [ -z "$TARGETMACHINE" ] || [ -z "$PORTNUMBER" ]; then
+		$RED
+		printf "    %s\n" "Server Name or Port Number is missing - Example:ServerName 22"
+		$NOCOL
+		exit 1
+	fi
+	CONN=FALSE && nc -z -w 2 $TARGETMACHINE $PORTNUMBER 2>/dev/null && CONN=TRUE
+	if [ "$CONN" = "TRUE" ]; then
+		LISTED=FALSE
+		ack "$TARGETMACHINE" $WDIR/linuxmachine >> /dev/null && LISTED=TRUE
+		if [ "$LISTED" = "FALSE" ]; then
+			ssh-copy-id -fi $LCKEY.pub -o "StrictHostKeyChecking no" root@$TARGETMACHINE
+			$GREEN
+			printf "    %s\n" "TaliaOppy SSH Key added to $TARGETMACHINE"
+			$NOCOL
+			echo "$TARGETMACHINE $PORTNUMBER" >> $WDIR/linuxmachine
+			$GREEN
+			printf "    %s\n" "$TARGETMACHINE added to Machine List"
+			$NOCOL
+			echo -e
+		elif [ "$LISTED" = "TRUE" ]; then
+			$RED
+			printf "    %s\n" "$TARGETMACHINE already exist"
+			$NOCOL
+			echo -e
+		fi
+		elif [ "$CONN" = "FALSE" ]; then
+			$RED
+			printf "    %s\n" "Could not reach $TARGETMACHINE from Port $PORTNUMBER"
+			$NOCOL
+			echo -e
+	else
+		printf "    %s\n" "$TARGETMACHINE could not be controlled from Port $PORTNUMBER"
+	fi
+	PAUSE
+}
+
 CREATE_REPORT_TXT() {
 	if [ -f "$RDIR/$HOST_NAME-allreports.txt" ]; then
 		rm $RDIR/$HOST_NAME-allreports.txt
@@ -1139,48 +1183,8 @@ if [ "$1" = "--report-remotehost" ]; then
 fi
 
 if [ "$1" = "--add-host" ]; then
-	if [ -z "$2" ] || [ -z "$3" ]; then
-		read -p "Enter the Machine Hostname and SSH Port (Example:ServerName 22): " TARGETMACHINE PORTNUMBER
-        else
-                TARGETMACHINE="$2"
-                PORTNUMBER="$3"
-        fi
-	
-	if [ -z "$TARGETMACHINE" ] || [ -z "$PORTNUMBER" ]; then 
-		$RED
-		printf "    %s\n" "Server Name or Port Number is missing - Example:ServerName 22"
-		$NOCOL
-		exit 1
-	fi
-	
-	CONN=FALSE && nc -z -w 2 $TARGETMACHINE $PORTNUMBER 2>/dev/null && CONN=TRUE
-	if [ "$CONN" = "TRUE" ]; then
-		LISTED=FALSE
-		ack "$TARGETMACHINE" $WDIR/linuxmachine >> /dev/null && LISTED=TRUE
-		if [ "$LISTED" = "FALSE" ]; then
-			ssh-copy-id -fi $LCKEY.pub -o "StrictHostKeyChecking no" root@$TARGETMACHINE
-			$GREEN
-			printf "    %s\n" "LastControl SSH Key added to $TARGETMACHINE"
-			$NOCOL
-			echo "$TARGETMACHINE $PORTNUMBER" >> $WDIR/linuxmachine
-			$GREEN
-			printf "    %s\n" "$TARGETMACHINE added to Machine List"
-			$NOCOL
-			echo -e
-		elif [ "$LISTED" = "TRUE" ]; then
-			$RED
-			printf "    %s\n" "$TARGETMACHINE already exist"
-			$NOCOL
-			echo -e
-		fi
-	elif [ "$CONN" = "FALSE" ]; then
-		$RED
-		printf "    %s\n" "Could not reach $TARGETMACHINE from Port $PORTNUMBER"
-		$NOCOL
-		echo -e
-	else
-		printf "    %s\n" "$TARGETMACHINE could not be controlled from Port $PORTNUMBER"
-	fi
+	ADD_HOST
+	exit 0
 fi
 
 if [ "$1" = "--remove-host" ]; then
