@@ -894,6 +894,21 @@ ADD_HOST() {
 	PAUSE
 }
 
+HOST_LIST() {
+        echo ""
+        $CYAN
+        echo "::. Host List ::."
+        echo "--------------------"
+        $NOCOL
+        cat $WDIR/linuxmachine
+        $CYAN
+        echo "--------------------"
+        $NOCOL
+        echo ""
+        PAUSE
+        ##exit 0
+}
+
 CREATE_REPORT_TXT() {
 	if [ -f "$RDIR/$HOST_NAME-allreports.txt" ]; then
 		rm $RDIR/$HOST_NAME-allreports.txt
@@ -1270,16 +1285,18 @@ if [ "$1" = "--remove-host" ]; then
 fi
 
 if [ "$1" = "--host-list" ]; then
-	echo ""
-	$CYAN
-	echo "::. Host List ::."
-	echo "--------------------"
-	$NOCOL
-	cat $WDIR/linuxmachine
-	$CYAN
-	echo "--------------------"
-	$NOCOL
-	echo ""
+	HOST_LIST
+	exit 0
+	#echo ""
+	#$CYAN
+	#echo "::. Host List ::."
+	#echo "--------------------"
+	#$NOCOL
+	#cat $WDIR/linuxmachine
+	#$CYAN
+	#echo "--------------------"
+	#$NOCOL
+	#echo ""
 fi
 
 if [ "$1" = "--report-localhost" ]; then
@@ -1335,6 +1352,7 @@ read -p "You can choose from the menu numbers " c
 case $c in
 0)about_of ;;
 1)ADD_HOST ;;
+3)HOST_LIST ;;
 99)exit 0 ;;
 *)
 echo "Please select from the menu numbers"
