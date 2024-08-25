@@ -21,6 +21,15 @@ BLUE="tput setaf 12"
 NOCOL="tput sgr0"
 BOLD="tput bold"
 
+PAUSE(){
+local message="$@"
+$MAGENTA
+[ -z $message ] && message="Press Enter to continue"
+read -p "$message" readEnterKey
+echo -e
+$NOCOL
+}
+
 SHOW_HELP() {
 	clear
 cat << EOF
