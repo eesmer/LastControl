@@ -33,22 +33,22 @@ $NOCOL
 SHOW_MENU(){
 $GREEN
 date
-echo " ----------------------------"
+echo " -----------------------"
 echo $SERVERTIME
 $NOCOL
-echo "   |--------------------------------------------|"
+echo "   |-------------------|"
 $BOLD
-echo "   | LastControl TUI                            |"
+echo "   | LastControl TUI   |"
 $NOCOL
-echo "   |--------------------------------------------|"
+echo "   |-------------------|"
 $BOLD
-echo "   | Add & Remove Host | Create Report          |"
+echo "   | Add & Remove Host |"
 $NOCOL
-echo "   |--------------------------------------------|"
-echo "   | 1.Add Host        | 10.Localhost Report    |"
-echo "   | 2.Remove Host     | 11.Remote Host Report  |"
-echo "   | 3.Host List       | 12.All Host Report     |"
-echo "   |--------------------------------------------|"
+echo "   |-------------------|"
+echo "   | 1.Add Host        |"
+echo "   | 2.Remove Host     |"
+echo "   | 3.Host List       |"
+echo "   |-------------------|"
 $WHITE
 $BOLD
 echo "     99.Exit   0.About"
