@@ -1287,16 +1287,6 @@ fi
 if [ "$1" = "--host-list" ]; then
 	HOST_LIST
 	exit 0
-	#echo ""
-	#$CYAN
-	#echo "::. Host List ::."
-	#echo "--------------------"
-	#$NOCOL
-	#cat $WDIR/linuxmachine
-	#$CYAN
-	#echo "--------------------"
-	#$NOCOL
-	#echo ""
 fi
 
 if [ "$1" = "--report-localhost" ]; then
