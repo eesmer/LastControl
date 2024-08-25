@@ -23,7 +23,7 @@ BOLD="tput bold"
 
 PAUSE(){
 local message="$@"
-$MAGENTA
+$GREEN
 [ -z $message ] && message="Press Enter to continue"
 read -p "$message" readEnterKey
 echo -e
