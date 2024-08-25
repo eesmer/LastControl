@@ -1328,3 +1328,27 @@ if [ "$1" = "--report-localhost" ]; then
 	
 	exit 0
 fi
+
+READ_INPUT(){
+local c
+read -p "You can choose from the menu numbers " c
+case $c in
+0)about_of ;;
+1)ADD_HOST ;;
+99)exit 0 ;;
+*)
+echo "Please select from the menu numbers"
+echo -e
+PAUSE
+esac
+}
+
+# CTRL+C, CTRL+Z
+trap '' SIGINT SIGQUIT SIGTSTP
+
+while true
+do
+clear
+SHOW_MENU
+READ_INPUT
+done
