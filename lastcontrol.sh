@@ -894,6 +894,74 @@ ADD_HOST() {
 	PAUSE
 }
 
+REMOVE_HOST() {
+	if [ -z "$2" ]; then
+                read -p "Enter the Machine Hostname : " TARGETMACHINE
+	else
+                TARGETMACHINE="$2"
+        fi
+        if [ -z "$TARGETMACHINE" ]; then
+                $RED
+                printf "    %s\n" "Server Name is missing"
+                $NOCOL
+                exit 1
+        fi
+        LISTED=FALSE
+        ack "$TARGETMACHINE" $WDIR/linuxmachine >> /dev/null && LISTED=TRUE
+        if [ "$LISTED" = "TRUE" ]; then
+                PORTNUMBER=$(ack "$TARGETMACHINE" $WDIR/linuxmachine | cut -d " " -f2)
+                CONN=FALSE && nc -z -w 2 $TARGETMACHINE $PORTNUMBER 2>/dev/null && CONN=TRUE
+                if [ "$CONN" = "TRUE" ]; then
+                        CONTINUE=FALSE
+                        ssh -p22 -i $LCKEY -o "StrictHostKeyChecking no" root@$TARGETMACHINE -- sed -i "/$LCKEYPUB/d" /root/.ssh/authorized_keys && CONTINUE=TRUE
+                        if [ "$CONTINUE" = "TRUE" ]; then
+                                echo -e
+                                $GREEN
+                                printf "    %s\n" "TaliaOppy SSH Key has been removed on $TARGETMACHINE"
+                                $NOCOL
+                                sed -i "/$TARGETMACHINE/d" $WDIR/linuxmachine
+                                echo -e
+                                $CYAN
+                                echo "::. Host List ::."
+                                echo "--------------------"
+                                $NOCOL
+                                cat $WDIR/linuxmachine
+                                $CYAN
+                                echo "--------------------"
+                                $NOCOL
+                                echo -e
+                                $GREEN
+                                printf "    %s\n" "Info: $TARGETMACHINE removed from Machine List"
+                                $NOCOL
+                                echo -e
+                                #elif [ "$CONTINUE" = "FALSE" ]; then
+                                #$RED
+                                #echo "Failed removed to $TARGETMACHINE"
+                                #echo "$?"
+                                #$NOCOL
+                                #echo -e
+                        elif [ "$CONTINUE" = "FALSE" ] || [ -z "$CONTINUE" ]; then
+                                $RED
+                                printf "    %s\n" "Could not remove TaliaOppy SSH Key from $TARGETMACHINE"
+                                $NOCOL
+                                echo -e
+                        fi
+                elif [ "$CONN" = "FALSE" ]; then
+                        $RED
+                        printf "    %s\n" "Could not reach $TARGETMACHINE from Port $PORTNUMBER"
+                        $NOCOL
+                        echo -e
+                fi
+        elif [ "$LISTED" = "FALSE" ]; then
+                $RED
+                printf "    %s\n" "The $TARGETMACHINE was not found in the Machine list"
+                $NOCOL
+                echo -e
+        fi
+        echo -e
+        PAUSE
+}
+
 HOST_LIST() {
         echo ""
         $CYAN
@@ -1215,73 +1283,6 @@ fi
 if [ "$1" = "--add-host" ]; then
 	ADD_HOST
 	exit 0
-fi
-
-if [ "$1" = "--remove-host" ]; then
-	if [ -z "$2" ]; then
-		read -p "Enter the Machine Hostname : " TARGETMACHINE
-	else
-		TARGETMACHINE="$2"
-	fi
-
-	if [ -z "$TARGETMACHINE" ]; then
-		$RED
-		printf "    %s\n" "Server Name is missing"
-		$NOCOL
-		exit 1
-	fi
-	LISTED=FALSE
-	ack "$TARGETMACHINE" $WDIR/linuxmachine >> /dev/null && LISTED=TRUE
-	if [ "$LISTED" = "TRUE" ]; then
-		PORTNUMBER=$(ack "$TARGETMACHINE" $WDIR/linuxmachine | cut -d " " -f2)
-		CONN=FALSE && nc -z -w 2 $TARGETMACHINE $PORTNUMBER 2>/dev/null && CONN=TRUE
-		if [ "$CONN" = "TRUE" ]; then
-			CONTINUE=FALSE
-			ssh -p22 -i $LCKEY -o "StrictHostKeyChecking no" root@$TARGETMACHINE -- sed -i "/$LCKEYPUB/d" /root/.ssh/authorized_keys && CONTINUE=TRUE
-			if [ "$CONTINUE" = "TRUE" ]; then
-				echo -e
-				$GREEN
-				printf "    %s\n" "LastControl SSH Key has been removed on $TARGETMACHINE"
-				$NOCOL
-				sed -i "/$TARGETMACHINE/d" $WDIR/linuxmachine
-				echo -e
-				$CYAN
-				echo "::. Host List ::."
-				echo "--------------------"
-				$NOCOL
-				cat $WDIR/linuxmachine
-				$CYAN
-				echo "--------------------"
-				$NOCOL
-				echo -e
-				$GREEN
-				printf "    %s\n" "Info: $TARGETMACHINE removed from Machine List"
-				$NOCOL
-				echo -e
-				#elif [ "$CONTINUE" = "FALSE" ]; then
-				#$RED
-				#echo "Failed removed to $TARGETMACHINE"
-				#echo "$?"
-				#$NOCOL
-				#echo -e
-			elif [ "$CONTINUE" = "FALSE" ] || [ -z "$CONTINUE" ]; then
-				$RED
-				printf "    %s\n" "Could not remove LastControl SSH Key from $TARGETMACHINE"
-				$NOCOL
-				echo -e
-			fi
-		elif [ "$CONN" = "FALSE" ]; then
-			$RED
-			printf "    %s\n" "Could not reach $TARGETMACHINE from Port $PORTNUMBER"
-			$NOCOL
-			echo -e
-		fi
-	elif [ "$LISTED" = "FALSE" ]; then
-		$RED
-		printf "    %s\n" "The $TARGETMACHINE was not found in the Machine list"
-		$NOCOL
-		echo -e
-	fi
 fi
 
 if [ "$1" = "--host-list" ]; then
