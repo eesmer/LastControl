@@ -31,14 +31,29 @@ $NOCOL
 }
 
 SHOW_MENU(){
+$GREEN
 date
 echo " ----------------------------"
 echo $SERVERTIME
+$NOCOL
 echo "   |--------------------------------------------|"
+$BOLD
 echo "   | LastControl TUI                            |"
+$NOCOL
 echo "   |--------------------------------------------|"
-echo "   | 99.Exit | 0.About                          |"
+$BOLD
+echo "   | Add & Remove Host | Create Report          |"
+$NOCOL
 echo "   |--------------------------------------------|"
+echo "   | 1.Add Host        | 10.Localhost Report    |"
+echo "   | 2.Remove Host     | 11.Remote Host Report  |"
+echo "   | 3.Host List       | 12.All Host Report     |"
+echo "   |--------------------------------------------|"
+$WHITE
+$BOLD
+echo "     99.Exit   0.About"
+echo -e
+$NOCOL
 }
 
 SHOW_HELP() {
