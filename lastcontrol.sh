@@ -1285,6 +1285,11 @@ if [ "$1" = "--add-host" ]; then
 	exit 0
 fi
 
+if [ "$1" = "--remove-host" ]; then
+	REMOVE_HOST
+	exit 0
+fi	
+
 if [ "$1" = "--host-list" ]; then
 	HOST_LIST
 	exit 0
@@ -1343,6 +1348,7 @@ read -p "You can choose from the menu numbers " c
 case $c in
 0)about_of ;;
 1)ADD_HOST ;;
+2)REMOVE_HOST ;;
 3)HOST_LIST ;;
 99)exit 0 ;;
 *)
