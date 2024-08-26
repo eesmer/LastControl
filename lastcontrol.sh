@@ -94,25 +94,6 @@ LCKEYPUB=$(cat /root/.ssh/lastcontrol.pub | cut -d "=" -f2 | xargs)
 LOGO=/usr/local/lastcontrol/images/lastcontrol_logo.png
 DATE=$(date)
 
-if [[ $1 = --help ]] || [[ $1 = -h ]]; then
-        SHOW_HELP
-        exit 0
-elif [[ $1 = --tui ]]; then
-        SHOW_MENU
-elif [[ $1 = --add-host ]]; then
-        ADD_HOST
-        exit 0
-elif [[ $1 = --remove-host ]]; then
-        REMOVE_HOST
-        exit 0
-elif [[ $1 = --host-list ]]; then
-        HOST_LIST
-        exit 0
-else
-        SHOW_HELP
-        exit 0
-fi
-
 CHECKRUN_ROOT() {
     $GREEN
     echo "Checking root user session"
@@ -1212,7 +1193,7 @@ EOF
 	cp $RDIR/$HOST_NAME-allreports.txt $WEB/reports
 }
 
-if [ "$1" = "--report-allhost" ]; then
+REPORT_ALLHOST() {
 	clear
 	HOSTLIST=$(cat $WDIR/linuxmachine | wc -l)
 	i=1
@@ -1229,7 +1210,32 @@ if [ "$1" = "--report-allhost" ]; then
 		i=$(( i + 1 ))
 		echo "---------------------------------------------------"
 	done
+}
+
+if [[ $1 = --help ]] || [[ $1 = -h ]]; then
+        SHOW_HELP
+        exit 0
+elif [[ $1 = --tui ]]; then
+        SHOW_MENU
+elif [[ $1 = --add-host ]]; then
+        ADD_HOST
+        exit 0
+elif [[ $1 = --remove-host ]]; then
+        REMOVE_HOST
+        exit 0
+elif [[ $1 = --host-list ]]; then
+        HOST_LIST
+        exit 0
+elif [[ $1 = --all-host ]]; then
+	REPORT_ALLHOST
+	exit 0
+else
+        SHOW_HELP
+        exit 0
 fi
+
+####if [ "$1" = "--report-allhost" ]; then
+
 
 if [ "$1" = "--server-install" ]; then
 	clear
