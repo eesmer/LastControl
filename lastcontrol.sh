@@ -1343,13 +1343,13 @@ elif [[ $1 = --host-list ]]; then
 elif [[ $1 = --report-allhost ]]; then
 	REPORT_ALLHOST
 	exit 0
-elif [[ $1 = --server-install ]];
+elif [[ $1 = --server-install ]]; then
 	SERVER_INSTALL
 	exit 0
-elif [[ $1 = --report-remotehost ]];
+elif [[ $1 = --report-remotehost ]]; then
 	REPORT_REMOTEHOST
 	exit 0
-elif [[ $1 = --report-localhost ]];
+elif [[ $1 = --report-localhost ]]; then
 	REPORT_LOCALHOST
 	exit 0
 else
