@@ -1226,7 +1226,7 @@ elif [[ $1 = --remove-host ]]; then
 elif [[ $1 = --host-list ]]; then
         HOST_LIST
         exit 0
-elif [[ $1 = --all-host ]]; then
+elif [[ $1 = --report-allhost ]]; then
 	REPORT_ALLHOST
 	exit 0
 else
