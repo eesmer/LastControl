@@ -94,14 +94,6 @@ LCKEYPUB=$(cat /root/.ssh/lastcontrol.pub | cut -d "=" -f2 | xargs)
 LOGO=/usr/local/lastcontrol/images/lastcontrol_logo.png
 DATE=$(date)
 
-if [[ $1 = tui ]]; then
-	SHOW_MENU
-fi
-if [ "$1" = "--help" ] || [ "$1" = "-h" ] || [ -z "$1" ]; then
-    SHOW_HELP
-    exit 0
-if
-
 if [[ $1 = --help ]] || [[ $1 = -h ]]; then
         SHOW_HELP
         exit 0
