@@ -1298,31 +1298,16 @@ if [ "$1" = "--report-remotehost" ]; then
 	fi
 fi
 
-if [ "$1" = "--add-host" ]; then
-	ADD_HOST
-	exit 0
-fi
-
-if [ "$1" = "--remove-host" ]; then
-	REMOVE_HOST
-	exit 0
-fi	
-
-if [ "$1" = "--host-list" ]; then
-	HOST_LIST
-	exit 0
-fi
-
 if [ "$1" = "--report-localhost" ]; then
 	clear
 	if [ -d "$RDIR" ]; then
 		rm -r $RDIR
 	fi
 	mkdir -p $RDIR
-  CHECKRUN_ROOT
+	CHECKRUN_ROOT
 	CHECK_DISTRO
 	CHECK_UPDATE
-  SYSTEM_REPORT
+	SYSTEM_REPORT
 	CHECK_QUOTA
 	LVM_CRYPT
 	SYSLOG_INFO
