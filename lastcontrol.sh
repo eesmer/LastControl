@@ -102,6 +102,25 @@ if [ "$1" = "--help" ] || [ "$1" = "-h" ] || [ -z "$1" ]; then
     exit 0
 if
 
+if [[ $1 = --help ]] || [[ $1 = -h ]]; then
+        SHOW_HELP
+        exit 0
+elif [[ $1 = --tui ]]; then
+        SHOW_MENU
+elif [[ $1 = --add-host ]]; then
+        ADD_HOST
+        exit 0
+elif [[ $1 = --remove-host ]]; then
+        REMOVE_HOST
+        exit 0
+elif [[ $1 = --host-list ]]; then
+        HOST_LIST
+        exit 0
+else
+        SHOW_HELP
+        exit 0
+fi
+
 CHECKRUN_ROOT() {
     $GREEN
     echo "Checking root user session"
