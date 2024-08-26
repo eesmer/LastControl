@@ -1235,34 +1235,7 @@ SERVER_INSTALL() {
 	systemctl reload apache2.service
 }
 
-
-if [[ $1 = --help ]] || [[ $1 = -h ]]; then
-        SHOW_HELP
-        exit 0
-elif [[ $1 = --tui ]]; then
-        SHOW_MENU
-elif [[ $1 = --add-host ]]; then
-        ADD_HOST
-        exit 0
-elif [[ $1 = --remove-host ]]; then
-        REMOVE_HOST
-        exit 0
-elif [[ $1 = --host-list ]]; then
-        HOST_LIST
-        exit 0
-elif [[ $1 = --report-allhost ]]; then
-	REPORT_ALLHOST
-	exit 0
-elif [[ $1 = --server-install ]];
-	SERVER_INSTALL
-	exit 0
-else
-        SHOW_HELP
-        exit 0
-fi
-
-
-if [ "$1" = "--report-remotehost" ]; then
+REPORT_REMOTEHOST() {
 	if [ -z "$2" ] || [ -z "$3" ]; then
 		read -p "Enter the Machine Hostname and SSH Port (Example:ServerName 22): " TARGETMACHINE PORTNUMBER
 	else
@@ -1304,9 +1277,9 @@ if [ "$1" = "--report-remotehost" ]; then
 		$NOCOL
 		exit 1
 	fi
-fi
+}
 
-if [ "$1" = "--report-localhost" ]; then
+REPORT_LOCALHOST() {
 	clear
 	if [ -d "$RDIR" ]; then
 		rm -r $RDIR
@@ -1351,6 +1324,37 @@ if [ "$1" = "--report-localhost" ]; then
 	rm -f /usr/local/lastcontrol.sh
 	
 	exit 0
+}
+
+if [[ $1 = --help ]] || [[ $1 = -h ]]; then
+        SHOW_HELP
+        exit 0
+elif [[ $1 = --tui ]]; then
+        SHOW_MENU
+elif [[ $1 = --add-host ]]; then
+        ADD_HOST
+        exit 0
+elif [[ $1 = --remove-host ]]; then
+        REMOVE_HOST
+        exit 0
+elif [[ $1 = --host-list ]]; then
+        HOST_LIST
+        exit 0
+elif [[ $1 = --report-allhost ]]; then
+	REPORT_ALLHOST
+	exit 0
+elif [[ $1 = --server-install ]];
+	SERVER_INSTALL
+	exit 0
+elif [[ $1 = --report-remotehost ]];
+	REPORT_REMOTEHOST
+	exit 0
+elif [[ $1 = --report-localhost ]];
+	REPORT_LOCALHOST
+	exit 0
+else
+        SHOW_HELP
+        exit 0
 fi
 
 READ_INPUT(){
