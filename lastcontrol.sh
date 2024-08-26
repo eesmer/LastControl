@@ -1212,32 +1212,7 @@ REPORT_ALLHOST() {
 	done
 }
 
-if [[ $1 = --help ]] || [[ $1 = -h ]]; then
-        SHOW_HELP
-        exit 0
-elif [[ $1 = --tui ]]; then
-        SHOW_MENU
-elif [[ $1 = --add-host ]]; then
-        ADD_HOST
-        exit 0
-elif [[ $1 = --remove-host ]]; then
-        REMOVE_HOST
-        exit 0
-elif [[ $1 = --host-list ]]; then
-        HOST_LIST
-        exit 0
-elif [[ $1 = --report-allhost ]]; then
-	REPORT_ALLHOST
-	exit 0
-else
-        SHOW_HELP
-        exit 0
-fi
-
-####if [ "$1" = "--report-allhost" ]; then
-
-
-if [ "$1" = "--server-install" ]; then
+SERVER_INSTALL() {
 	clear
 	# Install Required Packages
 	apt-get -y install nmap ack curl wget netcat-traditional
@@ -1258,7 +1233,34 @@ if [ "$1" = "--server-install" ]; then
 	#Configure Access
 	cp /root/.ssh/lastcontrol.pub $WEB/lastcontrol/
 	systemctl reload apache2.service
+}
+
+
+if [[ $1 = --help ]] || [[ $1 = -h ]]; then
+        SHOW_HELP
+        exit 0
+elif [[ $1 = --tui ]]; then
+        SHOW_MENU
+elif [[ $1 = --add-host ]]; then
+        ADD_HOST
+        exit 0
+elif [[ $1 = --remove-host ]]; then
+        REMOVE_HOST
+        exit 0
+elif [[ $1 = --host-list ]]; then
+        HOST_LIST
+        exit 0
+elif [[ $1 = --report-allhost ]]; then
+	REPORT_ALLHOST
+	exit 0
+elif [[ $1 = --server-install ]];
+	SERVER_INSTALL
+	exit 0
+else
+        SHOW_HELP
+        exit 0
 fi
+
 
 if [ "$1" = "--report-remotehost" ]; then
 	if [ -z "$2" ] || [ -z "$3" ]; then
