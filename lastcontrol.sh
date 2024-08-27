@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #---------------------------------------------------------------------
-# Lastcontrol, it does not change any settings in the target system.
+# LastControl, it does not change any settings in the target system.
 # It just checks and outputs.
 # However, it is your responsibility to run it on any system.
 #---------------------------------------------------------------------
