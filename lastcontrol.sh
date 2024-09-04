@@ -765,6 +765,10 @@ APP_LIST() {
         done
 }
 
+CRON_LIST () {
+	cat /var/spool/cron/crontabs/* | grep -v '^#'
+}
+
 SHOW_ABOUT_HOST() {
 #	cat $RDIR/$HOST_NAME-abouthost.txt
 	#clear
