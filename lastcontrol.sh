@@ -1136,6 +1136,11 @@ Host Inventory Check |$INVENTORY_CHANGE - Number of changed inventory info: $INV
 --------------------------------------------------------------------------------------------------------------------------
 
 EOF
+	echo "| CRON JOB LIST" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	cat $CRONLIST >> $RDIR/$HOST_NAME-allreports.txt
+	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "" >> $RDIR/$HOST_NAME-allreports.txt
 
 	echo "| DEFAULT USER ACCOUNTS SETTINGS" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
