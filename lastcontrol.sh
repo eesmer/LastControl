@@ -277,12 +277,15 @@ USER_LIST(){
 SUDO_USER_LIST(){
     SUDOUSERLIST=$(mktemp)
     getent group sudo | awk -F: '{print $4}' | tr ',' "\n" >> "$SUDOUSERLIST"
-    cat /etc/sudoers | grep "ALL" | grep -v "%" | awk '{print $1}' >> "$SUDOUSERLIST"
-    grep 'ALL' /etc/sudoers.d/* | cut -d":" -f2 | cut -d" " -f1 >> "$SUDOUSERLIST"
-    sed -i '/root/d' $SUDOUSERLIST
-    sed -i '/Defaults/d' $SUDOUSERLIST #for Centos,RHEL
+    if [[ -f /etc/sudoers ]]; then
+            cat /etc/sudoers >&2 | grep "ALL" | grep -v "%" | awk '{print $1}' >> "$SUDOUSERLIST"
+            grep 'ALL' /etc/sudoers.d/* | cut -d":" -f2 | cut -d" " -f1 >> "$SUDOUSERLIST"
+            sed -i '/root/d' $SUDOUSERLIST
+            sed -i '/Defaults/d' $SUDOUSERLIST #for Centos,RHEL
+            sed -i '/^$/d' $SUDOUSERLIST
+            SUDO_USER_LIST=$(sort -u "$SUDOUSERLIST" | paste -sd ",")
+    fi
     sed -i '/^$/d' $SUDOUSERLIST
-    SUDO_USER_LIST=$(sort -u "$SUDOUSERLIST" | paste -sd ",")
     SUDO_USER_COUNT=$(wc -l $SUDOUSERLIST | cut -d " " -f1)
     rm -f "$SUDOUSERLIST"
 }
