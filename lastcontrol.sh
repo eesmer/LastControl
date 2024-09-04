@@ -467,10 +467,12 @@ DIRECTORY_CHECK() {
 REPOSITORY_CHECK() {
         if [ "$REP" = "APT" ]; then
                 grep -hE '^\s*deb\s' /etc/apt/sources.list | grep -v '^#' | awk '{print $2}' > $RDIR/repositorylist.txt
-                grep -hE '^\s*deb\s' /etc/apt/sources.list.d/* | grep -v '^#' | awk '{print $2}' >> $RDIR/repositorylist.txt
-        elif [ "$REP" = "YUM" ]; then
-                yum repolist all | grep enabled | awk '{print $1}' > $RDIR/repositorylist.txt
-        fi
+		if [ "$(ls -A /etc/apt/sources.list.d/)" ]; then
+			grep -hE '^\s*deb\s' /etc/apt/sources.list.d/* | grep -v '^#' | awk '{print $2}' >> $RDIR/repositorylist.txt
+		fi
+	elif [ "$REP" = "YUM" ]; then
+		yum repolist all | grep enabled | awk '{print $1}' > $RDIR/repositorylist.txt
+	fi
 }
 
 SERVICE_PROCESS(){
