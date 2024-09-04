@@ -737,17 +737,17 @@ ABOUT_HOST() {
 	fi
 	if [ "$OOM" = "1" ]; then
 		$BLUE
-		echo "	Out of Memory Log Found [I]"
+		echo "	Out of Memory Log Found [I]" >> $RDIR/$HOST_NAME-abouthost.txt
 		$NOCOL
 	fi
 	if [ "$ETC_CHANGE_COUNT" -gt 0 ]; then
 		$BLUE
-		echo "	Found file changed in the /etc directory in last 24 hours [I]"
+		echo "	Found file changed in the /etc directory in last 24 hours [I]" >> $RDIR/$HOST_NAME-abouthost.txt
 		$NOCOL
 	fi
 	if [ "$INVENTORY_DIFF_COUNT" -gt 0 ]; then
 		$BLUE
-		echo "	Host Hardware inventory has changed [I]"
+		echo "	Host Hardware inventory has changed [I]" >> $RDIR/$HOST_NAME-abouthost.txt
 		$NOCOL
 	fi
 	echo -e
