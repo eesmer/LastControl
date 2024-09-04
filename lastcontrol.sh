@@ -766,7 +766,8 @@ APP_LIST() {
 }
 
 CRON_LIST () {
-	cat /var/spool/cron/crontabs/* | grep -v '^#'
+	CRONLIST=$(mktemp)
+	cat /var/spool/cron/crontabs/* | grep -v '^#' > $CRONLIST
 }
 
 SHOW_ABOUT_HOST() {
