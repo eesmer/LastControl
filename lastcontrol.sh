@@ -176,7 +176,12 @@ SYSTEM_REPORT() {
 	DISK=$(lsblk | grep "disk" | awk {'print $1'})
 	DISK_USAGE=$(df -lh | grep "$DISK" | awk {'print $5'})
 	WIRELESS=$(ip link show | grep -q "wl")
+	if [[ -z $WIRELESS ]]; then
+		lspci | grep -i "network" | grep -E -i "wireless|wi[-]?fi"
+	fi
 	if [[ ! -z $WIRELESS ]]; then WIRELESS_ADAPTER="Wireless Adapter Found"; else WIRELESS_ADAPTER="Wireless Adapter Not Found"; fi
+
+	lspci | grep -i "network" | grep -E -i "wireless|wi[-]?fi"
 
 	ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNECTED"
 	
