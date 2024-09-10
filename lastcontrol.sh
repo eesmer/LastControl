@@ -175,6 +175,8 @@ SYSTEM_REPORT() {
 	###DISK_USAGE=$(fdisk -lu | grep "Disk" | grep -v "Disklabel" | grep -v "dev/loop" | grep -v "Disk identifier")
 	DISK=$(lsblk | grep "disk" | awk {'print $1'})
 	DISK_USAGE=$(df -lh | grep "$DISK" | awk {'print $5'})
+	WIRELESS=$(ip link show | grep -q "wl")
+	if [[ ! -z $WIRELESS ]]; then WIRELESS_ADAPTER="Wireless Adapter Found"; else WIRELESS_ADAPTER="Wireless Adapter Not Found"; fi
 
 	ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNECTED"
 	
@@ -1001,9 +1003,10 @@ $HOST_NAME LastControl All Controls Report $DATE
 |IP Address          |$INTERNAL_IP | $EXTERNAL_IP
 |Internet Conn.      |$INTERNET
 |CPU                 |$CPU_INFO
-|RAM                 |Total:$RAM_TOTAL | Ram Usage: $RAM_USAGE
-|GPU / VGA           |VGA: $GPU_INFO   | VGA Ram: $GPU_RAM 
+|RAM                 |Total:$RAM_TOTAL | Ram Usage:$RAM_USAGE
+|GPU / VGA           |VGA:$GPU_INFO    | VGA Ram:$GPU_RAM 
 |DISK LIST           |$DISK_LIST
+|WIRELESS            |Adapter:$WIRELESS_ADAPTER
 --------------------------------------------------------------------------------------------------------------------------
 | SYSTEM INFORMATION
 --------------------------------------------------------------------------------------------------------------------------
