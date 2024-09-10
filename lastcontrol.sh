@@ -106,6 +106,23 @@ CHECKRUN_ROOT() {
     fi
 }
 
+CHECK_ROLES() {
+ROLES=()
+SERVICES=$(systemctl list-units --type=service --state=running --no-pager --no-legend | awk '{print $1}')
+LISTENING_PORTS=$(netstat -tuln | awk '/LISTEN/ {print $4}' | awk -F':' '{print $NF}')
+
+# Web Server
+if echo "$SERVICES" | grep -qE "nginx\.service|apache2\.service"; then
+        ROLES+=("WebServer(Service)")
+elif echo "$LISTENING_PORTS" | grep -qE "^80$|^443$"; then
+        ROLES+=("WebService(80,443)")
+fi
+
+if [ ${#ROLES[@]} -eq 0 ]; then
+    echo "No Server Role could be Detected"
+fi
+}
+
 CHECK_DISTRO() {
 	cat /etc/*-release /etc/issue > "$RDIR/distrocheck"
 	if grep -qi "debian\|ubuntu" "$RDIR/distrocheck"; then
@@ -1148,6 +1165,12 @@ Host Inventory Check |$INVENTORY_CHANGE - Number of changed inventory info: $INV
 --------------------------------------------------------------------------------------------------------------------------
 
 EOF
+	echo "| SERVER ROLES" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	echo ${ROLES[@]} | tr ' ' '\n' >> $RDIR/$HOST_NAME-allreports.txt
+	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "" >> $RDIR/$HOST_NAME-allreports.txt
+
 	echo "| CRON JOB LIST" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	cat $CRONLIST >> $RDIR/$HOST_NAME-allreports.txt
@@ -1315,6 +1338,7 @@ REPORT_LOCALHOST() {
 	fi
 	mkdir -p $RDIR
 	CHECKRUN_ROOT
+	CHECK_ROLES
 	CHECK_DISTRO
 	CHECK_UPDATE
 	SYSTEM_REPORT
