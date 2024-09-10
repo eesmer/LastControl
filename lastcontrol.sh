@@ -485,10 +485,12 @@ REPOSITORY_CHECK() {
 SERVICE_PROCESS(){
 	SERVICE_MANAGER="$(ps --no-headers -o comm 1)"
 	if [ "$SERVICE_MANAGER" = systemd ]; then
-		systemctl list-units --type service |grep running > $RDIR/runningservices.txt
-		RUNNING_SERVICE=$(wc -l $RDIR/runningservices.txt |cut -d ' ' -f1)
-		LOADED_SERVICE=$(systemctl list-units --type service |grep "units." |cut -d "." -f1)
-		rm $RDIR/runningservices.txt
+		#RUNNING_SERVICE=$(wc -l $RDIR/runningservices.txt |cut -d ' ' -f1)
+		#systemctl list-units --type service |grep running > $RDIR/runningservices.txt
+		SERVICE_LIST=$(systemctl list-units --type=service --state=running --no-pager --no-legend | awk '{print $1}')
+		RUNNING_SERVICE=$(echo $SERVICE_LIST | tr ' ' '\n' | wc -l)
+		LOADED_SERVICE=$(systemctl list-units --type=service --state=loaded --no-pager --no-legend | awk '{print $1}' | wc -l)
+		#rm $RDIR/runningservices.txt
 	fi
 	
 	ACTIVE_CONN=$(netstat -s | awk '/active connection openings/ {print $1}')
@@ -1187,6 +1189,13 @@ EOF
 	echo "|ESTABLISHED SERVICE LIST" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "|--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	netstat -tn |grep -v "Active Internet connections (servers and established)" |grep -v "Active Internet connections (only servers)" |grep "ESTABLISHED" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "---------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "" >> $RDIR/$HOST_NAME-allreports.txt
+	
+	echo "|--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "|RUNNING SERVICE LIST" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "|--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	echo $SERVICE_LIST | tr ' ' '\n' >> $RDIR/$HOST_NAME-allreports.txt
 	echo "---------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "" >> $RDIR/$HOST_NAME-allreports.txt
 	
