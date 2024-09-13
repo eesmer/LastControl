@@ -276,6 +276,9 @@ LVM_CRYPT() {
 }
 
 SYSLOG_INFO() {
+	$BLUE
+        echo "Checking SYSLOG Configuration"
+        $NOCOL
         SYSLOG_INSTALL=Not_Installed
                 if [ "$REP" = "APT" ]; then
                         dpkg -l | grep -q rsyslog && SYSLOG_INSTALL=Installed
@@ -340,6 +343,9 @@ SUDO_USER_LIST(){
 }
 
 USER_LOGINS() {
+	$BLUE
+        echo "Checking Login History"
+        $NOCOL
 	SERVICE_USER_LIST=$(awk -F: '$2 == "*"' /etc/shadow | cut -d ":" -f1 | paste -sd ",")
 	BLANK_PASS_USER_LIST=$(awk -F: '$2 == "!*" { print $1 }' /etc/shadow | paste -sd ",")
 	LAST_LOGIN_00D=$(lastlog --time 1 |grep -v "Username" | awk '{ print $1}' | paste -sd ',')
@@ -477,6 +483,9 @@ GRUB_CONTROL() {
 }
 
 DIRECTORY_CHECK() {
+	$BLUE
+        echo "Checking Directory Config"
+        $NOCOL
 	# /tmp directory
         mount | grep -E '\s/tmp\s' > $RDIR/tmpmount.txt
         if [ "$?" = 0 ]; then
@@ -514,6 +523,9 @@ DIRECTORY_CHECK() {
 }
 
 REPOSITORY_CHECK() {
+	$BLUE
+        echo "Checking Repositories"
+        $NOCOL
         if [ "$REP" = "APT" ]; then
                 grep -hE '^\s*deb\s' /etc/apt/sources.list | grep -v '^#' | awk '{print $2}' > $RDIR/repositorylist.txt
 		if [ "$(ls -A /etc/apt/sources.list.d/)" ]; then
@@ -525,6 +537,9 @@ REPOSITORY_CHECK() {
 }
 
 SERVICE_PROCESS(){
+	$BLUE
+        echo "Checking Process and Connections"
+        $NOCOL
 	SERVICE_MANAGER="$(ps --no-headers -o comm 1)"
 	if [ "$SERVICE_MANAGER" = systemd ]; then
 		SERVICE_LIST=$(systemctl list-units --type=service --state=running --no-pager --no-legend | awk '{print $1}')
@@ -606,6 +621,9 @@ rm $ETC_CHANGE_FILE
 }
 
 SSH_AUTH_LOGS() {
+	$BLUE
+        echo "Checking SSH Auth."
+        $NOCOL
 	echo "Accepted" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	find /var/log -type f -exec sh -c "cat {} | egrep -i 'ssh'" \; | grep "Accepted" | tail -n 10 >> $RDIR/$HOST_NAME-allreports.txt
@@ -618,6 +636,9 @@ SSH_AUTH_LOGS() {
 }
 
 NW_CONFIG_CHECK() {
+	$BLUE
+        echo "Checking NW Configs"
+        $NOCOL
 	NWCHECK1=$(sysctl net.ipv4.ip_forward |cut -d "=" -f2 |cut -d " " -f2)
 	IPV4_FORWARD_CHECK="Fail" && ((NWRESULT++))
 	if [ "$NWCHECK1" = 0 ]; then IPV4_FORWARD_CHECK="Pass" && ((NWRESULT--)); fi
@@ -676,6 +697,9 @@ NW_CONFIG_CHECK() {
 }
 
 SSH_CONFIG_CHECK() {
+	$BLUE
+        echo "Checking SSH Configs"
+        $NOCOL
 	# PRIVATE HOST KEY
 	SSHCHECK1=$(stat /etc/ssh/sshd_config |grep "Uid:" |cut -d " " -f2 |cut -d "(" -f2 |cut -d "/" -f1)
 	SSHD_ACL="Fail" && ((SSHRESULT++))
@@ -726,6 +750,9 @@ SSH_CONFIG_CHECK() {
 }
 
 SUIDGUID_FILE_CHECK() {
+	$BLUE
+        echo "Checking SUID,GUID Files"
+        $NOCOL
 	STICKYBIT_FILE=$(mktemp)
         find / -perm /1000 &> /dev/null > $STICKYBIT_FILE
         STICKYBITCOUNT=$(wc -l $STICKYBIT_FILE | awk {'print $1'})
@@ -760,6 +787,10 @@ LAST_INSTALL() {
 }
 
 ABOUT_HOST() {
+	$BLUE
+        echo "Generating About of Host Message"
+	echo -e
+        $NOCOL
 	echo "------------------------------------------------------" > $RDIR/$HOST_NAME-abouthost.txt 
 	echo "About of $HOST_NAME" >> $RDIR/$HOST_NAME-abouthost.txt
 	echo "------------------------------------------------------" >> $RDIR/$HOST_NAME-abouthost.txt 
@@ -809,6 +840,9 @@ ABOUT_HOST() {
 }
 
 APP_LIST() {
+	$BLUE
+        echo "Checking Apps"
+        $NOCOL
         APPLIST=$(mktemp)
         for appslist in /usr/share/applications/*.desktop; do
                 sed -ns '/^\[Desktop Entry\]/,/^\[/{/^Name=/p;/^Exec=/h};${z;x;G;p}' "$appslist" | \
@@ -819,6 +853,9 @@ APP_LIST() {
 }
 
 CRON_LIST () {
+	$BLUE
+        echo "Generating Cron Job List"
+        $NOCOL
 	CRONLIST=$(mktemp)
 	cat /var/spool/cron/crontabs/* | grep -v '^#' > $CRONLIST
 }
