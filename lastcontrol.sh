@@ -103,27 +103,37 @@ CHECKRUN_ROOT() {
         echo "This script must be run with root user"
         $NOCOL
         exit 1
+else
+	$GREEN
+	echo "Root session check OK"
+	$NOCOL
     fi
 }
 
 CHECK_ROLES() {
+$BLUE
+echo "Discovering server roles.."
+$NOCOL
 ROLES=()
 SERVICES=$(systemctl list-units --type=service --state=running --no-pager --no-legend | awk '{print $1}')
 LISTENING_PORTS=$(netstat -tuln | awk '/LISTEN/ {print $4}' | awk -F':' '{print $NF}')
 
 # Web Server
 if echo "$SERVICES" | grep -qE "nginx\.service|apache2\.service"; then
-        ROLES+=("WebServer(Service)")
+        ROLES+=("WebServer")
 elif echo "$LISTENING_PORTS" | grep -qE "^80$|^443$"; then
         ROLES+=("WebService(80,443)")
 fi
 
 if [ ${#ROLES[@]} -eq 0 ]; then
-    echo "No Server Role could be Detected"
+    ROLES+=("No Role Detected")
 fi
 }
 
 CHECK_DISTRO() {
+	$BLUE
+	echo "Checking Distro.."
+	$NOCOL
 	cat /etc/*-release /etc/issue > "$RDIR/distrocheck"
 	if grep -qi "debian\|ubuntu" "$RDIR/distrocheck"; then
 		REP=APT
@@ -145,6 +155,9 @@ CHECK_DISTRO() {
 }
 
 CHECK_UPDATE() {
+	$BLUE
+	echo "Checking for Updates"
+	$NOCOL
 	if [ "$REP" = "APT" ]; then
       UPDATE_OUTPUT=$(apt update 2>&1)
       if echo "$UPDATE_OUTPUT" | grep -qE "(Failed to fetch|Temporary failure resolving|Could not resolve|Some index files failed to download)"; then
