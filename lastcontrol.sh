@@ -608,6 +608,7 @@ AUDIT() {
 	ETC_CHANGE_COUNT=$(wc -l $ETC_CHANGE_FILE | awk {'print $1'})
 	if [ "$ETC_CHANGE_COUNT" -gt 0 ]; then
 		ETC_CHANGE="Found file changed in the /etc directory in last 24 hours"
+		ETC_FILES=$(cat $ETC_CHANGE_FILE)
 	else
 		ETC_CHANGE="There has been no change in the /etc directory in the last 24 hours"
 	fi
@@ -1251,6 +1252,9 @@ GUID	             |$GUIDCOUNT
 SUID-GUID            |$SUIDGUIDCOUNT
 --------------------------------------------------------------------------------------------------------------------------
 /etc Change Check    |$ETC_CHANGE - Number of changed files: $ETC_CHANGE_COUNT
+--------------------------------------------------------------------------------------------------------------------------
+$ETC_FILES
+--------------------------------------------------------------------------------------------------------------------------
 Host Inventory Check |$INVENTORY_CHANGE - Number of changed inventory info: $INVENTORY_DIFF_COUNT
 --------------------------------------------------------------------------------------------------------------------------
 
