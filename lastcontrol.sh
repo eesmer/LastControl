@@ -128,6 +128,13 @@ fi
 if [ ${#ROLES[@]} -eq 0 ]; then
     ROLES+=("No Role Detected")
 fi
+
+# Database Server
+if echo "$SERVICES" | grep -qE "mysql\.service|postgresql\.service|mariadb\.service"; then
+	ROLES+=("DatabaseServer(Service)")
+elif echo "$LISTENING_PORTS" | grep -qE "^3306$|^5432$"; then
+	ROLES+=("DatabaseServer(Port)")
+fi
 }
 
 CHECK_DISTRO() {
