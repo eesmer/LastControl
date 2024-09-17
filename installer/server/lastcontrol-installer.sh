@@ -81,8 +81,8 @@ function new_install(){
 	  apt-get -y install xsltproc
 	  apt-get -y install imagemagick
 	  apt-get -y install pandoc
-      apt-get -y texlive-latex-base texlive-fonts-recommended
-      apt-get -y install texlive-latex-recommended
+	  apt-get -y install texlive-latex-base texlive-fonts-recommended
+	  apt-get -y install texlive-latex-recommended
 	  #apt-get -y install sqlite3
 	  ##apt-get -y install php
 	  ##apt-get -y install php-sqlite3
