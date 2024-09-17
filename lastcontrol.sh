@@ -133,7 +133,14 @@ fi
 if echo "$SERVICES" | grep -qE "mysql\.service|postgresql\.service|mariadb\.service"; then
 	ROLES+=("DatabaseServer(Service)")
 elif echo "$LISTENING_PORTS" | grep -qE "^3306$|^5432$"; then
-	ROLES+=("DatabaseServer(Port)")
+	ROLES+=("DatabaseServer(3306,5432)")
+fi
+
+# SSH Server
+if echo "$SERVICES" | grep -qE "sshd\.service"; then
+    ROLES+=("SSHServer(Service)")
+elif echo "$LISTENING_PORTS" | grep -qE "^22$"; then
+    ROLES+=("SSHService(22)")
 fi
 }
 
