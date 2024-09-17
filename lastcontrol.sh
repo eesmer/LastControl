@@ -146,15 +146,15 @@ elif echo "$LISTENING_PORTS" | grep -qE "^21$"; then
     ROLES+=("FTPService(21)")
 fi
 
-if [ ${#ROLES[@]} -eq 0 ]; then
-    ROLES+=("No Role Detected")
-fi
-
 # Docker Host
 if echo "$SERVICES" | grep -qE "docker\.service"; then
     ROLES+=("DockerServer(Service)")
 elif echo "$LISTENING_PORTS" | grep -qE "^2375$|^2376$"; then
     ROLES+=("DockerService(Port)")
+fi
+
+if [ ${#ROLES[@]} -eq 0 ]; then
+    ROLES+=("No Role Detected")
 fi
 }
 
