@@ -125,10 +125,6 @@ elif echo "$LISTENING_PORTS" | grep -qE "^80$|^443$"; then
         ROLES+=("WebService(80,443)")
 fi
 
-if [ ${#ROLES[@]} -eq 0 ]; then
-    ROLES+=("No Role Detected")
-fi
-
 # Database Server
 if echo "$SERVICES" | grep -qE "mysql\.service|postgresql\.service|mariadb\.service"; then
 	ROLES+=("DatabaseServer(Service)")
@@ -148,6 +144,10 @@ if echo "$SERVICES" | grep -qE "vsftpd\.service|proftpd\.service|pure-ftpd\.serv
     ROLES+=("FTPServer(Service)")
 elif echo "$LISTENING_PORTS" | grep -qE "^21$"; then
     ROLES+=("FTPService(21)")
+fi
+
+if [ ${#ROLES[@]} -eq 0 ]; then
+    ROLES+=("No Role Detected")
 fi
 }
 
