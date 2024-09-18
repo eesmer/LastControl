@@ -661,7 +661,8 @@ SSH_AUTH_LOGS() {
 	echo "Failed" >> $RDIR/$HOST_NAME-allreports.txt >> $RDIR/$HOST_NAME-allreports.txt
 	echo "------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	#find /var/log/ -type f -exec sh -c "cat {} | egrep -i 'ssh'" \; | grep "Failed" | tail -n 10 >> $RDIR/$HOST_NAME-allreports.txt
-	find /var/log/ -type f -exec grep -I -i "ssh" {} \; | grep "Failed" | tail -n 10 >> $RDIR/$HOST_NAME-allreports.txt
+	#find /var/log/ -type f -exec grep -I -i "ssh" {} \; | grep "Failed" | tail -n 10 >> $RDIR/$HOST_NAME-allreports.txt
+	find /var/log/ -type f -exec sh -c 'file "{}" | grep -q text && grep -i "ssh" "{}"' \; | grep "Failed" | tail -n 10 >> $RDIR/$HOST_NAME-allreports.txt
 	# Debian,Ubuntu /var/log/auth.log
 	# RHEL,Centos   /var/log/secure
 }
