@@ -147,10 +147,11 @@ elif echo "$LISTENING_PORTS" | grep -qE "^21$"; then
 fi
 
 # Docker Host
+DOCKERHOST=FALSE
+DOCKERSERVICE=FALSE
 if echo "$SERVICES" | grep -qE "docker\.service"; then
 	DOCKERHOST=TRUE
 	ROLES+=("DockerHost(Service)")
-	DOCKERLIST=$(docker ps)
 elif echo "$LISTENING_PORTS" | grep -qE "^2375$|^2376$"; then
 	DOCKERSERVICE=TRUE
 	ROLES+=("DockerService(Port)")
