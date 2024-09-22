@@ -148,9 +148,12 @@ fi
 
 # Docker Host
 if echo "$SERVICES" | grep -qE "docker\.service"; then
-    ROLES+=("DockerHost(Service)")
+	DOCKERHOST=TRUE
+	ROLES+=("DockerHost(Service)")
+	DOCKERLIST=$(docker ps)
 elif echo "$LISTENING_PORTS" | grep -qE "^2375$|^2376$"; then
-    ROLES+=("DockerService(Port)")
+	DOCKERSERVICE=TRUE
+	ROLES+=("DockerService(Port)")
 fi
 
 if [ ${#ROLES[@]} -eq 0 ]; then
