@@ -1272,6 +1272,18 @@ EOF
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "" >> $RDIR/$HOST_NAME-allreports.txt
 
+	if [[ $DOCKERHOST=TRUE ]]; then
+		echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+		echo "Docker Container List" >> $RDIR/$HOST_NAME-allreports.txt
+		echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+		docker ps >> $RDIR/$HOST_NAME-allreports.txt
+		echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+		echo "" >> $RDIR/$HOST_NAME-allreports.txt
+	fi
+	if [[ $DOCKERHOST=TRUE ]]; then
+		echo "Docker service not detected. But the system is listening on docker ports." >> $RDIR/$HOST_NAME-allreports.txt
+	fi
+	
 	echo "| CRON JOB LIST" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	cat $CRONLIST >> $RDIR/$HOST_NAME-allreports.txt
