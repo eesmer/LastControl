@@ -785,7 +785,7 @@ SSH_CONFIG_CHECK() {
 	PERMITUSERENV="Fail" && ((SSHRESULT++))
 	if [ "$SSHCHECK14" = no ]; then PERMITUSERENV="Pass" && ((SSHRESULT--)); fi
 
-	PERMITROOT_LOGIN=$(permit_root_login=$(grep -E '^\s*PermitRootLogin' /etc/ssh/sshd_config)
+	PERMITROOT_LOGIN=$(grep -E '^\s*PermitRootLogin' /etc/ssh/sshd_config)
 	if [[ -z $PERMITROOT_LOGIN ]]; then
 		SSHACCESS="PermitRootLogin setting not found"
 	else
