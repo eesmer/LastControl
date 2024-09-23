@@ -784,6 +784,19 @@ SSH_CONFIG_CHECK() {
 	SSHCHECK14=$(sshd -T | grep permituserenvironment |cut -d " " -f2)
 	PERMITUSERENV="Fail" && ((SSHRESULT++))
 	if [ "$SSHCHECK14" = no ]; then PERMITUSERENV="Pass" && ((SSHRESULT--)); fi
+
+	PERMITROOT_LOGIN=$(permit_root_login=$(grep -E '^\s*PermitRootLogin' /etc/ssh/sshd_config)
+	if [[ -z $PERMITROOT_LOGIN ]]; then
+		SSHACCESS="PermitRootLogin setting not found"
+	else
+		if [[ $PERMITROOT_LOGIN == *"#"* ]]; then
+			SSHACCESS="PermitRootLogin setting is specified as a comment line"
+		elif [[ $PERMITROOT_LOGIN == *"yes"* ]]; then
+			SSHACCESS="SSH access allowed to root user"
+		elif [[ $permit_root_login == *"no"* ]]; then
+			SSHACCESS="SSH access is not permitted to root user"
+		fi
+	fi
 }
 
 SUIDGUID_FILE_CHECK() {
