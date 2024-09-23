@@ -1225,7 +1225,7 @@ $HOST_NAME LastControl All Controls Report $DATE
 -------------------------------------------------------------------------------------------------------------------------
 | SSH Config
 -------------------------------------------------------------------------------------------------------------------------
-|SSH Access                               |$SSHACCESS"
+|SSH Access Info                          |$SSHACCESS"
 |SSHD Config File ACL Check               |$SSHD_ACL"
 |ECDSA Public Key ACL Check               |$ECDSAKEY_ACL"
 |RSA Public Key ACL Check                 |$RSAKEYPUB_ACL"
