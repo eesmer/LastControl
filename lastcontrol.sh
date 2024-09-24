@@ -584,10 +584,21 @@ SERVICE_PROCESS(){
 		LOADED_SERVICE=$(systemctl list-units --type=service --state=loaded --no-pager --no-legend | awk '{print $1}' | wc -l)
 	fi
 	
-	ACTIVE_CONN=$(netstat -s | awk '/active connection openings/ {print $1}')
-	PASSIVE_CONN=$(netstat -s | awk '/passive connection openings/ {print $1}')
-	FAILED_CONN=$(netstat -s | awk '/failed connection attempts/ {print $1}')
-	ESTAB_CONN=$(netstat -s | awk '/connections established/ {print $1}')
+	if [[ ! $NETSTATP == FALSE ]]; then
+		ACTIVE_CONN=$(netstat -s | awk '/active connection openings/ {print $1}')
+		PASSIVE_CONN=$(netstat -s | awk '/passive connection openings/ {print $1}')
+		FAILED_CONN=$(netstat -s | awk '/failed connection attempts/ {print $1}')
+		ESTAB_CONN=$(netstat -s | awk '/connections established/ {print $1}')
+	else
+		$RED
+		echo "Failed to get active passive and established connection list (netstat package not found)"
+		$NOCOL
+	fi
+
+	#ACTIVE_CONN=$(netstat -s | awk '/active connection openings/ {print $1}')
+	#PASSIVE_CONN=$(netstat -s | awk '/passive connection openings/ {print $1}')
+	#FAILED_CONN=$(netstat -s | awk '/failed connection attempts/ {print $1}')
+	#ESTAB_CONN=$(netstat -s | awk '/connections established/ {print $1}')
 	NOC=$(nproc --all)
 	#LOAD_AVG=$(uptime | grep "load average:" | awk -F: '{print $4}' | xargs)
 	LOAD_AVG=$(uptime | grep "load average:"| xargs)
