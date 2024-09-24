@@ -919,11 +919,16 @@ APP_LIST() {
 }
 
 CRON_LIST () {
-	$BLUE
+        $BLUE
         echo "Generating Cron Job List"
-        $NOCOL
-	CRONLIST=$(mktemp)
-	cat /var/spool/cron/crontabs/* | grep -v '^#' > $CRONLIST
+        $NOC
+        CRONLIST=$(mktemp)
+        if [[ -n $(ls -A "/var/spool/cron/crontabs" 2>/dev/null) ]]; then
+                cat /var/spool/cron/crontabs/* | grep -v '^#' > $CRONLIST
+        else
+                echo "There is no cron job in the system" > $CRONLIST
+        fi
+        #cat /var/spool/cron/crontabs/* | grep -v '^#' > $CRONLIST
 }
 
 SHOW_ABOUT_HOST() {
