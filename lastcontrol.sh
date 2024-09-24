@@ -121,7 +121,9 @@ echo "Discovering server roles.."
 $NOCOL
 ROLES=()
 SERVICES=$(systemctl list-units --type=service --state=running --no-pager --no-legend | awk '{print $1}')
-LISTENING_PORTS=$(netstat -tuln | awk '/LISTEN/ {print $4}' | awk -F':' '{print $NF}')
+if [[ ! $NETSTATP == FALSE ]]; then
+	LISTENING_PORTS=$(netstat -tuln | awk '/LISTEN/ {print $4}' | awk -F':' '{print $NF}')
+fi
 
 # Web Server
 if echo "$SERVICES" | grep -qE "nginx\.service|apache2\.service"; then
@@ -921,7 +923,7 @@ APP_LIST() {
 CRON_LIST () {
         $BLUE
         echo "Generating Cron Job List"
-        $NOC
+        $NOCOL
         CRONLIST=$(mktemp)
         if [[ -n $(ls -A "/var/spool/cron/crontabs" 2>/dev/null) ]]; then
                 cat /var/spool/cron/crontabs/* | grep -v '^#' > $CRONLIST
@@ -1494,6 +1496,7 @@ REPORT_LOCALHOST() {
 	fi
 	mkdir -p $RDIR
 	CHECKRUN_ROOT
+	CHECK_PACKAGE
 	CHECK_ROLES
 	CHECK_DISTRO
 	CHECK_UPDATE
