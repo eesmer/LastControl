@@ -110,6 +110,11 @@ else
     fi
 }
 
+CHECK_PACKAGE() {
+# netstat packages control
+if [ ! -x "$(command -v netstat )" ]; then $RED && echo "The netstat package must be installed for some checks" && $NOCOL && NETSTATP=FALSE; fi
+}
+
 CHECK_ROLES() {
 $BLUE
 echo "Discovering server roles.."
