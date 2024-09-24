@@ -1358,7 +1358,9 @@ EOF
 	echo "|--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "|ESTABLISHED SERVICE LIST" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "|--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
-	netstat -tn |grep -v "Active Internet connections (servers and established)" |grep -v "Active Internet connections (only servers)" |grep "ESTABLISHED" >> $RDIR/$HOST_NAME-allreports.txt
+	netstat -tn |grep -v "Active Internet connections (servers and established)" \
+		|grep -v "Active Internet connections (only servers)" \
+		|grep "ESTABLISHED" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "---------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "" >> $RDIR/$HOST_NAME-allreports.txt
 	
