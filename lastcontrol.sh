@@ -8,18 +8,17 @@
 
 if [[ -d "./scripts" ]]; then
 	source "./scripts/common.sh"
+	source "./check_runroot.sh"
+	source "./check_reqpackage.sh"
+	source "./check_roles.sh"
 else
 	RED="tput setaf 9"
 	NOCOL="tput sgr0"
 	$RED
-	echo -e "Scripts Directory Not Found..\nPlease upload the scripts directory"
+	echo -e "Scripts Directory Not Found.\nPlease upload the scripts directory"
 	$NOCOL
 	exit 1
 fi
-
-source $SCRIPTSDIR/check_runroot.sh
-source $SCRIPTSDIR/check_reqpackage.sh
-source $SCRIPTSDIR/check_roles.sh
 
 clear
 echo -e
