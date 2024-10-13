@@ -6,20 +6,16 @@
 # However, it is your responsibility to run it on any system.
 #---------------------------------------------------------------------
 
-#------------------
-# Color Codes
-#------------------
-MAGENTA="tput setaf 1"
-GREEN="tput setaf 2"
-YELLOW="tput setaf 3"
-DGREEN="tput setaf 4"
-CYAN="tput setaf 6"
-WHITE="tput setaf 7"
-GRAY="tput setaf 8"
-RED="tput setaf 9"
-BLUE="tput setaf 12"
-NOCOL="tput sgr0"
-BOLD="tput bold"
+source /root/LastControl/scripts/common.sh
+source $SCRIPTSDIR/check_runroot.sh
+source $SCRIPTSDIR/check_reqpackage.sh
+source $SCRIPTSDIR/check_roles.sh
+
+clear
+echo -e
+CHECK_RUNROOT
+CHECK_ROLES
+CHECK_PACKAGE
 
 PAUSE(){
 local message="$@"
@@ -93,81 +89,6 @@ LCKEY=/root/.ssh/lastcontrol
 LCKEYPUB=$(cat /root/.ssh/lastcontrol.pub | cut -d "=" -f2 | xargs)
 LOGO=/usr/local/lastcontrol/images/lastcontrol_logo.png
 DATE=$(date)
-
-CHECKRUN_ROOT() {
-    $GREEN
-    echo "Checking root user session"
-    $NOCOL
-    if ! [[ $EUID -eq 0 ]]; then
-        $RED
-        echo "This script must be run with root user"
-        $NOCOL
-        exit 1
-else
-	$GREEN
-	echo "Root session check OK"
-	$NOCOL
-    fi
-}
-
-CHECK_PACKAGE() {
-# netstat packages control
-if [ ! -x "$(command -v netstat )" ]; then $RED && echo "The netstat package must be installed for some checks" && $NOCOL && NETSTATP=FALSE; fi
-}
-
-CHECK_ROLES() {
-$BLUE
-echo "Discovering server roles.."
-$NOCOL
-ROLES=()
-SERVICES=$(systemctl list-units --type=service --state=running --no-pager --no-legend | awk '{print $1}')
-if [[ ! $NETSTATP == FALSE ]]; then
-	LISTENING_PORTS=$(netstat -tuln | awk '/LISTEN/ {print $4}' | awk -F':' '{print $NF}')
-fi
-
-# Web Server
-if echo "$SERVICES" | grep -qE "nginx\.service|apache2\.service"; then
-        ROLES+=("WebServer")
-elif echo "$LISTENING_PORTS" | grep -qE "^80$|^443$"; then
-        ROLES+=("WebService(80,443)")
-fi
-
-# Database Server
-if echo "$SERVICES" | grep -qE "mysql\.service|postgresql\.service|mariadb\.service"; then
-	ROLES+=("DatabaseServer(Service)")
-elif echo "$LISTENING_PORTS" | grep -qE "^3306$|^5432$"; then
-	ROLES+=("DatabaseService(3306,5432)")
-fi
-
-# SSH Server
-if echo "$SERVICES" | grep -qE "sshd\.service"; then
-    ROLES+=("SSHServer(Service)")
-elif echo "$LISTENING_PORTS" | grep -qE "^22$"; then
-    ROLES+=("SSHService(22)")
-fi
-
-# FTP Server
-if echo "$SERVICES" | grep -qE "vsftpd\.service|proftpd\.service|pure-ftpd\.service"; then
-    ROLES+=("FTPServer(Service)")
-elif echo "$LISTENING_PORTS" | grep -qE "^21$"; then
-    ROLES+=("FTPService(21)")
-fi
-
-# Docker Host
-DOCKERHOST=FALSE
-DOCKERSERVICE=FALSE
-if echo "$SERVICES" | grep -qE "docker\.service"; then
-	DOCKERHOST=TRUE
-	ROLES+=("DockerHost(Service)")
-elif echo "$LISTENING_PORTS" | grep -qE "^2375$|^2376$"; then
-	DOCKERSERVICE=TRUE
-	ROLES+=("DockerService(Port)")
-fi
-
-if [ ${#ROLES[@]} -eq 0 ]; then
-    ROLES+=("No Role Detected")
-fi
-}
 
 CHECK_DISTRO() {
 	$BLUE
@@ -1495,9 +1416,6 @@ REPORT_LOCALHOST() {
 		rm -r $RDIR
 	fi
 	mkdir -p $RDIR
-	CHECKRUN_ROOT
-	CHECK_PACKAGE
-	CHECK_ROLES
 	CHECK_DISTRO
 	CHECK_UPDATE
 	SYSTEM_REPORT
