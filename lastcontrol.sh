@@ -6,7 +6,17 @@
 # However, it is your responsibility to run it on any system.
 #---------------------------------------------------------------------
 
-source /root/LastControl/scripts/common.sh
+if [[ -d "./scripts" ]]; then
+	source "./scripts/common.sh"
+else
+	RED="tput setaf 9"
+	NOCOL="tput sgr0"
+	$RED
+	echo "Scripts Directory Not Found.. Please upload the scripts directory to the location of the lastcontrol.sh file."
+	$NOCOL
+	exit 1
+fi
+
 source $SCRIPTSDIR/check_runroot.sh
 source $SCRIPTSDIR/check_reqpackage.sh
 source $SCRIPTSDIR/check_roles.sh
