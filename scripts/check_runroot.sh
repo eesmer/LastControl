@@ -1,5 +1,10 @@
 #!/bin/bash
 
+#---------------------------------------------
+# LastControl Check root user
+# This script checks if it is run as the root user
+#---------------------------------------------
+
 source /root/LastControl/scripts/common.sh
 
 CHECK_RUNROOT() {
