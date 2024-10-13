@@ -2,6 +2,7 @@
 
 #---------------------------------------------
 # LastControl common values
+# This script holds global variables for LastControl
 #---------------------------------------------
 
 #------------------
