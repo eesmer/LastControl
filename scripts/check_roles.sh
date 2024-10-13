@@ -1,7 +1,8 @@
 #!/bin/bash
 
 #---------------------------------------------
-# LastControl Check Roles Script
+# LastControl Check Roles
+# This script finds Server Roles by listing the roles and services on the machine it is running on
 #---------------------------------------------
 
 source /root/LastControl/scripts/common.sh
