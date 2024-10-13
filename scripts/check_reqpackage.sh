@@ -1,7 +1,8 @@
 #!/bin/bash
 
 #---------------------------------------------
-# LastControl Check Roles Script
+# LastControl Required packages check
+# This script checks if the packages required for LastControl checks are installed
 #---------------------------------------------
 
 source /root/LastControl/scripts/common.sh
