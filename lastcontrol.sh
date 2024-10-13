@@ -12,7 +12,7 @@ else
 	RED="tput setaf 9"
 	NOCOL="tput sgr0"
 	$RED
-	echo "Scripts Directory Not Found.. Please upload the scripts directory"
+	echo -e "Scripts Directory Not Found..\nPlease upload the scripts directory"
 	$NOCOL
 	exit 1
 fi
