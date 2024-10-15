@@ -5,7 +5,7 @@
 # This script checks if the packages required for LastControl checks are installed
 #---------------------------------------------
 
-source /root/LastControl/scripts/common.sh
+source ./common.sh
 
 CHECK_PACKAGE() {
     # netstat package control
