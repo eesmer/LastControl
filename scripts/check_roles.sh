@@ -5,7 +5,7 @@
 # This script finds Server Roles by listing the roles and services on the machine it is running on
 #---------------------------------------------
 
-source /root/LastControl/scripts/common.sh
+source ./common.sh
 
 CHECK_ROLES() {
 $BLUE
