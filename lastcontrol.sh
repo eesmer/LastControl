@@ -13,6 +13,7 @@ if [[ -d "./scripts" ]]; then
 	source "./scripts/check_distro.sh"
 	source "./scripts/check_update.sh"
 	source "./scripts/check_roles.sh"
+	source "./scripts/check_hardware.sh"
 else
 	RED="tput setaf 9"
 	NOCOL="tput sgr0"
@@ -112,31 +113,31 @@ SYSTEM_REPORT() {
 	LOCAL_USER_LIST_FILE=$LOCALUSERS
 	LOGGED_USERS=$(w -hi)
 	
-	# HARDWARE INVENTORY
-	$BLUE
-        echo "Checking Hardware Inventory"
-        $NOCOL
-	INTERNAL_IP=$(hostname -I | cut -d " " -f1)
-	EXTERNAL_IP=$(curl -4 icanhazip.com 2>/dev/null)
-	CPU_INFO=$(awk -F ':' '/model name/ {print $2}' /proc/cpuinfo | head -n 1 | xargs)
-	RAM_TOTAL=$(free -m | awk 'NR==2{print $2 " MB"}')
-	RAM_USAGE=$(free -m | awk 'NR==2{print $3 " MB"}')
-	GPU_INFO=$(lspci | grep -i vga | cut -d ':' -f3)
-	GPU_RAM=$(lspci -v | awk '/ prefetchable/{print $6}' | head -n 1)
-	DISK_LIST=$(lsblk -o NAME,SIZE -d -e 11,2 | tail -n +2 | grep -v "loop")
-	###DISK_INFO=$(df -h --total | awk 'END{print}')
-	###DISK_USAGE=$(fdisk -lu | grep "Disk" | grep -v "Disklabel" | grep -v "dev/loop" | grep -v "Disk identifier")
-	DISK=$(lsblk | grep "disk" | awk {'print $1'})
-	DISK_USAGE=$(df -lh | grep "$DISK" | awk {'print $5'})
-	WIRELESS=$(ip link show | grep -q "wl")
-	if [[ -z $WIRELESS ]]; then
-		lspci | grep -i "network" | grep -E -i "wireless|wi[-]?fi"
-	fi
-	if [[ ! -z $WIRELESS ]]; then WIRELESS_ADAPTER="Wireless Adapter Found"; else WIRELESS_ADAPTER="Wireless Adapter Not Found"; fi
-
-	lspci | grep -i "network" | grep -E -i "wireless|wi[-]?fi"
-
-	ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNECTED"
+	## HARDWARE INVENTORY
+	#$BLUE
+        #echo "Checking Hardware Inventory"
+        #$NOCOL
+	#INTERNAL_IP=$(hostname -I | cut -d " " -f1)
+	#EXTERNAL_IP=$(curl -4 icanhazip.com 2>/dev/null)
+	#CPU_INFO=$(awk -F ':' '/model name/ {print $2}' /proc/cpuinfo | head -n 1 | xargs)
+	#RAM_TOTAL=$(free -m | awk 'NR==2{print $2 " MB"}')
+	#RAM_USAGE=$(free -m | awk 'NR==2{print $3 " MB"}')
+	#GPU_INFO=$(lspci | grep -i vga | cut -d ':' -f3)
+	#GPU_RAM=$(lspci -v | awk '/ prefetchable/{print $6}' | head -n 1)
+	#DISK_LIST=$(lsblk -o NAME,SIZE -d -e 11,2 | tail -n +2 | grep -v "loop")
+	####DISK_INFO=$(df -h --total | awk 'END{print}')
+	####DISK_USAGE=$(fdisk -lu | grep "Disk" | grep -v "Disklabel" | grep -v "dev/loop" | grep -v "Disk identifier")
+	#DISK=$(lsblk | grep "disk" | awk {'print $1'})
+	#DISK_USAGE=$(df -lh | grep "$DISK" | awk {'print $5'})
+	#WIRELESS=$(ip link show | grep -q "wl")
+	#if [[ -z $WIRELESS ]]; then
+	#	lspci | grep -i "network" | grep -E -i "wireless|wi[-]?fi"
+	#fi
+	#if [[ ! -z $WIRELESS ]]; then WIRELESS_ADAPTER="Wireless Adapter Found"; else WIRELESS_ADAPTER="Wireless Adapter Not Found"; fi
+	#
+	#
+	#lspci | grep -i "network" | grep -E -i "wireless|wi[-]?fi"
+	#ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNECTED"
 	
 	# SYSTEM INFO
 	KERNEL=$(uname -sr)
@@ -1368,6 +1369,10 @@ REPORT_REMOTEHOST() {
 }
 
 REPORT_LOCALHOST() {
+	if [ -d "$RDIR" ]; then
+	rm -r $RDIR
+	fi
+	mkdir -p $RDIR
 	clear
 	echo -e
 	CHECK_RUNROOT
@@ -1375,12 +1380,9 @@ REPORT_LOCALHOST() {
 	CHECK_ROLES
 	CHECK_DISTRO
 	CHECK_UPDATE
+	CHECK_HARDWARE
 	###clear
 	echo "Other Functions"
-	if [ -d "$RDIR" ]; then
-		rm -r $RDIR
-	fi
-	mkdir -p $RDIR
 	###CHECK_DISTRO
 	###CHECK_UPDATE
 	SYSTEM_REPORT
