@@ -8,9 +8,11 @@
 
 if [[ -d "./scripts" ]]; then
 	source "./scripts/common.sh"
-	source "./check_runroot.sh"
-	source "./check_reqpackage.sh"
-	source "./check_roles.sh"
+	source "./scripts/check_runroot.sh"
+	source "./scripts/check_reqpackage.sh"
+	source "./scripts/check_distro.sh"
+	source "./scripts/check_update.sh"
+	source "./scripts/check_roles.sh"
 else
 	RED="tput setaf 9"
 	NOCOL="tput sgr0"
@@ -20,11 +22,15 @@ else
 	exit 1
 fi
 
-clear
-echo -e
-CHECK_RUNROOT
-CHECK_ROLES
-CHECK_PACKAGE
+HOST_NAME=$(cat /etc/hostname)
+WDIR=/usr/local/lastcontrol
+RDIR=/usr/local/lastcontrol/reports
+CDIR=$(pwd)
+WEB=/var/www/html
+LCKEY=/root/.ssh/lastcontrol
+LCKEYPUB=$(cat /root/.ssh/lastcontrol.pub | cut -d "=" -f2 | xargs)
+LOGO=/usr/local/lastcontrol/images/lastcontrol_logo.png
+DATE=$(date)
 
 PAUSE(){
 local message="$@"
@@ -89,63 +95,79 @@ EOF
 echo -e
 }
 
-HOST_NAME=$(cat /etc/hostname)
-WDIR=/usr/local/lastcontrol
-RDIR=/usr/local/lastcontrol/reports
-CDIR=$(pwd)
-WEB=/var/www/html
-LCKEY=/root/.ssh/lastcontrol
-LCKEYPUB=$(cat /root/.ssh/lastcontrol.pub | cut -d "=" -f2 | xargs)
-LOGO=/usr/local/lastcontrol/images/lastcontrol_logo.png
-DATE=$(date)
+#CHECK_DISTRO() {
+#	$BLUE
+#	echo "Checking Distro.."
+#	$NOCOL
+#	cat /etc/*-release /etc/issue > "$RDIR/distrocheck"
+#	if grep -qi "debian\|ubuntu" "$RDIR/distrocheck"; then
+#		REP=APT
+#	elif grep -qi "centos\|rocky\|red hat" "$RDIR/distrocheck"; then
+#		REP=YUM
+#	fi
+#	rm $RDIR/distrocheck
+#	# Not support message
+#	if [ -z "$REP" ]; then
+#		$RED
+#		echo -e
+#		echo "--------------------------------------------------------------"
+#		echo -e "Repository could not be detected.\nThis distro is not supported",
+#		echo "--------------------------------------------------------------"
+#		echo -e
+#		$NOCOL
+#		exit 1
+#	fi
+#}
 
-CHECK_DISTRO() {
-	$BLUE
-	echo "Checking Distro.."
-	$NOCOL
-	cat /etc/*-release /etc/issue > "$RDIR/distrocheck"
-	if grep -qi "debian\|ubuntu" "$RDIR/distrocheck"; then
-		REP=APT
-	elif grep -qi "centos\|rocky\|red hat" "$RDIR/distrocheck"; then
-		REP=YUM
-	fi
-	rm $RDIR/distrocheck
-	# Not support message
-	if [ -z "$REP" ]; then
-		$RED
-		echo -e
-		echo "--------------------------------------------------------------"
-		echo -e "Repository could not be detected.\nThis distro is not supported",
-		echo "--------------------------------------------------------------"
-		echo -e
-		$NOCOL
-		exit 1
-	fi
-}
+#CHECK_DISTRO(){
+#        $BLUE
+#        echo "Checking Distro.."
+#        $NOCOL
+#        if grep -qi "debian\|ubuntu" /etc/*-release; then
+#                REP=APT
+#        elif grep -qi "centos\|rocky\|red hat\|alma\|fedora" /etc/*-release; then
+#                REP=YUM
+#        elif grep -qi "arch" /etc/*-release; then
+#                REP=PACMAN
+#        elif grep -qi "suse" /etc/*-release; then
+#                REP=ZYPPER
+#        else
+#                REP=""
+#        fi
+#
+#        if [[ "$REP" != "APT" && "$REP" != "YUM" ]]; then
+#                $RED
+#                echo "--------------------------------------------------------------"
+#                echo -e "Repository could not be detected.\nThis distro is not supported"
+#                echo "--------------------------------------------------------------"
+#                $NOCOL
+#                exit 1
+#       fi
+#}
 
-CHECK_UPDATE() {
-	$BLUE
-	echo "Checking for Updates"
-	$NOCOL
-	if [ "$REP" = "APT" ]; then
-		UPDATE_OUTPUT=$(apt update 2>&1)
-		if echo "$UPDATE_OUTPUT" | grep -qE "(Failed to fetch|Temporary failure resolving|Could not resolve|Some index files failed to download)"; then
-			UPDATE_COUNT="Some errors occurred during apt update. Please check internet or repository access."
-		else
-			UPDATE_COUNT=$(apt list --upgradable 2>&1 | grep -v "Listing" | wc -l)
-		fi
-	fi
-	if [ "$REP" = "YUM" ]; then
-		UPDATE_OUTPUT=$(yum update -y 2>&1)
-		if echo "$UPDATE_OUTPUT" | grep -qE "(Failed to download|Could not resolve host|Temporary failure in name resolution|No more mirrors to try)"; then
-			UPDATE_COUNT="Some errors occurred during yum update. Please check internet or repository access."
-		else
-			UPDATE_COUNT=$(echo N | yum update | grep "Upgrade" | awk '{print $2}')
-			INSTALL_COUNT=$(echo N | yum update | grep "Install" | grep -v "Installing"| awk '{print $2}')
-			UPDATE_COUNT=$(expr $UPDATE_COUNT + $INSTALL_COUNT)
-		fi
-	fi
-}
+#CHECK_UPDATE() {
+#	$BLUE
+#	echo "Checking for Updates"
+#	$NOCOL
+#	if [ "$REP" = "APT" ]; then
+#		UPDATE_OUTPUT=$(apt update 2>&1)
+#		if echo "$UPDATE_OUTPUT" | grep -qE "(Failed to fetch|Temporary failure resolving|Could not resolve|Some index files failed to download)"; then
+#			UPDATE_COUNT="Some errors occurred during apt update. Please check internet or repository access."
+#		else
+#			UPDATE_COUNT=$(apt list --upgradable 2>&1 | grep -v "Listing" | wc -l)
+#		fi
+#	fi
+#	if [ "$REP" = "YUM" ]; then
+#		UPDATE_OUTPUT=$(yum update -y 2>&1)
+#		if echo "$UPDATE_OUTPUT" | grep -qE "(Failed to download|Could not resolve host|Temporary failure in name resolution|No more mirrors to try)"; then
+#			UPDATE_COUNT="Some errors occurred during yum update. Please check internet or repository access."
+#		else
+#			UPDATE_COUNT=$(echo N | yum update | grep "Upgrade" | awk '{print $2}')
+#			INSTALL_COUNT=$(echo N | yum update | grep "Install" | grep -v "Installing"| awk '{print $2}')
+#			UPDATE_COUNT=$(expr $UPDATE_COUNT + $INSTALL_COUNT)
+#		fi
+#	fi
+#}
 
 SYSTEM_REPORT() {
 	if [ -d "$RDIR" ]; then
@@ -1421,12 +1443,20 @@ REPORT_REMOTEHOST() {
 
 REPORT_LOCALHOST() {
 	clear
+	echo -e
+	CHECK_RUNROOT
+	CHECK_PACKAGE
+	CHECK_ROLES
+	CHECK_DISTRO
+	CHECK_UPDATE
+	###clear
+	echo "Other Functions"
 	if [ -d "$RDIR" ]; then
 		rm -r $RDIR
 	fi
 	mkdir -p $RDIR
-	CHECK_DISTRO
-	CHECK_UPDATE
+	###CHECK_DISTRO
+	###CHECK_UPDATE
 	SYSTEM_REPORT
 	CHECK_QUOTA
 	LVM_CRYPT
