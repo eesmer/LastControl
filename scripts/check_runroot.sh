@@ -5,7 +5,7 @@
 # This script checks if it is run as the root user
 #---------------------------------------------
 
-source /root/LastControl/scripts/common.sh
+source ./common.sh
 
 CHECK_RUNROOT() {
     $GREEN
