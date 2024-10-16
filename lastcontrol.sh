@@ -1158,6 +1158,12 @@ EOF
 		echo "Docker service not detected. But the system is listening on docker ports." >> "$RDIR/$HOST_NAME-allreports.txt"
 	fi
 
+	if [[ $LVM_USAGE == PASS ]]; then
+		cat $LVMINFO >> "$RDIR/$HOST_NAME-allreports.txt"
+		echo -e >> "$RDIR/$HOST_NAME-allreports.txt" 
+		rm $LVMINFO
+	fi
+
 	echo "| CRON JOB LIST" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	cat $CRONLIST >> $RDIR/$HOST_NAME-allreports.txt
