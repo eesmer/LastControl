@@ -15,6 +15,7 @@ if [[ -d "./scripts" ]]; then
 	source "./scripts/check_roles.sh"
 	source "./scripts/check_hardware.sh"
 	source "./scripts/check_lvm.sh"
+	source "./scripts/check_encryptdisk.sh"
 else
 	RED="tput setaf 9"
 	NOCOL="tput sgr0"
@@ -1017,7 +1018,7 @@ $HOST_NAME LastControl All Controls Report $DATE
 |Out of Memory Logs  |$OOM_LOGS
 --------------------------------------------------------------------------------------------------------------------------
 |Disk Quota Usage    |Install: $QUOTA_INSTALL | Usr_Quota: $USR_QUOTA | Grp_Quota: $GRP_QUOTA | Mount: $MNT_QUOTA
-|Disk Encrypt Usage  |Install: $CRYPT_INSTALL | Usage: $CRYPT_USAGE
+|Disk Encrypt Usage  |$ENCRYPT_USAGE
 |LVM Usage           |$LVM_USAGE
 --------------------------------------------------------------------------------------------------------------------------
 | Update Count       |$UPDATE_COUNT
@@ -1162,6 +1163,12 @@ EOF
 		cat $LVMINFO >> "$RDIR/$HOST_NAME-allreports.txt"
 		echo -e >> "$RDIR/$HOST_NAME-allreports.txt" 
 		rm $LVMINFO
+	fi
+	
+	if [[ $ENCRYPT_USAGE == PASS ]]; then
+		cat $ENCRYPTINFO >> "$RDIR/$HOST_NAME-allreports.txt"
+		echo -e >> "$RDIR/$HOST_NAME-allreports.txt" 
+		rm $ENCRYPTINFO
 	fi
 
 	echo "| CRON JOB LIST" >> $RDIR/$HOST_NAME-allreports.txt
