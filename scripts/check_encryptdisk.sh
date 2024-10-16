@@ -5,7 +5,7 @@
 # This script checks the encrypted disk for LUKS
 #-------------------------------------------------
 
-ENCRYPT_DISK() {
+CHECK_ENCRYPTDISK() {
 	ENCRYPTED_DISK=$(lsblk -o NAME,FSTYPE | grep "crypto_LUKS")
 	ENCRYPT_USAGE=FAIL
 	if [[ -n $ENCRYPTED_DISK ]]; then
