@@ -149,25 +149,6 @@ CHECK_QUOTA() {
 	fi
 }
 
-#LVM_CRYPT() {
-#	$BLUE
-#        echo "Checking LVM Configuration"
-#        $NOCOL
-#	if lsblk --output type | grep -qw "lvm"; then
-#		LVM_USAGE=Pass
-#	else
-#		LVM_USAGE=Fail
-#	fi
-#	
-#	if command -v cryptsetup &> /dev/null && lsblk --output type | grep -qw "crypt"; then
-#		CRYPT_INSTALL=Pass
-#		CRYPT_USAGE=Pass
-#	else
-#		CRYPT_INSTALL=Fail
-#		CRYPT_USAGE=Fail
-#	fi
-#}
-
 SYSLOG_INFO() {
 	$BLUE
         echo "Checking SYSLOG Configuration"
@@ -1359,7 +1340,6 @@ REPORT_LOCALHOST() {
 	CHECK_LVM
 	SYSTEM_REPORT
 	CHECK_QUOTA
-	#LVM_CRYPT
 	SYSLOG_INFO
 	MEMORY_INFO
 	USER_LIST
