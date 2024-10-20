@@ -129,27 +129,6 @@ SYSTEM_REPORT() {
 	{ env | grep -q "http_proxy"; } || { grep -q -e "export http" /etc/profile /etc/profile.d/*; } && HTTP_PROXY_USAGE=TRUE
 }
 
-#CHECK_QUOTA() {
-#	$BLUE
-#        echo "Checking Disk Quota Configuration"
-#        $NOCOL
-#	if command -v quotacheck &> /dev/null; then
-#		QUOTA_INSTALL=Pass
-#	else
-#		QUOTA_INSTALL=Fail
-#	fi
-#	
-#	if grep -q -E 'usrquota|grpquota' /proc/mounts; then
-#		USR_QUOTA=Pass
-#		GRP_QUOTA=Pass
-#		MNT_QUOTA=Pass
-#	else
-#		USR_QUOTA=Fail
-#		GRP_QUOTA=Fail
-#		MNT_QUOTA=Fail
-#	fi
-#}
-
 SYSLOG_INFO() {
 	$BLUE
         echo "Checking SYSLOG Configuration"
