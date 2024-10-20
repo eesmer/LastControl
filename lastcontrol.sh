@@ -670,7 +670,7 @@ LAST_INSTALL() {
 }
 
 ABOUT_HOST() {
-	$BLUE
+	$GREEN
         echo "Generating About of Host Message"
 	echo -e
         $NOCOL
