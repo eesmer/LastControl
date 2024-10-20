@@ -15,7 +15,7 @@ if [[ -d "./scripts" ]]; then
 	source "./scripts/check_roles.sh"
 	source "./scripts/check_hardware.sh"
 	source "./scripts/check_lvm.sh"
-	source "./scripts/check_encryptdisk.sh"
+	source "./scripts/check_quota.sh"
 else
 	RED="tput setaf 9"
 	NOCOL="tput sgr0"
@@ -129,26 +129,26 @@ SYSTEM_REPORT() {
 	{ env | grep -q "http_proxy"; } || { grep -q -e "export http" /etc/profile /etc/profile.d/*; } && HTTP_PROXY_USAGE=TRUE
 }
 
-CHECK_QUOTA() {
-	$BLUE
-        echo "Checking Disk Quota Configuration"
-        $NOCOL
-	if command -v quotacheck &> /dev/null; then
-		QUOTA_INSTALL=Pass
-	else
-		QUOTA_INSTALL=Fail
-	fi
-	
-	if grep -q -E 'usrquota|grpquota' /proc/mounts; then
-		USR_QUOTA=Pass
-		GRP_QUOTA=Pass
-		MNT_QUOTA=Pass
-	else
-		USR_QUOTA=Fail
-		GRP_QUOTA=Fail
-		MNT_QUOTA=Fail
-	fi
-}
+#CHECK_QUOTA() {
+#	$BLUE
+#        echo "Checking Disk Quota Configuration"
+#        $NOCOL
+#	if command -v quotacheck &> /dev/null; then
+#		QUOTA_INSTALL=Pass
+#	else
+#		QUOTA_INSTALL=Fail
+#	fi
+#	
+#	if grep -q -E 'usrquota|grpquota' /proc/mounts; then
+#		USR_QUOTA=Pass
+#		GRP_QUOTA=Pass
+#		MNT_QUOTA=Pass
+#	else
+#		USR_QUOTA=Fail
+#		GRP_QUOTA=Fail
+#		MNT_QUOTA=Fail
+#	fi
+#}
 
 SYSLOG_INFO() {
 	$BLUE
@@ -1017,8 +1017,8 @@ $HOST_NAME LastControl All Controls Report $DATE
 |Disk Usage          |$DISK_USAGE
 |Out of Memory Logs  |$OOM_LOGS
 --------------------------------------------------------------------------------------------------------------------------
-|Disk Quota Usage    |Install: $QUOTA_INSTALL | Usr_Quota: $USR_QUOTA | Grp_Quota: $GRP_QUOTA | Mount: $MNT_QUOTA
-|Disk Encrypt Usage  |$ENCRYPT_USAGE
+|Disk Quota Usage    |$QUOTA_USAGE - NonQuotaDisk: $NONQUOTA_DISK
+|Disk Encrypt Usage  |Install: $CRYPT_INSTALL | Usage: $CRYPT_USAGE
 |LVM Usage           |$LVM_USAGE
 --------------------------------------------------------------------------------------------------------------------------
 | Update Count       |$UPDATE_COUNT
@@ -1159,18 +1159,6 @@ EOF
 		echo "Docker service not detected. But the system is listening on docker ports." >> "$RDIR/$HOST_NAME-allreports.txt"
 	fi
 
-	if [[ $LVM_USAGE == PASS ]]; then
-		cat $LVMINFO >> "$RDIR/$HOST_NAME-allreports.txt"
-		echo -e >> "$RDIR/$HOST_NAME-allreports.txt" 
-		rm $LVMINFO
-	fi
-	
-	if [[ $ENCRYPT_USAGE == PASS ]]; then
-		cat $ENCRYPTINFO >> "$RDIR/$HOST_NAME-allreports.txt"
-		echo -e >> "$RDIR/$HOST_NAME-allreports.txt" 
-		rm $ENCRYPTINFO
-	fi
-
 	echo "| CRON JOB LIST" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	cat $CRONLIST >> $RDIR/$HOST_NAME-allreports.txt
@@ -1190,6 +1178,13 @@ EOF
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "" >> $RDIR/$HOST_NAME-allreports.txt
 	
+	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "| DISK QUOTA INFORMATION" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	cat $QUOTAREPORT >> $RDIR/$HOST_NAME-allreports.txt
+	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
+	echo "" >> $RDIR/$HOST_NAME-allreports.txt
+
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "| LAST INSTALLED PACKAGES" >> $RDIR/$HOST_NAME-allreports.txt
 	echo "--------------------------------------------------------------------------------------------------------------------------" >> $RDIR/$HOST_NAME-allreports.txt
@@ -1351,9 +1346,8 @@ REPORT_LOCALHOST() {
 	CHECK_UPDATE
 	CHECK_HARDWARE
 	CHECK_LVM
-	CHECK_ENCRYPTDISK
-	SYSTEM_REPORT
 	CHECK_QUOTA
+	SYSTEM_REPORT
 	SYSLOG_INFO
 	MEMORY_INFO
 	USER_LIST
