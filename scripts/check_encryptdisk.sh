@@ -6,6 +6,10 @@
 #-------------------------------------------------
 
 CHECK_ENCRYPTDISK() {
+	$BLUE
+        echo "Checking Disk Encrypted Configuration"
+        $NOCOL
+
 	ENCRYPTED_DISK=$(lsblk -o NAME,FSTYPE | grep "crypto_LUKS")
 	ENCRYPT_USAGE=FAIL
 	if [[ -n $ENCRYPTED_DISK ]]; then
