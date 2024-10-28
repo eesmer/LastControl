@@ -16,6 +16,7 @@ if [[ -d "./scripts" ]]; then
 	source "./scripts/check_hardware.sh"
 	source "./scripts/check_lvm.sh"
 	source "./scripts/check_quota.sh"
+	source "./scripts/check_encryptdisk.sh"
 else
 	RED="tput setaf 9"
 	NOCOL="tput sgr0"
@@ -1326,6 +1327,7 @@ REPORT_LOCALHOST() {
 	CHECK_HARDWARE
 	CHECK_LVM
 	CHECK_QUOTA
+	CHECK_ENCRYPTDISK
 	SYSTEM_REPORT
 	SYSLOG_INFO
 	MEMORY_INFO
