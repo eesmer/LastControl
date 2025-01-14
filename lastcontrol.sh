@@ -643,12 +643,12 @@ SUIDGUID_FILE_CHECK() {
 	rm $STICKYBIT_FILE
 
 	SUID_FILE=$(mktemp)
-	find / -perm /2000 &> /dev/null $SUID_FILE
+	find / -perm /4000 &> /dev/null $SUID_FILE
 	SUIDCOUNT=$(wc -l $SUID_FILE | awk {'print $1'})
 	rm $SUID_FILE
 	
 	GUID_FILE=$(mktemp)
-	find / -perm /4000 &> /dev/null > $GUID_FILE
+	find / -perm /2000 &> /dev/null > $GUID_FILE
 	GUIDCOUNT=$(wc -l $GUID_FILE | awk {'print $1'})
 	rm $GUID_FILE
 
