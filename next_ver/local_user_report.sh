@@ -72,3 +72,14 @@ check_user_status() {
         fi
     done
 }
+
+# Login shell control
+check_login_shell() {
+    echo -e "\n${CYAN}--- Login Control---${RESET}"
+    for user in $(getent passwd | awk -F: '{print $1}'); do
+        shell=$(getent passwd "$user" | cut -d: -f7)
+        if [[ "$shell" == "/usr/sbin/nologin" || "$shell" == "/bin/false" ]]; then
+            echo -e "${RED}$user: No login shell${RESET}"
+        fi
+    done
+}
