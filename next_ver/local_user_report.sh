@@ -26,3 +26,18 @@ real_user_details() {
         echo "Bash History Not Found.."
     fi
 }
+
+# System/Service User Accounts
+service_user_details() {
+    username=$1
+    echo -e "\n${RED}--- System/Service User Accounts Details: $username ---${RESET}"
+    # Hesap durumu
+    echo -e "${CYAN}Account Status:${RESET} $(getent passwd "$username" | cut -d: -f7)"
+    # Login durumu
+    shell=$(getent passwd "$username" | cut -d: -f7)
+    if [[ "$shell" == "/usr/sbin/nologin" || "$shell" == "/bin/false" ]]; then
+        echo -e "${RED}Login Status:${RESET} No Login"
+    else
+        echo -e "${GREEN}Login Status:${RESET} Login Allowed"
+    fi
+}
