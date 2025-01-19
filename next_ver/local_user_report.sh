@@ -41,3 +41,10 @@ service_user_details() {
         echo -e "${GREEN}Login Status:${RESET} Login Allowed"
     fi
 }
+
+# SUDO Permissions
+check_sudo_permissions() {
+    username=$1
+    echo -e "\n${CYAN}--- SUDO Permissions for $username ---${RESET}"
+    sudo -lU "$username" 2>/dev/null || echo "No SUDO permissions."
+}
