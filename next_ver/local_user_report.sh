@@ -1,4 +1,9 @@
 #!/bin/bash
+#----------------------------------------------------------------------------------------
+# This script,
+# checks Local User accounts and System/Service user accounts.
+# Produces outputs regarding passwords, activities and authorizations of the accounts.
+#----------------------------------------------------------------------------------------
 
 # User List
 list_users() {
