@@ -83,3 +83,47 @@ check_login_shell() {
         fi
     done
 }
+
+# Main Function
+main() {
+    # Colors
+    RED='\033[0;31m'
+    GREEN='\033[0;32m'
+    YELLOW='\033[0;33m'
+    CYAN='\033[0;36m'
+    RESET='\033[0m'
+
+    # User List
+    list_users
+
+    # User Accounts & Activity
+    echo -e "\n${GREEN}--- User Accounts ---${RESET}"
+    for user in $(getent passwd | awk -F: '{print $1}'); do
+        shell=$(getent passwd "$user" | cut -d: -f7)
+        if [[ "$shell" != "/usr/sbin/nologin" && "$shell" != "/bin/false" ]]; then
+            real_user_details "$user"
+            check_sudo_permissions "$user"
+        fi
+    done
+
+    # System/Service User Accounts
+    echo -e "\n${RED}--- System/Service Accounts ---${RESET}"
+    for user in $(getent passwd | awk -F: '{print $1}'); do
+        shell=$(getent passwd "$user" | cut -d: -f7)
+        if [[ "$shell" == "/usr/sbin/nologin" || "$shell" == "/bin/false" ]]; then
+            service_user_details "$user"
+        fi
+    done
+
+    # Users in sudoers file
+    check_sudoers
+
+    # Real User Status
+    check_user_status
+
+    # Login shell Control
+    check_login_shell
+}
+
+# run script
+main
