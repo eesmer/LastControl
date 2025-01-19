@@ -59,3 +59,16 @@ check_sudoers() {
         fi
     done
 }
+
+# User Password and enable/disable status
+check_user_status() {
+    echo -e "\n${CYAN}--- Local User Account Status ---${RESET}"
+    for user in $(getent passwd | awk -F: '{print $1}'); do
+        shell=$(getent passwd "$user" | cut -d: -f7)
+        # Only Real Users (exclude the system/service users)
+        if [[ "$shell" != "/usr/sbin/nologin" && "$shell" != "/bin/false" ]]; then
+            echo -e "${YELLOW}User:${RESET} $user"
+            chage -l "$user" | grep 'Account expires'
+        fi
+    done
+}
