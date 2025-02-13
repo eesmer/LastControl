@@ -32,4 +32,16 @@ for user in $(getent passwd | awk -F: '{print $1}'); do
     if [ -z "$account_expires" ]; then
         account_expires="Never"
     fi
+    
+    # Create JSON Report File
+    echo "  {" >> "$output_file"
+    echo "    \"username\": \"$user\"," >> "$output_file"
+    echo "    \"shell\": \"$shell\"," >> "$output_file"
+    echo "    \"type\": \"$user_type\"," >> "$output_file"
+    echo "    \"sudo_access\": \"$sudo_access\"," >> "$output_file"
+    echo "    \"account_expires\": \"$account_expires\"" >> "$output_file"
+    echo "  }," >> "$output_file"
+done
 
+sed -i '$ s/,$//' "$output_file"
+echo "]" >> "$output_file"
