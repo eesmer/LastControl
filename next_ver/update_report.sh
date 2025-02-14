@@ -56,3 +56,5 @@ check_updates() {
         exit 1
     fi
 }
+
+check_updates
