@@ -13,3 +13,5 @@ detect_package_manager() {
         echo "UNKNOWN"
     fi
 }
+
+PACKAGE_MANAGER=$(detect_package_manager)
