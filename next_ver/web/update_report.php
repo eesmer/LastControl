@@ -40,3 +40,5 @@ $updates = json_decode($jsonData, true);
         </tbody>
     </table>
 
+</body>
+</html>
