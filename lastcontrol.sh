@@ -30,7 +30,7 @@ fi
 HOSTNAME=$(cat /etc/hostname)
 INTERNALIP=$(hostname -I | cut -d " " -f1)
 EXTERNALIP=$(curl -4 icanhazip.com 2>/dev/null)
-CPU=$(awk -F ':' '/model name/ {print $2}' /proc/cpuinfo | head -n 1 | xargs)
+GCPU=$(awk -F ':' '/model name/ {print $2}' /proc/cpuinfo | head -n 1 | xargs)
 RAM=$(free -m | awk 'NR==2{print $2 " MB"}')
 DISK_LIST=$(lsblk -o NAME,SIZE -d -e 11,2 | tail -n +2 | grep -v "loop")
 GPU_INFO=$(lspci | grep -i vga | cut -d ':' -f3)
@@ -112,3 +112,5 @@ done <<< "$DISK_LIST" >> $report
 echo "GPU               : $GPU_INFO - $GPU_RAM" >> $report
 echo "Wireless          : $WIRELESS_ADAPTER" >> $report
 echo "Internet Conn.    : $INTERNET" >> $report
+
+echo -e >> $report
