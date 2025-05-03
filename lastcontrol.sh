@@ -26,3 +26,30 @@ if [[ "$SERVICEMAN" != "Systemd" ]]; then
     echo "ERROR: Systemd Not Use"
     exit 1
 fi
+
+HOSTNAME=$(cat /etc/hostname)
+INTERNALIP=$(hostname -I | cut -d " " -f1)
+EXTERNALIP=$(curl -4 icanhazip.com 2>/dev/null)
+CPU=$(awk -F ':' '/model name/ {print $2}' /proc/cpuinfo | head -n 1 | xargs)
+RAM=$(free -m | awk 'NR==2{print $2 " MB"}')
+DISK_LIST=$(lsblk -o NAME,SIZE -d -e 11,2 | tail -n +2 | grep -v "loop")
+GPU_INFO=$(lspci | grep -i vga | cut -d ':' -f3)
+GPU_RAM=$(lspci -v | awk '/ prefetchable/{print $6}' | head -n 1)
+WIRELESS=$(ip link show | grep -q "wl")
+        if [[ -z $WIRELESS ]]; then
+                lspci | grep -i "network" | grep -E -i "wireless|wi[-]?fi"
+        fi
+        if [[ ! -z $WIRELESS ]]; then WIRELESS_ADAPTER="Wireless Adapter Found"; else WIRELESS_ADAPTER="Wireless Adapter Not Found"; fi
+        lspci | grep -i "network" | grep -E -i "wireless|wi[-]?fi"
+ping -c 1 google.com &> /dev/null && INTERNET="CONNECTED" || INTERNET="DISCONNECTED"
+DISTRO=$(grep PRETTY_NAME /etc/os-release | cut -d '"' -f2)
+KERNEL=$(uname -sr)
+UPTIME=$(uptime | xargs) && UPTIME_MIN=$(awk '{print "up", $1/60, "minutes"}' /proc/uptime)
+LAST_BOOT=$(uptime -s)
+VIRT_CONTROL=NONE
+[ -e "/dev/kvm" ] && VIRT_CONTROL=ON
+LOCAL_DATE=$(timedatectl status | awk '/Local time:/ {print $3,$4,$5}')
+TIME_SYNC=$(timedatectl status | awk '/synchronized:/ {print $4}')
+TIME_ZONE=$(timedatectl status | awk -F ': ' '/Time zone:/ {print $2}')
+HTTP_PROXY_USAGE=FALSE
+{ env | grep -q "http_proxy"; } || { grep -q -e "export http" /etc/profile /etc/profile.d/*; } && HTTP_PROXY_USAGE=TRUE
