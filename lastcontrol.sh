@@ -160,3 +160,13 @@ if echo "$SERVICES" | grep -qE "vsftpd\.service|proftpd\.service|pure-ftpd\.serv
 elif echo "$LISTENING_PORTS" | grep -qE "^21$"; then
     ROLES+=("FTPService(21)")
 fi
+# Docker Host
+if echo "$SERVICES" | grep -qE "docker\.service"; then
+    ROLES+=("DockerHost(Service)")
+elif echo "$LISTENING_PORTS" | grep -qE "^2375$|^2376$"; then
+    ROLES+=("DockerService(Port)")
+fi
+if [ ${#ROLES[@]} -eq 0 ]; then
+    ROLES+=("No Role Detected")
+fi
+echo "${ROLES[@]}" | tr ' ' '\n' | sed 's/^/Role: /' >> "$report"
