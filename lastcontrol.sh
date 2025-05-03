@@ -133,3 +133,12 @@ echo "LVM Usage         : $LVM_USAGE" >> $report
 echo "Disk Encrypt      : $CRYPT_USAGE" >> $report
 
 echo -e >> $report
+
+echo "=== Roles ===" >> $report
+ROLES=()
+SERVICES=$(systemctl list-units --type=service --state=running --no-pager --no-legend | awk '{print $1}')
+LISTENING_PORTS=$(netstat -tuln | awk '/LISTEN/ {print $4}' | awk -F':' '{print $NF}')
+# Web Server
+if echo "$SERVICES" | grep -qE "nginx\.service|apache2\.service"; then
+        ROLES+=("WebServer")
+fi
