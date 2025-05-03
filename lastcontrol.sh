@@ -53,3 +53,9 @@ TIME_SYNC=$(timedatectl status | awk '/synchronized:/ {print $4}')
 TIME_ZONE=$(timedatectl status | awk -F ': ' '/Time zone:/ {print $2}')
 HTTP_PROXY_USAGE=FALSE
 { env | grep -q "http_proxy"; } || { grep -q -e "export http" /etc/profile /etc/profile.d/*; } && HTTP_PROXY_USAGE=TRUE
+
+# Out of Memory
+OOM=0
+grep -i -r 'out of memory' /var/log/ &>/dev/null && OOM=1
+OOM_LOGS="None"
+if [ "$OOM" = "1" ]; then OOM_LOGS="Out of Memory Log Found !!"; fi
