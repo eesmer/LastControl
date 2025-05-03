@@ -114,3 +114,12 @@ echo "Wireless          : $WIRELESS_ADAPTER" >> $report
 echo "Internet Conn.    : $INTERNET" >> $report
 
 echo -e >> $report
+
+echo "=== System Information ===" >> $report
+echo "Operation Systems : $DISTRO" >> $report
+echo "Kernel            : $KERNEL" >> $report
+echo "Uptime            : $UPTIME" >> $report
+echo "Last Boot         : $LAST_BOOT" >> $report
+echo "Virtualization    : $VIRT_CONTROL" >> $report
+echo "Date/Time Sync.   : $LOCAL_DATE - Sync:$TIME_SYNC" >> $report
+echo "Timezone          : $TIME_ZINE" >> $report
