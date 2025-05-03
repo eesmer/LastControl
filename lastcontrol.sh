@@ -89,3 +89,12 @@ else
         CRYPT_INSTALL=Fail
         CRYPT_USAGE=Fail
 fi
+
+echo "=== LastControl Report ===" > $report
+echo "-----------------------------------" >> $report
+echo "Hostname        : $HOSTNAME" >> $report
+echo "IP Address      : $INTERNALIP - $EXTERNALIP" >> $report
+echo "Distro          : $DISTRO" >> $report
+echo "Service Manager : $SERVICEMAN" >> $report
+echo "-----------------------------------" >> $report
+echo -e >> $report
