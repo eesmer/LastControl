@@ -142,3 +142,9 @@ LISTENING_PORTS=$(netstat -tuln | awk '/LISTEN/ {print $4}' | awk -F':' '{print 
 if echo "$SERVICES" | grep -qE "nginx\.service|apache2\.service"; then
         ROLES+=("WebServer")
 fi
+# Database Server
+if echo "$SERVICES" | grep -qE "mysql\.service|postgresql\.service|mariadb\.service"; then
+        ROLES+=("DatabaseServer(Service)")
+elif echo "$LISTENING_PORTS" | grep -qE "^3306$|^5432$"; then
+        ROLES+=("DatabaseService(3306,5432)")
+fi
