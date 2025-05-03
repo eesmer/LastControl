@@ -98,3 +98,17 @@ echo "Distro          : $DISTRO" >> $report
 echo "Service Manager : $SERVICEMAN" >> $report
 echo "-----------------------------------" >> $report
 echo -e >> $report
+
+echo "=== Hardware Inventory ===" >> $report
+echo "Name              : $HOSTNAME" >> $report
+echo "CPU               : $CPU" >> $report
+echo "RAM               : $RAM" >> $report
+while read -r line; do
+    DISK_NAME=$(echo $line | awk '{print $1}')
+    DISK_SIZE=$(echo $line | awk '{print $2}')
+    echo "DISK: $DISK_NAME"
+    echo "SIZE: $DISK_SIZE"
+done <<< "$DISK_LIST" >> $report
+echo "GPU               : $GPU_INFO - $GPU_RAM" >> $report
+echo "Wireless          : $WIRELESS_ADAPTER" >> $report
+echo "Internet Conn.    : $INTERNET" >> $report
