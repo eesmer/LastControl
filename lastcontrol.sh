@@ -154,3 +154,9 @@ if echo "$SERVICES" | grep -qE "ssh\.service"; then
 elif echo "$LISTENING_PORTS" | grep -qE "^22$"; then
     ROLES+=("SSHService(22)")
 fi
+ FTP Server
+if echo "$SERVICES" | grep -qE "vsftpd\.service|proftpd\.service|pure-ftpd\.service"; then
+    ROLES+=("FTPServer(Service)")
+elif echo "$LISTENING_PORTS" | grep -qE "^21$"; then
+    ROLES+=("FTPService(21)")
+fi
