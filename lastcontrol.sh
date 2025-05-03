@@ -17,3 +17,12 @@ else
     SERVICEMAN="Unknown"
 fi
 
+SUPPORTED_OS=("ubuntu" "debian" "centos" "rhel" "rocky" "suse")
+if [[ ! " ${SUPPORTED_OS[*]} " =~ " ${DISTRO} " ]]; then
+    echo "ERROR: '$DISTRO' OS/Distro Not Support"
+    exit 1
+fi
+if [[ "$SERVICEMAN" != "Systemd" ]]; then
+    echo "ERROR: Systemd Not Use"
+    exit 1
+fi
