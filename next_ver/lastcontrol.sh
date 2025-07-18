@@ -97,3 +97,25 @@ else
         CRYPT_INSTALL=Fail
         CRYPT_USAGE=Fail
 fi
+
+echo "=== LastControl Report ===" > $report
+echo "-----------------------------------" >> $report
+echo "Hostname        : $HOSTNAME" >> $report
+echo "IP Address      : $INTERNALIP - $EXTERNALIP" >> $report
+echo "Distro          : $DISTRO" >> $report
+echo "Service Manager : $SERVICEMAN" >> $report
+echo "-----------------------------------" >> $report
+echo "=== Hardware Inventory ===" >> $report
+echo "-----------------------------------" >> $report
+echo "Name              : $HOSTNAME" >> $report
+echo "CPU               : $CPU" >> $report
+echo "RAM               : $RAM" >> $report
+while read -r line; do
+    DISK_NAME=$(echo $line | awk '{print $1}')
+    DISK_SIZE=$(echo $line | awk '{print $2}')
+    echo "DISK: $DISK_NAME"
+    echo "SIZE: $DISK_SIZE"
+done <<< "$DISK_LIST" >> $report
+echo "GPU               : $GPU_INFO - $GPU_RAM" >> $report
+echo "Wireless          : $WIRELESS_ADAPTER" >> $report
+echo "Internet Conn.    : $INTERNET" >> $report
