@@ -119,3 +119,33 @@ done <<< "$DISK_LIST" >> $report
 echo "GPU               : $GPU_INFO - $GPU_RAM" >> $report
 echo "Wireless          : $WIRELESS_ADAPTER" >> $report
 echo "Internet Conn.    : $INTERNET" >> $report
+echo "-----------------------------------" >> $report
+echo "=== System Information ===" >> $report
+echo "-----------------------------------" >> $report
+echo "Operation Systems : $DISTRO" >> $report
+echo "Kernel            : $KERNEL" >> $report
+echo "Uptime            : $UPTIME" >> $report
+echo "Last Boot         : $LAST_BOOT" >> $report
+echo "Virtualization    : $VIRT_CONTROL" >> $report
+echo "Date/Time Sync.   : $LOCAL_DATE - Sync:$TIME_SYNC" >> $report
+echo "Timezone          : $TIME_ZINE" >> $report
+echo "Proxy Usage       : $HTTP_PROXY_USAGE" >> $report
+echo "Out of Memory Log : $OOM_LOGS" >> $report
+echo "Disk Quota        : $QUOTA_INSTALL" >> $report
+echo "User Quota        : $USR_QUOTA" >> $report
+echo "Group Quota       : $GRP_QUOTA" >> $report
+echo "Mount Quota       : $MNT_QUOTA" >> $report
+echo "LVM Usage         : $LVM_USAGE" >> $report
+echo "Disk Encrypt      : $CRYPT_USAGE" >> $report
+echo "-----------------------------------" >> $report
+echo "=== /home Directory Usage ===" >> $report
+echo "-----------------------------------" >> $report
+du -sh /home/* | sort -h >> $report
+echo "-----------------------------------" >> $report
+echo "=== Find Files ===" >> $report
+echo "-----------------------------------" >> $report
+find /home -type f | sed 's/.*\.//' | sort | uniq -c | sort -nr | head -10 >> $report
+echo "-----------------------------------" >> $report
+echo "=== Last Logins ===" >> $report
+echo "-----------------------------------" >> $report
+last -n 10 >> $report
