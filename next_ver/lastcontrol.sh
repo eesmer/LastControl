@@ -83,3 +83,17 @@ else
         GRP_QUOTA=Fail
         MNT_QUOTA=Fail
 fi
+
+# LVM CRYPT Check
+if lsblk --output type | grep -qw "lvm"; then
+        LVM_USAGE=Pass
+else
+        LVM_USAGE=Fail
+fi
+if command -v cryptsetup &> /dev/null && lsblk --output type | grep -qw "crypt"; then
+        CRYPT_INSTALL=Pass
+        CRYPT_USAGE=Pass
+else
+        CRYPT_INSTALL=Fail
+        CRYPT_USAGE=Fail
+fi
