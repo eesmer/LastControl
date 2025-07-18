@@ -156,3 +156,38 @@ zgrep " install " /var/log/dpkg.log* | tail -n 10 | awk '{print $1, $2, $4}' >> 
 echo "-----------------------------------" >> $report
 echo "=== Roles & Services ===" >> $report
 echo "-----------------------------------" >> $report
+ROLES=()
+SERVICES=$(systemctl list-units --type=service --state=running --no-pager --no-legend | awk '{print $1}')
+LISTENING_PORTS=$(netstat -tuln | awk '/LISTEN/ {print $4}' | awk -F':' '{print $NF}')
+# Web Server
+if echo "$SERVICES" | grep -qE "nginx\.service|apache2\.service"; then
+        ROLES+=("WebServer")
+fi
+# Database Server
+if echo "$SERVICES" | grep -qE "mysql\.service|postgresql\.service|mariadb\.service"; then
+        ROLES+=("DatabaseServer(Service)")
+elif echo "$LISTENING_PORTS" | grep -qE "^3306$|^5432$"; then
+        ROLES+=("DatabaseService(3306,5432)")
+fi
+# SSH Server
+if echo "$SERVICES" | grep -qE "ssh\.service"; then
+    ROLES+=("SSHServer(Service)")
+elif echo "$LISTENING_PORTS" | grep -qE "^22$"; then
+    ROLES+=("SSHService(22)")
+fi
+# FTP Server
+if echo "$SERVICES" | grep -qE "vsftpd\.service|proftpd\.service|pure-ftpd\.service"; then
+    ROLES+=("FTPServer(Service)")
+elif echo "$LISTENING_PORTS" | grep -qE "^21$"; then
+    ROLES+=("FTPService(21)")
+fi
+# Docker Host
+if echo "$SERVICES" | grep -qE "docker\.service"; then
+    ROLES+=("DockerHost(Service)")
+elif echo "$LISTENING_PORTS" | grep -qE "^2375$|^2376$"; then
+    ROLES+=("DockerService(Port)")
+fi
+if [ ${#ROLES[@]} -eq 0 ]; then
+    ROLES+=("No Role Detected")
+fi
+echo "${ROLES[@]}" | tr ' ' '\n' | sed 's/^/Role: /' >> "$report"
