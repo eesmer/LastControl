@@ -149,3 +149,10 @@ echo "-----------------------------------" >> $report
 echo "=== Last Logins ===" >> $report
 echo "-----------------------------------" >> $report
 last -n 10 >> $report
+echo "-----------------------------------" >> $report
+echo "=== Last Installs ===" >> $report
+echo "-----------------------------------" >> $report
+zgrep " install " /var/log/dpkg.log* | tail -n 10 | awk '{print $1, $2, $4}' >> $report
+echo "-----------------------------------" >> $report
+echo "=== Roles & Services ===" >> $report
+echo "-----------------------------------" >> $report
