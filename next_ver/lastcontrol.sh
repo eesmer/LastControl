@@ -67,3 +67,19 @@ OOM=0
 grep -i -r 'out of memory' /var/log/ &>/dev/null && OOM=1
 OOM_LOGS="None"
 if [ "$OOM" = "1" ]; then OOM_LOGS="Out of Memory Log Found !!"; fi
+
+# Quota Check
+if command -v quotacheck &> /dev/null; then
+        QUOTA_INSTALL=Pass
+else
+        QUOTA_INSTALL=Fail
+fi
+if grep -q -E 'usrquota|grpquota' /proc/mounts; then
+        USR_QUOTA=Pass
+        GRP_QUOTA=Pass
+        MNT_QUOTA=Pass
+else
+        USR_QUOTA=Fail
+        GRP_QUOTA=Fail
+        MNT_QUOTA=Fail
+fi
