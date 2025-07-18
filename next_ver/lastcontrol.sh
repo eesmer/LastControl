@@ -191,3 +191,9 @@ if [ ${#ROLES[@]} -eq 0 ]; then
     ROLES+=("No Role Detected")
 fi
 echo "${ROLES[@]}" | tr ' ' '\n' | sed 's/^/Role: /' >> "$report"
+
+echo "-----------------------------------" >> $report
+echo -e >> $report
+echo "=== Internet Usage ===" >> $report
+echo "-----------------------------------" >> $report
+vnstat >> $report
