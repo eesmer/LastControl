@@ -1,5 +1,6 @@
-![alt text](doc/images/lastcontrol_logo-r1.png "LastControl")
-<br>
+![LastControl](https://img.shields.io/badge/LastControl-System%20Audit%20%26%20Reporting-1e3a8a?style=for-the-badge&logo=linux&logoColor=white&labelColor=0f172a&color=1e3a8a)
+
+---
 
 LastControl performs hardening and health checks on Linux systems. <br>
 It generates summary and detailed reports. <br>
