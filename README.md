@@ -10,6 +10,11 @@
 ![Agents](https://img.shields.io/badge/agents-124-1e3a8a?style=for-the-badge)
 ![Status](https://img.shields.io/badge/status-OK-22c55e?style=for-the-badge)
 
+![LastControl](https://img.shields.io/badge/LastControl-Linux%20System%20Reporter-1e3a8a?style=for-the-badge&logo=linux&logoColor=green&labelColor=0f172a&color=darkblue) <br>
+![Version](https://img.shields.io/badge/version-0.1.0-1e3a8a?style=flat-square)
+![License](https://img.shields.io/badge/license-GPL--2.0-1e3a8a?style=flat-square)
+![Platform](https://img.shields.io/badge/platform-Linux-1e3a8a?style=flat-square)
+
 ---
 
 LastControl performs hardening and health checks on Linux systems. <br>
