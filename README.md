@@ -3,6 +3,12 @@
 <br>
 ![Version](https://img.shields.io/badge/version-3-1e3a8a?style=for-the-badge&labelColor=0f172a&color=gray)
 ![License](https://img.shields.io/badge/license-GPL--2.0-1e3a8a?style=for-the-badge&labelColor=0f172a&color=gray)
+<br>
+![Type](https://img.shields.io/badge/type-System%20Audit%20Tool-1e3a8a?style=for-the-badge&labelColor=0f172a&color=1e3a8a)
+![Security](https://img.shields.io/badge/security-Audit%20%26%20Compliance-1e3a8a?style=for-the-badge&labelColor=0f172a&color=1e3a8a)
+<br>
+![Agents](https://img.shields.io/badge/agents-124-1e3a8a?style=for-the-badge)
+![Status](https://img.shields.io/badge/status-OK-22c55e?style=for-the-badge)
 
 ---
 
