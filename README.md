@@ -1,4 +1,4 @@
-![LastControl](https://img.shields.io/badge/LastControl-System%20Audit%20%26%20Reporting-1e3a8a?style=for-the-badge&logo=linux&logoColor=white&labelColor=0f172a&color=1e3a8a)
+![LastControl](https://img.shields.io/badge/LastControl-Linux%20System%20Reporter-1e3a8a?style=for-the-badge&logo=linux&logoColor=white&labelColor=0f172a&color=1e3a8a)
 
 ---
 
