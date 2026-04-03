@@ -236,3 +236,25 @@ esac
 HANDLER
 chmod +x /usr/local/bin/lastcontrol-handler.sh
 
+# Server Listener Service
+cat > "/etc/systemd/system/lastcontrol-listener.service" <<LCSSERVICE
+[Unit]
+Description=LastControl Listener
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/socat -T 30 OPENSSL-LISTEN:${PORT},reuseaddr,fork,verify=1,cafile=/etc/lastcontrol/certs/ca.crt,cert=/etc/lastcontrol/certs/server.crt,key=/etc/lastcontrol/certs/server.key EXEC:/usr/local/bin/lastcontrol-handler.sh
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target
+LCSSERVICE
+systemctl daemon-reload
+systemctl enable --now lastcontrol-listener.service
+
+echo "--- Installation Complete ---"
+echo "Agent Installer: $AGENT_DIR/agent_installer.sh"
+
