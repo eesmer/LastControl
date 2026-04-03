@@ -31,3 +31,13 @@ openssl x509 -req -in $CERT_DIR/client.csr -CA $CERT_DIR/ca.crt -CAkey $CERT_DIR
 cat $CERT_DIR/server.key $CERT_DIR/server.crt > $CERT_DIR/server.pem
 cat $CERT_DIR/client.key $CERT_DIR/client.crt > $CERT_DIR/client.pem
 
+mkdir -p /etc/lastcontrol/
+cp -r "$CERT_DIR" /etc/lastcontrol/
+
+# Server WDIR
+rm -rf "$SERVER_WDIR"
+mkdir -p "$SERVER_WDIR"
+touch "$SERVER_WDIR/readme.md"
+TODAY=$(date)
+echo "InstallDate: $TODAY" > $SERVER_WDIR/readme.md
+
