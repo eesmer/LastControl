@@ -27,3 +27,7 @@ openssl genrsa -out $CERT_DIR/client.key 2048
 openssl req -new -key $CERT_DIR/client.key -out $CERT_DIR/client.csr -subj "/CN=LastControl-Agent"
 openssl x509 -req -in $CERT_DIR/client.csr -CA $CERT_DIR/ca.crt -CAkey $CERT_DIR/ca.key -CAcreateserial -out $CERT_DIR/client.crt -days 3650 -sha256
 
+# Merge PEM for socat packages
+cat $CERT_DIR/server.key $CERT_DIR/server.crt > $CERT_DIR/server.pem
+cat $CERT_DIR/client.key $CERT_DIR/client.crt > $CERT_DIR/client.pem
+
