@@ -77,3 +77,89 @@ CREATE TABLE IF NOT EXISTS inventory (
 );
 EOF
 
+echo "--- Agent Installer Preparing ---"
+AGENT_PAYLOAD=$(tar -czf - -C ./agent_scripts . | base64 -w 0)
+# 4. Agent Installer - Generated Specifically for each installation
+cat <<EOF > $AGENT_DIR/agent_installer.sh
+#!/bin/bash
+# LastControl Agent Installer
+
+# LastControl Server Info
+SERVER_ADDR="$SERVER_IP"
+PORT="$PORT"
+CERTS="/etc/lastcontrol/certs"
+
+# Debian & RHEL
+if [ -f /etc/debian_version ]; then
+    apt-get update && apt-get install -y socat
+elif [ -f /etc/redhat-release ]; then
+    yum install -y epel-release && yum install -y socat
+fi
+
+mkdir -p /usr/local/lastcontrol/scripts
+echo "$AGENT_PAYLOAD" | base64 -d | tar -xzf - -C /usr/local/lastcontrol/scripts/
+chmod +x /usr/local/lastcontrol/scripts/*.sh
+
+mkdir -p /etc/lastcontrol/certs
+echo "$(cat $CERT_DIR/ca.crt)" > /etc/lastcontrol/certs/ca.crt
+echo "$(cat $CERT_DIR/client.pem)" > /etc/lastcontrol/certs/client.pem
+
+cat <<'CERT_EOF' > /etc/lastcontrol/certs/ca.crt
+$(cat $CERT_DIR/ca.crt)
+CERT_EOF
+
+cat <<'CERT_EOF' > /etc/lastcontrol/certs/client.pem
+$(cat $CERT_DIR/client.pem)
+CERT_EOF
+
+# Client Report Script
+cat <<'REPORT' > /usr/local/bin/lastcontrol-report.sh
+#!/bin/bash
+
+SERVER_IP="$SERVER_IP"
+PORT="$PORT"
+
+send_to_server() {
+    # \$1 yaparak Bash'in bunu kurulum anında yorumlamasını engelliyoruz
+    local script_path=\$1
+    if [ -x "\$script_path" ]; then
+        "\$script_path" | /usr/bin/socat -T 10 - OPENSSL:\$SERVER_IP:\$PORT,verify=1,cafile=/etc/lastcontrol/certs/ca.crt,cert=/etc/lastcontrol/certs/client.pem,snihost=0
+    fi
+}
+
+# Send Inventory
+send_to_server "/usr/local/lastcontrol/scripts/inventory.sh"
+
+sleep 3
+
+REPORT
+chmod +x /usr/local/bin/lastcontrol-report.sh
+
+# Systemd Service
+cat <<SERVICE > /etc/systemd/system/lastcontrol.service
+[Unit]
+Description=LastControl System Report Agent
+
+[Service]
+ExecStart=/usr/local/bin/lastcontrol-report.sh
+SERVICE
+
+cat <<TIMER > /etc/systemd/system/lastcontrol.timer
+[Unit]
+Description=Run LastControl Report Randomly between 23:00-05:00
+
+[Timer]
+OnCalendar=*-*-* 23:00:00
+RandomizedDelaySec=21600
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+TIMER
+
+systemctl daemon-reload
+systemctl enable --now lastcontrol.timer
+echo "LastControl Agent was successfully installed"
+EOF
+
+chmod +x $AGENT_DIR/agent_installer.sh
