@@ -41,3 +41,39 @@ touch "$SERVER_WDIR/readme.md"
 TODAY=$(date)
 echo "InstallDate: $TODAY" > $SERVER_WDIR/readme.md
 
+# Create DB
+# Create INVENTORY Table
+sqlite3 $SERVER_WDIR/lastcontrol.db <<EOF
+CREATE TABLE IF NOT EXISTS inventory (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    hostname TEXT,
+    internal_ip TEXT,
+    external_ip TEXT,
+    internet_conn TEXT,
+    cpu_info TEXT,
+    ram_total TEXT,
+    disk_list TEXT,
+    gpu TEXT,
+    wireless TEXT,
+    distro TEXT,
+    kernel TEXT,
+    uptime TEXT,
+    last_boot TEXT,
+    virt_control TEXT,
+    local_date TEXT,
+    time_sync TEXT,
+    time_zone TEXT,
+    bios_vendor TEXT,
+    bios_info TEXT,
+    bios_version TEXT,
+    bios_release_date TEXT,
+    bios_revision TEXT,
+    bios_firmware_revision TEXT,
+    bios_mode TEXT,
+    mainboard TEXT,
+    product_name TEXT,
+    serial_number TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+EOF
+
