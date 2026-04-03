@@ -6,3 +6,24 @@ AGENT_DIR="./dist"
 PORT="4433"
 SERVER_WDIR="/usr/local/lastcontrol"
 
+rm -rf $CERT_DIR $AGENT_DIR
+rm -rf "/etc/lastcontrol"
+mkdir -p $CERT_DIR $AGENT_DIR
+
+echo "--- LastControl: Creating Certificate and Security Infrastructure ---"
+echo "--- LastControl: Installing Required Packages ---"
+apt update
+apt-get -y install socat jq sqlite3
+
+# CA & Certs / Server
+openssl genrsa -out $CERT_DIR/ca.key 4096
+openssl req -x509 -new -nodes -key $CERT_DIR/ca.key -sha256 -days 3650 -out $CERT_DIR/ca.crt -subj "/CN=LastControl-CA"
+openssl genrsa -out $CERT_DIR/server.key 2048
+openssl req -new -key $CERT_DIR/server.key -out $CERT_DIR/server.csr -subj "/CN=$SERVER_IP"
+openssl x509 -req -in $CERT_DIR/server.csr -CA $CERT_DIR/ca.crt -CAkey $CERT_DIR/ca.key -CAcreateserial -out $CERT_DIR/server.crt -days 3650 -sha256
+
+# Certs / Client
+openssl genrsa -out $CERT_DIR/client.key 2048
+openssl req -new -key $CERT_DIR/client.key -out $CERT_DIR/client.csr -subj "/CN=LastControl-Agent"
+openssl x509 -req -in $CERT_DIR/client.csr -CA $CERT_DIR/ca.crt -CAkey $CERT_DIR/ca.key -CAcreateserial -out $CERT_DIR/client.crt -days 3650 -sha256
+
