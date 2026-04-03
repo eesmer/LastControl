@@ -163,3 +163,76 @@ echo "LastControl Agent was successfully installed"
 EOF
 
 chmod +x $AGENT_DIR/agent_installer.sh
+
+cat <<'HANDLER' > /usr/local/bin/lastcontrol-handler.sh
+#!/bin/bash
+# /usr/local/bin/lastcontrol-handler.sh
+
+DB_PATH="/usr/local/lastcontrol/lastcontrol.db"
+ERROR_LOG="/tmp/handler_errors.log"
+
+# Read Data
+RAW_DATA=$(cat | tr -d '\r' | tr -d '[:cntrl:]')
+[ -z "$RAW_DATA" ] && exit 0
+
+# Detect Origin
+ORIGIN=$(echo "$RAW_DATA" | jq -r '.origin // empty')
+
+if [ -z "$ORIGIN" ]; then
+    echo "$(date) - ERROR: Origin info Not Found. Data: $RAW_DATA" >> $ERROR_LOG
+    exit 0
+fi
+
+# DB/Table Record
+case "$ORIGIN" in
+    "inventory")
+        eval $(echo "$RAW_DATA" | jq -r '
+          "HNAME=\(.hostname|@sh); IIP=\(.internal_ip|@sh); EIP=\(.external_ip|@sh);
+           ICONN=\(.internet_conn|@sh); CPU=\(.cpu_info|@sh); RAM=\(.ram_total|@sh);
+           DSK=\(.disk_list|@sh); GPU=\(.gpu|@sh); WRLS=\(.wireless|@sh);
+           DST=\(.distro|@sh); KERN=\(.kernel|@sh); UPT=\(.uptime|@sh);
+           LBOOT=\(.last_boot|@sh); VRT=\(.virt_control|@sh); LDATE=\(.local_date|@sh);
+           TSYNC=\(.time_sync|@sh); TZONE=\(.time_zone|@sh); B_VEND=\(.bios_vendor|@sh);
+           B_INFO=\(.bios_info|@sh); B_VER=\(.bios_version|@sh); B_DATE=\(.bios_release_date|@sh);
+           B_REV=\(.bios_revision|@sh); B_FW=\(.bios_firmware_revision|@sh); B_MODE=\(.bios_mode|@sh);
+           MB=\(.mainboard|@sh); PNAME=\(.product_name|@sh); SN=\(.serial_number|@sh)"')
+
+        H_SQL=$(echo "$HNAME" | sed "s/'/''/g")
+        CPU_SQL=$(echo "$CPU" | sed "s/'/''/g")
+        DSK_SQL=$(echo "$DSK" | sed "s/'/''/g")
+        GPU_SQL=$(echo "$GPU" | sed "s/'/''/g")
+        DST_SQL=$(echo "$DST" | sed "s/'/''/g")
+        MB_SQL=$(echo "$MB" | sed "s/'/''/g")
+        PNAME_SQL=$(echo "$PNAME" | sed "s/'/''/g")
+        SN_SQL=$(echo "$SN" | sed "s/'/''/g")
+
+        /usr/bin/sqlite3 "$DB_PATH" <<EOF
+        INSERT INTO inventory (
+            hostname, internal_ip, external_ip, internet_conn, cpu_info, ram_total,
+            disk_list, gpu, wireless, distro, kernel, uptime, last_boot,
+            virt_control, local_date, time_sync, time_zone, bios_vendor,
+            bios_info, bios_version, bios_release_date, bios_revision,
+            bios_firmware_revision, bios_mode, mainboard, product_name, serial_number
+        ) VALUES (
+            '$H_SQL', '$IIP', '$EIP', '$ICONN', '$CPU_SQL', '$RAM',
+            '$DSK_SQL', '$GPU_SQL', '$WRLS', '$DST_SQL', '$KERN', '$UPT', '$LBOOT',
+            '$VRT', '$LDATE', '$TSYNC', '$TZONE', '$B_VEND',
+            '$B_INFO', '$B_VER', '$B_DATE', '$B_REV',
+            '$B_FW', '$B_MODE', '$MB_SQL', '$PNAME_SQL', '$SN_SQL'
+        );
+EOF
+        ;;
+
+    "system_info_ports")
+        eval $(echo "$RAW_DATA" | jq -r '"HNAME=\(.hostname|@sh); DATA=\(.info_data|@sh)"')
+        H_SQL=$(echo "$HNAME" | sed "s/'/''/g")
+        DATA_SQL=$(echo "$DATA" | sed "s/'/''/g")
+        /usr/bin/sqlite3 "$DB_PATH" "INSERT INTO system_info (hostname, info_type, info_data) VALUES ('$H_SQL', 'open_ports', '$DATA_SQL');"
+        ;;
+    *)
+        echo "$(date) - ERROR: Invalid Origin: $ORIGIN" >> $ERROR_LOG
+        ;;
+esac
+HANDLER
+chmod +x /usr/local/bin/lastcontrol-handler.sh
+
