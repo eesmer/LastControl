@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-header bg-white">
+        <h5 class="mb-0 text-secondary">Kayıtlı Agent Listesi</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Hostname</th>
+                        <th>Son Rapor Tarihi</th>
+                        <th class="text-end">İşlem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for agent in agents %}
+                    <tr>
+                        <td class="fw-bold text-primary">{{ agent.hostname }}</td>
+                        <td><small class="text-muted">{{ agent.last_report }}</small></td>
+                        <td class="text-end">
+                            <a href="/agent/{{ agent.hostname }}" class="btn btn-sm btn-outline-secondary">
+                                Detayları İncele
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
