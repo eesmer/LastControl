@@ -1,31 +1,40 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LastControl Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { background-color: #f8f9fa; }
-        .navbar-brand-custom { font-weight: bold; letter-spacing: 1px; }
+        :root { --lc-darkblue: #00008B; }
+        body { background-color: #f4f7f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .navbar { background-color: var(--lc-darkblue) !important; border-bottom: 3px solid #000055; }
+        .lc-logo { 
+            font-weight: 800; 
+            text-decoration: none; 
+            color: white !important; 
+            letter-spacing: 1px;
+            padding: 5px 15px;
+            border: 2px solid white;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        .lc-logo:hover { background-color: white; color: var(--lc-darkblue) !important; }
+        .card { border-top: 4px solid var(--lc-darkblue); }
     </style>
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-    <div class="container shadow-sm">
-        <a class="navbar-brand" href="/">
-            <span class="badge bg-primary me-2">LC</span> Ana Menü
+<nav class="navbar navbar-expand-lg navbar-dark mb-4 shadow">
+    <div class="container">
+        <a class="navbar-brand shadow-sm" href="/">
+             Ana Menü
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto">
-                </ul>
-            <span class="navbar-text navbar-brand-custom text-white uppercase">
-                LASTCONTROL
-            </span>
+        <div class="ms-auto">
+            <a href="https://www.github.com/eesmer/LastControl" target="_blank" class="lc-logo">
+                LastControl
+            </a>
         </div>
     </div>
 </nav>
