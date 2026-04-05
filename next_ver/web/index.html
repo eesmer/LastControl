@@ -1,28 +1,50 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="card shadow-sm">
-    <div class="card-header bg-white">
-        <h5 class="mb-0 text-secondary">Kayıtlı Agent Listesi</h5>
+<div class="row mb-3">
+    <div class="col-md-6">
+        <h4 style="color: #00008B;">Agent Yönetim Paneli</h4>
     </div>
+    <div class="col-md-6">
+        <div class="input-group shadow-sm">
+            <span class="input-group-text bg-white border-end-0">
+                <i class="fas fa-search text-muted"></i>
+            </span>
+            <input type="text" id="agentSearch" class="form-control border-start-0" placeholder="Hostname veya IP ile ara...">
+        </div>
+    </div>
+</div>
+
+<div class="card shadow">
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-hover mb-0">
+            <table class="table table-hover align-middle mb-0" id="agentTable">
                 <thead class="table-light">
                     <tr>
-                        <th>Hostname</th>
-                        <th>Son Rapor Tarihi</th>
-                        <th class="text-end">İşlem</th>
+                        <th style="width: 30%;">Hostname</th>
+                        <th style="width: 30%;">Son Rapor Tarihi</th>
+                        <th class="text-center">Envanter</th>
+                        <th class="text-center">Durum</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for agent in agents %}
                     <tr>
-                        <td class="fw-bold text-primary">{{ agent.hostname }}</td>
-                        <td><small class="text-muted">{{ agent.last_report }}</small></td>
-                        <td class="text-end">
-                            <a href="/agent/{{ agent.hostname }}" class="btn btn-sm btn-outline-secondary">
-                                Detayları İncele
+                        <td>
+                            <i class="fas fa-desktop me-2 text-muted"></i>
+                            <span class="fw-bold agent-name">{{ agent.hostname }}</span>
+                        </td>
+                        <td>
+                            <span class="badge bg-light text-dark border">
+                                <i class="far fa-clock me-1"></i> {{ agent.last_report }}
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <a href="/agent/{{ agent.hostname }}" class="btn btn-sm text-white" style="background-color: #00008B;">
+                                <i class="fas fa-info-circle me-1"></i> Detaylar
                             </a>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge rounded-pill bg-success" title="Aktif">●</span>
                         </td>
                     </tr>
                     {% endfor %}
@@ -31,4 +53,21 @@
         </div>
     </div>
 </div>
+
+<script>
+document.getElementById('agentSearch').addEventListener('keyup', function() {
+    let filter = this.value.toUpperCase();
+    let rows = document.querySelector("#agentTable tbody").rows;
+    
+    for (let i = 0; i < rows.length; i++) {
+        let hostname = rows[i].cells[0].textContent.toUpperCase();
+        let reportDate = rows[i].cells[1].textContent.toUpperCase();
+        if (hostname.indexOf(filter) > -1 || reportDate.indexOf(filter) > -1) {
+            rows[i].style.display = "";
+        } else {
+            rows[i].style.display = "none";
+        }      
+    }
+});
+</script>
 {% endblock %}
