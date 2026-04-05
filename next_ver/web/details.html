@@ -22,6 +22,9 @@
                 <div class="row mt-2">
                     <div class="col-sm-4"><strong>Kernel:</strong> {{ report.kernel }}</div>
                     <div class="col-sm-8"><strong>BIOS:</strong> {{ report.bios_vendor }} ({{ report.bios_version }})</div>
+		    <div class="col-sm-4"><span class="text-muted small">IP:</span> <code class="text-dark">{{ report.internal_ip }}</code></div>
+                    <div class="col-sm-4"><span class="text-muted small">OS:</span> <span class="badge bg-info text-dark">{{ report.distro }}</span></div>
+                    <div class="col-sm-4"><span class="text-muted small">RAM:</span> <span class="badge bg-secondary">{{ report.ram_total }}</span></div>
                 </div>
             </div>
         </div>
