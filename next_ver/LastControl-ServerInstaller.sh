@@ -1,19 +1,20 @@
 #!/bin/bash
 
 SERVER_IP=$(hostname -I | awk '{print $1}')
-CERT_DIR="./certs"
-AGENT_DIR="./dist"
-PORT="4433"
 SERVER_WDIR="/usr/local/lastcontrol"
+CERT_DIR="./certs"
+AGENT_DIR="$SERVER_WDIR/dist"
+PORT="4433"
 
 rm -rf $CERT_DIR $AGENT_DIR
 rm -rf "/etc/lastcontrol"
 mkdir -p $CERT_DIR $AGENT_DIR
 
-echo "--- LastControl: Creating Certificate and Security Infrastructure ---"
 echo "--- LastControl: Installing Required Packages ---"
+echo "--- LastControl: Creating Certificate and Security Infrastructure ---"
 apt update
 apt-get -y install socat jq sqlite3
+apt-get -y install python3-venv python3-pip nginx
 
 # CA & Certs / Server
 openssl genrsa -out $CERT_DIR/ca.key 4096
@@ -41,44 +42,9 @@ touch "$SERVER_WDIR/readme.md"
 TODAY=$(date)
 echo "InstallDate: $TODAY" > $SERVER_WDIR/readme.md
 
-# Create DB
-# Create INVENTORY Table
-sqlite3 $SERVER_WDIR/lastcontrol.db <<EOF
-CREATE TABLE IF NOT EXISTS inventory (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    hostname TEXT,
-    internal_ip TEXT,
-    external_ip TEXT,
-    internet_conn TEXT,
-    cpu_info TEXT,
-    ram_total TEXT,
-    disk_list TEXT,
-    gpu TEXT,
-    wireless TEXT,
-    distro TEXT,
-    kernel TEXT,
-    uptime TEXT,
-    last_boot TEXT,
-    virt_control TEXT,
-    local_date TEXT,
-    time_sync TEXT,
-    time_zone TEXT,
-    bios_vendor TEXT,
-    bios_info TEXT,
-    bios_version TEXT,
-    bios_release_date TEXT,
-    bios_revision TEXT,
-    bios_firmware_revision TEXT,
-    bios_mode TEXT,
-    mainboard TEXT,
-    product_name TEXT,
-    serial_number TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-EOF
-
 echo "--- Agent Installer Preparing ---"
 AGENT_PAYLOAD=$(tar -czf - -C ./agent_scripts . | base64 -w 0)
+mkdir -p $AGENT_DIR
 # 4. Agent Installer - Generated Specifically for each installation
 cat <<EOF > $AGENT_DIR/agent_installer.sh
 #!/bin/bash
@@ -120,7 +86,6 @@ SERVER_IP="$SERVER_IP"
 PORT="$PORT"
 
 send_to_server() {
-    # \$1 yaparak Bash'in bunu kurulum anında yorumlamasını engelliyoruz
     local script_path=\$1
     if [ -x "\$script_path" ]; then
         "\$script_path" | /usr/bin/socat -T 10 - OPENSSL:\$SERVER_IP:\$PORT,verify=1,cafile=/etc/lastcontrol/certs/ca.crt,cert=/etc/lastcontrol/certs/client.pem,snihost=0
@@ -161,8 +126,95 @@ systemctl daemon-reload
 systemctl enable --now lastcontrol.timer
 echo "LastControl Agent was successfully installed"
 EOF
-
 chmod +x $AGENT_DIR/agent_installer.sh
+
+# LastControl Web directtory and files
+mkdir -p $SERVER_WDIR/web/templates
+cd $SERVER_WDIR/web
+python3 -m venv venv
+source venv/bin/activate
+pip install flask
+
+# Create DB
+# Create INVENTORY Table
+# 1. DB Dizinini ve Dosyasını Hazırla
+mkdir -p "$SERVER_WDIR"
+
+# 2. Hash Oluşturma İşlemini SQLite Bloğunun DIŞINDA Yap
+VENV_PYTHON="/usr/local/lastcontrol/web/venv/bin/python3"
+DEFAULT_HASH=$($VENV_PYTHON -c 'from werkzeug.security import generate_password_hash; print(generate_password_hash("lastcontrol"))')
+
+# 3. SQLite Tablo Oluşturma ve Veri Ekleme Bloğu
+sqlite3 "$SERVER_WDIR/lastcontrol.db" <<EOF
+CREATE TABLE IF NOT EXISTS inventory (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    hostname TEXT,
+    internal_ip TEXT,
+    external_ip TEXT,
+    internet_conn TEXT,
+    cpu_info TEXT,
+    ram_total TEXT,
+    disk_list TEXT,
+    gpu TEXT,
+    wireless TEXT,
+    distro TEXT,
+    kernel TEXT,
+    uptime TEXT,
+    last_boot TEXT,
+    virt_control TEXT,
+    local_date TEXT,
+    time_sync TEXT,
+    time_zone TEXT,
+    bios_vendor TEXT,
+    bios_info TEXT,
+    bios_version TEXT,
+    bios_release_date TEXT,
+    bios_revision TEXT,
+    bios_firmware_revision TEXT,
+    bios_mode TEXT,
+    mainboard TEXT,
+    product_name TEXT,
+    serial_number TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE,
+    password TEXT
+);
+
+-- Değişkeni burada güvenle kullanabiliriz
+INSERT OR IGNORE INTO users (username, password) VALUES ('admin', '$DEFAULT_HASH');
+EOF
+
+# DOWNLOAD "lastcontrol-webapp.py" in server -> /usr/local/lastcontrol/web/
+cp /root/LCV3/lastcontrol-webapp.py /usr/local/lastcontrol/web/
+# DOWNLOAD "index.html" in server -> /usr/local/lastcontrol/web/template/
+# DOWNLOAD "details.html" in server -> /usr/local/lastcontrol/web/template/
+# DOWNLOAD "layout.html" in server -> /usr/local/lastcontrol/web/template/
+cp /root/LCV3/index.html /usr/local/lastcontrol/web/templates/
+cp /root/LCV3/details.html /usr/local/lastcontrol/web/templates/
+cp /root/LCV3/layout.html /usr/local/lastcontrol/web/templates/
+cp /root/LCV3/change_password.html /usr/local/lastcontrol/web/templates/
+cp /root/LCV3/login.html /usr/local/lastcontrol/web/templates/
+
+cat <<'WEBCONF' > /etc/nginx/sites-available/lastcontrol
+server {
+    listen 80;
+    server_name _;
+
+    location / {
+        proxy_pass http://127.0.0.1:5000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
+WEBCONF
+ln -s /etc/nginx/sites-available/lastcontrol /etc/nginx/sites-enabled/
+rm /etc/nginx/sites-enabled/default
+systemctl restart nginx
 
 cat <<'HANDLER' > /usr/local/bin/lastcontrol-handler.sh
 #!/bin/bash
@@ -252,8 +304,26 @@ RestartSec=2
 [Install]
 WantedBy=multi-user.target
 LCSSERVICE
+
+# Server Web Service
+cat > "/etc/systemd/system/lastcontrol-web.service" <<LCSWEB
+[Unit]
+Description=LastControl Web Service
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/usr/local/lastcontrol/web
+ExecStart=/usr/local/lastcontrol/web/venv/bin/python3 /usr/local/lastcontrol/web/lastcontrol-webapp.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+LCSWEB
+
 systemctl daemon-reload
 systemctl enable --now lastcontrol-listener.service
+systemctl enable --now lastcontrol-web.service
 
 echo "--- Installation Complete ---"
 echo "Agent Installer: $AGENT_DIR/agent_installer.sh"
