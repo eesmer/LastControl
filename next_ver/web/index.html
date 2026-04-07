@@ -18,38 +18,32 @@
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0" id="agentTable">
-                <thead class="table-light">
-                    <tr>
-                        <th style="width: 30%;">Hostname</th>
-                        <th style="width: 30%;">Son Rapor Tarihi</th>
-                        <th class="text-center">Envanter</th>
-                        <th class="text-center">Durum</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for agent in agents %}
-                    <tr>
-                        <td>
-                            <i class="fas fa-desktop me-2 text-muted"></i>
-                            <span class="fw-bold agent-name">{{ agent.hostname }}</span>
-                        </td>
-                        <td>
-                            <span class="badge bg-light text-dark border">
-                                <i class="far fa-clock me-1"></i> {{ agent.last_report }}
-                            </span>
-                        </td>
-                        <td class="text-center">
-                            <a href="/agent/{{ agent.hostname }}" class="btn btn-sm text-white" style="background-color: #00008B;">
-                                <i class="fas fa-info-circle me-1"></i> Detaylar
-                            </a>
-                        </td>
-                        <td class="text-center">
-                            <span class="badge rounded-pill bg-success" title="Aktif">●</span>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <thead>
+            <tr>
+            <th>Hostname</th>
+	    <th>Son Rapor Tarihi</th>
+	    <th class="text-center">Envanter</th>
+	    <th class="text-center">Açık Portlar</th> </tr>
+	    <th class="text-center">Disk Kullanımı</th> </tr>
+	    </thead>
+	    <tbody>
+	    {% for agent in agents %}
+	    <tr>
+	    <td class="fw-bold">{{ agent.hostname }}</td>
+	    <td><span class="badge bg-light text-dark border">{{ agent.last_report }}</span></td>
+	    <td class="text-center">
+	    <a href="/agent/{{ agent.hostname }}" class="btn btn-sm text-white" style="background-color: #00008B;">Detaylar</a>
+	    </td>
+	    <td class="text-center">
+            <a href="/ports/{{ agent.hostname }}" class="btn btn-sm btn-outline-dark">Detaylar</a> </td>
+	    <td class="text-center">
+	    <a href="/disk/{{ agent.hostname }}" class="btn btn-sm btn-outline-danger ms-1">
+            <i class="fas fa-hard-drive"></i> Disk Durumu
+	    </a>
+            </tr>
+	    {% endfor %}
+	    </tbody>
+	    </table>
         </div>
     </div>
 </div>
