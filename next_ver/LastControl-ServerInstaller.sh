@@ -81,21 +81,22 @@ CERT_EOF
 # Client Report Script
 cat <<'REPORT' > /usr/local/bin/lastcontrol-report.sh
 #!/bin/bash
-
 SERVER_IP="$SERVER_IP"
 PORT="$PORT"
-
 send_to_server() {
     local script_path=\$1
     if [ -x "\$script_path" ]; then
         "\$script_path" | /usr/bin/socat -T 10 - OPENSSL:\$SERVER_IP:\$PORT,verify=1,cafile=/etc/lastcontrol/certs/ca.crt,cert=/etc/lastcontrol/certs/client.pem,snihost=0
     fi
 }
-
-# Send Inventory
+# Send Data
 send_to_server "/usr/local/lastcontrol/scripts/inventory.sh"
-
-sleep 3
+sleep 2
+send_to_server "/usr/local/lastcontrol/scripts/open_ports.sh"
+sleep 2
+send_to_server "/usr/local/lastcontrol/scripts/disk_usage.sh"
+sleep 2
+send_to_server "/usr/local/lastcontrol/scripts/roles.sh"
 
 REPORT
 chmod +x /usr/local/bin/lastcontrol-report.sh
@@ -177,27 +178,36 @@ CREATE TABLE IF NOT EXISTS inventory (
     serial_number TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
-
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE,
     password TEXT
 );
-
--- Değişkeni burada güvenle kullanabiliriz
+CREATE TABLE IF NOT EXISTS system_info (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    hostname TEXT,
+    info_type TEXT,
+    info_data TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS agents (
+    hostname TEXT PRIMARY KEY,
+    ip_address TEXT,
+    os_name TEXT,
+    last_seen DATETIME
+);
 INSERT OR IGNORE INTO users (username, password) VALUES ('admin', '$DEFAULT_HASH');
 EOF
 
-# DOWNLOAD "lastcontrol-webapp.py" in server -> /usr/local/lastcontrol/web/
 cp /root/LCV3/lastcontrol-webapp.py /usr/local/lastcontrol/web/
-# DOWNLOAD "index.html" in server -> /usr/local/lastcontrol/web/template/
-# DOWNLOAD "details.html" in server -> /usr/local/lastcontrol/web/template/
-# DOWNLOAD "layout.html" in server -> /usr/local/lastcontrol/web/template/
+cp /root/LCV3/change_password.html /usr/local/lastcontrol/web/templates/
 cp /root/LCV3/index.html /usr/local/lastcontrol/web/templates/
 cp /root/LCV3/details.html /usr/local/lastcontrol/web/templates/
 cp /root/LCV3/layout.html /usr/local/lastcontrol/web/templates/
-cp /root/LCV3/change_password.html /usr/local/lastcontrol/web/templates/
 cp /root/LCV3/login.html /usr/local/lastcontrol/web/templates/
+cp /root/LCV3/ports.html /usr/local/lastcontrol/web/templates/
+cp /root/LCV3/disk.html /usr/local/lastcontrol/web/templates/
+cp /root/LCV3/roles.html /usr/local/lastcontrol/web/templates/
 
 cat <<'WEBCONF' > /etc/nginx/sites-available/lastcontrol
 server {
@@ -237,17 +247,17 @@ fi
 
 # DB/Table Record
 case "$ORIGIN" in
-    "inventory")
+"inventory")
         eval $(echo "$RAW_DATA" | jq -r '
           "HNAME=\(.hostname|@sh); IIP=\(.internal_ip|@sh); EIP=\(.external_ip|@sh);
-           ICONN=\(.internet_conn|@sh); CPU=\(.cpu_info|@sh); RAM=\(.ram_total|@sh);
-           DSK=\(.disk_list|@sh); GPU=\(.gpu|@sh); WRLS=\(.wireless|@sh);
-           DST=\(.distro|@sh); KERN=\(.kernel|@sh); UPT=\(.uptime|@sh);
-           LBOOT=\(.last_boot|@sh); VRT=\(.virt_control|@sh); LDATE=\(.local_date|@sh);
-           TSYNC=\(.time_sync|@sh); TZONE=\(.time_zone|@sh); B_VEND=\(.bios_vendor|@sh);
-           B_INFO=\(.bios_info|@sh); B_VER=\(.bios_version|@sh); B_DATE=\(.bios_release_date|@sh);
-           B_REV=\(.bios_revision|@sh); B_FW=\(.bios_firmware_revision|@sh); B_MODE=\(.bios_mode|@sh);
-           MB=\(.mainboard|@sh); PNAME=\(.product_name|@sh); SN=\(.serial_number|@sh)"')
+            ICONN=\(.internet_conn|@sh); CPU=\(.cpu_info|@sh); RAM=\(.ram_total|@sh);
+            DSK=\(.disk_list|@sh); GPU=\(.gpu|@sh); WRLS=\(.wireless|@sh);
+            DST=\(.distro|@sh); KERN=\(.kernel|@sh); UPT=\(.uptime|@sh);
+            LBOOT=\(.last_boot|@sh); VRT=\(.virt_control|@sh); LDATE=\(.local_date|@sh);
+            TSYNC=\(.time_sync|@sh); TZONE=\(.time_zone|@sh); B_VEND=\(.bios_vendor|@sh);
+            B_INFO=\(.bios_info|@sh); B_VER=\(.bios_version|@sh); B_DATE=\(.bios_release_date|@sh);
+            B_REV=\(.bios_revision|@sh); B_FW=\(.bios_firmware_revision|@sh); B_MODE=\(.bios_mode|@sh);
+            MB=\(.mainboard|@sh); PNAME=\(.product_name|@sh); SN=\(.serial_number|@sh)"')
 
         H_SQL=$(echo "$HNAME" | sed "s/'/''/g")
         CPU_SQL=$(echo "$CPU" | sed "s/'/''/g")
@@ -272,16 +282,38 @@ case "$ORIGIN" in
             '$B_INFO', '$B_VER', '$B_DATE', '$B_REV',
             '$B_FW', '$B_MODE', '$MB_SQL', '$PNAME_SQL', '$SN_SQL'
         );
+
+        INSERT INTO agents (hostname, ip_address, os_name, last_seen)
+        VALUES ('$H_SQL', '$IIP', '$DST_SQL', datetime('now','localtime'))
+        ON CONFLICT(hostname) DO UPDATE SET
+            ip_address=excluded.ip_address,
+            os_name=excluded.os_name,
+            last_seen=excluded.last_seen;
 EOF
         ;;
-
-    "system_info_ports")
-        eval $(echo "$RAW_DATA" | jq -r '"HNAME=\(.hostname|@sh); DATA=\(.info_data|@sh)"')
-        H_SQL=$(echo "$HNAME" | sed "s/'/''/g")
-        DATA_SQL=$(echo "$DATA" | sed "s/'/''/g")
-        /usr/bin/sqlite3 "$DB_PATH" "INSERT INTO system_info (hostname, info_type, info_data) VALUES ('$H_SQL', 'open_ports', '$DATA_SQL');"
+"system_info_ports")
+        HNAME=$(echo "$RAW_DATA" | jq -r '.hostname')
+        DATA=$(echo "$RAW_DATA" | jq -r '.info_data')
+        /usr/bin/sqlite3 "$DB_PATH" "INSERT INTO system_info (hostname, info_type, info_data) VALUES ('$HNAME', 'open_ports', '$DATA');"
+        echo "DEBUG: Portlar yazıldı." >&2
         ;;
-    *)
+"system_info_disk")
+        # Burayı daha esnek yapıyoruz:
+        HNAME=$(echo "$RAW_DATA" | jq -r '.hostname')
+        DATA=$(echo "$RAW_DATA" | jq -r '.info_data')
+        if [ "$HNAME" != "null" ] && [ -n "$DATA" ]; then
+            /usr/bin/sqlite3 "$DB_PATH" "INSERT INTO system_info (hostname, info_type, info_data) VALUES ('$HNAME', 'disk_usage', '$DATA');"
+            echo "DEBUG: Disk verisi başarıyla yazıldı." >&2
+        else
+            echo "DEBUG: Disk verisi ayıklanamadı!" >&2
+        fi
+        ;;
+"system_info_roles")
+        HNAME=$(echo "$RAW_DATA" | jq -r '.hostname')
+        DATA=$(echo "$RAW_DATA" | jq -r '.info_data')
+        /usr/bin/sqlite3 "$DB_PATH" "INSERT INTO system_info (hostname, info_type, info_data) VALUES ('$HNAME', 'roles', '$DATA');"
+        ;;
+        *)
         echo "$(date) - ERROR: Invalid Origin: $ORIGIN" >> $ERROR_LOG
         ;;
 esac
