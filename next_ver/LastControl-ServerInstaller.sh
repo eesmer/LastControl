@@ -97,6 +97,10 @@ sleep 2
 send_to_server "/usr/local/lastcontrol/scripts/disk_usage.sh"
 sleep 2
 send_to_server "/usr/local/lastcontrol/scripts/roles.sh"
+sleep 2
+send_to_server "/usr/local/lastcontrol/scripts/ram_usage.sh"
+sleep 2
+send_to_server "/usr/local/lastcontrol/scripts/local_users.sh"
 
 REPORT
 chmod +x /usr/local/bin/lastcontrol-report.sh
