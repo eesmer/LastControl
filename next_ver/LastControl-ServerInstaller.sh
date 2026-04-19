@@ -15,6 +15,7 @@ echo "--- LastControl: Creating Certificate and Security Infrastructure ---"
 apt update
 apt-get -y install socat jq sqlite3
 apt-get -y install python3-venv python3-pip nginx
+apt-get -y install rsyslog
 
 # CA & Certs / Server
 openssl genrsa -out $CERT_DIR/ca.key 4096
@@ -57,9 +58,11 @@ CERTS="/etc/lastcontrol/certs"
 
 # Debian & RHEL
 if [ -f /etc/debian_version ]; then
-    apt-get update && apt-get install -y socat
+    apt-get update && apt-get -y install socat
+    apt-get -y install rsyslog
 elif [ -f /etc/redhat-release ]; then
-    yum install -y epel-release && yum install -y socat
+    yum -y install epel-release && yum -y install socat
+    yum -y install rsyslog
 fi
 
 mkdir -p /usr/local/lastcontrol/scripts
@@ -97,10 +100,6 @@ sleep 2
 send_to_server "/usr/local/lastcontrol/scripts/disk_usage.sh"
 sleep 2
 send_to_server "/usr/local/lastcontrol/scripts/roles.sh"
-sleep 2
-send_to_server "/usr/local/lastcontrol/scripts/ram_usage.sh"
-sleep 2
-send_to_server "/usr/local/lastcontrol/scripts/local_users.sh"
 
 REPORT
 chmod +x /usr/local/bin/lastcontrol-report.sh
