@@ -6,31 +6,32 @@
             <span class="input-group-text bg-white border-end-0 text-muted">
                 <i class="fas fa-search"></i>
             </span>
-            <input type="text" id="agentSearch" class="form-control border-start-0 ps-0" placeholder="Search with Hostname or IP Address">
+            <input type="text" id="agentSearch" class="form-control border-start-0 ps-0" placeholder="Hostname veya IP ile hızlı ara...">
         </div>
     </div>
 </div>
 <div class="card shadow-sm">
     <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center py-2">
-        <h5 class="mb-0"><i class="fas fa-list me-2"></i> Agent & Report Table</h5>
+        <h5 class="mb-0"><i class="fas fa-list me-2"></i> Sistem İzleme Paneli</h5>
         <span class="badge bg-primary" id="agentCount">{{ agents|length }} Makine</span>
     </div>
     <div class="card-body p-0">
         <table class="table table-hover table-striped table-compact mb-0" id="agentTable">
             <thead class="table-light text-secondary">
                 <tr>
-                    <th style="width: 25%;">Hostname - OS/Distro</th>
-                    <th style="width: 25%;">Last Report Date</th>
-                    <th class="text-center">Controls & Reports</th>
+                    <th style="width: 25%;">Hostname</th>
+                    <th style="width: 25%;">Son Rapor Tarihi</th>
+                    <th class="text-center">İzleme Araçları</th>
                 </tr>
             </thead>
 <tbody>
     {% for agent in agents %}
     <tr>
         <td class="fw-bold text-dark search-target">
-            <i class="fas fa-desktop text-muted me-2"></i>{{ agent.hostname }} {{ agent.os_name }}
+            <i class="fas fa-desktop text-muted me-2"></i>{{ agent.hostname }}
             <span class="d-none ip-search">{{ agent.ip_address }}</span>
-	</td>
+        </td>
+
         <td class="report-date">
             <i class="far fa-clock me-1"></i>
             {% set ago_text = agent.last_seen | time_ago %}
@@ -39,14 +40,12 @@
             </span>
         </td>
         <td class="text-center">
-	<div class="btn-group btn-group-sm shadow-sm" role="group">
-		<a href="/agent/{{ agent.hostname }}" class="btn btn-outline-dark" title="Inventory"> Inventory <i class="fas fa-id-card"></i></a>
-		<a href="/roles/{{ agent.hostname }}" class="btn btn-outline-primary" title="Roles"> Roles <i class="fas fa-server"></i></a>
-		<a href="/ram/{{ agent.hostname }}" class="btn btn-outline-warning" title="Ram Usage"> Ram Usage <i class="fas fa-memory"></i></a>
-		<a href="/users/{{ agent.hostname }}" class="btn btn-outline-info" title="Local Users"> Local Users <i class="fas fa-users"></i></a>
-		<a href="/ports/{{ agent.hostname }}" class="btn btn-outline-success" title="Ports"> Open Ports <i class="fas fa-network-wired"></i></a>
-		<a href="/disk/{{ agent.hostname }}" class="btn btn-outline-danger" title="Disk Usage"> Disk Report <i class="fas fa-hdd"></i></a>
-	</div>
+            <div class="btn-group btn-group-sm shadow-sm" role="group">
+                <a href="/agent/{{ agent.hostname }}" class="btn btn-outline-dark">Envanter</a>
+                <a href="/roles/{{ agent.hostname }}" class="btn btn-outline-primary">Roller</a>
+                <a href="/ports/{{ agent.hostname }}" class="btn btn-outline-success">Portlar</a>
+                <a href="/disk/{{ agent.hostname }}" class="btn btn-outline-danger">Disk</a>
+            </div>
         </td>
     </tr>
     {% endfor %}
