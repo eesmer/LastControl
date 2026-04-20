@@ -8,3 +8,12 @@ It provides detailed output for services and roles. <br>
 It displays the control results through a simple web interface. <br>
 
 ---
+
+**Key Features** <br>
+
+- Inventory report
+- Check Roles
+- Local Users
+- Open Ports
+
+---
