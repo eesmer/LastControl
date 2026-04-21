@@ -6,9 +6,9 @@ import sqlite3
 import os
 
 app = Flask(__name__)
-app.secret_key = 'lastcontrol_gizli_anahtar' # Session güvenliği için
+app.secret_key = 'lastcontrol_secret_key'
 DB_PATH = "/usr/local/lastcontrol/lastcontrol.db"
-AGENT_PATH = "/usr/local/lastcontrol/dist" # agent_installer.sh konumu
+AGENT_PATH = "/usr/local/lastcontrol/dist"
 
 def get_db_connection():
     conn = sqlite3.connect(DB_PATH)
@@ -18,28 +18,25 @@ def get_db_connection():
 @app.template_filter('time_ago')
 def time_ago_filter(s):
     if not s: 
-        return "Veri Yok"
+        return "Data NotFound"
     try:
-        # SQLite datetime formatı bazen saliseli gelebilir, o yüzden esnek parse ediyoruz
         past = datetime.fromisoformat(str(s))
         now = datetime.now()
         diff = now - past
         seconds = diff.total_seconds()
         
-        if seconds < 60: return "Şimdi"
-        if seconds < 3600: return f"{int(seconds // 60)} dk önce"
-        if seconds < 86400: return f"Bugün {past.strftime('%H:%M')}"
-        if seconds < 172800: return f"Dün {past.strftime('%H:%M')}"
-        return f"{diff.days} gün önce"
+        if seconds < 60: return "Now"
+        if seconds < 3600: return f"{int(seconds // 60)} min Before"
+        if seconds < 86400: return f"Today {past.strftime('%H:%M')}"
+        if seconds < 172800: return f"Yesterday {past.strftime('%H:%M')}"
+        return f"{diff.days} day ago"
     except Exception as e:
-        # Hata olsa bile sistemi çökertme, gelen ham veriyi bas
         return str(s)
 
 @app.route('/')
 def index():
     if not session.get('logged_in'): return redirect(url_for('login'))
     conn = get_db_connection()
-    # Artık doğrudan agents tablosuna bakıyoruz, çok daha hızlı!
     agents = conn.execute('SELECT * FROM agents ORDER BY last_seen DESC').fetchall()
     conn.close()
     return render_template('index.html', agents=agents)
@@ -56,17 +53,15 @@ def login():
             conn.close()
 
             if user is not None:
-                # DB'den gelen password verisini string'e zorla (None kontrolü)
                 stored_password = str(user['password'])
                 if check_password_hash(stored_password, password):
                     session['logged_in'] = True
                     return redirect(url_for('index'))
             
-            return "Hatalı kullanıcı adı veya parola!"
+            return "Incorrect Username or Password!"
         except Exception as e:
-            # Hatayı terminale/loglara basar
-            print(f"LOGIN HATASI: {e}")
-            return f"Sistem Hatası: {e}", 500
+            print(f"LOGIN ERROR: {e}")
+            return f"System Error: {e}", 500
             
     return render_template('login.html')
 
@@ -83,12 +78,9 @@ def download_agent():
 @app.route('/change-password', methods=['GET', 'POST'])
 def change_password():
     if not session.get('logged_in'): return redirect(url_for('login'))
-    
     if request.method == 'POST':
         new_password = request.form['new_password']
-        # Şifreyi hash'liyoruz (pbkdf2:sha256 algoritması ile)
         hashed_password = generate_password_hash(new_password)
-        
         conn = get_db_connection()
         conn.execute('UPDATE users SET password = ? WHERE username = ?', (hashed_password, "admin"))
         conn.commit()
@@ -99,7 +91,7 @@ def change_password():
 @app.route('/agent/<hostname>')
 def agent_detail(hostname):
     conn = get_db_connection()
-    # Last 5 records in inventory table
+    # Last 5 records
     reports = conn.execute('''
         SELECT * FROM inventory 
         WHERE hostname = ? 
@@ -107,7 +99,6 @@ def agent_detail(hostname):
         LIMIT 5
     ''', (hostname,)).fetchall()
     conn.close()
-    #return render_template('details.html', hostname=hostname, reports=reports)
     return render_template('inventory.html', hostname=hostname, reports=reports)
 
 @app.route('/ports/<hostname>')
@@ -115,7 +106,6 @@ def agent_ports(hostname):
     if not session.get('logged_in'): 
         return redirect(url_for('login'))
     conn = get_db_connection()
-    # LIMIT 1 yerine LIMIT 5 yapıyoruz ve fetchall() kullanıyoruz
     all_ports = conn.execute('''
         SELECT * FROM system_info 
         WHERE hostname = ? AND info_type = "open_ports" 
@@ -129,7 +119,6 @@ def agent_disk(hostname):
     if not session.get('logged_in'): 
         return redirect(url_for('login'))
     conn = get_db_connection()
-    # Son 5 disk raporunu çekiyoruz
     all_disk_reports = conn.execute('''
         SELECT * FROM system_info 
         WHERE hostname = ? AND info_type = "disk_usage" 
@@ -143,7 +132,6 @@ def agent_roles(hostname):
     if not session.get('logged_in'): return redirect(url_for('login'))
     conn = get_db_connection()
     try:
-        # Son 5 rol raporunu çekiyoruz
         reports = conn.execute('''
             SELECT * FROM system_info
             WHERE hostname = ? AND info_type = "roles"
@@ -156,50 +144,10 @@ def agent_roles(hostname):
         conn.close()
     return render_template('roles.html', hostname=hostname, all_roles_reports=reports)
 
-#@app.route('/roles/<hostname>')
-#def agent_roles(hostname):
-#    if not session.get('logged_in'):
-#        return redirect(url_for('login'))
-#
-#    conn = get_db_connection()
-#    try:
-#        # Verileri tarihe göre azalan sırada çekiyoruz
-#        reports = conn.execute('''
-#            SELECT * FROM system_info
-#            WHERE hostname = ? AND info_type = "roles"
-#            ORDER BY created_at DESC
-#        ''', (hostname,)).fetchall()
-#    except Exception as e:
-#        print(f"Veritabanı hatası: {e}")
-#        reports = []
-#    finally:
-#        conn.close()
-#
-#    # HTML tarafında hata almamak için veriyi basit bir yapıya dönüştürüp gönderiyoruz
-#    return render_template('roles.html', hostname=hostname, all_roles_reports=reports)
-
-#@app.route('/users/<hostname>')
-#def local_users(hostname):
-#    if not session.get('logged_in'):
-#        return redirect(url_for('login'))
-#    conn = get_db_connection()
-#    # Debug 1: Bu hostname ile DB'de ne var?
-#    reports = conn.execute('SELECT * FROM system_info WHERE hostname = ? AND info_type = "local_users" ORDER BY created_at DESC', (hostname,)).fetchall()
-#    conn.close()
-#    # Terminale bak: Eğer burada 0 yazıyorsa sorun SQL sorgusundadır.
-#    print(f"--- DEBUG START ---")
-#    print(f"Hostname: {hostname}")
-#    print(f"Bulunan Rapor Sayısı: {len(reports)}")
-#    if len(reports) > 0:
-#        print(f"İlk Rapor İçeriği: {reports[0]['info_data'][:50]}...") 
-#    print(f"--- DEBUG END ---")
-#    return render_template('users.html', hostname=hostname, all_reports=reports)
-
 @app.route('/users/<hostname>')
 def local_users(hostname):
     if not session.get('logged_in'): return redirect(url_for('login'))
     conn = get_db_connection()
-    # Son 5 kullanıcı listesi raporunu çekiyoruz
     reports = conn.execute('''
         SELECT * FROM system_info 
         WHERE hostname = ? AND info_type = "local_users" 
@@ -217,7 +165,6 @@ def agent_ram(hostname):
         ORDER BY created_at DESC LIMIT 5
     ''', (hostname,)).fetchall()
     conn.close()
-    # JSON verisini Python objesine çeviriyoruz
     processed_reports = []
     for r in reports:
         processed_reports.append({
