@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h4><i class="fas fa-server text-primary"></i> {{ hostname }} <small class="text-muted">Servis Rolleri</small></h4>
+    <h4><i class="fas fa-server text-primary"></i> {{ hostname }} <small class="text-muted">Service and Roles</small></h4>
 </div>
 
 <div class="row">
@@ -10,7 +10,7 @@
         <div class="col-12 mb-4">
             <div class="card shadow-sm {% if loop.first %}border-primary{% endif %}">
                 <div class="card-header d-flex justify-content-between align-items-center {% if loop.first %}bg-primary text-white{% endif %}">
-                    <span><i class="fas fa-microchip me-1"></i> {{ "GÜNCEL DURUM" if loop.first else "GEÇMİŞ" }}</span>
+                    <span><i class="fas fa-microchip me-1"></i> {{ "CURRENT STATUS" if loop.first else "HISTORICAL RECORDS" }}</span>
                     <span class="badge bg-light text-dark">{{ report.created_at }}</span>
                 </div>
                 <div class="card-body">
@@ -36,9 +36,9 @@
                                                         {% endfor %}
                                                     </div>
                                                 {% elif 'Top_Targets' in detail %}
-                                                    <div class="small text-danger mt-1"><i class="fas fa-user-secret me-1"></i><strong>Hedefler:</strong> {{ detail.split(': ')[1] }}</div>
+                                                    <div class="small text-danger mt-1"><i class="fas fa-user-secret me-1"></i><strong>User:</strong> {{ detail.split(': ')[1] }}</div>
                                                 {% elif 'Last_Logins' in detail %}
-                                                    <div class="small text-success mt-1 border-top pt-1"><i class="fas fa-sign-in-alt me-1"></i><strong>Son Giriş:</strong> {{ detail.split(': ')[1] }}</div>
+                                                    <div class="small text-success mt-1 border-top pt-1"><i class="fas fa-sign-in-alt me-1"></i><strong>Last Login:</strong> {{ detail.split(': ')[1] }}</div>
                                                 {% else %}
                                                     <div class="small py-1 text-muted"><i class="fas fa-caret-right me-1"></i>{{ detail.replace('_', ' ') }}</div>
                                                 {% endif %}
