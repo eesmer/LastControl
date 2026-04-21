@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h4><i class="fas fa-network-wired"></i> {{ hostname }} <small class="text-muted">Port Geçmişi (Son 5 Rapor)</small></h4>
+    <h4><i class="fas fa-network-wired"></i> {{ hostname }} <small class="text-muted">Port Info History (Last 5 Records)</small></h4>
 </div>
 
 <div class="row">
@@ -11,7 +11,7 @@
             <div class="card shadow-sm {% if loop.first %}border-primary{% endif %}">
                 <div class="card-header d-flex justify-content-between align-items-center {% if loop.first %}bg-primary text-white{% else %}bg-light{% endif %}">
                     <span class="small fw-bold">
-                        {% if loop.first %}<i class="fas fa-clock me-1"></i> En Güncel Rapor{% else %}Geçmiş Kayıt{% endif %}
+                        {% if loop.first %}<i class="fas fa-clock me-1"></i> Current Report{% else %}Historical Records{% endif %}
                     </span>
                     <span class="badge {% if loop.first %}bg-white text-primary{% else %}bg-secondary{% endif %}">
                         {{ report.created_at }}
@@ -26,7 +26,7 @@
                                 </span>
                             {% endfor %}
                         {% else %}
-                            <span class="text-muted italic">Açık port tespit edilmedi.</span>
+                            <span class="text-muted italic">No Open Port Found</span>
                         {% endif %}
                     </div>
                 </div>
@@ -36,7 +36,7 @@
     {% else %}
         <div class="col-12">
             <div class="alert alert-warning shadow-sm">
-                <i class="fas fa-exclamation-triangle me-2"></i> Henüz bu makineden port verisi alınamadı.
+                <i class="fas fa-exclamation-triangle me-2"></i> Port Info NotFound!
             </div>
         </div>
     {% endif %}
