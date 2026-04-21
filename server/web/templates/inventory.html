@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h4><i class="fas fa-id-card text-primary"></i> {{ hostname }} <small class="text-muted">Donanım ve Sistem Envanteri</small></h4>
+    <h4><i class="fas fa-id-card text-primary"></i> {{ hostname }} <small class="text-muted">Machine Hardware Inventory</small></h4>
 </div>
 
 {% if reports %}
@@ -10,7 +10,7 @@
         <div class="card-header d-flex justify-content-between align-items-center {% if loop.first %}bg-primary text-white{% else %}bg-light{% endif %}">
             <span>
                 <i class="fas fa-history me-1"></i> 
-                {% if loop.first %}<strong>GÜNCEL ENVANTER</strong>{% else %}GEÇMİŞ KAYIT{% endif %}
+                {% if loop.first %}<strong>CURRENT INVENTORY</strong>{% else %}HISTORICAL RECORDS{% endif %}
             </span>
             <span class="badge {% if loop.first %}bg-white text-primary{% else %}bg-secondary{% endif %}">
                 {{ report.created_at }}
@@ -19,15 +19,15 @@
         <div class="card-body">
             <div class="row mb-3">
                 <div class="col-md-3">
-                    <label class="text-muted small d-block">IP ADRESİ</label>
+                    <label class="text-muted small d-block">IP ADDRESS</label>
                     <code class="text-dark fw-bold">{{ report.internal_ip }}</code>
                 </div>
                 <div class="col-md-3">
-                    <label class="text-muted small d-block">İŞLETİM SİSTEMİ</label>
+                    <label class="text-muted small d-block">OS</label>
                     <span class="badge bg-info text-dark">{{ report.distro }}</span>
                 </div>
                 <div class="col-md-3">
-                    <label class="text-muted small d-block">TOPLAM RAM</label>
+                    <label class="text-muted small d-block">RAM</label>
                     <span class="badge bg-secondary">{{ report.ram_total }}</span>
                 </div>
                 <div class="col-md-3">
@@ -38,11 +38,11 @@
 
             <div class="row pt-2 border-top">
                 <div class="col-md-6">
-                    <label class="text-muted small d-block mb-1">CPU MODELİ</label>
+                    <label class="text-muted small d-block mb-1">CPU INFO</label>
                     <div class="p-2 bg-light rounded small">{{ report.cpu_info }}</div>
                 </div>
                 <div class="col-md-6">
-                    <label class="text-muted small d-block mb-1">BIOS BİLGİSİ</label>
+                    <label class="text-muted small d-block mb-1">BIOS INFO</label>
                     <div class="p-2 bg-light rounded small">
                         <strong>{{ report.bios_vendor }}</strong> - {{ report.bios_version }} 
                         <span class="text-muted ms-1">({{ report.bios_release_date }})</span>
@@ -52,11 +52,11 @@
             
             <div class="row mt-3 pt-2 border-top">
                 <div class="col-md-6">
-                    <label class="text-muted small d-block">ANAKART / MODEL</label>
+                    <label class="text-muted small d-block">MAINBOARD / MODEL</label>
                     <span class="small">{{ report.mainboard }} / {{ report.product_name }}</span>
                 </div>
                 <div class="col-md-6">
-                    <label class="text-muted small d-block">SERİ NUMARASI</label>
+                    <label class="text-muted small d-block">SERIAL NUMBER</label>
                     <code class="text-primary">{{ report.serial_number }}</code>
                 </div>
             </div>
@@ -66,7 +66,7 @@
 {% else %}
     <div class="col-12 text-center py-5">
         <div class="alert alert-info shadow-sm">
-            <i class="fas fa-info-circle me-2"></i> Henüz envanter kaydı bulunamadı.
+            <i class="fas fa-info-circle me-2"></i> Inventory Info NotFound!
         </div>
     </div>
 {% endif %}

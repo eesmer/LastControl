@@ -13,7 +13,7 @@
 <div class="card shadow-sm">
     <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center py-2">
         <h5 class="mb-0"><i class="fas fa-list me-2"></i> Agent & Report Table</h5>
-        <span class="badge bg-primary" id="agentCount">{{ agents|length }} Makine</span>
+        <span class="badge bg-primary" id="agentCount">{{ agents|length }} Machine</span>
     </div>
     <div class="card-body p-0">
         <table class="table table-hover table-striped table-compact mb-0" id="agentTable">
@@ -62,7 +62,6 @@ document.getElementById('agentSearch').addEventListener('keyup', function() {
 
     for (let i = 0; i < rows.length; i++) {
         let hostname = rows[i].cells[0].textContent.toLowerCase();
-        // Hem hostname hem de gizli IP bilgisinde arama yapar
         if (hostname.includes(filter)) {
             rows[i].style.display = "";
             visibleCount++;
