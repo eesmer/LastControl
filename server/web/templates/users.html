@@ -1,15 +1,14 @@
 {% extends "layout.html" %}
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h4><i class="fas fa-users text-primary"></i> {{ hostname }} <small class="text-muted">Kullanıcı Analizi (Son 5 Rapor)</small></h4>
+    <h4><i class="fas fa-users text-primary"></i> {{ hostname }} <small class="text-muted">Local User Info</small></h4>
 </div>
 
 {% if all_reports and all_reports|length > 0 %}
-    {# Flask tarafında LIMIT 5 ile çektiğimiz tüm raporları döngüye alıyoruz #}
     {% for report in all_reports %}
     <div class="card shadow-sm mb-5">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <span><i class="fas fa-clock me-1"></i> Rapor Tarihi: {{ report.created_at }}</span>
+            <span><i class="fas fa-clock me-1"></i> Report Date: {{ report.created_at }}</span>
             <span class="badge bg-light text-dark small">{{ report.created_at | time_ago }}</span>
         </div>
         <div class="card-body p-0">
@@ -17,17 +16,15 @@
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Kullanıcı Adı</th>
-                            <th class="text-center">UID / Detay</th>
-                            <th>Son Giriş Bilgisi</th>
+                            <th>Username</th>
+                            <th class="text-center">UID / Details</th>
+                            <th>Last Login Info</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {# Her raporun info_data bilgisini parçalıyoruz #}
                         {% for entry in report.info_data.split(',') %}
                             <tr>
                                 {% if ':' in entry %}
-                                    {# YENİ FORMAT (user:uid:date) #}
                                     {% set parts = entry.split(':') %}
                                     <td>
                                         <strong class="{{ 'text-danger' if parts[0] == 'root' else 'text-dark' }}">
@@ -39,16 +36,15 @@
                                         {% if parts|length > 2 and parts[2].strip() %}
                                             <span class="text-success small"><i class="fas fa-check-circle me-1"></i>{{ parts[2] }}</span>
                                         {% else %}
-                                            <span class="text-muted small">Giriş Yok</span>
+                                            <span class="text-muted small">Not Logged</span>
                                         {% endif %}
                                     </td>
                                 {% else %}
-                                    {# ESKİ FORMAT (Sadece kullanıcı adı) #}
                                     <td>
                                         <i class="fas fa-user text-muted me-2"></i>{{ entry.replace('()', '').strip() }}
                                     </td>
                                     <td class="text-center text-muted small">-</td>
-                                    <td class="text-muted small italic">Eski Kayıt (Detay Yok)</td>
+                                    <td class="text-muted small italic">Old Record (Details NotFound)</td>
                                 {% endif %}
                             </tr>
                         {% endfor %}
@@ -57,13 +53,13 @@
             </div>
         </div>
         <div class="card-footer bg-white text-muted small">
-            * {{ hostname }} istemcisinden gelen sistem kullanıcı verisidir.
+            * {{ hostname }} local users info
         </div>
     </div>
     {% endfor %}
 {% else %}
     <div class="alert alert-info shadow-sm">
-        <i class="fas fa-info-circle me-2"></i> Henüz kullanıcı raporu bulunamadı.
+        <i class="fas fa-info-circle me-2"></i> Local Users Info NotFound!
     </div>
 {% endif %}
 
