@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% block content %}
+<h4><i class="fas fa-memory text-primary"></i> {{ hostname }} - RAM ve Swap Analizi</h4>
+<hr>
+{% for report in reports %}
+<div class="card mb-3 shadow-sm">
+    <div class="card-header d-flex justify-content-between">
+        <span>Rapor Zamanı: {{ report.created_at }}</span>
+    </div>
+    <div class="card-body">
+        <h6>RAM Kullanımı (%{{ report.data.ram_perc }})</h6>
+        <div class="progress mb-3" style="height: 25px;">
+            <div class="progress-bar {% if report.data.ram_perc|int > 80 %}bg-danger{% else %}bg-success{% endif %}" 
+                 style="width: {{ report.data.ram_perc }}%">{{ report.data.ram_used }}MB / {{ report.data.ram_total }}MB</div>
+        </div>
+        
+        <h6>Swap Kullanımı (%{{ report.data.swap_perc }})</h6>
+        <div class="progress" style="height: 25px;">
+            <div class="progress-bar bg-warning text-dark" style="width: {{ report.data.swap_perc }}%">
+                {{ report.data.swap_used }}MB / {{ report.data.swap_total }}MB
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}
