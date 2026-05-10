@@ -75,11 +75,6 @@ def logout():
     session.pop('logged_in', None)
     return redirect(url_for('login'))
 
-#@app.route('/download-agent')
-#def download_agent():
-#    if not session.get('logged_in'): return redirect(url_for('login'))
-#    return send_from_directory(directory=AGENT_PATH, path='lastcontrol-agent_installer.sh', as_attachment=True)
-
 @app.route('/download-agent')
 def download_agent():
     if not session.get('logged_in'):
@@ -96,12 +91,9 @@ def download_agent():
 @app.route('/change-password', methods=['GET', 'POST'])
 def change_password():
     if not session.get('logged_in'): return redirect(url_for('login'))
-    
     if request.method == 'POST':
         new_password = request.form['new_password']
-        # Şifreyi hash'liyoruz (pbkdf2:sha256 algoritması ile)
         hashed_password = generate_password_hash(new_password)
-        
         conn = get_db_connection()
         conn.execute('UPDATE users SET password = ? WHERE username = ?', (hashed_password, "admin"))
         conn.commit()
@@ -142,7 +134,6 @@ def agent_disk(hostname):
     if not session.get('logged_in'): 
         return redirect(url_for('login'))
     conn = get_db_connection()
-    # Son 5 disk raporunu çekiyoruz
     all_disk_reports = conn.execute('''
         SELECT * FROM system_info 
         WHERE hostname = ? AND info_type = "disk_usage" 
@@ -156,7 +147,6 @@ def agent_roles(hostname):
     if not session.get('logged_in'): return redirect(url_for('login'))
     conn = get_db_connection()
     try:
-        # Son 5 rol raporunu çekiyoruz
         reports = conn.execute('''
             SELECT * FROM system_info
             WHERE hostname = ? AND info_type = "roles"
@@ -168,45 +158,6 @@ def agent_roles(hostname):
     finally:
         conn.close()
     return render_template('roles.html', hostname=hostname, all_roles_reports=reports)
-
-#@app.route('/roles/<hostname>')
-#def agent_roles(hostname):
-#    if not session.get('logged_in'):
-#        return redirect(url_for('login'))
-#
-#    conn = get_db_connection()
-#    try:
-#        # Verileri tarihe göre azalan sırada çekiyoruz
-#        reports = conn.execute('''
-#            SELECT * FROM system_info
-#            WHERE hostname = ? AND info_type = "roles"
-#            ORDER BY created_at DESC
-#        ''', (hostname,)).fetchall()
-#    except Exception as e:
-#        print(f"Veritabanı hatası: {e}")
-#        reports = []
-#    finally:
-#        conn.close()
-#
-#    # HTML tarafında hata almamak için veriyi basit bir yapıya dönüştürüp gönderiyoruz
-#    return render_template('roles.html', hostname=hostname, all_roles_reports=reports)
-
-#@app.route('/users/<hostname>')
-#def local_users(hostname):
-#    if not session.get('logged_in'):
-#        return redirect(url_for('login'))
-#    conn = get_db_connection()
-#    # Debug 1: Bu hostname ile DB'de ne var?
-#    reports = conn.execute('SELECT * FROM system_info WHERE hostname = ? AND info_type = "local_users" ORDER BY created_at DESC', (hostname,)).fetchall()
-#    conn.close()
-#    # Terminale bak: Eğer burada 0 yazıyorsa sorun SQL sorgusundadır.
-#    print(f"--- DEBUG START ---")
-#    print(f"Hostname: {hostname}")
-#    print(f"Bulunan Rapor Sayısı: {len(reports)}")
-#    if len(reports) > 0:
-#        print(f"İlk Rapor İçeriği: {reports[0]['info_data'][:50]}...") 
-#    print(f"--- DEBUG END ---")
-#    return render_template('users.html', hostname=hostname, all_reports=reports)
 
 @app.route('/users/<hostname>')
 def local_users(hostname):
