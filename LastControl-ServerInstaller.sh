@@ -57,3 +57,194 @@ openssl x509 -req -in $CERT_DIR/client.csr -CA $CERT_DIR/ca.crt -CAkey $CERT_DIR
 cat $CERT_DIR/server.key $CERT_DIR/server.crt > $CERT_DIR/server.pem
 cat $CERT_DIR/client.key $CERT_DIR/client.crt > $CERT_DIR/client.pem
 
+echo "--- Agent Installer Preparing ---"
+#AGENT_PAYLOAD=$(tar -czf - -C ./agent_scripts . | base64 -w 0)
+AGENT_PAYLOAD=$(tar -czf - -C "$TEMP_REPO"/client/agent_scripts . | base64 -w 0)
+mkdir -p $AGENT_DIR
+# 4. Agent Installer - Generated Specifically for each installation
+cat <<EOF > $AGENT_DIR/lastcontrol-agent_installer.sh
+#!/bin/bash
+# LastControl Agent Installer
+
+# LastControl Server Info
+SERVER_ADDR="$SERVER_IP"
+PORT="$PORT"
+CERTS="/etc/lastcontrol/certs"
+
+# Debian & RHEL
+if [ -f /etc/debian_version ]; then
+    apt-get update && apt-get -y install socat
+    apt-get -y install rsyslog
+elif [ -f /etc/redhat-release ]; then
+    yum -y install epel-release && yum -y install socat
+    yum -y install rsyslog
+fi
+
+mkdir -p /usr/local/lastcontrol/scripts
+echo "$AGENT_PAYLOAD" | base64 -d | tar -xzf - -C /usr/local/lastcontrol/scripts/
+chmod +x /usr/local/lastcontrol/scripts/*.sh
+
+mkdir -p /etc/lastcontrol/certs
+cat > /etc/lastcontrol/certs/ca.crt <<'CERT_EOF'
+$(cat $CERT_DIR/ca.crt)
+CERT_EOF
+cat > /etc/lastcontrol/certs/client.pem <<'CERT_EOF'
+$(cat $CERT_DIR/client.pem)
+CERT_EOF
+
+# Client Report Script
+cat <<'REPORT' > /usr/local/bin/lastcontrol-report.sh
+#!/bin/bash
+SERVER_IP="$SERVER_IP"
+PORT="$PORT"
+send_to_server() {
+    local script_path=\$1
+    if [ -x "\$script_path" ]; then
+        "\$script_path" | /usr/bin/socat -T 10 - OPENSSL:\$SERVER_IP:\$PORT,verify=1,cafile=/etc/lastcontrol/certs/ca.crt,cert=/etc/lastcontrol/certs/client.pem,snihost=0
+    fi
+}
+# Send Data
+send_to_server "/usr/local/lastcontrol/scripts/inventory.sh"
+sleep 2
+send_to_server "/usr/local/lastcontrol/scripts/open_ports.sh"
+sleep 2
+send_to_server "/usr/local/lastcontrol/scripts/disk_usage.sh"
+sleep 2
+send_to_server "/usr/local/lastcontrol/scripts/roles.sh"
+sleep 2
+send_to_server "/usr/local/lastcontrol/scripts/ram_usage.sh"
+sleep 2
+send_to_server "/usr/local/lastcontrol/scripts/local_users.sh"
+
+REPORT
+chmod +x /usr/local/bin/lastcontrol-report.sh
+
+# Systemd Service
+cat <<SERVICE > /etc/systemd/system/lastcontrol.service
+[Unit]
+Description=LastControl System Report Agent
+
+[Service]
+ExecStart=/usr/local/bin/lastcontrol-report.sh
+SERVICE
+
+cat <<TIMER > /etc/systemd/system/lastcontrol.timer
+[Unit]
+Description=Run LastControl Report Randomly between 01:00-06:00
+
+[Timer]
+OnCalendar=*-*-* 01:00:00
+RandomizedDelaySec=18000
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+TIMER
+
+systemctl daemon-reload
+systemctl enable --now lastcontrol.timer
+echo "LastControl Agent was successfully installed"
+EOF
+chmod +x $AGENT_DIR/lastcontrol-agent_installer.sh
+
+# Create DB
+# Create INVENTORY Table
+#mkdir -p "$SERVER_WDIR"
+
+VENV_PYTHON="/usr/local/lastcontrol/web/venv/bin/python3"
+DEFAULT_HASH=$($VENV_PYTHON -c 'from werkzeug.security import generate_password_hash; print(generate_password_hash("lastcontrol"))')
+
+sqlite3 "$SERVER_WDIR/lastcontrol.db" <<EOF
+CREATE TABLE IF NOT EXISTS inventory (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    hostname TEXT,
+    internal_ip TEXT,
+    external_ip TEXT,
+    internet_conn TEXT,
+    cpu_info TEXT,
+    ram_total TEXT,
+    disk_list TEXT,
+    gpu TEXT,
+    wireless TEXT,
+    distro TEXT,
+    kernel TEXT,
+    uptime TEXT,
+    last_boot TEXT,
+    virt_control TEXT,
+    local_date TEXT,
+    time_sync TEXT,
+    time_zone TEXT,
+    bios_vendor TEXT,
+    bios_info TEXT,
+    bios_version TEXT,
+    bios_release_date TEXT,
+    bios_revision TEXT,
+    bios_firmware_revision TEXT,
+    bios_mode TEXT,
+    mainboard TEXT,
+    product_name TEXT,
+    serial_number TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE,
+    password TEXT
+);
+CREATE TABLE IF NOT EXISTS system_info (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    hostname TEXT,
+    info_type TEXT,
+    info_data TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS agents (
+    hostname TEXT PRIMARY KEY,
+    ip_address TEXT,
+    os_name TEXT,
+    last_seen DATETIME
+);
+INSERT OR IGNORE INTO users (username, password) VALUES ('admin', '$DEFAULT_HASH');
+
+CREATE TABLE IF NOT EXISTS tasks (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    hostname TEXT NOT NULL,
+    task_type TEXT NOT NULL,
+    task_payload TEXT,
+    status TEXT DEFAULT 'pending',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    assigned_at DATETIME,
+    completed_at DATETIME
+);
+
+CREATE TABLE IF NOT EXISTS task_results (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    task_id INTEGER,
+    hostname TEXT NOT NULL,
+    result_status TEXT,
+    result_output TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(task_id) REFERENCES tasks(id)
+);
+EOF
+
+sqlite3 "$SERVER_WDIR/lastcontrol.db" "PRAGMA journal_mode=WAL;"
+sqlite3 "$SERVER_WDIR/lastcontrol.db" "PRAGMA synchronous=NORMAL;"
+
+cat <<'WEBCONF' > /etc/nginx/sites-available/lastcontrol
+server {
+    listen 80;
+    server_name _;
+
+    location / {
+        proxy_pass http://127.0.0.1:5000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
+WEBCONF
+ln -s /etc/nginx/sites-available/lastcontrol /etc/nginx/sites-enabled/
+rm /etc/nginx/sites-enabled/default
+systemctl restart nginx
+
