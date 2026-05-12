@@ -64,4 +64,7 @@ http://SERVER_IP/download-agent
 ```
 /usr/local/lastcontrol/dist/lastcontrol-agent_installer.sh
 ```
-
+Copy the installer to the target machine and run:
+```
+bash lastcontrol-agent_installer.sh
+```
