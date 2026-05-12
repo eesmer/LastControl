@@ -74,3 +74,18 @@ The agent will:
 - Install TLS certificates
 - Configure systemd timer
 - Start periodic reporting
+
+---
+
+#### Design Approach
+LastControl deliberately avoids the following:
+- Heavy-duty middleware
+- Complex orchestration stacks
+- Extensive dependency trees
+- Over-engineered infrastructure
+
+The project prioritizes the following:
+- Simplicity
+- Transparency
+- Comprehensibility
+- Small operational footprint
