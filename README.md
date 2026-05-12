@@ -36,3 +36,14 @@ LastControl was designed with the following ideas in mind:
 - Centralized reporting
 - Web-based visibility
 - Secure agent-server communication
+
+#### Features
+- Secure Agent Communication
+- TLS-encrypted communication using socat
+- Certificate-based client authentication
+- Lightweight transport layer
+- Flask-based lightweight web UI
+- Historical telemetry views
+- Bash-based agents
+- systemd integration
+- Randomized reporting timers
