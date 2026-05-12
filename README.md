@@ -10,7 +10,7 @@ LastControl, a lightweight, TLS-enabled Linux fleet reporting and telemetry plat
 
 ---
 
-Project focuses:
+#### Project Focuses
 
 - Simple deployment
 - Minimal dependencies
@@ -20,3 +20,15 @@ Project focuses:
 - Lightweight operational visibility
 
 Unlike large-scale enterprise monitoring stacks, LastControl aims to provide a minimal and understandable infrastructure that can be deployed quickly on Debian-based systems while remaining extensible for future orchestration and task execution capabilities.
+
+#### Project Goals
+
+LastControl was designed with the following ideas in mind:
+
+- Keep the agent lightweight
+- Avoid daemon-heavy architectures
+- Use standard Linux tools
+- Use encrypted communication
+- Make deployments reproducible
+- Allow future orchestration capabilities
+- Remain understandable and maintainable by system administrators
