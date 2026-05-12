@@ -47,3 +47,9 @@ LastControl was designed with the following ideas in mind:
 - Bash-based agents
 - systemd integration
 - Randomized reporting timers
+
+#### Installation
+```
+git clone https://github.com/eesmer/LastControl.git
+cd LastControl
+```
