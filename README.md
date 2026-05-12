@@ -49,3 +49,10 @@ git clone https://github.com/eesmer/LastControl.git
 cd LastControl
 bash LastControl-ServerInstaller.sh
 ```
+
+### Access to Web Interface
+```
+http://SERVER_IP
+Username: admin
+Password: lastcontrol
+```
