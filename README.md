@@ -56,3 +56,12 @@ http://SERVER_IP
 Username: admin
 Password: lastcontrol
 ```
+### Agent Installation
+The server generates a custom installer:
+```
+http://SERVER_IP/download-agent
+```
+```
+/usr/local/lastcontrol/dist/lastcontrol-agent_installer.sh
+```
+
