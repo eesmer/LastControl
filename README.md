@@ -10,12 +10,3 @@ LastControl, a lightweight, TLS-enabled Linux fleet reporting and telemetry plat
 ![Version](https://img.shields.io/badge/Version-v3-2563eb?style=for-the-badge&logo=github&logoColor=white&labelColor=0f172a&color=darkblue) <br>
 
 ---
-
-**Key Features** <br>
-
-- Inventory report
-- Check Roles
-- Local Users
-- Open Ports
-
----
