@@ -68,3 +68,9 @@ Copy the installer to the target machine and run:
 ```
 bash lastcontrol-agent_installer.sh
 ```
+The agent will:
+- Install required dependencies
+- Install reporting scripts
+- Install TLS certificates
+- Configure systemd timer
+- Start periodic reporting
