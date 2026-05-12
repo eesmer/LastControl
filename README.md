@@ -52,4 +52,5 @@ LastControl was designed with the following ideas in mind:
 ```
 git clone https://github.com/eesmer/LastControl.git
 cd LastControl
+bash LastControl-ServerInstaller.sh
 ```
