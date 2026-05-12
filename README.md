@@ -30,13 +30,6 @@ LastControl was designed with the following ideas in mind:
 - Allow future orchestration capabilities
 - Remain understandable and maintainable by system administrators
 
-### The current version focuses:
-- Inventory collection
-- System telemetry
-- Centralized reporting
-- Web-based visibility
-- Secure agent-server communication
-
 ### Features
 - Secure Agent Communication
 - TLS-encrypted communication using socat
