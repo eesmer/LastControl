@@ -115,6 +115,8 @@ sleep 2
 send_to_server "/usr/local/lastcontrol/scripts/ram_usage.sh"
 sleep 2
 send_to_server "/usr/local/lastcontrol/scripts/local_users.sh"
+sleep 2
+send_to_server "/usr/local/lastcontrol/scripts/update_report.sh"
 
 REPORT
 chmod +x /usr/local/bin/lastcontrol-report.sh
@@ -273,6 +275,7 @@ SYSTEM_INFO_MAP = {
     "system_info_roles": "roles",
     "system_info_ram": "ram_usage",
     "local_users": "local_users",
+    "update_report": "update_report",
 }
 
 INVENTORY_FIELDS = [
