@@ -9,7 +9,7 @@ if command -v apt >/dev/null 2>&1; then
     apt-get update -qq >/dev/null 2>&1
     UPDATES=$(apt list --upgradable 2>/dev/null | tail -n +2)
     TOTAL_UPDATES=$(echo "$UPDATES" | grep -c .)
-    UPDATE_LIST=$(echo "$UPDATES" | awk -F/ '{print $1}' | head -20 | paste -sd "," -)
+    UPDATE_LIST=$(echo "$UPDATES" | awk -F/ '{print $1}' | paste -sd "," -)
 
     if [ -f /var/run/reboot-required ]; then
         REBOOT_REQUIRED="yes"
@@ -22,7 +22,7 @@ elif command -v dnf >/dev/null 2>&1; then
     DISTRO=$(grep '^PRETTY_NAME=' /etc/os-release | cut -d= -f2 | tr -d '"')
     UPDATES=$(dnf check-update 2>/dev/null)
     TOTAL_UPDATES=$(echo "$UPDATES" | awk '/^[a-zA-Z0-9]/ {count++} END {print count+0}')
-    UPDATE_LIST=$(echo "$UPDATES" | awk '/^[a-zA-Z0-9]/ {print $1}' | head -20 | paste -sd "," -)
+    UPDATE_LIST=$(echo "$UPDATES" | awk -F/ '{print $1}' | paste -sd "," -)
 
     if command -v needs-restarting >/dev/null 2>&1; then
         needs-restarting -r >/dev/null 2>&1
@@ -40,7 +40,7 @@ elif command -v yum >/dev/null 2>&1; then
     DISTRO=$(grep '^PRETTY_NAME=' /etc/os-release | cut -d= -f2 | tr -d '"')
     UPDATES=$(yum check-update 2>/dev/null)
     TOTAL_UPDATES=$(echo "$UPDATES" | awk '/^[a-zA-Z0-9]/ {count++} END {print count+0}')
-    UPDATE_LIST=$(echo "$UPDATES" | awk '/^[a-zA-Z0-9]/ {print $1}' | head -20 | paste -sd "," -)
+    UPDATE_LIST=$(echo "$UPDATES" | awk -F/ '{print $1}' | paste -sd "," -)
     REBOOT_REQUIRED="unknown"
 
 else
