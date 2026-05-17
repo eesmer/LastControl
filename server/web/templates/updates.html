@@ -1,0 +1,80 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4><i class="fas fa-sync-alt text-secondary"></i> {{ hostname }} <small class="text-muted">Güncelleme Raporu</small></h4>
+</div>
+
+{% if reports and reports|length > 0 %}
+    {% for report in reports %}
+    <div class="card mb-4 shadow-sm {% if loop.first %}border-secondary{% endif %}">
+        <div class="card-header d-flex justify-content-between align-items-center {% if loop.first %}bg-secondary text-white{% else %}bg-light{% endif %}">
+            <span>
+                {% if loop.first %}
+                    <strong><i class="fas fa-clock me-1"></i> CURRENT UPDATE REPORT</strong>
+                {% else %}
+                    HISTORICAL REPORT
+                {% endif %}
+            </span>
+            <span class="badge {% if loop.first %}bg-white text-secondary{% else %}bg-secondary{% endif %}">
+                {{ report.created_at }}
+            </span>
+        </div>
+
+        <div class="card-body">
+            <div class="row g-3 mb-3">
+                <div class="col-md-3">
+                    <label class="text-muted small d-block">Distro</label>
+                    <span class="fw-bold">{{ report.data.distro or "unknown" }}</span>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="text-muted small d-block">Package Manager</label>
+                    <span class="badge bg-dark">{{ report.data.package_manager or "unknown" }}</span>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="text-muted small d-block">Update Count</label>
+                    {% set total = report.data.total_updates|int %}
+                    <span class="badge {% if total > 0 %}bg-warning text-dark{% else %}bg-success{% endif %}">
+                        {{ total }}
+                    </span>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="text-muted small d-block">Reboot Necessary?</label>
+                    {% if report.data.reboot_required == "yes" %}
+                        <span class="badge bg-danger">Yes</span>
+                    {% elif report.data.reboot_required == "no" %}
+                        <span class="badge bg-success">No</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Unknown</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <hr>
+
+            <h6 class="text-muted mb-2"><i class="fas fa-box-open me-1"></i> Updatable Packages</h6>
+
+            {% if report.data.updates %}
+                <div class="d-flex flex-wrap gap-2">
+                    {% for pkg in report.data.updates.split(',') %}
+                        <span class="badge rounded-pill bg-light text-dark border px-3 py-2">
+                            {{ pkg }}
+                        </span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-success mb-0">
+                    No updatable packages were found.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <div class="alert alert-info shadow-sm">
+        <i class="fas fa-info-circle me-2"></i> Update Report NotFound!
+    </div>
+{% endif %}
+{% endblock %}
