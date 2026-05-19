@@ -45,10 +45,9 @@ LastControl was designed with the following ideas in mind:
 
 ### Installation
 ```
-git clone https://github.com/eesmer/LastControl.git
+wget https://raw.githubusercontent.com/eesmer/LastControl/refs/heads/main/LastControl-ServerInstaller.sh
 ```
 ```
-cd LastControl
 bash LastControl-ServerInstaller.sh
 ```
 
