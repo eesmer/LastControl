@@ -20,6 +20,7 @@ mkdir -p "$CERT_DIR" "$AGENT_DIR"
 echo "--- LastControl: Installing Required Packages ---"
 echo "--- LastControl: Creating Certificate and Security Infrastructure ---"
 apt update
+apt-get -y install git
 apt-get -y install socat jq sqlite3
 apt-get -y install python3-venv python3-pip nginx
 apt-get -y install rsyslog
