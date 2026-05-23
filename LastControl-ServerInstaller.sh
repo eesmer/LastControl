@@ -277,6 +277,7 @@ SYSTEM_INFO_MAP = {
     "system_info_ram": "ram_usage",
     "local_users": "local_users",
     "update_report": "update_report",
+    "disk_io_load": "disk_io_load",
 }
 
 INVENTORY_FIELDS = [
