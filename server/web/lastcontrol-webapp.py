@@ -230,5 +230,41 @@ def agent_systemload(hostname):
         })
     return render_template('systemload.html', hostname=hostname, reports=processed_reports)
 
+@app.route('/packages/<hostname>')
+def agent_packages(hostname):
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+    conn = get_db_connection()
+    reports = conn.execute('''
+        SELECT *
+        FROM system_info
+        WHERE hostname = ? AND info_type = "package_inventory"
+        ORDER BY created_at DESC
+        LIMIT 3
+    ''', (hostname,)).fetchall()
+    conn.close()
+    processed_reports = []
+    for r in reports:
+        try:
+            data = json.loads(r['info_data'])
+        except Exception:
+            data = {}
+        packages_raw = data.get('packages', '')
+        packages = []
+        if packages_raw:
+            for item in packages_raw.split(','):
+                if '|' in item:
+                    name, version = item.split('|', 1)
+                    packages.append({
+                        'name': name,
+                        'version': version
+                    })
+        processed_reports.append({
+            'created_at': r['created_at'],
+            'data': data,
+            'packages': packages
+        })
+    return render_template('packages.html', hostname=hostname, reports=processed_reports)
+
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5000)
