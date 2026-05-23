@@ -10,150 +10,133 @@
 </div>
 
 {% if reports and reports|length > 0 %}
+{% for report in reports %}
 
-    {% for report in reports %}
+{% set load_ratio = report.data.load_per_core|float %}
+{% set disk_util = report.data.top_util|float %}
+{% set iowait = report.data.iowait|float %}
 
-        {% set load_ratio = report.data.load_per_core|float %}
-        {% set disk_util = report.data.top_util|float %}
-        {% set iowait = report.data.iowait|float %}
+<div class="card mb-4 shadow-sm {% if loop.first %}border-warning{% endif %}">
+<div class="card-header d-flex justify-content-between align-items-center {% if loop.first %}bg-warning text-dark{% else %}bg-light{% endif %}">
+<span>
+{% if loop.first %}
+<strong>
+<i class="fas fa-clock me-1"></i>
+CURRENT REPORT
+</strong>
+{% else %}
+HISTORICAL RECORDS
+{% endif %}
+</span>
 
-        <div class="card mb-4 shadow-sm {% if loop.first %}border-warning{% endif %}">
+<span class="badge bg-dark">
+{{ report.created_at }}
+</span>
+</div>
 
-            <div class="card-header d-flex justify-content-between align-items-center {% if loop.first %}bg-warning text-dark{% else %}bg-light{% endif %}">
-                <span>
-                    {% if loop.first %}
-                        <strong>
-                            <i class="fas fa-clock me-1"></i>
-                            GÜNCEL RAPOR
-                        </strong>
-                    {% else %}
-                        GEÇMİŞ RAPOR
-                    {% endif %}
-                </span>
+<div class="card-body">
+<div class="row g-3">
+<div class="col-md-4">
+<div class="p-3 border rounded bg-light">
+<h6 class="text-muted">
+Load / Core Ratio
+</h6>
 
-                <span class="badge bg-dark">
-                    {{ report.created_at }}
-                </span>
-            </div>
+{% if load_ratio < 0.7 %}
+<span class="badge bg-success fs-6">
+{{ report.data.load_per_core }}
+</span>
+<div class="small text-success mt-2">
+Healthy
+</div>
 
-            <div class="card-body">
-
-                <div class="row g-3">
-
-                    <div class="col-md-4">
-                        <div class="p-3 border rounded bg-light">
-
-                            <h6 class="text-muted">
-                                Load / Core Ratio
-                            </h6>
-
-                            {% if load_ratio < 0.7 %}
-                                <span class="badge bg-success fs-6">
-                                    {{ report.data.load_per_core }}
-                                </span>
-                                <div class="small text-success mt-2">
-                                    Normal
-                                </div>
-
-                            {% elif load_ratio < 1.0 %}
-                                <span class="badge bg-warning text-dark fs-6">
-                                    {{ report.data.load_per_core }}
-                                </span>
-                                <div class="small text-warning mt-2">
-                                    Yoğun
-                                </div>
-
-                            {% else %}
-                                <span class="badge bg-danger fs-6">
-                                    {{ report.data.load_per_core }}
-                                </span>
-                                <div class="small text-danger mt-2">
-                                    Saturation Riski
-                                </div>
-                            {% endif %}
-
-                            <div class="small text-muted mt-2">
-                                Load1: {{ report.data.load1 }}
-                                |
-                                CPU: {{ report.data.cpu_cores }}
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <div class="col-md-4">
-                        <div class="p-3 border rounded bg-light">
-
-                            <h6 class="text-muted">
-                                Disk Utilization
-                            </h6>
-
-                            {% if disk_util < 70 %}
-                                <span class="badge bg-success fs-6">
-                                    %{{ report.data.top_util }}
-                                </span>
-
-                            {% elif disk_util < 90 %}
-                                <span class="badge bg-warning text-dark fs-6">
-                                    %{{ report.data.top_util }}
-                                </span>
-
-                            {% else %}
-                                <span class="badge bg-danger fs-6">
-                                    %{{ report.data.top_util }}
-                                </span>
-                            {% endif %}
-
-                            <div class="small text-muted mt-2">
-                                Disk: {{ report.data.top_disk }}
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <div class="col-md-4">
-                        <div class="p-3 border rounded bg-light">
-
-                            <h6 class="text-muted">
-                                IO Wait
-                            </h6>
-
-                            {% if iowait < 5 %}
-                                <span class="badge bg-success fs-6">
-                                    %{{ report.data.iowait }}
-                                </span>
-
-                            {% elif iowait < 15 %}
-                                <span class="badge bg-warning text-dark fs-6">
-                                    %{{ report.data.iowait }}
-                                </span>
-
-                            {% else %}
-                                <span class="badge bg-danger fs-6">
-                                    %{{ report.data.iowait }}
-                                </span>
-                            {% endif %}
-
-                            <div class="small text-muted mt-2">
-                                IO pressure indicator
-                            </div>
-
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
-        </div>
-
-    {% endfor %}
+{% elif load_ratio < 1.0 %}
+<span class="badge bg-warning text-dark fs-6">
+{{ report.data.load_per_core }}
+</span>
+<div class="small text-warning mt-2">
+High Load
+</div>
 
 {% else %}
-
-    <div class="alert alert-info shadow-sm">
-        Henüz System Load raporu bulunamadı.
-    </div>
-
+<span class="badge bg-danger fs-6">
+{{ report.data.load_per_core }}
+</span>
+<div class="small text-danger mt-2">
+Saturation Risk
+</div>
 {% endif %}
 
+<div class="small text-muted mt-2">
+Load1: {{ report.data.load1 }}
+|
+CPU: {{ report.data.cpu_cores }}
+</div>
+</div>
+</div>
+
+<div class="col-md-4">
+<div class="p-3 border rounded bg-light">
+<h6 class="text-muted">
+Disk Utilization
+</h6>
+
+{% if disk_util < 70 %}
+<span class="badge bg-success fs-6">
+%{{ report.data.top_util }}
+</span>
+
+{% elif disk_util < 90 %}
+<span class="badge bg-warning text-dark fs-6">
+%{{ report.data.top_util }}
+</span>
+
+{% else %}
+<span class="badge bg-danger fs-6">
+%{{ report.data.top_util }}
+</span>
+{% endif %}
+<div class="small text-muted mt-2">
+Disk: {{ report.data.top_disk }}
+</div>
+</div>
+</div>
+
+<div class="col-md-4">
+<div class="p-3 border rounded bg-light">
+<h6 class="text-muted">
+IO Wait
+</h6>
+{% if iowait < 5 %}
+<span class="badge bg-success fs-6">
+%{{ report.data.iowait }}
+</span>
+
+{% elif iowait < 15 %}
+<span class="badge bg-warning text-dark fs-6">
+%{{ report.data.iowait }}
+</span>
+
+{% else %}
+<span class="badge bg-danger fs-6">
+%{{ report.data.iowait }}
+</span>
+{% endif %}
+
+<div class="small text-muted mt-2">
+IO pressure indicator
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+{% endfor %}
+{% else %}
+<div class="alert alert-info shadow-sm">
+System Load Report NotFound!
+</div>
+
+{% endif %}
 {% endblock %}
