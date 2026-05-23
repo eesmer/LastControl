@@ -1,0 +1,106 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4>
+        <i class="fas fa-boxes text-secondary"></i>
+        {{ hostname }}
+        <small class="text-muted">Package Inventory</small>
+    </h4>
+</div>
+
+{% if reports and reports|length > 0 %}
+    {% for report in reports %}
+    <div class="card mb-4 shadow-sm {% if loop.first %}border-secondary{% endif %}">
+        <div class="card-header d-flex justify-content-between align-items-center {% if loop.first %}bg-secondary text-white{% else %}bg-light{% endif %}">
+            <span>
+                {% if loop.first %}
+                    <strong><i class="fas fa-clock me-1"></i> GÜNCEL PAKET ENVANTERİ</strong>
+                {% else %}
+                    GEÇMİŞ PAKET ENVANTERİ
+                {% endif %}
+            </span>
+            <span class="badge {% if loop.first %}bg-white text-secondary{% else %}bg-secondary{% endif %}">
+                {{ report.created_at }}
+            </span>
+        </div>
+
+        <div class="card-body">
+            <div class="row g-3 mb-3">
+                <div class="col-md-3">
+                    <label class="text-muted small d-block">Distro</label>
+                    <span class="fw-bold">{{ report.data.distro_id }}</span>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="text-muted small d-block">Version</label>
+                    <span class="badge bg-dark">{{ report.data.distro_version }}</span>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="text-muted small d-block">Codename</label>
+                    <span class="badge bg-info text-dark">{{ report.data.distro_codename }}</span>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="text-muted small d-block">Package Count</label>
+                    <span class="badge bg-primary">{{ report.data.package_count }}</span>
+                </div>
+            </div>
+
+            <hr>
+
+            {% if loop.first %}
+            <div class="mb-3">
+                <input type="text"
+                       class="form-control"
+                       id="packageSearch"
+                       placeholder="Paket adı veya sürüm ara...">
+            </div>
+            {% endif %}
+
+            <div class="table-responsive" style="max-height: 600px; overflow-y: auto;">
+                <table class="table table-sm table-hover table-striped mb-0 package-table">
+                    <thead class="table-light sticky-top">
+                        <tr>
+                            <th style="width: 45%;">Package</th>
+                            <th>Version</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pkg in report.packages %}
+                        <tr>
+                            <td class="fw-bold package-name">{{ pkg.name }}</td>
+                            <td class="text-muted package-version">{{ pkg.version }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <div class="alert alert-info shadow-sm">
+        Henüz package inventory raporu bulunamadı.
+    </div>
+{% endif %}
+
+<script>
+const searchInput = document.getElementById("packageSearch");
+
+if (searchInput) {
+    searchInput.addEventListener("keyup", function() {
+        const filter = this.value.toLowerCase();
+        const rows = document.querySelectorAll(".package-table tbody tr");
+
+        rows.forEach(function(row) {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(filter) ? "" : "none";
+        });
+    });
+}
+</script>
+
+{% endblock %}
