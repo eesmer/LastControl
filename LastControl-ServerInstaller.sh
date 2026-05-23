@@ -76,9 +76,11 @@ CERTS="/etc/lastcontrol/certs"
 if [ -f /etc/debian_version ]; then
     apt-get update && apt-get -y install socat
     apt-get -y install rsyslog
+    apt-get -y install sysstat
 elif [ -f /etc/redhat-release ]; then
     yum -y install epel-release && yum -y install socat
     yum -y install rsyslog
+    yum -y install sysstat
 fi
 
 mkdir -p /usr/local/lastcontrol/scripts
@@ -118,6 +120,8 @@ sleep 2
 send_to_server "/usr/local/lastcontrol/scripts/local_users.sh"
 sleep 2
 send_to_server "/usr/local/lastcontrol/scripts/update_report.sh"
+sleep 2
+send_to_server "/usr/local/lastcontrol/scripts/disk_io_load.sh"
 
 REPORT
 chmod +x /usr/local/bin/lastcontrol-report.sh
