@@ -538,8 +538,28 @@ fi
 touch /var/log/lastcontrol-handler.log
 chmod 640 /var/log/lastcontrol-handler.log
 
+# Server Web Service
+cp $TEMP_REPO/server/etc/systemd/system/lastcontrol-web.service /etc/systemd/system/
+chmod 644 /etc/systemd/system/lastcontrol-web.service
+
+#cat > "/etc/systemd/system/lastcontrol-web.service" <<LCWEB
+#[Unit]
+#Description=LastControl Web Service
+#After=network.target
+#
+#[Service]
+##User=root
+#WorkingDirectory=/usr/local/lastcontrol/web
+#ExecStart=/usr/local/lastcontrol/web/venv/bin/python3 /usr/local/lastcontrol/web/lastcontrol-webapp.py
+#Restart=always
+#
+#[Install]
+#WantedBy=multi-user.target
+#LCWEB
+
+
 # Server Listener Service
-cat > "/etc/systemd/system/lastcontrol-listener.service" <<LCSSERVICE
+cat > "/etc/systemd/system/lastcontrol-listener.service" <<LCLISTENER
 [Unit]
 Description=LastControl Listener
 After=network-online.target
@@ -561,23 +581,7 @@ ReadWritePaths=/usr/local/lastcontrol /var/log
 
 [Install]
 WantedBy=multi-user.target
-LCSSERVICE
-
-# Server Web Service
-cat > "/etc/systemd/system/lastcontrol-web.service" <<LCSWEB
-[Unit]
-Description=LastControl Web Service
-After=network.target
-
-[Service]
-User=root
-WorkingDirectory=/usr/local/lastcontrol/web
-ExecStart=/usr/local/lastcontrol/web/venv/bin/python3 /usr/local/lastcontrol/web/lastcontrol-webapp.py
-Restart=always
-
-[Install]
-WantedBy=multi-user.target
-LCSWEB
+LCLISTENER
 
 systemctl daemon-reload
 systemctl enable --now lastcontrol-listener.service

@@ -1,0 +1,12 @@
+[Unit]
+Description=LastControl Web Service
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/usr/local/lastcontrol/web
+ExecStart=/usr/local/lastcontrol/web/venv/bin/python3 /usr/local/lastcontrol/web/lastcontrol-webapp.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
