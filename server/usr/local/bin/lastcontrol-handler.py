@@ -59,14 +59,11 @@ INVENTORY_FIELDS = [
 
 def read_payload():
     raw = sys.stdin.buffer.read(MAX_PAYLOAD_SIZE + 1)
-
     if len(raw) > MAX_PAYLOAD_SIZE:
         logging.error("Payload too large")
         sys.exit(0)
-
     if not raw:
         sys.exit(0)
-
     try:
         text = raw.decode("utf-8", errors="replace").strip()
         return json.loads(text)
@@ -88,18 +85,14 @@ def clean_value(value):
 
 def handle_inventory(data):
     values = [clean_value(data.get(field, "")) for field in INVENTORY_FIELDS]
-
     hostname = clean_value(data.get("hostname", ""))
     internal_ip = clean_value(data.get("internal_ip", ""))
     distro = clean_value(data.get("distro", ""))
-
     if not hostname:
         logging.error("Inventory rejected: hostname missing")
         return
-
     placeholders = ", ".join(["?"] * len(INVENTORY_FIELDS))
     field_list = ", ".join(INVENTORY_FIELDS)
-
     with get_conn() as conn:
         conn.execute(
             f"""
@@ -108,7 +101,6 @@ def handle_inventory(data):
             """,
             values
         )
-
         conn.execute(
             """
             INSERT INTO agents (hostname, ip_address, os_name, last_seen)
@@ -120,19 +112,15 @@ def handle_inventory(data):
             """,
             (hostname, internal_ip, distro)
         )
-
         conn.commit()
-
     logging.info("Inventory recorded for hostname=%s", hostname)
 
 def handle_system_info(data, info_type):
     hostname = clean_value(data.get("hostname", ""))
     info_data = clean_value(data.get("info_data", ""))
-
     if not hostname:
         logging.error("System info rejected: hostname missing")
         return
-
     with get_conn() as conn:
         conn.execute(
             """
@@ -141,7 +129,6 @@ def handle_system_info(data, info_type):
             """,
             (hostname, info_type, info_data)
         )
-
         conn.execute(
             """
             UPDATE agents
@@ -150,18 +137,14 @@ def handle_system_info(data, info_type):
             """,
             (hostname,)
         )
-
         conn.commit()
-
     logging.info("System info recorded hostname=%s type=%s", hostname, info_type)
 
 def handle_task_check(data):
     hostname = clean_value(data.get("hostname", ""))
-
     if not hostname:
         logging.error("Task check rejected: hostname missing")
         return
-
     with get_conn() as conn:
         task = conn.execute(
             """
@@ -174,7 +157,6 @@ def handle_task_check(data):
             """,
             (hostname,)
         ).fetchone()
-
         if task is None:
             response = {
                 "has_task": False
@@ -190,14 +172,12 @@ def handle_task_check(data):
                 (task["id"],)
             )
             conn.commit()
-
             response = {
                 "has_task": True,
                 "task_id": task["id"],
                 "task_type": task["task_type"],
                 "task_payload": task["task_payload"] or ""
             }
-
     print(json.dumps(response, ensure_ascii=False))
 
 def handle_task_result(data):
@@ -209,11 +189,9 @@ def handle_task_result(data):
        return
     result_status = clean_value(data.get("result_status", "unknown"))
     result_output = clean_value(data.get("result_output", ""))
-
     if not hostname or not task_id:
         logging.error("Task result rejected: hostname or task_id missing")
         return
-
     with get_conn() as conn:
         conn.execute(
             """
@@ -227,7 +205,6 @@ def handle_task_result(data):
             """,
             (task_id, hostname, result_status, result_output)
         )
-
         conn.execute(
             """
             UPDATE tasks
@@ -237,19 +214,15 @@ def handle_task_result(data):
             """,
             (task_id,)
         )
-
         conn.commit()
-
     logging.info("Task result recorded hostname=%s task_id=%s", hostname, task_id)
 
 def main():
     data = read_payload()
     origin = clean_value(data.get("origin", ""))
-
     if not origin:
         logging.error("Origin missing")
         return
-
     if origin == "inventory":
         handle_inventory(data)
     elif origin in SYSTEM_INFO_MAP:
