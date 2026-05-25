@@ -295,9 +295,19 @@ ReadWritePaths=/usr/local/lastcontrol /var/log
 WantedBy=multi-user.target
 LCLISTENER
 
+# CVE Data Services
+# Debian SecurityData Update Service
+cp $TEMP_REPO/server/usr/local/bin/lastcontrol-debian-securitydata-update.sh /usr/local/bin/
+chmod +x /usr/local/bin/lastcontrol-debian-securitydata-update.sh
+touch /var/log/lastcontrol-debian-securitydata-update.sh
+chmod 640 /var/log/lastcontrol-debian-securitydata-update.sh
+cp $TEMP_REPO/server/etc/systemd/system/lastcontrol-debian-securitydata-update.service /etc/systemd/system/
+cp $TEMP_REPO/server/etc/systemd/system/lastcontrol-debian-securitydata-update.timer /etc/systemd/system/
+
 systemctl daemon-reload
 systemctl enable --now lastcontrol-listener.service
 systemctl enable --now lastcontrol-web.service
+systemctl enable --now lastcontrol-debian-securitydata-update.timer
 
 echo "--- Installation Complete ---"
 echo "Agent Installer: $AGENT_DIR/lastcontrol-agent_installer.sh"
