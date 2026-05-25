@@ -59,8 +59,7 @@ cat $CERT_DIR/server.key $CERT_DIR/server.crt > $CERT_DIR/server.pem
 cat $CERT_DIR/client.key $CERT_DIR/client.crt > $CERT_DIR/client.pem
 
 echo "--- Agent Installer Preparing ---"
-#AGENT_PAYLOAD=$(tar -czf - -C ./agent_scripts . | base64 -w 0)
-AGENT_PAYLOAD=$(tar -czf - -C "$TEMP_REPO"/client/agent_scripts . | base64 -w 0)
+AGENT_PAYLOAD=$(tar -czf - -C "$TEMP_REPO"/client/scripts . | base64 -w 0)
 mkdir -p $AGENT_DIR
 # 4. Agent Installer - Generated Specifically for each installation
 cat <<EOF > $AGENT_DIR/lastcontrol-agent_installer.sh
