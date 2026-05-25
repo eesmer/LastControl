@@ -1,0 +1,265 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4>
+        <i class="fas fa-shield-alt text-danger"></i>
+        {{ hostname }}
+        <small class="text-muted">Potential CVE Exposure</small>
+    </h4>
+</div>
+
+<div class="alert alert-warning shadow-sm">
+    <i class="fas fa-exclamation-triangle me-2"></i>
+    Bu rapor aktif zafiyet testi yapmaz.
+    Kurulu paketler ile vendor security tracker verileri eşleştirilerek
+    <strong>potansiyel CVE görünürlüğü</strong> sağlar.
+</div>
+
+<div class="mb-3">
+    {% if show_all %}
+        <a href="/cves/{{ hostname }}" class="btn btn-sm btn-outline-danger">
+            Current Records
+        </a>
+    {% else %}
+        <a href="/cves/{{ hostname }}?all=1" class="btn btn-sm btn-outline-secondary">
+            Show Historical/Resolved/Unimportant Records
+        </a>
+    {% endif %}
+</div>
+
+{% if summary %}
+
+<h6 class="text-muted mb-2">Status Summary</h6>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card shadow-sm text-center">
+            <div class="card-body">
+                <div class="text-muted small">Total</div>
+                <div class="fs-4 fw-bold">{{ summary.total or 0 }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm text-center border-danger">
+            <div class="card-body">
+                <div class="text-muted small">Open</div>
+                <div class="fs-4 fw-bold text-danger">{{ summary.open_count or 0 }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm text-center border-warning">
+            <div class="card-body">
+                <div class="text-muted small">Undetermined</div>
+                <div class="fs-4 fw-bold text-warning">{{ summary.undetermined_count or 0 }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm text-center border-success">
+            <div class="card-body">
+                <div class="text-muted small">Resolved</div>
+                <div class="fs-4 fw-bold text-success">{{ summary.resolved_count or 0 }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h6 class="text-muted mb-2">Operational Priority</h6>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm text-center border-danger">
+            <div class="card-body">
+                <div class="text-muted small">Open + High</div>
+                <div class="fs-4 fw-bold text-danger">{{ summary.open_high_count or 0 }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card shadow-sm text-center border-warning">
+            <div class="card-body">
+                <div class="text-muted small">Open + Medium</div>
+                <div class="fs-4 fw-bold text-warning">{{ summary.open_medium_count or 0 }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h6 class="text-muted mb-2">Urgency Summary</h6>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-2">
+        <div class="card shadow-sm text-center border-danger">
+            <div class="card-body">
+                <div class="text-muted small">High</div>
+                <div class="fs-4 fw-bold text-danger">{{ summary.high_count or 0 }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-2">
+        <div class="card shadow-sm text-center border-warning">
+            <div class="card-body">
+                <div class="text-muted small">Medium</div>
+                <div class="fs-4 fw-bold text-warning">{{ summary.medium_count or 0 }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-2">
+        <div class="card shadow-sm text-center border-info">
+            <div class="card-body">
+                <div class="text-muted small">Low</div>
+                <div class="fs-4 fw-bold text-info">{{ summary.low_count or 0 }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm text-center border-secondary">
+            <div class="card-body">
+                <div class="text-muted small">Unimportant</div>
+                <div class="fs-4 fw-bold text-secondary">{{ summary.unimportant_count or 0 }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm text-center">
+            <div class="card-body">
+                <div class="text-muted small">Not Assigned</div>
+                <div class="fs-4 fw-bold text-dark">{{ summary.not_assigned_count or 0 }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endif %}
+
+<div class="card shadow-sm">
+    <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+        <span>
+            <i class="fas fa-bug me-1"></i>
+            CVE Exposure Records
+        </span>
+
+        <span class="badge bg-light text-danger">
+            {{ rows|length }} kayıt gösteriliyor
+        </span>
+    </div>
+
+    <div class="card-body">
+        <div class="mb-3">
+            <input type="text"
+                   class="form-control"
+                   id="cveSearch"
+                   placeholder="Paket, CVE, status veya urgency ara...">
+        </div>
+
+        {% if rows and rows|length > 0 %}
+
+        <div class="table-responsive" style="max-height: 700px; overflow-y: auto;">
+            <table class="table table-sm table-hover table-striped mb-0" id="cveTable">
+                <thead class="table-light sticky-top">
+                    <tr>
+                        <th>Package</th>
+                        <th>Installed Version</th>
+                        <th>CVE</th>
+                        <th>Status</th>
+                        <th>Urgency</th>
+                        <th>Fixed Version</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for r in rows %}
+                    <tr>
+                        <td class="fw-bold">{{ r.package_name }}</td>
+
+                        <td>
+                            <code>{{ r.installed_version }}</code>
+                        </td>
+
+                        <td>
+                            <a href="https://security-tracker.debian.org/tracker/{{ r.cve_id }}"
+                               target="_blank"
+                               class="badge bg-dark text-decoration-none">
+                                {{ r.cve_id }}
+                            </a>
+                        </td>
+
+                        <td>
+                            {% if r.debian_status == "open" %}
+                                <span class="badge bg-danger">open</span>
+                            {% elif r.debian_status == "resolved" %}
+                                <span class="badge bg-success">resolved</span>
+                            {% elif r.debian_status == "undetermined" %}
+                                <span class="badge bg-warning text-dark">undetermined</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ r.debian_status or "unknown" }}</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if r.urgency == "high" %}
+                                <span class="badge bg-danger">high</span>
+                            {% elif r.urgency == "medium" %}
+                                <span class="badge bg-warning text-dark">medium</span>
+                            {% elif r.urgency == "low" %}
+                                <span class="badge bg-info text-dark">low</span>
+                            {% elif r.urgency == "unimportant" %}
+                                <span class="badge bg-secondary">unimportant</span>
+                            {% else %}
+                                <span class="badge bg-light text-dark border">
+                                    {{ r.urgency or "not assigned" }}
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if r.fixed_version %}
+                                <code>{{ r.fixed_version }}</code>
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% else %}
+
+        <div class="alert alert-info mb-0">
+            Bu makine için CVE exposure kaydı bulunamadı.
+        </div>
+
+        {% endif %}
+    </div>
+</div>
+
+<script>
+const cveSearch = document.getElementById("cveSearch");
+
+if (cveSearch) {
+    cveSearch.addEventListener("keyup", function() {
+        const filter = this.value.toLowerCase();
+        const rows = document.querySelectorAll("#cveTable tbody tr");
+
+        rows.forEach(function(row) {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(filter) ? "" : "none";
+        });
+    });
+}
+</script>
+
+{% endblock %}
