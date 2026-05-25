@@ -266,5 +266,62 @@ def agent_packages(hostname):
         })
     return render_template('packages.html', hostname=hostname, reports=processed_reports)
 
+@app.route('/cves/<hostname>')
+def agent_cves(hostname):
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+    show_all = request.args.get('all') == '1'
+    conn = get_db_connection()
+    if show_all:
+        query_filter = ""
+    else:
+        query_filter = """
+            AND (
+                debian_status IN ('open', 'undetermined')
+                OR urgency IN ('high', 'medium')
+            )
+           AND urgency != 'unimportant'
+        """
+    rows = conn.execute(f'''
+        SELECT *
+        FROM cve_exposure
+        WHERE hostname = ?
+        {query_filter}
+        ORDER BY
+            CASE
+                WHEN debian_status = 'open' THEN 1
+                WHEN debian_status = 'undetermined' THEN 2
+                WHEN debian_status = 'resolved' THEN 3
+                ELSE 4
+            END,
+            CASE
+                WHEN urgency = 'high' THEN 1
+                WHEN urgency = 'medium' THEN 2
+                WHEN urgency = 'low' THEN 3
+                WHEN urgency = 'unimportant' THEN 4
+                ELSE 5
+            END,
+            package_name ASC,
+            cve_id DESC
+    ''', (hostname,)).fetchall()
+    summary = conn.execute('''
+        SELECT
+            COUNT(*) AS total,
+            SUM(CASE WHEN debian_status = 'open' THEN 1 ELSE 0 END) AS open_count,
+            SUM(CASE WHEN debian_status = 'resolved' THEN 1 ELSE 0 END) AS resolved_count,
+            SUM(CASE WHEN debian_status = 'undetermined' THEN 1 ELSE 0 END) AS undetermined_count,
+            SUM(CASE WHEN urgency = 'high' THEN 1 ELSE 0 END) AS high_count,
+            SUM(CASE WHEN urgency = 'medium' THEN 1 ELSE 0 END) AS medium_count,
+            SUM(CASE WHEN urgency = 'low' THEN 1 ELSE 0 END) AS low_count,
+            SUM(CASE WHEN urgency = 'unimportant' THEN 1 ELSE 0 END) AS unimportant_count,
+            SUM(CASE WHEN urgency = 'not yet assigned' OR urgency = '' OR urgency IS NULL THEN 1 ELSE 0 END) AS not_assigned_count,
+            SUM(CASE WHEN debian_status = 'open' AND urgency = 'high' THEN 1 ELSE 0 END) AS open_high_count,
+            SUM(CASE WHEN debian_status = 'open' AND urgency = 'medium' THEN 1 ELSE 0 END) AS open_medium_count
+        FROM cve_exposure
+        WHERE hostname = ?
+    ''', (hostname,)).fetchone()
+    conn.close()
+    return render_template('cves.html', hostname=hostname, rows=rows, summary=summary, show_all=show_all)
+
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5000)
