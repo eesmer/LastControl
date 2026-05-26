@@ -2,7 +2,7 @@
 
 # -----------------------------------------------------
 # LastControl Server Installer
-# build: 2026-05-25
+# build: 2026-05-26
 # -----------------------------------------------------
 
 SERVER_IP=$(hostname -I | awk '{print $1}')
@@ -35,7 +35,9 @@ mkdir -p $SERVER_WDIR/web/templates
 touch "$SERVER_WDIR/readme.md"
 TODAY=$(date)
 echo "InstallDate: $TODAY" > $SERVER_WDIR/readme.md
+[ -f "$TEMP_REPO/server/web/lastcontrol-webapp.py" ] || { echo "WebApp NotFound"; exit 1; }
 cp $TEMP_REPO/server/web/lastcontrol-webapp.py "$SERVER_WDIR/web/"
+[ -d "$TEMP_REPO/server/web/templates" ] || { echo "Templates Dir NotFound"; exit 1; }
 cp -r "$TEMP_REPO/server/web/templates/"* "$SERVER_WDIR/web/templates/"
 cd $SERVER_WDIR/web
 python3 -m venv venv
@@ -59,6 +61,7 @@ cat $CERT_DIR/server.key $CERT_DIR/server.crt > $CERT_DIR/server.pem
 cat $CERT_DIR/client.key $CERT_DIR/client.crt > $CERT_DIR/client.pem
 
 echo "--- Agent Installer Preparing ---"
+[ -d "$TEMP_REPO/client/scripts" ] || { echo "AgentScripts Dir NotFound"; exit 1; }
 AGENT_PAYLOAD=$(tar -czf - -C "$TEMP_REPO"/client/scripts . | base64 -w 0)
 mkdir -p $AGENT_DIR
 # 4. Agent Installer - Generated Specifically for each installation
@@ -272,6 +275,7 @@ rm /etc/nginx/sites-enabled/default
 systemctl restart nginx
 
 # Server Handler Script (for listener service)
+[ -f "$TEMP_REPO/server/usr/local/bin/lastcontrol-handler.py" ] || { echo "Listener/Handler script NotFound"; exit 1; }
 cp $TEMP_REPO/server/usr/local/bin/lastcontrol-handler.py /usr/local/bin/
 chmod +x /usr/local/bin/lastcontrol-handler.py
 python3 -m py_compile /usr/local/bin/lastcontrol-handler.py
@@ -283,6 +287,7 @@ touch /var/log/lastcontrol-handler.log
 chmod 640 /var/log/lastcontrol-handler.log
 
 # Server Web Service
+[ -f "$TEMP_REPO/server/etc/systemd/system/lastcontrol-web.service" ] || { echo "WebService File NotFound"; exit 1; }
 cp $TEMP_REPO/server/etc/systemd/system/lastcontrol-web.service /etc/systemd/system/
 chmod 644 /etc/systemd/system/lastcontrol-web.service
 
@@ -312,12 +317,19 @@ WantedBy=multi-user.target
 LCLISTENER
 
 # CVE Data Services
+[ -f "$TEMP_REPO/server/usr/local/bin/lastcontrol-securitydata-update.sh" ] || { echo "SecurityData Update Script NotFound"; exit 1; }
 cp $TEMP_REPO/server/usr/local/bin/lastcontrol-securitydata-update.sh /usr/local/bin/lastcontrol-securitydata-update.sh
+[ -f "$TEMP_REPO/server/usr/local/bin/lastcontrol-securitydata-cve-matcher.sh" ] || { echo "SecurityData Matcher Script (sh) NotFound"; exit 1; }
 cp $TEMP_REPO/server/usr/local/bin/lastcontrol-securitydata-cve-matcher.sh /usr/local/bin/lastcontrol-securitydata-cve-matcher.sh
+[ -f "$TEMP_REPO/server/usr/local/bin/lastcontrol-debian-cve-matcher.py" ] || { echo "SecurityData Update Script (py) NotFound"; exit 1; }
 cp $TEMP_REPO/server/usr/local/bin/lastcontrol-debian-cve-matcher.py /usr/local/bin/lastcontrol-debian-cve-matcher.py
+[ -f "$TEMP_REPO/server/etc/systemd/system/lastcontrol-securitydata-update.service" ] || { echo "SecurityData Update Service NotFound"; exit 1; }
 cp $TEMP_REPO/server/etc/systemd/system/lastcontrol-securitydata-update.service /etc/systemd/system/lastcontrol-securitydata-update.service
+[ -f "$TEMP_REPO/server/etc/systemd/system/lastcontrol-securitydata-update.timer" ] || { echo "SecurityData Update Timer NotFound"; exit 1; }
 cp $TEMP_REPO/server/etc/systemd/system/lastcontrol-securitydata-update.timer /etc/systemd/system/lastcontrol-securitydata-update.timer
+[ -f "$TEMP_REPO/server/etc/systemd/system/lastcontrol-securitydata-cve-matcher.service" ] || { echo "SecurityData CVE Matcher Service NotFound"; exit 1; }
 cp $TEMP_REPO/server/etc/systemd/system/lastcontrol-securitydata-cve-matcher.service /etc/systemd/system/lastcontrol-securitydata-cve-matcher.service
+[ -f "$TEMP_REPO/server/etc/systemd/system/lastcontrol-securitydata-cve-matcher.timer" ] || { echo "SecurityData CVE Matcher Timer NotFound"; exit 1; }
 cp $TEMP_REPO/server/etc/systemd/system/lastcontrol-securitydata-cve-matcher.timer /etc/systemd/system/lastcontrol-securitydata-cve-matcher.timer
 
 chmod +x /usr/local/bin/lastcontrol-securitydata-update.sh
@@ -335,7 +347,6 @@ systemctl enable --now lastcontrol-securitydata-update.timer
 systemctl enable --now lastcontrol-securitydata-cve-matcher.timer
 
 echo "SecurityData Updater Services Initialize.."
-#/usr/local/bin/lastcontrol-debian-securitydata-update.sh --download-only || true
 /usr/local/bin/lastcontrol-securitydata-update.sh --download-only || true
 
 echo "--- Installation Complete ---"
