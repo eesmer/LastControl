@@ -278,7 +278,7 @@ server {
 }
 WEBCONF
 ln -s /etc/nginx/sites-available/lastcontrol /etc/nginx/sites-enabled/
-rm /etc/nginx/sites-enabled/default
+rm -f /etc/nginx/sites-enabled/default
 systemctl restart nginx
 
 # Server Handler Script (for listener service)
