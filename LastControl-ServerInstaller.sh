@@ -74,15 +74,22 @@ SERVER_ADDR="$SERVER_IP"
 PORT="$PORT"
 CERTS="/etc/lastcontrol/certs"
 
-# Debian & RHEL
+# Debian / Ubuntu
 if [ -f /etc/debian_version ]; then
-    apt-get update && apt-get -y install socat
-    apt-get -y install rsyslog
-    apt-get -y install sysstat
+    apt-get update
+    apt-get -y install socat rsyslog sysstat
+# RHEL / Rocky / Alma / CentOS
 elif [ -f /etc/redhat-release ]; then
-    yum -y install epel-release && yum -y install socat
-    yum -y install rsyslog
-    yum -y install sysstat
+    if command -v dnf >/dev/null 2>&1; then
+        dnf -y install epel-release
+        dnf -y install socat rsyslog sysstat
+    elif command -v yum >/dev/null 2>&1; then
+        yum -y install epel-release
+        yum -y install socat rsyslog sysstat
+    else
+        echo "No supported package manager found!"
+        exit 1
+    fi
 fi
 
 mkdir -p /usr/local/lastcontrol/scripts
