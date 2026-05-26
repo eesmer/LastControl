@@ -1,6 +1,0 @@
-[Unit]
-Description=LastControl Debian SecurityData Update Service
-
-[Service]
-Type=oneshot
-ExecStart=/usr/local/bin/lastcontrol-debian-securitydata-update.sh

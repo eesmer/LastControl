@@ -1,5 +1,5 @@
 [Unit]
-Description=Run LastControl SecurityData Update Daily Service
+Description=Run LastControl SecurityData Update Daily
 
 [Timer]
 OnCalendar=*-*-* 03:30:00

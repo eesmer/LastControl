@@ -1,0 +1,6 @@
+[Unit]
+Description=LastControl SecurityData Update
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/lastcontrol-securitydata-update.sh
