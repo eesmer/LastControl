@@ -2,7 +2,7 @@
 
 # -----------------------------------------------------
 # LastControl Server Installer
-# build: 2026-05-10
+# build: 2026-05-25
 # -----------------------------------------------------
 
 SERVER_IP=$(hostname -I | awk '{print $1}')
@@ -214,6 +214,21 @@ CREATE TABLE IF NOT EXISTS agents (
 );
 INSERT OR IGNORE INTO users (username, password) VALUES ('admin', '$DEFAULT_HASH');
 
+CREATE TABLE IF NOT EXISTS cve_exposure (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    hostname TEXT,
+    distro_id TEXT,
+    distro_version TEXT,
+    distro_codename TEXT,
+    package_name TEXT,
+    installed_version TEXT,
+    cve_id TEXT,
+    debian_status TEXT,
+    urgency TEXT,
+    fixed_version TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS tasks (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     hostname TEXT NOT NULL,
@@ -256,6 +271,7 @@ ln -s /etc/nginx/sites-available/lastcontrol /etc/nginx/sites-enabled/
 rm /etc/nginx/sites-enabled/default
 systemctl restart nginx
 
+# Server Handler Script (for listener service)
 cp $TEMP_REPO/server/usr/local/bin/lastcontrol-handler.py /usr/local/bin/
 chmod +x /usr/local/bin/lastcontrol-handler.py
 python3 -m py_compile /usr/local/bin/lastcontrol-handler.py
@@ -296,18 +312,31 @@ WantedBy=multi-user.target
 LCLISTENER
 
 # CVE Data Services
-# Debian SecurityData Update Service
-cp $TEMP_REPO/server/usr/local/bin/lastcontrol-debian-securitydata-update.sh /usr/local/bin/
-chmod +x /usr/local/bin/lastcontrol-debian-securitydata-update.sh
-touch /var/log/lastcontrol-debian-securitydata-update.sh
-chmod 640 /var/log/lastcontrol-debian-securitydata-update.sh
-cp $TEMP_REPO/server/etc/systemd/system/lastcontrol-debian-securitydata-update.service /etc/systemd/system/
-cp $TEMP_REPO/server/etc/systemd/system/lastcontrol-debian-securitydata-update.timer /etc/systemd/system/
+cp $TEMP_REPO/server/usr/local/bin/lastcontrol-securitydata-update.sh /usr/local/bin/lastcontrol-securitydata-update.sh
+cp $TEMP_REPO/server/usr/local/bin/lastcontrol-securitydata-cve-matcher.sh /usr/local/bin/lastcontrol-securitydata-cve-matcher.sh
+cp $TEMP_REPO/server/usr/local/bin/lastcontrol-debian-cve-matcher.py /usr/local/bin/lastcontrol-debian-cve-matcher.py
+cp $TEMP_REPO/server/etc/systemd/system/lastcontrol-securitydata-update.service /etc/systemd/system/lastcontrol-securitydata-update.service
+cp $TEMP_REPO/server/etc/systemd/system/lastcontrol-securitydata-update.timer /etc/systemd/system/lastcontrol-securitydata-update.timer
+cp $TEMP_REPO/server/etc/systemd/system/lastcontrol-securitydata-cve-matcher.service /etc/systemd/system/lastcontrol-securitydata-cve-matcher.service
+cp $TEMP_REPO/server/etc/systemd/system/lastcontrol-securitydata-cve-matcher.timer /etc/systemd/system/lastcontrol-securitydata-cve-matcher.timer
+
+chmod +x /usr/local/bin/lastcontrol-securitydata-update.sh
+chmod +x /usr/local/bin/lastcontrol-securitydata-cve-matcher.sh
+chmod +x /usr/local/bin/lastcontrol-debian-cve-matcher.py
+touch /var/log/lastcontrol-securitydata-update.log
+touch /var/log/lastcontrol-securitydata-cve-matcher.log
+chmod 640 /var/log/lastcontrol-securitydata-update.log
+chmod 640 /var/log/lastcontrol-securitydata-cve-matcher.log
 
 systemctl daemon-reload
 systemctl enable --now lastcontrol-listener.service
 systemctl enable --now lastcontrol-web.service
-systemctl enable --now lastcontrol-debian-securitydata-update.timer
+systemctl enable --now lastcontrol-securitydata-update.timer
+systemctl enable --now lastcontrol-securitydata-cve-matcher.timer
+
+echo "SecurityData Updater Services Initialize.."
+#/usr/local/bin/lastcontrol-debian-securitydata-update.sh --download-only || true
+/usr/local/bin/lastcontrol-securitydata-update.sh --download-only || true
 
 echo "--- Installation Complete ---"
 echo "Agent Installer: $AGENT_DIR/lastcontrol-agent_installer.sh"
