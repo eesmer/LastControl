@@ -328,8 +328,12 @@ LCLISTENER
 cp $TEMP_REPO/server/usr/local/bin/lastcontrol-securitydata-update.sh /usr/local/bin/lastcontrol-securitydata-update.sh
 [ -f "$TEMP_REPO/server/usr/local/bin/lastcontrol-securitydata-cve-matcher.sh" ] || { echo "SecurityData Matcher Script (sh) NotFound"; exit 1; }
 cp $TEMP_REPO/server/usr/local/bin/lastcontrol-securitydata-cve-matcher.sh /usr/local/bin/lastcontrol-securitydata-cve-matcher.sh
-[ -f "$TEMP_REPO/server/usr/local/bin/lastcontrol-debian-cve-matcher.py" ] || { echo "SecurityData Update Script (py) NotFound"; exit 1; }
+[ -f "$TEMP_REPO/server/usr/local/bin/lastcontrol-debian-cve-matcher.py" ] || { echo "SecurityData Debian CVE Matcher Script NotFound"; exit 1; }
 cp $TEMP_REPO/server/usr/local/bin/lastcontrol-debian-cve-matcher.py /usr/local/bin/lastcontrol-debian-cve-matcher.py
+[ -f "$TEMP_REPO/server/usr/local/bin/lastcontrol-debian-cve-matcher.py" ] || { echo "SecurityData Ubuntu CVE Matcher Script NotFound"; exit 1; }
+cp $TEMP_REPO/server/usr/local/bin/lastcontrol-ubuntu-cve-matcher.py /usr/local/bin/lastcontrol-ubuntu-cve-matcher.py
+[ -f "$TEMP_REPO/server/usr/local/bin/lastcontrol-debian-cve-matcher.py" ] || { echo "SecurityData RHEL(Rocky/Alma) CVE Matcher Script NotFound"; exit 1; }
+cp $TEMP_REPO/server/usr/local/bin/lastcontrol-rhel-cve-matcher.py /usr/local/bin/lastcontrol-rhel-cve-matcher.py
 [ -f "$TEMP_REPO/server/etc/systemd/system/lastcontrol-securitydata-update.service" ] || { echo "SecurityData Update Service NotFound"; exit 1; }
 cp $TEMP_REPO/server/etc/systemd/system/lastcontrol-securitydata-update.service /etc/systemd/system/lastcontrol-securitydata-update.service
 [ -f "$TEMP_REPO/server/etc/systemd/system/lastcontrol-securitydata-update.timer" ] || { echo "SecurityData Update Timer NotFound"; exit 1; }
@@ -342,6 +346,8 @@ cp $TEMP_REPO/server/etc/systemd/system/lastcontrol-securitydata-cve-matcher.tim
 chmod +x /usr/local/bin/lastcontrol-securitydata-update.sh
 chmod +x /usr/local/bin/lastcontrol-securitydata-cve-matcher.sh
 chmod +x /usr/local/bin/lastcontrol-debian-cve-matcher.py
+chmod +x /usr/local/bin/lastcontrol-ubuntu-cve-matcher.py
+chmod +x /usr/local/bin/lastcontrol-rhel-cve-matcher.py
 touch /var/log/lastcontrol-securitydata-update.log
 touch /var/log/lastcontrol-securitydata-cve-matcher.log
 chmod 640 /var/log/lastcontrol-securitydata-update.log
