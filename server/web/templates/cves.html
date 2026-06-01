@@ -11,9 +11,9 @@
 
 <div class="alert alert-warning shadow-sm">
     <i class="fas fa-exclamation-triangle me-2"></i>
-    Bu rapor aktif zafiyet testi yapmaz.
-    Kurulu paketler ile vendor security tracker verileri eşleştirilerek
-    <strong>potansiyel CVE görünürlüğü</strong> sağlar.
+    This report does not perform active vulnerability testing.
+    It performs <strong>a potential</strong> CVE check by matching installed packages
+    with vendor security tracker data.
 </div>
 
 <div class="mb-3">
@@ -151,7 +151,7 @@
         </span>
 
         <span class="badge bg-light text-danger">
-            {{ rows|length }} kayıt gösteriliyor
+            {{ rows|length }} showing records
         </span>
     </div>
 
@@ -239,7 +239,7 @@
         {% else %}
 
         <div class="alert alert-info mb-0">
-            Bu makine için CVE exposure kaydı bulunamadı.
+	    No CVE exposure record was found for this machine.
         </div>
 
         {% endif %}
