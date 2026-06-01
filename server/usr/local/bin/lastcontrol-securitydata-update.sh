@@ -22,18 +22,37 @@ else
     echo "$(date '+%F %T') - Debian Security Tracker JSON validation failed" >> "$LOG_FILE"
 fi
 
-# Ubuntu
-echo "$(date '+%F %T') - Ubuntu security data update not implemented yet" >> "$LOG_FILE"
+# Ubuntu OVAL
+echo "$(date '+%F %T') - Ubuntu OVAL update started" >> "$LOG_FILE"
+UBUNTU_RELEASES=("focal" "jammy" "noble")
+for rel in "${UBUNTU_RELEASES[@]}"; do
+    URL="https://security-metadata.canonical.com/oval/com.ubuntu.${rel}.cve.oval.xml.bz2"
+    OUT="$UBUNTU_DIR/${rel}.cve.oval.xml.bz2"
 
-# RHEL
-echo "$(date '+%F %T') - RHEL security data update not implemented yet" >> "$LOG_FILE"
+    if curl -fsSL "$URL" -o "$OUT.tmp"; then
+        mv "$OUT.tmp" "$OUT"
+        echo "$(date '+%F %T') - Ubuntu OVAL updated: $rel" >> "$LOG_FILE"
+    else
+        rm -f "$OUT.tmp"
+        echo "$(date '+%F %T') - Ubuntu OVAL update failed: $rel" >> "$LOG_FILE"
+    fi
+done
+
+# RHEL / Rocky / Alma compatible Red Hat Security Data
+echo "$(date '+%F %T') - Red Hat Security Data update started" >> "$LOG_FILE"
+CURRENT_YEAR=$(date +%Y)
+AFTER_YEAR=$((CURRENT_YEAR - 2))
+AFTER_DATE="${AFTER_YEAR}-01-01"
+curl -fsSL \
+  "https://access.redhat.com/hydra/rest/securitydata/cve.json?after=${AFTER_DATE}" \
+  -o "$RHEL_DIR/cve-recent.json.tmp"
+if jq empty "$RHEL_DIR/cve-recent.json.tmp"; then
+    mv "$RHEL_DIR/cve-recent.json.tmp" "$RHEL_DIR/cve-recent.json"
+    echo "$(date '+%F %T') - Red Hat CVE recent data updated successfully" >> "$LOG_FILE"
+else
+    rm -f "$RHEL_DIR/cve-recent.json.tmp"
+    echo "$(date '+%F %T') - Red Hat CVE recent JSON validation failed" >> "$LOG_FILE"
+fi
 
 echo "$(date '+%F %T') - Security data update finished" >> "$LOG_FILE"
 
-
-#if [ -x /usr/local/bin/lastcontrol-debian-cve-matcher.py ]; then
-#    /usr/local/bin/lastcontrol-debian-cve-matcher.py >> "$LOG_FILE" 2>&1
-#    echo "$(date '+%F %T') - Debian CVE matcher completed" >> "$LOG_FILE"
-#else
-#    echo "$(date '+%F %T') - Debian CVE matcher not found or not executable" >> "$LOG_FILE"
-#fi
