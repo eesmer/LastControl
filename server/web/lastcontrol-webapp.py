@@ -271,16 +271,23 @@ def agent_cves(hostname):
     if not session.get('logged_in'):
         return redirect(url_for('login'))
     show_all = request.args.get('all') == '1'
+    from datetime import datetime
+    cutoff_year = datetime.now().year - 2
     conn = get_db_connection()
     if show_all:
         query_filter = ""
     else:
-        query_filter = """
+        query_filter = f"""
             AND (
                 debian_status IN ('open', 'undetermined')
                 OR urgency IN ('high', 'medium')
             )
-           AND urgency != 'unimportant'
+            AND (
+                urgency IS NULL
+                OR urgency = ''
+                OR urgency != 'unimportant'
+            )
+            AND CAST(substr(cve_id, 5, 4) AS INTEGER) >= {cutoff_year}
         """
     rows = conn.execute(f'''
         SELECT *
