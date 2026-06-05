@@ -4,11 +4,13 @@ import sys
 import json
 import sqlite3
 import logging
+import subprocess
 from datetime import datetime
 
 DB_PATH = "/usr/local/lastcontrol/lastcontrol.db"
 LOG_PATH = "/var/log/lastcontrol-handler.log"
 MAX_PAYLOAD_SIZE = 1024 * 1024  # 1 MB
+RRD_PROCESS_SCRIPT = "/usr/local/lastcontrol/scripts/rrd.sh"
 
 logging.basicConfig(
     filename=LOG_PATH,
@@ -217,6 +219,42 @@ def handle_task_result(data):
         conn.commit()
     logging.info("Task result recorded hostname=%s task_id=%s", hostname, task_id)
 
+def handle_rrd_telemetry(data):
+    hostname = clean_value(data.get("hostname", ""))
+    if not hostname:
+        logging.error("RRD telemetry rejected: hostname missing")
+        return
+    try:
+        payload = json.dumps(data, ensure_ascii=False)
+        result = subprocess.run(
+            [RRD_PROCESS_SCRIPT],
+            input=payload,
+            text=True,
+            capture_output=True,
+            timeout=30
+        )
+        if result.returncode != 0:
+            logging.error(
+                "RRD telemetry failed hostname=%s rc=%s stderr=%s",
+                hostname,
+                result.returncode,
+                result.stderr.strip()
+            )
+            return
+        with get_conn() as conn:
+            conn.execute(
+                """
+                UPDATE agents
+                SET last_seen = datetime('now','localtime')
+                WHERE hostname = ?
+                """,
+                (hostname,)
+            )
+            conn.commit()
+        logging.info("RRD telemetry processed hostname=%s", hostname)
+    except Exception as e:
+        logging.error("RRD telemetry exception hostname=%s error=%s", hostname, e)
+
 def main():
     data = read_payload()
     origin = clean_value(data.get("origin", ""))
@@ -231,6 +269,8 @@ def main():
         handle_task_check(data)
     elif origin == "task_result":
         handle_task_result(data)
+    elif origin == "rrd_telemetry":
+        handle_rrd_telemetry(data)
     else:
         logging.error("Unknown origin: %s", origin)
 if __name__ == "__main__":
