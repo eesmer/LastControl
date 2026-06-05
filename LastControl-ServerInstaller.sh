@@ -133,6 +133,8 @@ sleep 2
 send_to_server "/usr/local/lastcontrol/scripts/disk_io_load.sh"
 sleep 2
 send_to_server "/usr/local/lastcontrol/scripts/package_inventory.sh"
+sleep 2
+send_to_server "/usr/local/lastcontrol/scripts/rrd.sh"
 
 REPORT
 chmod +x /usr/local/bin/lastcontrol-report.sh
