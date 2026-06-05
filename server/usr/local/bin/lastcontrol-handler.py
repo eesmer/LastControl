@@ -10,7 +10,7 @@ from datetime import datetime
 DB_PATH = "/usr/local/lastcontrol/lastcontrol.db"
 LOG_PATH = "/var/log/lastcontrol-handler.log"
 MAX_PAYLOAD_SIZE = 1024 * 1024  # 1 MB
-RRD_PROCESS_SCRIPT = "/usr/local/lastcontrol/scripts/rrd.sh"
+RRD_PROCESS_SCRIPT = "/usr/local/bin//lastcontrol-rrd.sh"
 
 logging.basicConfig(
     filename=LOG_PATH,
