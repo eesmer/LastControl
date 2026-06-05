@@ -365,7 +365,7 @@ chmod +x /usr/local/bin/lastcontrol-rrd.sh
 chown -R www-data:www-data /usr/local/lastcontrol/web/rrd
 chown -R www-data:www-data /usr/local/lastcontrol/web/graphs
 chmod -R 755 /usr/local/lastcontrol/web/rrd
-chmod -R 755 /usr/local/lastcontrol/www/web/graphs
+chmod -R 755 /usr/local/lastcontrol/web/graphs
 ln -s /usr/local/lastcontrol/web/graphs /var/www/html/lastcontrol/graphs
 
 systemctl daemon-reload
