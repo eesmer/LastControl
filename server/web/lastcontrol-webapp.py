@@ -337,7 +337,7 @@ def agent_graphs(hostname):
     if not session.get('logged_in'):
         return redirect(url_for('login'))
     safe_hostname = re.sub(r'[^A-Za-z0-9._-]', '', hostname)
-    graph_dir = f"/usr/local/lastcontrol/www/graphs/{safe_hostname}"
+    graph_dir = f"/usr/local/lastcontrol/web/graphs/{safe_hostname}"
     graph_defs = [
         ("System Load", "load-day.png", "fas fa-chart-line text-primary"),
         ("Memory Usage", "memory-day.png", "fas fa-memory text-warning"),
@@ -367,7 +367,7 @@ def graph_file(hostname, filename):
         return redirect(url_for('login'))
     safe_hostname = re.sub(r'[^A-Za-z0-9._-]', '', hostname)
     safe_filename = re.sub(r'[^A-Za-z0-9._-]', '', filename)
-    graph_dir = f"/usr/local/lastcontrol/www/graphs/{safe_hostname}"
+    graph_dir = f"/usr/local/lastcontrol/web/graphs/{safe_hostname}"
     return send_from_directory(graph_dir, safe_filename)
 
 if __name__ == '__main__':
