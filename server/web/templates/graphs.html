@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4>
+        <i class="fas fa-chart-area text-primary"></i>
+        {{ hostname }}
+        <small class="text-muted">RRD Graph Telemetry</small>
+    </h4>
+    <a href="/" class="btn btn-sm btn-outline-secondary">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
+</div>
+
+<div class="row">
+{% for graph in graphs %}
+    <div class="col-12 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white">
+                <i class="{{ graph.icon }}"></i> {{ graph.title }}
+            </div>
+            <div class="card-body text-center bg-white">
+                {% if graph.exists %}
+                    <img src="{{ graph.url }}?t={{ cache_buster }}"
+                         class="img-fluid border rounded"
+                         alt="{{ graph.title }}">
+                {% else %}
+                    <div class="alert alert-warning mb-0">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Graph not found: {{ graph.filename }}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endfor %}
+</div>
+
+{% endblock %}
