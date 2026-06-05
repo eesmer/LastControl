@@ -23,7 +23,7 @@ apt update
 apt-get -y install git
 apt-get -y install socat jq curl sqlite3
 apt-get -y install python3-venv python3-pip nginx
-apt-get -y install rsyslog
+apt-get -y install rsyslog rrdtool
 
 # Clone Repo
 rm -rf "$TEMP_REPO"
