@@ -2,7 +2,7 @@
 
 # -----------------------------------------------------
 # LastControl Server Installer
-# build: 2026-05-26
+# build: 05-06-2026
 # -----------------------------------------------------
 
 SERVER_IP=$(hostname -I | awk '{print $1}')
@@ -31,6 +31,9 @@ git clone "$REPO_URL" "$TEMP_REPO"
 
 # Server WDIR
 rm -rf "$SERVER_WDIR"
+
+mkdir -p $SERVER_WDIR//web/rrd
+mkdir -p $SERVER_WDIR/web/graphs
 mkdir -p $SERVER_WDIR/web/templates
 touch "$SERVER_WDIR/readme.md"
 TODAY=$(date)
@@ -354,6 +357,16 @@ touch /var/log/lastcontrol-securitydata-update.log
 touch /var/log/lastcontrol-securitydata-cve-matcher.log
 chmod 640 /var/log/lastcontrol-securitydata-update.log
 chmod 640 /var/log/lastcontrol-securitydata-cve-matcher.log
+
+# RRD Graph
+[ -f "$TEMP_REPO/server/usr/local/bin/lastcontrol-rrd.sh" ] || { echo "RRD Graph Script NotFound"; exit 1; }
+cp $TEMP_REPO/server/usr/local/bin/lastcontrol-rrd.sh /usr/local/bin/lastcontrol-rrd.sh
+chmod +x /usr/local/bin/lastcontrol-rrd.sh
+chown -R www-data:www-data /usr/local/lastcontrol/web/rrd
+chown -R www-data:www-data /usr/local/lastcontrol/web/graphs
+chmod -R 755 /usr/local/lastcontrol/web/rrd
+chmod -R 755 /usr/local/lastcontrol/www/web/graphs
+ln -s /usr/local/lastcontrol/web/graphs /var/www/html/lastcontrol/graphs
 
 systemctl daemon-reload
 systemctl enable --now lastcontrol-listener.service
