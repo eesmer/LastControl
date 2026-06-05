@@ -4,6 +4,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import json
 import sqlite3
 import os
+import re
+import time
 
 app = Flask(__name__)
 app.secret_key = 'lastcontrol_gizli_anahtar' # for session security
@@ -329,6 +331,44 @@ def agent_cves(hostname):
     ''', (hostname,)).fetchone()
     conn.close()
     return render_template('cves.html', hostname=hostname, rows=rows, summary=summary, show_all=show_all)
+
+@app.route('/graphs/<hostname>')
+def agent_graphs(hostname):
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+    safe_hostname = re.sub(r'[^A-Za-z0-9._-]', '', hostname)
+    graph_dir = f"/usr/local/lastcontrol/www/graphs/{safe_hostname}"
+    graph_defs = [
+        ("System Load", "load-day.png", "fas fa-chart-line text-primary"),
+        ("Memory Usage", "memory-day.png", "fas fa-memory text-warning"),
+        ("Network Traffic", "network-day.png", "fas fa-network-wired text-success"),
+        ("Disk I/O", "diskio-day.png", "fas fa-hdd text-danger"),
+        ("Filesystem Usage", "filesystem-day.png", "fas fa-database text-secondary"),
+    ]
+    graphs = []
+    for title, filename, icon in graph_defs:
+        graphs.append({
+            "title": title,
+            "filename": filename,
+            "icon": icon,
+            "exists": os.path.exists(os.path.join(graph_dir, filename)),
+            "url": url_for("graph_file", hostname=safe_hostname, filename=filename)
+        })
+    return render_template(
+        "graphs.html",
+        hostname=safe_hostname,
+        graphs=graphs,
+        cache_buster=int(time.time())
+    )
+
+@app.route('/graph-files/<hostname>/<filename>')
+def graph_file(hostname, filename):
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+    safe_hostname = re.sub(r'[^A-Za-z0-9._-]', '', hostname)
+    safe_filename = re.sub(r'[^A-Za-z0-9._-]', '', filename)
+    graph_dir = f"/usr/local/lastcontrol/www/graphs/{safe_hostname}"
+    return send_from_directory(graph_dir, safe_filename)
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5000)
