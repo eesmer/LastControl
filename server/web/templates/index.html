@@ -34,7 +34,7 @@
         <td class="report-date">
             <i class="far fa-clock me-1"></i>
             {% set ago_text = agent.last_seen | time_ago %}
-            <span title="{{ agent.last_seen }}" class="{% if 'gün' in ago_text %}text-danger fw-bold{% elif 'dk' in ago_text or 'Şimdi' in ago_text %}text-success{% else %}text-muted{% endif %}">
+            <span title="{{ agent.last_seen }}" class="{% if 'day' in ago_text %}text-danger fw-bold{% elif 'dk' in ago_text or 'Şimdi' in ago_text %}text-success{% else %}text-muted{% endif %}">
                 {{ ago_text }}
             </span>
         </td>
