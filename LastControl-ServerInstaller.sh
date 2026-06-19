@@ -67,10 +67,25 @@ echo "--- Agent Installer Preparing ---"
 [ -d "$TEMP_REPO/client/scripts" ] || { echo "AgentScripts Dir NotFound"; exit 1; }
 AGENT_PAYLOAD=$(tar -czf - -C "$TEMP_REPO"/client/scripts . | base64 -w 0)
 mkdir -p $AGENT_DIR
+
+AGENT_VERSION="1.0.0"
 # 4. Agent Installer - Generated Specifically for each installation
 cat <<EOF > $AGENT_DIR/lastcontrol-agent_installer.sh
 #!/bin/bash
 # LastControl Agent Installer
+
+# uninstall
+systemctl stop lastcontrol.timer 2>/dev/null || true
+systemctl disable lastcontrol.timer 2>/dev/null || true
+systemctl stop lastcontrol.service 2>/dev/null || true
+systemctl disable lastcontrol.service 2>/dev/null || true
+rm -f /etc/systemd/system/lastcontrol.timer
+rm -f /etc/systemd/system/lastcontrol.service
+systemctl daemon-reload
+systemctl reset-failed 2>/dev/null || true
+rm -f /usr/local/bin/lastcontrol-report.sh
+rm -rf /usr/local/lastcontrol
+rm -rf /etc/lastcontrol
 
 # LastControl Server Info
 SERVER_ADDR="$SERVER_IP"
@@ -167,6 +182,11 @@ TIMER
 systemctl daemon-reload
 systemctl enable --now lastcontrol.timer
 echo "LastControl Agent was successfully installed"
+
+mkdir -p /etc/lastcontrol
+cat > /etc/lastcontrol/agent.conf <<ACONF
+AGENT_VERSION="$AGENT_VERSION"
+ACONF
 EOF
 chmod +x $AGENT_DIR/lastcontrol-agent_installer.sh
 
@@ -207,6 +227,14 @@ CREATE TABLE IF NOT EXISTS inventory (
     mainboard TEXT,
     product_name TEXT,
     serial_number TEXT,
+    agent_version TEXT,
+    socat_version TEXT,
+    openssl_version TEXT,
+    bash_version TEXT,
+    systemd_version TEXT,
+    jq_version TEXT,
+    package_manager TEXT,
+    agent_state TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 CREATE TABLE IF NOT EXISTS users (
