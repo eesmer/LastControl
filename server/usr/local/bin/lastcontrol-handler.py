@@ -57,6 +57,14 @@ INVENTORY_FIELDS = [
     "mainboard",
     "product_name",
     "serial_number",
+    "agent_version",
+    "socat_version",
+    "openssl_version",
+    "bash_version",
+    "systemd_version",
+    "jq_version",
+    "package_manager",
+    "agent_state",
 ]
 
 def read_payload():
