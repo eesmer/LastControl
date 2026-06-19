@@ -80,15 +80,15 @@ CERTS="/etc/lastcontrol/certs"
 # Debian / Ubuntu
 if [ -f /etc/debian_version ]; then
     apt-get update
-    apt-get -y install socat rsyslog sysstat
+    apt-get -y install socat rsyslog sysstat jq
 # RHEL / Rocky / Alma / CentOS
 elif [ -f /etc/redhat-release ]; then
     if command -v dnf >/dev/null 2>&1; then
         dnf -y install epel-release
-        dnf -y install socat rsyslog sysstat
+        dnf -y install socat rsyslog sysstat jq
     elif command -v yum >/dev/null 2>&1; then
         yum -y install epel-release
-        yum -y install socat rsyslog sysstat
+        yum -y install socat rsyslog sysstat jq
     else
         echo "No supported package manager found!"
         exit 1
@@ -115,7 +115,7 @@ PORT="$PORT"
 send_to_server() {
     local script_path=\$1
     if [ -x "\$script_path" ]; then
-        "\$script_path" | /usr/bin/socat -T 10 - OPENSSL:\$SERVER_IP:\$PORT,verify=1,cafile=/etc/lastcontrol/certs/ca.crt,cert=/etc/lastcontrol/certs/client.pem,snihost=0
+        "\$script_path" | /usr/bin/socat -T 10 - OPENSSL:\$SERVER_IP:\$PORT,verify=1,cafile=/etc/lastcontrol/certs/ca.crt,cert=/etc/lastcontrol/certs/client.pem
     fi
 }
 # Send Data
