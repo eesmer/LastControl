@@ -7,9 +7,11 @@ KERNEL=$(uname -r)
 get_internal_ip() {
     hostname -I | awk '{print $1}'
 }
+
 get_external_ip() {
     curl -s --max-time 2 ifconfig.me || echo "N/A"
 }
+
 get_disk_list() {
     if command -v lsblk >/dev/null; then
         lsblk -dno NAME,SIZE | tr '\n' ',' | sed 's/,$//'
@@ -17,9 +19,11 @@ get_disk_list() {
         awk '{if(NR>2) print $4 " " $3}' /proc/partitions | tr '\n' ','
     fi
 }
+
 get_virt_control() {
     systemd-detect-virt 2>/dev/null || echo "physical"
 }
+
 get_gpu() {
     if command -v lspci >/dev/null; then
         lspci | grep -iE 'vga|3d|display' | cut -d: -f3 | xargs || echo "None"
@@ -27,6 +31,7 @@ get_gpu() {
         echo "N/A"
     fi
 }
+
 get_bios() {
     if [ -r /sys/class/dmi/id/bios_vendor ]; then
         echo "$(cat /sys/class/dmi/id/bios_vendor) - $(cat /sys/class/dmi/id/bios_version)"
@@ -34,28 +39,93 @@ get_bios() {
         echo "Permission Denied"
     fi
 }
+
 get_last_boot() {
 	#LAST_BOOT=$(who -b | awk '{print $3,$4}')
 	who -b | awk '{print $3,$4}'
 }
+
 get_bios_vendor() {
 	dmidecode -s bios-vendor
 }
+
 get_bios_version() {
 	dmidecode -s bios-version
 }
+
 get_bios_release_date() {
 	dmidecode -s bios-release-date
 }
+
 get_bios_revision() {
 	dmidecode -s bios-revision
 }
+
 get_bios_firmware_revision() {
 	dmidecode -s firmware-revision
 }
+
 get_bios_mode() {
 	#[ -d /sys/firmware/efi ] && bios_mode="UEFI Mode" || bios_mode="Legacy Mode"
 	[ -d /sys/firmware/efi ] && echo "UEFI Mode" || echo "Legacy Mode"
+}
+
+get_socat_version() {
+    socat -V 2>/dev/null | awk '
+        /socat version/ {
+            for (i=1; i<=NF; i++) {
+                if ($i == "version") {
+                    print $(i+1)
+                    exit
+                }
+            }
+        }
+    '
+}
+
+get_openssl_version() {
+    openssl version 2>/dev/null
+}
+
+get_bash_version() {
+    bash --version | head -1
+}
+
+get_systemd_version() {
+    systemctl --version | head -1 | awk '{print $2}'
+}
+
+get_jq_version() {
+    jq --version 2>/dev/null
+}
+
+get_package_manager() {
+    if command -v apt >/dev/null 2>&1; then
+        echo "apt"
+    elif command -v dnf >/dev/null 2>&1; then
+        echo "dnf"
+    elif command -v yum >/dev/null 2>&1; then
+        echo "yum"
+    else
+        echo "unknown"
+    fi
+}
+
+get_agent_state() {
+    [ -x /usr/bin/socat ] || { echo "FAIL"; return; }
+    command -v openssl >/dev/null 2>&1 || { echo "FAIL"; return; }
+    command -v jq >/dev/null 2>&1 || { echo "FAIL"; return; }
+    command -v systemctl >/dev/null 2>&1 || { echo "FAIL"; return; }
+    echo "PASS"
+}
+
+get_agent_version() {
+    if [ -f /etc/lastcontrol/agent.conf ]; then
+        . /etc/lastcontrol/agent.conf
+        echo "$AGENT_VERSION"
+    else
+        echo "UNKNOWN"
+    fi
 }
 
 # --- Create JSON---
@@ -83,6 +153,14 @@ REPORT_JSON=$(jq -n \
   --arg biosrevision "$(get_bios_revision)" \
   --arg biosfirmwarerevision "$(get_bios_firmware_revision)" \
   --arg biosmode "$(get_bios_mode)" \
+  --arg socatver "$(get_socat_version)" \
+  --arg opensslver "$(get_openssl_version)" \
+  --arg bashver "$(get_bash_version)" \
+  --arg systemdver "$(get_systemd_version)" \
+  --arg jqver "$(get_jq_version)" \
+  --arg agentstate "$(get_agent_state)" \
+  --arg agentver "$(get_agent_version)" \
+  --arg pkgmgr "$(get_package_manager)" \
   '{
     origin: $org,
     hostname: $hn,
@@ -101,7 +179,15 @@ REPORT_JSON=$(jq -n \
     bios_release_date: $biosreleasedate,
     bios_revision: $biosrevision,
     bios_firmware_revision: $biosfirmwarerevision,
-    bios_mode: $biosmode
+    bios_mode: $biosmode,
+    socat_version: $socatver,
+    openssl_version: $opensslver,
+    bash_version: $bashver,
+    systemd_version: $systemdver,
+    jq_version: $jqver,
+    agent_state: $agentstate,
+    agent_version: $agentver,
+    package_manager: $pkgmgr
   }')
 
 echo "$REPORT_JSON"
