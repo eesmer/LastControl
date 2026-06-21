@@ -1,7 +1,13 @@
 {% extends "layout.html" %}
 {% block content %}
-<h4><i class="fas fa-memory text-primary"></i> {{ hostname }} - RAM and Swap Info</h4>
-<hr>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4><i class="fas fa-server text-primary"></i> {{ hostname }} <small class="text-muted">RAM and Swap Info</small></h4>
+    <a href="/" class="btn btn-sm btn-outline-secondary">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
+</div>
+
 {% for report in reports %}
 <div class="card mb-3 shadow-sm">
     <div class="card-header d-flex justify-content-between">
