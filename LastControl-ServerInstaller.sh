@@ -95,15 +95,15 @@ CERTS="/etc/lastcontrol/certs"
 # Debian / Ubuntu
 if [ -f /etc/debian_version ]; then
     apt-get update
-    apt-get -y install socat rsyslog sysstat jq
+    apt-get -y install socat rsyslog sysstat jq curl
 # RHEL / Rocky / Alma / CentOS
 elif [ -f /etc/redhat-release ]; then
     if command -v dnf >/dev/null 2>&1; then
         dnf -y install epel-release
-        dnf -y install socat rsyslog sysstat jq
+        dnf -y install socat rsyslog sysstat jq curl
     elif command -v yum >/dev/null 2>&1; then
         yum -y install epel-release
-        yum -y install socat rsyslog sysstat jq
+        yum -y install socat rsyslog sysstat jq curl
     else
         echo "No supported package manager found!"
         exit 1
