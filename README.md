@@ -7,6 +7,7 @@
 LastControl is a reporting and telemetry platform that runs on Linux machines using a TLS-enabled agent.
 Unlike large-scale enterprise monitoring systems, it aims to provide a fast-to-deploy, scalable, minimal, and easy-to-understand infrastructure.
 
+#### Key Features
 - TLS-encrypted communication using socat
 - Certificate-based client authorization
 - Web UI
@@ -17,36 +18,28 @@ Unlike large-scale enterprise monitoring systems, it aims to provide a fast-to-d
 
 ---
 
-### Project Focuses
-- Simple deployment
-- Minimal dependencies
-- Bash-first architecture
-- Secure telemetry transport
-- Centralized reporting
-- Lightweight operational visibility
+#### Reports and Dashboard Pages
+- Inventory Report
+- Update Report
+- Installed Packages
+- Open Ports
+- Local Users
+- Roles
+- System Load
+- RRD Graphics
+- CVE Page Associated with Installed Packages
+- Vulnerability Exposure
+- Historical Reports
 
-Unlike large-scale enterprise monitoring stacks, LastControl aims to provide a minimal and understandable infrastructure that can be deployed quickly on Debian-based systems while remaining extensible for future orchestration and task execution capabilities.
+#### Supported Distros
+- Ubuntu
+- RHEL / Rocky / Alma
+- Debian
+- Oracle Linux
 
-### Project Goals
-LastControl was designed with the following ideas in mind:
-- Keep the agent lightweight
-- Avoid daemon-heavy architectures
-- Use standard Linux tools
-- Use encrypted communication
-- Make deployments reproducible
-- Allow future orchestration capabilities
-- Remain understandable and maintainable by system administrators
-
-### Features
-- Secure Agent Communication
-- TLS-encrypted communication using socat
-- Certificate-based client authentication
-- Lightweight transport layer
-- Flask-based lightweight web UI
-- Historical telemetry views
-- Bash-based agents
-- systemd integration
-- Randomized reporting timers
+##### Servers
+- Debian
+- Ubuntu
 
 ---
 
