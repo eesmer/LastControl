@@ -50,9 +50,9 @@ Instead it correlates installed packages with official vendor security advisorie
 This approach significantly reduces false positives and follows the security status published by distribution vendors.
 
 #### Supported security sources;
-- Debian Security Tracker
-- Ubuntu OVAL
-- Red Hat Security Data API
+- [Debian Security Tracker](https://security-tracker.debian.org/)
+- [Ubuntu OVAL](https://security-metadata.canonical.com/oval/)
+- [Red Hat Security Data API](https://access.redhat.com/hydra/rest/securitydata)
 
 #### Future vendors
 - Oracle Linux
