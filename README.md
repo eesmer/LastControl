@@ -4,7 +4,14 @@
 
 ---
 
-LastControl, a lightweight, TLS-enabled Linux fleet reporting and telemetry platform, is designed for small and medium-sized infrastructures, laboratories, test environments, and self-hosted enterprise-style deployments.
+LastControl is a reporting and telemetry platform that runs on Linux machines using a TLS-enabled agent.
+Unlike large-scale enterprise monitoring systems, it aims to provide a fast-to-deploy, scalable, minimal, and easy-to-understand infrastructure.
+
+- TLS-encrypted communication using socat
+- Certificate-based client authorization
+- Web UI
+- Historical telemetry and Historical reporting
+- Randomized reporting timers
 
 ![LastControl](https://img.shields.io/badge/LastControl-Linux%20System%20Reporter-1e3a8a?style=for-the-badge&logo=linux&logoColor=green&labelColor=0f172a&color=darkblue) <br>
 
