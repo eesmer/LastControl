@@ -58,6 +58,8 @@ This approach significantly reduces false positives and follows the security sta
 - Oracle Linux
 - SUSE
 
+![alt text](docs/SS1-CVE-Exposure.png "CVE Page")
+
 ---
 
 ### Installation
