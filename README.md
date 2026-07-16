@@ -9,10 +9,10 @@ Unlike large-scale enterprise monitoring systems, it aims to provide a fast-to-d
 
 ### Key Features
 - TLS-encrypted communication using socat
-- Certificate-based client authorization
+- Certificate-based client authentication
+- CVE Analysis by comparing packages with the distro’s Security Tracker records
+- Historical telemetry data and historical reporting
 - Web UI
-- Historical telemetry and Historical reporting
-- Randomized reporting timers
 
 ![LastControl](https://img.shields.io/badge/LastControl-Linux%20System%20Reporter-1e3a8a?style=for-the-badge&logo=linux&logoColor=green&labelColor=0f172a&color=darkblue) <br>
 
