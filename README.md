@@ -43,8 +43,6 @@ This approach significantly reduces false positives and follows the security sta
 - Oracle Linux
 - SUSE
 
-![alt text](docs/SS1-CVE-Exposure.png "CVE Page")
-
 ---
 
 ### Installation
@@ -83,3 +81,20 @@ The agent will:
 - Start periodic reporting
 
 ---
+
+### Screenshots
+![alt text](docs/SS1-CVE-Exposure.png "CVE Page")
+
+----
+
+### Roadmap & Progress
+
+#### Roadmap
+
+| Phase | Status | Description |
+|--------|--------|-------------|
+| Phase 1 | Completed | Core reporting platform |
+| Phase 1.5 | In Progress | Security Intelligence & Vendor-aware CVE Matching |
+| Phase 2 | Planned | Task Runner & Remote Execution |
+| Phase 3 | Planned | Policy Compliance |
+| Phase 4 | Planned | Enterprise Features |
