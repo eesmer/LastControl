@@ -83,6 +83,7 @@ The agent will:
 ---
 
 ### Screenshots
+![alt text](docs/SS-MainMenu.png "Main Page")
 ![alt text](docs/SS1-CVE-Exposure.png "CVE Page")
 
 ----
