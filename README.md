@@ -7,39 +7,24 @@
 LastControl is a reporting and telemetry platform that runs on Linux machines using a TLS-enabled agent.
 Unlike large-scale enterprise monitoring systems, it aims to provide a fast-to-deploy, scalable, minimal, and easy-to-understand infrastructure.
 
-### Key Features
-- TLS-encrypted communication using socat
-- Certificate-based client authentication
-- CVE Analysis by comparing packages with the distro’s Security Tracker records
-- Historical telemetry data and historical reporting
-- Web UI
+### Key Highlights
+- Lightweight agent-based reporting platform
+- TLS-secured communication
+- Vendor-aware CVE intelligence
+- Historical inventory and telemetry
+- Web dashboard
+- Multi-distribution support
 
 ![LastControl](https://img.shields.io/badge/LastControl-Linux%20System%20Reporter-1e3a8a?style=for-the-badge&logo=linux&logoColor=green&labelColor=0f172a&color=darkblue) <br>
 
 ---
-
-### Reports and Dashboard Pages
-- Inventory Report
-- Update Report
-- Installed Packages
-- Open Ports
-- Local Users
-- Roles
-- System Load
-- RRD Graphics
-- CVE Page Associated with Installed Packages
-- Vulnerability Exposure
-- Historical Reports
+LastControl provides multiple reporting pages including inventory, software updates, installed packages, users, services, networking, historical telemetry and vendor-aware CVE exposure.
 
 #### Supported Distros
 - Ubuntu
 - RHEL / Rocky / Alma
 - Debian
 - Oracle Linux
-
-##### Servers
-- Debian
-- Ubuntu
 
 ---
 
@@ -63,6 +48,8 @@ This approach significantly reduces false positives and follows the security sta
 ---
 
 ### Installation
+The installation has been tested on **Debian 13 Trixie**. Use the latest version of **Debian** for the server. <br>
+(Server installation has not been tested on Ubuntu. You can try it if you like.) <br>
 ```
 wget https://raw.githubusercontent.com/eesmer/LastControl/refs/heads/main/LastControl-ServerInstaller.sh
 ```
