@@ -1,4 +1,4 @@
-## Lightweight Linux Fleet Reporting & Telemetry Platform
+## Linux Fleet Reporting & Telemetry Platform
 
 ![alt text](docs/lastcontrol_logo.png "LastControl Logo")
 
@@ -88,8 +88,9 @@ The agent will:
 
 ----
 
-### Roadmap & Progress
+### Project Status
 
+#### Roadmap & Progress
 #### Roadmap
 
 | Phase | Status | Description |
@@ -99,3 +100,29 @@ The agent will:
 | Phase 2 | Planned | Task Runner & Remote Execution |
 | Phase 3 | Planned | Policy Compliance |
 | Phase 4 | Planned | Enterprise Features |
+
+##### Progress
+#### Phase 1
+- [x] Agent architecture
+- [x] TLS communication
+- [x] Inventory collection
+- [x] various system reports
+- [x] Historical database
+- [x] Reporting engine
+- [x] Web dashboard
+
+#### Phase 1.5
+- [x] Debian CVE matcher
+- [x] Ubuntu CVE matcher
+- [x] RHEL family CVE matcher
+- [x] Security data cache
+- [ ] Multi-distribution validation
+- [ ] Documentation review
+- [ ] Final stabilization
+
+#### Phase 2
+- [ ] Task Runner
+- [ ] Job Scheduler
+- [ ] Remote Command Execution
+- [ ] Job History
+- [ ] Result Viewer
