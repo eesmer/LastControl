@@ -4,10 +4,11 @@
 
 ---
 
-## 1- Description
+## Description
 
 LastControl is a reporting and telemetry platform that runs on Linux machines using a TLS-enabled agent.
 Unlike large-scale enterprise monitoring systems, it aims to provide a fast-to-deploy, scalable, minimal, and easy-to-understand infrastructure.
+LastControl provides multiple reporting pages including inventory, software updates, installed packages, users, services, networking, historical telemetry and vendor-aware CVE exposure.
 
 - Lightweight agent-based reporting platform
 - TLS-secured communication
@@ -15,8 +16,6 @@ Unlike large-scale enterprise monitoring systems, it aims to provide a fast-to-d
 - Historical inventory and telemetry
 - Web dashboard
 - Multi-distribution support
-
-LastControl provides multiple reporting pages including inventory, software updates, installed packages, users, services, networking, historical telemetry and vendor-aware CVE exposure.
 
 #### Supported Distros
 - Ubuntu
@@ -43,7 +42,7 @@ This approach significantly reduces false positives and follows the security sta
 
 ---
 
-## 2- Installation
+## Installation
 The installation has been tested on **Debian 13 Trixie**. Use the latest version of **Debian** for the server. <br>
 (Server installation has not been tested on Ubuntu. You can try it if you like.) <br>
 ```
@@ -79,13 +78,16 @@ The agent will:
 
 ---
 
-## 3- Screenshots
+## Screenshots
 ![alt text](docs/SS-MainMenu.png "Main Page")
+
+---
+
 ![alt text](docs/SS1-CVE-Exposure.png "CVE Page")
 
-----
+---
 
-## 4- Project Status
+## Project Status
 #### Roadmap & Release Plan
 | Phase | Status | Description | Version/Status
 |--------|--------|-------------|------------------|
@@ -106,4 +108,6 @@ The agent will:
 | [x] Reporting engine       | [ ] Documentation review            |
 | [x] Web dashboard          | [ ] Final stabilization             |
 
-- [Changelog](docs/changelog.txt "changelog.txt")
+---
+
+See [CHANGELOG.txt](docs/changelog.txt) for the complete release history.
