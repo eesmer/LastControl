@@ -110,4 +110,4 @@ The agent will:
 
 ---
 
-See [CHANGELOG.txt](docs/changelog.txt) for the complete release history.
+See [CHANGELOG.txt](docs/CHANGELOG.txt) for the complete release history.
