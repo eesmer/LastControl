@@ -4,10 +4,11 @@
 
 ---
 
+## 1- Description
+
 LastControl is a reporting and telemetry platform that runs on Linux machines using a TLS-enabled agent.
 Unlike large-scale enterprise monitoring systems, it aims to provide a fast-to-deploy, scalable, minimal, and easy-to-understand infrastructure.
 
-### Key Highlights
 - Lightweight agent-based reporting platform
 - TLS-secured communication
 - Vendor-aware CVE intelligence
@@ -15,9 +16,6 @@ Unlike large-scale enterprise monitoring systems, it aims to provide a fast-to-d
 - Web dashboard
 - Multi-distribution support
 
-![LastControl](https://img.shields.io/badge/LastControl-Linux%20System%20Reporter-1e3a8a?style=for-the-badge&logo=linux&logoColor=green&labelColor=0f172a&color=darkblue) <br>
-
----
 LastControl provides multiple reporting pages including inventory, software updates, installed packages, users, services, networking, historical telemetry and vendor-aware CVE exposure.
 
 #### Supported Distros
@@ -45,7 +43,7 @@ This approach significantly reduces false positives and follows the security sta
 
 ---
 
-### Installation
+## 2- Installation
 The installation has been tested on **Debian 13 Trixie**. Use the latest version of **Debian** for the server. <br>
 (Server installation has not been tested on Ubuntu. You can try it if you like.) <br>
 ```
@@ -54,7 +52,6 @@ wget https://raw.githubusercontent.com/eesmer/LastControl/refs/heads/main/LastCo
 ```
 bash LastControl-ServerInstaller.sh
 ```
-
 ### Access to Web Interface
 ```
 http://SERVER_IP
@@ -82,17 +79,14 @@ The agent will:
 
 ---
 
-### Screenshots
+## 3- Screenshots
 ![alt text](docs/SS-MainMenu.png "Main Page")
 ![alt text](docs/SS1-CVE-Exposure.png "CVE Page")
 
 ----
 
-### Project Status
-
-#### Roadmap, Progress and Release Plan Informations
+## 4- Project Status
 #### Roadmap & Release Plan
-
 | Phase | Status | Description | Version/Status
 |--------|--------|-------------|------------------|
 | Phase 1 | Completed | Core reporting platform | v1.0 - Released |
@@ -101,28 +95,13 @@ The agent will:
 | Phase 3 | Planned | Policy Compliance | v3.0 - Planned |
 | Phase 4 | Planned | Enterprise Features | v4.0 - Planned |
 
-##### Progress
-#### Phase 1
-- [x] Agent architecture
-- [x] TLS communication
-- [x] Inventory collection
-- [x] various system reports
-- [x] Historical database
-- [x] Reporting engine
-- [x] Web dashboard
-
-#### Phase 1.5
-- [x] Debian CVE matcher
-- [x] Ubuntu CVE matcher
-- [x] RHEL family CVE matcher
-- [x] Security data cache
-- [ ] Multi-distribution validation
-- [ ] Documentation review
-- [ ] Final stabilization
-
-#### Phase 2
-- [ ] Task Runner
-- [ ] Job Scheduler
-- [ ] Remote Command Execution
-- [ ] Job History
-- [ ] Result Viewer
+#### Progress
+| Phase 1                    | Phase 1.5                           | Phase 2                           |
+|----------------------------|-------------------------------------|-----------------------------------|
+| [x] Agent architecture     | [x] Debian CVE matcher              | [ ] Task Runner
+| [x] TLS communication      | [x] Ubuntu CVE matcher              | [ ] Job Scheduler
+| [x] Inventory collection   | [x] RHEL family CVE matcher         | [ ] Remote Command Execution
+| [x] various system reports | [x] Security data cache             | [ ] Job History
+| [x] Historical database    | [ ] Multi-distribution validation   | [ ] Result Viewer
+| [x] Reporting engine       | [ ] Documentation review            |
+| [x] Web dashboard          | [ ] Final stabilization             |
