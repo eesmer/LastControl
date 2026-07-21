@@ -106,4 +106,4 @@ The agent will:
 | [x] Reporting engine       | [ ] Documentation review            |
 | [x] Web dashboard          | [ ] Final stabilization             |
 
-![alt text](docs/changelog.txt)
+- [Changelog](docs/changelog.txt "changelog.txt")
