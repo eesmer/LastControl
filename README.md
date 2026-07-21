@@ -105,3 +105,5 @@ The agent will:
 | [x] Historical database    | [ ] Multi-distribution validation   | [ ] Result Viewer
 | [x] Reporting engine       | [ ] Documentation review            |
 | [x] Web dashboard          | [ ] Final stabilization             |
+
+![alt text](docs/changelog.txt "Changelog")
