@@ -90,16 +90,16 @@ The agent will:
 
 ### Project Status
 
-#### Roadmap & Progress
-#### Roadmap
+#### Roadmap, Progress and Release Plan Informations
+#### Roadmap & Release Plan
 
-| Phase | Status | Description |
-|--------|--------|-------------|
-| Phase 1 | Completed | Core reporting platform |
-| Phase 1.5 | In Progress | Security Intelligence & Vendor-aware CVE Matching |
-| Phase 2 | Planned | Task Runner & Remote Execution |
-| Phase 3 | Planned | Policy Compliance |
-| Phase 4 | Planned | Enterprise Features |
+| Phase | Status | Description | Version/Status
+|--------|--------|-------------|------------------|
+| Phase 1 | Completed | Core reporting platform | v1.0 - Released |
+| Phase 1.5 | In Progress | Security Intelligence & Vendor-aware CVE Matching | v1.5 - In Progress |
+| Phase 2 | Planned | Task Runner & Remote Execution | v2.0 - Planned |
+| Phase 3 | Planned | Policy Compliance | v3.0 - Planned |
+| Phase 4 | Planned | Enterprise Features | v4.0 - Planned |
 
 ##### Progress
 #### Phase 1
