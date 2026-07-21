@@ -6,7 +6,7 @@
 
 ## Description
 
-LastControl is a reporting and telemetry platform that runs on Linux machines using a TLS-enabled agent.
+LastControl is a reporting and telemetry platform that runs on Linux machines using a TLS-enabled agent. <br>
 Unlike large-scale enterprise monitoring systems, it aims to provide a fast-to-deploy, scalable, minimal, and easy-to-understand infrastructure.
 LastControl provides multiple reporting pages including inventory, software updates, installed packages, users, services, networking, historical telemetry and vendor-aware CVE exposure.
 
